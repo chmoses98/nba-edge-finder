@@ -66,6 +66,7 @@ jobs:
           git config user.email "nba-edge-bot@users.noreply.github.com"
           git add -f data/history/kalshi/MANIFEST.json data/history/kalshi/kalshi_team_uuids.json
           git add -f data/history/kalshi/markets_*.jsonl.gz || true
+          git add -f data/history/kalshi/candles_*.jsonl.gz || true
           if git diff --cached --quiet; then echo "nothing to commit"; else
             git commit -m "history: kalshi settled markets (run ${{ github.run_id }})"
             git pull --rebase origin "${GITHUB_REF_NAME}" || true

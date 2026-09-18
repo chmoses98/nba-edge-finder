@@ -26,6 +26,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from nba_edge.kalshi.fees import DEFAULT_SCHEDULE, FeeSchedule, fee_per_contract_dollars
+from nba_edge.kalshi.normalize import market_to_cents
 
 MIN_EXECUTABLE_CENTS = 1
 MAX_EXECUTABLE_CENTS = 99
@@ -155,7 +156,7 @@ def normalize_quotes(snapshot: Any) -> Quotes:
 
     Explicit quotes win over derived ones; derivation only fills gaps.
     """
-    snap = _as_mapping(snapshot)
+    snap = market_to_cents(_as_mapping(snapshot))
     yes_bid = _executable(snap.get("yes_bid"))
     yes_ask = _executable(snap.get("yes_ask"))
     no_bid = _executable(snap.get("no_bid"))
@@ -177,7 +178,7 @@ def market_implied_probability(snapshot: Any) -> MarketImplied:
     Also returns the bid- and ask-implied probabilities. There is deliberately no de-vig step: a single
     binary market has no overround beyond the spread itself.
     """
-    snap = _as_mapping(snapshot)
+    snap = market_to_cents(_as_mapping(snapshot))
     q = normalize_quotes(snap)
     p_bid = None if q.yes_bid is None else q.yes_bid / 100.0
     p_ask = None if q.yes_ask is None else q.yes_ask / 100.0

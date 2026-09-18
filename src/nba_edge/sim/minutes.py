@@ -46,8 +46,8 @@ def draw_starters(rng: np.random.Generator, players: list[PlayerParams], played:
 def water_fill(raw: np.ndarray, caps: np.ndarray, total: np.ndarray, iters: int = 6) -> np.ndarray:
     """Scale minutes so each row sums to ``total`` without exceeding per-player caps (rows: draws, cols: players).
     Zero entries (unavailable players) stay zero."""
-    m = raw.copy()
     avail = raw > 0
+    m = np.minimum(raw, np.where(avail, caps[None, :], 0.0))
     for _ in range(iters):
         s = m.sum(axis=1)
         deficit = total - s

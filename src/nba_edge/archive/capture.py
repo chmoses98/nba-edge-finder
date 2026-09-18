@@ -15,6 +15,7 @@ from nba_edge.archive.ledger import Ledger
 from nba_edge.config import settings
 from nba_edge.kalshi.client import KalshiClient, KalshiError
 from nba_edge.kalshi.discovery import is_nba_series
+from nba_edge.kalshi.normalize import quote_cents
 from nba_edge.kalshi.ontology import Ontology, classify_market
 from nba_edge.log import get_logger, kv
 from nba_edge.timeutil import iso, parse_iso, utcnow
@@ -56,6 +57,7 @@ def snapshot_markets(client: KalshiClient, series: list[str], statuses: list[str
                     cls = classify_market(m, ontology)
                     m["_family"] = cls.family
                     m["_support"] = str(cls.support)
+                    m["_quote_cents"] = quote_cents(m)  # canonical cents view; raw dollar fields kept verbatim
                     rows.append(m)
             except KalshiError as e:
                 log.warning(kv(event="capture_series_error", series=st, status=status, err=str(e)[:160]))
@@ -68,7 +70,8 @@ LIVE_STATUSES = {"open", "active"}  # Kalshi's filter param says 'open'; the mar
 
 def _priority(m: dict[str, Any]) -> tuple[int, str]:
     """Earliest expected expiration first; quoted markets before unquoted ones."""
-    quoted = 0 if (m.get("yes_bid") or m.get("yes_ask")) else 1
+    q = m.get("_quote_cents") or {}
+    quoted = 0 if (q.get("yes_bid") or q.get("yes_ask")) else 1
     return (quoted, str(m.get("expected_expiration_time") or m.get("close_time") or "9999"))
 
 

@@ -64,3 +64,5 @@ class Contract(Strict):
     support: str = "UNRESOLVED"
     semantics_confidence: str = "low"
     notes: list[str] = Field(default_factory=list)
+    entity_name: str | None = None  # player display name as Kalshi prints it (identity resolution input)
+    kalshi_entity_uuid: str | None = None  # Kalshi's stable player/team uuid from custom_strike

@@ -146,8 +146,9 @@ def build_contract(m: dict[str, Any], ontology: Ontology | None = None, reg: Tea
             notes.append("head-to-head phrasing; not a threshold contract")
     elif cls.scope.value == "player":
         # identity is resolved downstream (kalshi player uuid / display name -> nba_id); here we only extract threshold
-        if strike_type == "greater" and floor is not None:
-            comparator, threshold, conf = "gt", floor, "medium"
+        # observed 2025-26 shape: strike_type='structured', floor_strike='39.5', title 'Cade Cunningham records 40+ points'
+        if strike_type in ("greater", "structured") and floor is not None:
+            comparator, threshold, conf = "gt", floor, "high" if cs.get("basketball_player") else "medium"
         elif strike_type == "greater_or_equal" and floor is not None:
             comparator, threshold, conf = "ge", floor, "medium"
         elif strike_type == "structured" and cls.stat in ("double_double", "triple_double"):
@@ -173,10 +174,28 @@ def build_contract(m: dict[str, Any], ontology: Ontology | None = None, reg: Tea
         support = Support.UNRESOLVED
         notes.append("support downgraded: semantics not proven")
 
+    entity_name = player_name_from_title(title, ysub) if cls.scope.value == "player" else None
+    if cls.scope.value == "player" and team_id is None:
+        for code in game_candidates:
+            if pt.market_suffix.upper().startswith(code):
+                team_id = reg.by_tricode(code).team_id
     return Contract(
         ticker=ticker, family=cls.family, scope=cls.scope.value, stat=cls.stat, period=cls.period, game_id=None, team_id=team_id, nba_id=nba_id,
         threshold=threshold, comparator=comparator, upper=upper, support=str(support), semantics_confidence=conf, notes=notes,
+        entity_name=entity_name, kalshi_entity_uuid=(cs.get("basketball_player") or cs.get("basketball_team")),
     )
+
+
+_PLAYER_TITLE_RE = re.compile(r"^(?P<name>[A-Z][\w.'\-]+(?: [A-Z][\w.'\-]+){1,3}?) (?:records|scores|to record|to score)\b", re.U)
+_PLAYER_SUB_RE = re.compile(r"^(?P<name>[A-Z][\w.'\-]+(?: [A-Z][\w.'\-]+){1,3}?): \d", re.U)
+
+
+def player_name_from_title(title: str, yes_sub_title: str = "") -> str | None:
+    m = _PLAYER_TITLE_RE.match(title or "")
+    if m:
+        return m["name"].strip()
+    m = _PLAYER_SUB_RE.match(yes_sub_title or "")
+    return m["name"].strip() if m else None
 
 
 def kalshi_entity_uuid(m: dict[str, Any]) -> tuple[str, str] | None:

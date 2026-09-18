@@ -153,6 +153,32 @@ def _secondary_stats(rng: np.random.Generator, home: _TeamDraw, away: _TeamDraw,
         td.blk = _multinomial_rows(rng, blk_team, _weights(td.team.players, "blk_weight", td.minutes))
 
 
+def _transfer_production(rng: np.random.Generator, td: _TeamDraw, mask: np.ndarray, cut: float) -> None:
+    """Move a ``cut`` share of each starter's attempts/makes to bench players (minutes-weighted) in ``mask`` rows.
+    Makes are thinned first and attempts follow (attempt >= make is preserved); points are recomputed from makes."""
+    idx = np.where(mask)[0]
+    if idx.size == 0:
+        return
+    starters = td.started[idx]
+    bench_w = np.where(~td.started[idx] & (td.minutes[idx] > 0), td.minutes[idx], 0.0)
+    has_bench = bench_w.sum(axis=1) > 0
+    idx, starters, bench_w = idx[has_bench], starters[has_bench], bench_w[has_bench]
+    if idx.size == 0:
+        return
+    for made, att in (("fg2m", "fg2a"), ("fg3m", "fg3a"), ("ftm", "fta")):
+        M, A = getattr(td, made), getattr(td, att)
+        m_take = np.where(starters, rng.binomial(M[idx], cut), 0)
+        miss_take = np.where(starters, rng.binomial(A[idx] - M[idx], cut), 0)
+        M[idx] -= m_take
+        A[idx] -= m_take + miss_take
+        m_give = _multinomial_rows(rng, m_take.sum(axis=1), bench_w)
+        miss_give = _multinomial_rows(rng, miss_take.sum(axis=1), bench_w)
+        M[idx] += m_give
+        A[idx] += m_give + miss_give
+    td.fga = td.fg2a + td.fg3a
+    td.pts = 2 * td.fg2m + 3 * td.fg3m + td.ftm
+
+
 def _endgame_compression(rng: np.random.Generator, h: _TeamDraw, a: _TeamDraw, c: float) -> None:
     """Crude game-script term: real NBA margins are less dispersed than independent shot noise implies (leaders
     coast, trailers foul and shoot quickly). Transfer c/2 of the raw margin from the leader to the trailer, taking
@@ -210,13 +236,19 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
         draws.append(_TeamDraw(team, played, started, minutes, mu, shock))
     h, a = draws
 
-    # game-script pre-draw for blowout-conditional rotations (same efficiency shocks as the main draw)
-    pre_margin = poss * (h.ppp_mu - a.ppp_mu) + poss * 0.55 * (h.shock_logit - a.shock_logit) + rng.normal(0.0, 8.0, n)
-    h.minutes = apply_blowout(h.minutes, h.started, pre_margin)
-    a.minutes = apply_blowout(a.minutes, a.started, pre_margin)
-
+    # pass 1: shoot with the base rotation
     _shoot(rng, h, poss, h.minutes)
     _shoot(rng, a, poss, a.minutes)
+    # game script: in draws that turned into blowouts, starters sit and the bench absorbs their minutes AND the
+    # production in those minutes. Team totals are untouched (the realised game is the realised game); only the
+    # player-level split changes, so the blowout effect on props is tied to the realised margin.
+    margin1 = h.pts.sum(axis=1) - a.pts.sum(axis=1)
+    blow = np.abs(margin1) >= LEAGUE["blowout_margin"]
+    if blow.any():
+        for td in (h, a):
+            new_minutes = apply_blowout(td.minutes, td.started, margin1)
+            _transfer_production(rng, td, blow, LEAGUE["blowout_starter_cut"])
+            td.minutes = new_minutes
     _endgame_compression(rng, h, a, LEAGUE["endgame_compression"])
     reg_h, reg_a = h.pts.sum(axis=1), a.pts.sum(axis=1)
 
@@ -274,11 +306,12 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
         away_pts[idx] += period_pts[idx, 1, 4 + k]
         n_ot[idx] += 1
         active = active & (home_pts == away_pts)
-    if active.any():  # still tied after MAX_OT: break by a coin flip point (vanishingly rare; documented)
+    if active.any():  # still tied after MAX_OT: award one point to the home team's highest-minute player (rare; documented)
         idx = np.where(active)[0]
         home_pts[idx] += 1
         period_pts[idx, 0, 4 + max_ot - 1] += 1
-        h.pts[idx, 0] += 1
+        top = np.argmax(np.where(h.played[idx], h.minutes[idx], -1.0), axis=1)
+        h.pts[idx, top] += 1
     h.minutes = h.minutes + ot_minutes_h
     a.minutes = a.minutes + ot_minutes_a
     poss_total = poss * (1.0 + n_ot * 5.0 / 48.0)
@@ -301,7 +334,7 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
     return SimResult(
         game_id=gp.game_id, home_team_id=home.team_id, away_team_id=away.team_id, n_sims=n, seed=-1, sim_version=SIM_VERSION,
         home_pts=home_pts, away_pts=away_pts, period_pts=period_pts, n_ot=n_ot, possessions=poss_total, players=players,
-        diagnostics={"ot_rate": float(n_ot.mean() > 0) if n else 0.0},
+        diagnostics={"ot_rate": float((n_ot > 0).mean()) if n else 0.0},
     )
 
 
