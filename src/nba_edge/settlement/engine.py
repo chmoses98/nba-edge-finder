@@ -62,8 +62,27 @@ class SettlementRecord(Strict):
     idempotency_key: str
 
 
-def idempotency_key(ticker: str, game_id: str, engine_version: str, stat_correction_version: int) -> str:
-    raw = f"{ticker}|{game_id}|{engine_version}|{stat_correction_version}"
+def semantics_fingerprint(contract: Contract | None) -> str:
+    """Hash of exactly the contract fields that decide the outcome.
+
+    Without this the key was ticker+game+engine+correction, which says nothing about WHAT YES meant.
+    So if we discovered a threshold had been parsed wrong -- the case this project must survive,
+    since Kalshi semantics are reverse-engineered -- re-settling reused the stale record forever:
+    the same ticker with threshold 199.5 and with 500.0 produced byte-identical keys, and
+    ``settle_many`` skips anything whose key it has already seen. Corrected semantics must produce a
+    NEW record (the old one stays; the ledger is append-only), which means a different key.
+    """
+    if contract is None:
+        return "-"
+    parts = (contract.scope, contract.stat, contract.period, contract.comparator,
+             contract.threshold, contract.upper, contract.team_id, contract.nba_id)
+    return hashlib.sha256("|".join("" if x is None else str(x) for x in parts).encode("utf-8")).hexdigest()[:16]
+
+
+def idempotency_key(
+    ticker: str, game_id: str, engine_version: str, stat_correction_version: int, contract: Contract | None = None
+) -> str:
+    raw = f"{ticker}|{game_id}|{engine_version}|{stat_correction_version}|{semantics_fingerprint(contract)}"
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
@@ -268,7 +287,7 @@ def settle_contract(
         box_source=box.source,
         box_stat_correction_version=box.stat_correction_version,
         engine_version=ENGINE_VERSION,
-        idempotency_key=idempotency_key(contract.ticker, box.game_id, ENGINE_VERSION, box.stat_correction_version),
+        idempotency_key=idempotency_key(contract.ticker, box.game_id, ENGINE_VERSION, box.stat_correction_version, contract),
     )
 
 
@@ -288,7 +307,7 @@ def settle_many(
     kalshi_results = kalshi_results or {}
     out: list[SettlementRecord] = []
     for c in contracts:
-        key = idempotency_key(c.ticker, box.game_id, ENGINE_VERSION, box.stat_correction_version)
+        key = idempotency_key(c.ticker, box.game_id, ENGINE_VERSION, box.stat_correction_version, c)
         prior = existing.get(key)
         out.append(prior if prior is not None else settle_contract(c, box, kalshi_results.get(c.ticker), now=now))
     return out

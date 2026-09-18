@@ -277,3 +277,36 @@ def test_a_voided_market_disagrees_when_we_settled_it_to_a_side():
 
     agree, reason2 = _reconcile_with_kalshi(SettlementOutcome.YES, "player scored 22 > 19.5", "yes")
     assert agree is SettlementOutcome.YES and "agrees with Kalshi" in reason2
+
+
+def test_corrected_semantics_produce_a_new_settlement_record():
+    """A re-parse that changes what YES means must not reuse the old record.
+
+    The idempotency key was ticker + game + engine + stat-correction version, which says nothing
+    about WHAT the contract meant. Kalshi's semantics are reverse-engineered here, so "we parsed a
+    threshold wrong and fixed it" is a case this project must survive -- and it did not: the same
+    ticker at threshold 199.5 and at 500.0 produced byte-identical keys, and `settle_many` skips any
+    key it has already seen, so the stale outcome would have been reused forever.
+    """
+    from nba_edge.settlement.engine import ENGINE_VERSION, idempotency_key
+
+    def total_contract(threshold):
+        return Contract(
+            ticker="KXNBATOTAL-26JAN01BOSNYK-T199", family="game_total", scope="game", stat="total",
+            period="full", game_id=None, team_id=None, nba_id=None, threshold=threshold,
+            comparator="gt", upper=None, support="MODELABLE", semantics_confidence="high",
+            notes=[], entity_name=None, kalshi_entity_uuid=None,
+        )
+
+    args = ("KXNBATOTAL-26JAN01BOSNYK-T199", "espn:1", ENGINE_VERSION, 0)
+    corrected = idempotency_key(*args, total_contract(500.0))
+    original = idempotency_key(*args, total_contract(199.5))
+    assert corrected != original, "corrected semantics must settle again, not reuse the stale record"
+
+    # and unchanged semantics must still deduplicate, or idempotency is gone
+    assert idempotency_key(*args, total_contract(199.5)) == original
+
+    # the comparator matters just as much as the number
+    flipped = total_contract(199.5)
+    flipped = flipped.model_copy(update={"comparator": "lt"})
+    assert idempotency_key(*args, flipped) != original

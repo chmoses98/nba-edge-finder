@@ -42,6 +42,7 @@ from nba_edge.settlement.engine import (
     DISAGREE_PREFIX,
     SettlementOutcome,
     SettlementRecord,
+    _kalshi_outcome,
     idempotency_key,
     settle_many,
 )
@@ -205,9 +206,9 @@ def default_fetch_box(game_id: str) -> FinalBoxScore:
 
 
 def market_only_record(ticker: str, result: str, game_id: str, now: datetime) -> SettlementRecord:
-    outcome = {"yes": SettlementOutcome.YES, "no": SettlementOutcome.NO, "void": SettlementOutcome.VOID}.get(
-        result.strip().lower(), SettlementOutcome.UNSETTLEABLE
-    )
+    # Share the engine's map rather than repeating it: this copy also lacked "scalar", so a market
+    # Kalshi had voided was recorded as UNSETTLEABLE "unrecognised result" instead of VOID.
+    outcome = _kalshi_outcome(result) or SettlementOutcome.UNSETTLEABLE
     reason = MARKET_ONLY_REASON if outcome != SettlementOutcome.UNSETTLEABLE else f"{MARKET_ONLY_REASON}: unrecognised result {result!r}"
     return SettlementRecord(
         ticker=ticker, game_id=game_id, outcome=outcome, value=None, reason=reason, settled_at_utc=now, box_source="kalshi",
