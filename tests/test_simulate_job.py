@@ -75,7 +75,7 @@ def test_run_simulate_end_to_end(tmp_path):
     assert len(preds) == 5
     pr = next(x for x in preds if x["ticker"] == "KXNBAGAME-26OCT20OKCSAS-SAS")
     assert pr["p_market"] == pytest.approx(0.61) and pr["p_data_only"] != pr["p_market"] and pr["authority"] == "RESEARCH"
-    assert pr["input_snapshot_ids"]["hybrid_market_weight"] == "0.7"
+    assert pr["input_snapshot_ids"]["hybrid_market_weight"] == "0.9"  # game scope
     assert (tmp_path / "archive" / "slates" / "latest" / "packet.json").exists()
     packet = json.loads((tmp_path / "archive" / "slates" / "latest" / "packet.json").read_text())
     assert packet["games"][0]["home"]["players"][0]["sim"]["pts"]["q50"] >= 0

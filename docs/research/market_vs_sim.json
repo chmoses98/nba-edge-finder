@@ -1,0 +1,25 @@
+{
+ "n_joined": 290,
+ "n_walk_forward": 300,
+ "market": {
+  "log_loss": 0.46491597522962824,
+  "brier": 0.15091577586206895,
+  "ece": 0.0916034482758621
+ },
+ "sim": {
+  "log_loss": 0.5219268739421437,
+  "brier": 0.1720266440613027,
+  "ece": 0.09603563218390807
+ },
+ "elo": {
+  "log_loss": 0.5017644687504019,
+  "brier": 0.16230350077554576,
+  "ece": 0.08354508337403756
+ },
+ "in_sample_blend": {
+  "market_weight": 1.0,
+  "log_loss": 0.46491597522962824,
+  "note": "in-sample on the same games; reference only, not a production weight"
+ },
+ "corr_sim_market_logit": 0.9005988912013205
+}

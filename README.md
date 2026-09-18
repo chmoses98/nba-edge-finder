@@ -9,7 +9,8 @@ data/context → game environment → availability → minutes → opportunity �
 ```
 
 Status (2026-09-18, overnight foundation build): infrastructure complete and running; every model family is in
-**RESEARCH** authority — nothing here is a bet recommendation yet. See `docs/HANDOFF.md`.
+**RESEARCH** authority — nothing here is a bet recommendation. On the same games the Kalshi pregame moneyline
+currently beats the DATA_ONLY model (log loss 0.465 vs 0.522). See `docs/HANDOFF.md` and `docs/research/RESEARCH_NOTES.md`.
 
 ## What runs automatically (GitHub Actions)
 | workflow | trigger | what |

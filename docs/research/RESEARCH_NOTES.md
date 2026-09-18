@@ -130,12 +130,30 @@ v5 (rotation membership + recency availability + bench-first trimming + rating_s
 total MAE 15.6 (naive 16.0). DATA_ONLY is still behind Elo on win probability by 0.02 log loss on this
 late-season window but is now in the same class, and it produces the joint player/period universe Elo cannot.
 
-## 5. Kalshi market calibration (market_calibration.json) — negative/invalid result
-The first attempt used the `previous_*_dollars` quotes on settled markets as "closing" prices. They produced a
-Brier of 0.016 on moneylines — impossible for pregame prices — because those quotes are post-tip (in-game trading
-runs until the market closes after the final buzzer). The result is stored under `contaminated_post_tip` and must
-not be cited. Pregame calibration requires hourly candlesticks joined to tip times; the candle-based study
-(`study_candles`) runs automatically once `candles_*.jsonl.gz` and `start_time_utc` are both present.
+## 5. Kalshi market calibration (market_calibration.json)
+First attempt (invalid, kept for the record): `previous_*_dollars` quotes on settled markets are post-tip, giving
+an impossible Brier of 0.016; stored under `contaminated_post_tip`, never to be cited.
+
+Valid pregame result from hourly candles joined to ESPN tip times (last candle strictly before tip, yes bid/ask
+mid, spread ≤ 10c): **KXNBAGAME n = 2,772 markets (2025-26): Brier 0.1995, log loss 0.581, ECE 0.018** — the
+Kalshi moneyline is very well calibrated pregame. KXNBASPREAD (only 101 markets had candles): Brier 0.158,
+ECE 0.09 (small n). Candles for totals/team totals/props are not pulled yet.
+
+## 5b. Market vs DATA_ONLY on the same games (market_vs_sim.json) — research questions 17-19
+290 of the 300 walk-forward games had a pregame Kalshi price:
+
+| view | log loss | Brier | ECE |
+|---|---:|---:|---:|
+| Kalshi pregame moneyline | **0.465** | **0.151** | 0.092 |
+| Elo | 0.502 | 0.162 | 0.084 |
+| DATA_ONLY simulator v5 | 0.522 | 0.172 | 0.096 |
+| in-sample logit blend (market weight 1.00) | 0.465 | — | — |
+
+corr(logit sim, logit market) = 0.90. **DATA_ONLY currently adds no information beyond the market for full-game
+winners** in this window: the in-sample optimal blend puts all weight on the market. This is the honest baseline
+the model has to beat prospectively; HYBRID now uses market weight 0.90 for game-scope families (0.70 for
+player props, where no comparison exists yet because prop candles were not pulled). Where residual edge is more
+plausible — player props, team totals, period markets, injury-driven repricing — the comparison has not been run.
 
 Volume facts that *are* valid (per settled market, contracts): median volume KXNBAGAME 2.7M, KXNBATOTAL 28k,
 KXNBASPREAD 22k, KXNBAPTS 1.1k, KXNBAREB 410, KXNBAAST 383, KXNBA3PT 546, KXNBATEAMTOTAL 343; 1H markets ~1.3k.

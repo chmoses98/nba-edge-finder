@@ -47,7 +47,11 @@ from nba_edge.sim.engine import SIM_VERSION
 from nba_edge.timeutil import ET, iso, parse_iso, utcnow
 
 log = get_logger(__name__)
-HYBRID_MARKET_WEIGHT = 0.70  # prior; NOT learned. Recorded on every prediction row.
+HYBRID_MARKET_WEIGHT = 0.70  # default prior for player/period families; NOT learned. Recorded on every prediction row.
+# research/market_vs_sim (2026-09-18, 290 games): the Kalshi pregame moneyline beat DATA_ONLY (log loss 0.465 vs 0.522) and an
+# in-sample blend put 100% weight on the market, so full-game team families lean almost entirely on the market until
+# prospective evidence says otherwise.
+HYBRID_WEIGHT_BY_SCOPE = {"game": 0.90, "player": 0.70, "season": 0.95, "other": 0.90}
 STALE_MARKET_MIN = 45.0
 STALE_INJURY_MIN = 6 * 60.0
 
@@ -276,7 +280,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             mi = market_implied_probability(snap)
             p_mkt = mi.p_mid
             p_data = pr.p if pr.supported else None
-            p_h = _hybrid(p_data, p_mkt)
+            p_h = _hybrid(p_data, p_mkt, HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))
             econ = compute_economics(snap, p_h if p_h is not None else (p_data or 0.5), pr.se or 0.0, schedule=DEFAULT_SCHEDULE, config=EconomicsConfig(max_age_min=STALE_MARKET_MIN), observed_at=parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None, now=now) if (p_h is not None or p_data is not None) else None
             if not pr.supported:
                 gate, greasons = Gate.UNSUPPORTED, [pr.reason]
@@ -293,7 +297,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
                 p_data_only=p_data, p_market=p_mkt, p_hybrid=p_h, p_production=p_h, p_data_only_se=pr.se if pr.supported else None,
                 market_observed_at_utc=parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None, market_yes_bid=m.get("yes_bid"), market_yes_ask=m.get("yes_ask"),
                 market_no_bid=m.get("no_bid"), market_no_ask=m.get("no_ask"), gate=gate, gate_reasons=[str(x) for x in greasons][:8], authority=Authority.RESEARCH, support=c.support,
-                pregame=True, thesis_group=None, input_snapshot_ids={"markets": mkt_entry.path if mkt_entry else "", "injuries": inj_entry.path if inj_entry else "", "hybrid_market_weight": str(HYBRID_MARKET_WEIGHT)},
+                pregame=True, thesis_group=None, input_snapshot_ids={"markets": mkt_entry.path if mkt_entry else "", "injuries": inj_entry.path if inj_entry else "", "hybrid_market_weight": str(HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))},
             )
             pred_rows.append(pred.model_dump(mode="json"))
             contract_rows.append(c.model_dump(mode="json"))
@@ -330,7 +334,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
                 row["thesis"] = t["thesis"]
     slate = {
         "generated_at_utc": iso(now), "date_et": target, "model_version": MODEL_VERSION, "sim_version": SIM_VERSION, "feature_version": FEATURE_VERSION,
-        "hybrid_market_weight_prior": HYBRID_MARKET_WEIGHT, "authority_note": "All families are RESEARCH: no betting authority. Numbers are for prospective evaluation.",
+        "hybrid_market_weight_prior": HYBRID_WEIGHT_BY_SCOPE, "authority_note": "All families are RESEARCH: no betting authority. Numbers are for prospective evaluation.",
         "market_snapshot": mkt_entry.path if mkt_entry else None, "market_snapshot_age_min": mkt_age_min, "injury_snapshot": inj_entry.path if inj_entry else None, "injury_snapshot_age_min": inj_age_min, "injury_provenance": inj_prov,
         "coverage": dict(coverage), "games": slate_games, "contracts": slate_contracts, "theses": theses, "portfolio": [p.ticker for p in portfolio],
     }

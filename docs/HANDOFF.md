@@ -21,9 +21,12 @@ What now exists is a working, tested, automated pipeline from Kalshi discovery t
 - Fee-aware YES/NO economics, bet-up-to, thesis grouping with simulated correlations, fail-closed gates that
   distinguish NO_EDGE from CANNOT_TRUST_INPUTS, immutable prediction rows carrying model/sim/feature versions,
   idempotent fail-closed settlement, pregame-filtered evaluation with CLV and a granular authority ledger.
-- Research on real data already corrected several priors (margin sd is 16, not 13.5; EWM half-life 5 minutes
-  beat season averages; negative binomial beats Poisson and still under-predicts the points upper tail) and
-  produced an honest negative result: the v1 DATA_ONLY win probabilities lose to a plain Elo.
+- Research on real data corrected several priors (margin sd is 16, not 13.5; EWM half-life 5 minutes beats season
+  averages; negative binomial beats Poisson and still under-predicts the points upper tail), found and fixed two
+  large bugs in the feature layer through walk-forward diagnostics (rating compression, roster dilution), and
+  produced the honest headline: **the Kalshi pregame moneyline currently beats DATA_ONLY and Elo on the same games;
+  the model has not demonstrated edge anywhere yet.** Player props improved from Brier 0.201 to 0.165 on 7,666 real
+  settled markets but were not compared to market prices (no prop candles pulled yet).
 
 ## B. Repository state
 
@@ -64,6 +67,7 @@ dollar strings (`yes_bid_dollars`) on both live and historical hosts; `close_tim
 ## D. Data sources
 
 Probed from GitHub Actions (`docs/probe/probe_results.md`, `docs/NBA_DATA_SOURCE_AUDIT.md`):
+- ESPN dataset after re-pull: 4,094 games, 110,714 player-game rows, quarter line scores valid.
 - Working and used in production: Kalshi live + historical APIs; ESPN site API (scoreboard by date, summary box
   scores, injuries, teams, rosters); official NBA injury-report PDF (`ak-static.cms.nba.com`).
 - Reachable but not depended on: Basketball-Reference (terms/rate limits), pbpstats API (undocumented), Rotowire
@@ -111,8 +115,10 @@ point-in-time, 300 late-2025-26 games):
 - Minutes: EWM half-life 5 is the best next-game minutes estimator (MAE 4.96; season mean 5.39; residual sd 6.4).
 - Distributions: negative binomial ≫ Poisson for points (log score −3.22 vs −3.78); points upper tail P(>mu+5) is
   17.5% empirically vs 13.6% NB — fat tails matter for ladders.
-- Market calibration: first attempt invalid (post-tip quotes); candle-based pregame calibration wired, pending the
-  candle commit + tip-time join.
+- Market calibration (valid, candle-based): Kalshi pregame moneyline Brier 0.1995 / ECE 0.018 on 2,772 markets.
+  **On the same 290 games the market (log loss 0.465) beats Elo (0.502) and DATA_ONLY (0.522); an in-sample
+  blend puts 100% weight on the market.** DATA_ONLY adds no moneyline information yet; HYBRID uses market weight
+  0.90 for game families. Props/totals/periods not yet compared (no candles pulled for them).
 
 ## G. Automation
 
@@ -162,8 +168,9 @@ settled evidence per family (thresholds in `evaluation/authority.py` are placeho
 
 ## L. Next 10 highest-value tasks
 
-1. Fix rating shrinkage from the sweep, then full-season walk-forward (2024-25, 2025-26) vs Elo and vs Kalshi
-   pregame candles; learn the HYBRID weight prospectively.
+1. Full-season walk-forward (2024-25, 2025-26) vs Elo and vs Kalshi pregame candles; re-estimate `rating_scale`
+   out of sample; learn HYBRID weights prospectively per family. The game-winner family is unlikely to carry edge;
+   focus the search on props, team totals, periods and injury-news repricing.
 2. Candle-based pregame market calibration + CLV baseline per family. Hourly candles for all 2,898 KXNBAGAME
    markets (174k rows) and 102 spreads are committed under `data/history/kalshi/candles_*.jsonl.gz`;
    `research/market_calibration.study_candles` joins them to tip times once the re-pulled ESPN rows carry
