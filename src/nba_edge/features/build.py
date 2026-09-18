@@ -43,6 +43,7 @@ class BuildConfig:
     include_preseason: bool = False
     min_player_games: int = 1
     max_roster: int = 15
+    participation_proxy: bool = False  # walk-forward v3 (2026-09-18): the proxy worsened game log loss (0.556 -> 0.571); off until understood
 
 
 @dataclass
@@ -179,7 +180,7 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
         status = injuries.get(int(pid))
         p_play = STATUS_P_PLAY.get(status, 1.0) if status is not None else 1.0
         notes = []
-        if status is None and not injuries and len(rows) >= 3:
+        if cfg.participation_proxy and status is None and not injuries and len(rows) >= 3:
             # no injury report for this team at all (e.g. historical research): use the prior-games participation
             # rate over the team's last 3 games as a leak-free availability proxy
             recent = rows.tail(3)["played"].to_numpy(dtype=float)
