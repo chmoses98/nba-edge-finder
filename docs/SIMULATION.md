@@ -116,9 +116,28 @@ win probability; higher pace ⇒ higher total; mirrored matchup ⇒ home side wi
 - **L1 Independent availability.** `played_j` are independent Bernoullis. Correlated rest (several starters sat
   together), lineup-dependent minutes and "if A is out, B starts" logic are not modelled beyond the headroom
   water-fill.
-- **L2 `impact_ppp` is a surprise term only.** Ruling a star out (`p_play = 0`) does not lower the team's expected
-  efficiency; the feature layer must fold expected absences into `off_ppp`/`def_ppp`. Redistributed usage keeps
-  team points essentially unchanged (synthetic game: 114.65 → 114.60 with the 26-ppg star out).
+- **L2 There is NO team-level injury response. This is the single most important limitation on this page.**
+  A player being ruled out redistributes his minutes and shots to teammates (that part is real and measured),
+  but it does **not** lower the team's expected efficiency, so team points, spread, total and moneyline barely
+  move. Measured on the engine: ruling out a **29.7-ppg** star costs the team **0.68 points** and 2.3 points of
+  win probability. The true figure for a star of that size is several points of spread.
+
+  Two separate causes, one fixed and one open:
+  1. *(fixed)* The availability term read `(played - p_play) * impact_ppp`, using **today's** `p_play` as the
+     baseline. That is identically mean-zero — `(0-0)` for a player ruled out, `(1-1)` for a certain one — so the
+     term could never shift the mean at any value of `impact_ppp`. Verified: `impact_ppp` of 0.0, 0.03 and 0.06
+     gave byte-identical team means. The baseline is now `p_play_baseline`, the availability the trailing
+     `off_ppp` rating was actually earned with, which is what that rating already prices in. With the fix,
+     `impact_ppp = 0.06` moves a star's absence to −5.65 points and −14.3 points of win probability.
+  2. *(open)* **`impact_ppp` is never estimated.** Nothing in `features/build.py` populates it, so it is `0.0`
+     for every real player and the channel above carries nothing in production. Estimating it needs on/off or
+     lineup data that is not yet ingested. Compounding it, `engine.py` rescales every player's shooting by
+     `factor = clip(ppp_mu / base_ppp, 0.75, 1.3)` so realised efficiency tracks a roster-independent target —
+     which actively renormalises roster quality away.
+
+  Every `SimResult` therefore carries `diagnostics["team_injury_response_modeled"]`, which is `0.0` today. Do not
+  read a slate as though injuries are priced into team efficiency. **No market family may be promoted above
+  RESEARCH authority until `impact_ppp` is estimated and validated walk-forward.**
 - **L3 Blowout rotations are almost decoupled from the realised score.** The pre-draw margin has sd ≈ 8.6 (rating
   and shock components contribute ≈ 3 of that), so `|pre_margin| >= 18` happens in ≈ 4 % of draws while the
   realised `|margin| >= 18` happens in ≈ 20 %; the two are correlated at roughly ρ ≈ 0.1. Starters lose < 0.5

@@ -86,10 +86,16 @@ def _team_ppp_mu(team: TeamParams, opp: TeamParams, is_home: bool, neutral: bool
     if team.b2b:
         mu -= LEAGUE["b2b_ppp_penalty"]
     mu = np.full(n, mu)
-    # availability surprise relative to expectation: expected availability is already priced into off_ppp
+    # Availability surprise relative to what the trailing off_ppp rating already prices in.
+    # The baseline must be the availability the RATING was earned with, not today's p_play. With
+    # today's p_play the term is identically mean-zero -- (0-0) when a player is ruled out, (1-1)
+    # when he is certain -- so injury news could not move the team's expected points at all, at any
+    # value of impact_ppp. Measured before the fix: a 29.7-ppg star ruled OUT cost 0.68 team points,
+    # and impact_ppp of 0.0, 0.03 and 0.06 gave byte-identical results.
     for j, pl in enumerate(team.players):
         if pl.impact_ppp:
-            mu += (played[:, j].astype(float) - pl.p_play) * pl.impact_ppp
+            baseline = 1.0 if pl.p_play_baseline is None else pl.p_play_baseline
+            mu += (played[:, j].astype(float) - baseline) * pl.impact_ppp
     mu += rng.normal(0.0, team.rating_sd, n)
     return mu
 
@@ -370,8 +376,16 @@ def simulate(gp: GameParams, n_sims: int, seed: int, batch: int = 20000) -> SimR
         parts.append(simulate_batch(gp, b, rng))
         done += b
     res = concat_results(parts, seed)
+    # Declare, on every single result, whether a team-level injury response was actually modelled.
+    # impact_ppp is the only channel by which a player's absence can change team EFFICIENCY (minutes
+    # redistribution still happens either way), and nothing populates it today -- so this is 0.0 in
+    # production. A reader of a slate would otherwise reasonably assume injuries are priced. They
+    # are not, and a silent 0.0 is exactly how that assumption survives.
+    n_impact = sum(1 for t in (gp.home, gp.away) for pl in t.players if pl.impact_ppp)
     res.diagnostics = {
         "ot_rate": float((res.n_ot > 0).mean()), "home_pts_mean": float(res.home_pts.mean()), "home_pts_sd": float(res.home_pts.std()),
         "margin_sd": float(res.margin.std()), "total_sd": float(res.total.std()), "poss_mean": float(res.possessions.mean()),
+        "players_with_impact_ppp": float(n_impact),
+        "team_injury_response_modeled": 1.0 if n_impact else 0.0,
     }
     return res

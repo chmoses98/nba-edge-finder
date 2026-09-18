@@ -63,7 +63,19 @@ class PlayerParams:
     blk_weight: float = 1.0
     tov_weight: float = 1.0
     usage_elasticity: float = 1.0  # how much this player's FGA rate rises when teammates' FGA are missing (1 = proportional)
-    impact_ppp: float = 0.0  # team points-per-possession impact of this player being available vs not (on/off-style)
+    # Team points-per-possession impact of this player being available vs not (on/off-style).
+    # NOT ESTIMATED: nothing populates this, so it is 0.0 for every player in production and the
+    # simulator therefore has NO team-level injury response beyond minutes redistribution. See
+    # docs/SIMULATION.md "Known limitation: no team-level injury response". Estimating it needs
+    # on/off or lineup data we do not yet ingest; until then no family may leave RESEARCH authority.
+    impact_ppp: float = 0.0
+    # Availability that the trailing off_ppp rating was EARNED with, which is what that rating
+    # already prices in. The engine shifts team efficiency by the surprise, (played - baseline), so
+    # this must be the lookback availability and NOT today's p_play: using today's p_play made the
+    # term identically mean-zero (at p_play=0 it is (0-0)*impact, at p_play=1 it is (1-1)*impact),
+    # so ruling a star out moved the team's expected points by exactly nothing. None means "assume
+    # the rating was earned with this player available", i.e. a baseline of 1.0.
+    p_play_baseline: float | None = None
     minutes_dispersion: float = 1.0
 
 

@@ -107,6 +107,7 @@ class ContractEconomics:
     no: SideEconomics
     spread_cents: int | None
     wide_spread: bool
+    crossed: bool  # book is internally impossible (ask under bid, or asks summing under 100c)
     no_quote: bool
     stale: bool
     thin: bool
@@ -337,10 +338,28 @@ def compute_economics(
     thin, thin_reasons = _is_thin(snap, config)
     reasons.extend(thin_reasons)
 
-    best = None if stale else _pick_best(yes, no, config.min_edge)
+    # An incoherent book is a corrupt observation, not an opportunity. Two shapes are impossible in a
+    # real order book and both used to sail through: an ask below its own bid (`spread` goes negative,
+    # and `wide_spread` only tests spread > threshold, so -20c was never "wide"), and YES and NO asks
+    # summing to less than a dollar (you could buy both sides and be paid to hold a certainty).
+    # Untreated, the first produced +$0.18/contract of phantom edge with no flag at all, and the
+    # second reported BOTH sides simultaneously profitable. Crossed quotes are almost always a torn
+    # or mid-update snapshot; the only safe reading is to decline to trade, exactly as for `stale`.
+    crossed = False
+    if quotes.yes_bid is not None and quotes.yes_ask is not None and quotes.yes_ask < quotes.yes_bid:
+        crossed = True
+        reasons.append(f"crossed: yes_ask {quotes.yes_ask}c < yes_bid {quotes.yes_bid}c")
+    if quotes.no_bid is not None and quotes.no_ask is not None and quotes.no_ask < quotes.no_bid:
+        crossed = True
+        reasons.append(f"crossed: no_ask {quotes.no_ask}c < no_bid {quotes.no_bid}c")
+    if quotes.yes_ask is not None and quotes.no_ask is not None and quotes.yes_ask + quotes.no_ask < 100:
+        crossed = True
+        reasons.append(f"crossed: yes_ask + no_ask = {quotes.yes_ask + quotes.no_ask}c < 100c (arbitrage-free books cannot do this)")
+
+    best = None if (stale or crossed) else _pick_best(yes, no, config.min_edge)
     if best is not None:
         reasons.append(f"best_side={best.side}: ev {best.ev_per_contract:.4f}/contract")
-    elif not stale:
+    elif not (stale or crossed):
         reasons.append("no_edge: no side has fee-adjusted EV above min_edge")
 
     return ContractEconomics(
@@ -352,6 +371,7 @@ def compute_economics(
         no=no,
         spread_cents=spread,
         wide_spread=wide,
+        crossed=crossed,
         no_quote=no_quote,
         stale=stale,
         thin=thin,

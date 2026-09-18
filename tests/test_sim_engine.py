@@ -235,6 +235,11 @@ def test_player_out_redistributes_usage_to_teammates(synthetic_game):
         assert out.players[pid].stats["pts"].mean() > base.players[pid].stats["pts"].mean() + 0.3, pid
         assert out.players[pid].stats["min"].mean() > base.players[pid].stats["min"].mean(), pid
     drop = base.home_pts.mean() - out.home_pts.mean()
+    # This bound is deliberately honest rather than reassuring: it ACCEPTS a near-zero drop, because
+    # that is what the simulator currently does. Ruling out a ~30-ppg star costs well under a point,
+    # since the only channel that can move team efficiency (impact_ppp) is unestimated and therefore
+    # zero for every real player. The redistribution asserted above is real; the quality loss is not
+    # modelled. See test_team_injury_response_is_declared_absent and docs/SIMULATION.md.
     assert -0.75 <= drop <= 5.0, f"team mean should fall only modestly, got {drop:+.2f}"
     # the away side is untouched in expectation
     assert abs(base.away_pts.mean() - out.away_pts.mean()) < 0.75
@@ -307,3 +312,56 @@ def test_synthetic_fixture_is_what_the_shared_sim_used(synthetic_sim, synthetic_
     """Guards the shared session fixture: re-simulating the pristine game reproduces it exactly."""
     again = simulate(synthetic_sim_game, SYNTHETIC_N_SIMS, SYNTHETIC_SEED)
     np.testing.assert_array_equal(again.home_pts, synthetic_sim.home_pts)
+
+
+def test_impact_ppp_can_actually_move_the_team_mean(synthetic_game):
+    """The availability term must shift the mean, not merely add variance.
+
+    It used to read ``(played - p_play) * impact_ppp``. Using TODAY's p_play as the baseline makes
+    that term identically mean-zero -- (0-0) for a player ruled out, (1-1) for a certain player --
+    so injury news could not move a team's expected points at any value of impact_ppp. Measured on
+    the real engine before the fix: impact_ppp of 0.0, 0.03 and 0.06 produced byte-identical team
+    means. The baseline must instead be the availability the trailing off_ppp rating was earned
+    with, which is what that rating already prices in.
+    """
+    import copy
+
+    def run(p_play, impact):
+        gp = copy.deepcopy(synthetic_game)
+        star = gp.home.players[STAR_INDEX]
+        star.p_play, star.impact_ppp, star.p_play_baseline = p_play, impact, 1.0
+        return simulate(gp, 40_000, 5).home_pts.mean()
+
+    inert = run(1.0, 0.0) - run(0.0, 0.0)
+    live = run(1.0, 0.05) - run(0.0, 0.05)
+    assert live > inert + 1.0, (
+        f"impact_ppp must change the team mean: with impact it costs {live:.2f} pts, without it {inert:.2f}"
+    )
+
+
+def test_team_injury_response_is_declared_absent(synthetic_game):
+    """Every result must state whether a team-level injury response was modelled.
+
+    impact_ppp is unestimated -- nothing in the feature layer populates it -- so in production this
+    is always 0. That is a real limitation, and a silent zero is precisely how a reader of a slate
+    would go on assuming injuries are priced into team efficiency. They are not.
+    """
+    import copy
+
+    # the production shape: nothing sets impact_ppp, so every player carries the 0.0 default
+    gp = copy.deepcopy(synthetic_game)
+    for t in (gp.home, gp.away):
+        for pl in t.players:
+            pl.impact_ppp = 0.0
+    r = simulate(gp, 5_000, 3)
+    assert r.diagnostics["team_injury_response_modeled"] == 0.0
+    assert r.diagnostics["players_with_impact_ppp"] == 0.0
+
+    gp.home.players[STAR_INDEX].impact_ppp = 0.05
+    r2 = simulate(gp, 5_000, 3)
+    assert r2.diagnostics["team_injury_response_modeled"] == 1.0
+    assert r2.diagnostics["players_with_impact_ppp"] == 1.0
+
+    # and the feature layer really does leave it unset -- this is the claim the docs rest on
+    from nba_edge.sim.params import PlayerParams
+    assert PlayerParams(nba_id=1, team_id=1, name="x", p_play=1.0, p_start=1.0, min_mean=30.0, min_sd=4.0).impact_ppp == 0.0

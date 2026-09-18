@@ -195,3 +195,56 @@ def test_compute_economics_never_recommends_negative_ev(p, q):
         assert e.best.ev_per_contract > 0
         other = e.side("no" if e.best_side == "yes" else "yes")
         assert e.best.ev_per_contract >= other.ev_per_contract
+
+
+# --- pre-merge audit regressions -------------------------------------------------
+
+
+def test_zero_is_a_real_probability_not_a_missing_one():
+    """0.0 must price as 0.0. It used to become 0.5 and recommend a buy.
+
+    The slate computed ``p_data or 0.5``. A deep-OTM ladder leg is legitimately priced at exactly
+    0.0 by the simulator, and 0.0 is falsy, so the fair value silently became a coin flip. On a
+    one-sided book (an ask, no bid, never traded) the market midpoint is None, so the hybrid is None
+    too and that fabricated 0.5 went straight into the economics -- turning a contract the model
+    calls worthless into positive EV and a recommendation to buy.
+    """
+    from nba_edge.execution.economics import EconomicsConfig, compute_economics
+
+    snap = {"yes_bid": None, "yes_ask": 5, "no_bid": None, "no_ask": None, "last_price": None,
+            "volume": 5000, "open_interest": 5000, "liquidity": 500_000, "observed_at_utc": None}
+
+    honest = compute_economics(snap, 0.0, 0.0, config=EconomicsConfig())
+    assert honest.p_fair == 0.0
+    assert honest.best_side is None, "a contract the model prices at zero must never be recommended"
+    assert honest.yes.ev_per_contract < 0
+    assert honest.yes.bet_up_to_cents is None
+
+    fabricated = compute_economics(snap, 0.5, 0.0, config=EconomicsConfig())
+    assert fabricated.best_side == "yes" and fabricated.yes.ev_per_contract > 0.4, (
+        "this is what the bug produced; it is here so the two are never confused again"
+    )
+
+
+def test_crossed_books_are_refused_not_traded():
+    """An impossible book is a corrupt observation, not free money."""
+    from nba_edge.execution.economics import EconomicsConfig, compute_economics
+
+    base = {"last_price": None, "volume": 5000, "open_interest": 5000, "liquidity": 500_000, "observed_at_utc": None}
+
+    # ask below bid: spread is -20c, which the wide_spread test (spread > 6) could never catch
+    crossed = compute_economics({**base, "yes_bid": 60, "yes_ask": 40, "no_bid": None, "no_ask": None}, 0.60, 0.0, config=EconomicsConfig())
+    assert crossed.crossed and crossed.best_side is None
+    assert crossed.yes.ev_per_contract > 0, "the phantom edge is still computed; it just must not be actionable"
+    assert any("crossed" in r for r in crossed.reasons)
+
+    # both asks under a dollar: buying both sides would pay you to hold a certainty
+    both = compute_economics({**base, "yes_bid": 60, "yes_ask": 40, "no_bid": 55, "no_ask": 35}, 0.50, 0.0, config=EconomicsConfig())
+    assert both.crossed and both.best_side is None
+    assert both.yes.ev_per_contract > 0 and both.no.ev_per_contract > 0, (
+        "the giveaway: a coherent book can never make both sides profitable at once"
+    )
+
+    # a normal book is untouched
+    sane = compute_economics({**base, "yes_bid": 40, "yes_ask": 42, "no_bid": 56, "no_ask": 58}, 0.60, 0.0, config=EconomicsConfig())
+    assert not sane.crossed and sane.best_side == "yes"

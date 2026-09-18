@@ -284,7 +284,14 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             p_mkt = mi.p_mid
             p_data = pr.p if pr.supported else None
             p_h = _hybrid(p_data, p_mkt, HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))
-            econ = compute_economics(snap, p_h if p_h is not None else (p_data or 0.5), pr.se or 0.0, schedule=DEFAULT_SCHEDULE, config=EconomicsConfig(max_age_min=STALE_MARKET_MIN), observed_at=parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None, now=now) if (p_h is not None or p_data is not None) else None
+            # `p_data or 0.5` was a live mispricing bug: 0.0 is a perfectly legitimate probability for a
+            # deep-OTM ladder leg, but it is falsy, so the fair value silently became 50%. On a one-sided
+            # book (ask only, never traded) p_mid is None, so the hybrid is None too and the 0.5 went
+            # straight into the economics -- turning a contract the model says is worthless into
+            # +$0.45/contract of EV and a Gate.OK recommendation to buy up to 48c. Never invent a fair
+            # value; the guard below already guarantees at least one of the two is not None.
+            p_used = p_h if p_h is not None else p_data
+            econ = compute_economics(snap, p_used, pr.se or 0.0, schedule=DEFAULT_SCHEDULE, config=EconomicsConfig(max_age_min=STALE_MARKET_MIN), observed_at=parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None, now=now) if (p_h is not None or p_data is not None) else None
             if not pr.supported:
                 gate, greasons = Gate.UNSUPPORTED, [pr.reason]
             elif not trust:
