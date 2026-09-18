@@ -47,6 +47,13 @@ At a 4,000-market board this is reached about **15 weeks** into a season, so the
 must land before the regular season is a month old. It is **not** a merge blocker: the archive is
 0.76 MB today and the off-season cadence is one capture per day.
 
+## Findings deliberately not fixed before merge
+
+`docs/AUDIT_FOLLOWUPS.md` lists all 20, each with why it was left. None is a blocker; several are
+research tasks and several are judgement calls about gating semantics that should be decided
+explicitly rather than slipped in beside a merge. **R1 (no team-level injury response) blocks any
+promotion above RESEARCH.**
+
 ## What this gate does NOT claim
 
 - **No edge is claimed.** Nothing here measures profitability. The moneyline market-vs-model study
