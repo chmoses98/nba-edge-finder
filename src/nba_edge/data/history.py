@@ -38,7 +38,10 @@ from nba_edge.timeutil import ET, et_date, iso, parse_iso, utcnow
 
 log = get_logger(__name__)
 
-ESPN_SEASON_TYPES = {1: SeasonType.PRESEASON, 2: SeasonType.REGULAR, 3: SeasonType.PLAYOFFS}
+# ESPN season.type codes we recognise. Anything else (play-in has been observed outside this set) is kept as
+# SeasonType.OTHER rather than dropped: the raw code travels with the row as `espn_season_type`, so an unknown
+# code is auditable instead of invisible. Research filters on season_type == "regular" regardless.
+ESPN_SEASON_TYPES = {1: SeasonType.PRESEASON, 2: SeasonType.REGULAR, 3: SeasonType.PLAYOFFS, 5: SeasonType.PLAYIN}
 ESPN_WHAT = {"espn", "team_logs", "player_logs", "team_games", "player_games"}
 
 DAY_S = 86_400.0
@@ -145,8 +148,9 @@ def cached_scoreboard(d: date, cache_root: Path, now: datetime | None = None) ->
 def scoreboard_events(payload: dict[str, Any]) -> list[dict[str, Any]]:
     """Completed NBA events from a scoreboard payload -> light meta dicts (id, date, season_type, teams).
 
-    Events whose teams are not NBA teams (All-Star, preseason vs international clubs) are skipped, as are events
-    whose ``season.type`` is not 1/2/3.
+    Events whose teams are not NBA teams (All-Star, preseason vs international clubs) are skipped. An event with
+    an unrecognised ``season.type`` is NOT skipped: it is labelled ``SeasonType.OTHER`` and keeps its raw code, so
+    a new ESPN code shows up in the data instead of quietly removing games from every study.
     """
     reg = registry()
     out: list[dict[str, Any]] = []
@@ -156,9 +160,7 @@ def scoreboard_events(payload: dict[str, Any]) -> list[dict[str, Any]]:
         if not st.get("completed"):
             continue
         stype_raw = (ev.get("season") or {}).get("type")
-        stype = ESPN_SEASON_TYPES.get(stype_raw)
-        if stype is None:
-            continue
+        stype = ESPN_SEASON_TYPES.get(stype_raw, SeasonType.OTHER)
         teams = {c.get("homeAway"): c for c in comp.get("competitors", [])}
         try:
             home = reg.by_tricode(teams["home"]["team"]["abbreviation"])
@@ -223,6 +225,11 @@ def parse_espn_summary_extended(payload: dict[str, Any], fetched_at_utc: datetim
         for grp in tp.get("statistics", []) or []:
             keys = grp.get("keys", []) or []
             for a in grp.get("athletes", []) or []:
+                # A single athlete entry without an id must not abort the whole game: 48 games of the first
+                # 2025-26 pull were lost to `KeyError: 'id'` here, which silently shrank every downstream study.
+                aid = ((a.get("athlete") or {}).get("id"))
+                if aid in (None, ""):
+                    continue
                 vals = dict(zip(keys, a.get("stats", []) or [], strict=False))
                 dnp = bool(a.get("didNotPlay", False))
                 fgm, fga = split_made_att(vals.get(K_FG)) if not dnp else (0, 0)
@@ -230,7 +237,7 @@ def parse_espn_summary_extended(payload: dict[str, Any], fetched_at_utc: datetim
                 ftm, fta = split_made_att(vals.get(K_FT)) if not dnp else (0, 0)
                 extra.append(
                     {
-                        "nba_id": -int(a["athlete"]["id"]), "team_id": tid, "fgm": fgm, "fga": fga, "fg3a": fg3a, "ftm": ftm,
+                        "nba_id": -int(aid), "team_id": tid, "fgm": fgm, "fga": fga, "fg3a": fg3a, "ftm": ftm,
                         "fta": fta, "fg3m": fg3m, "oreb": to_int(vals.get("offensiveRebounds")) if not dnp else 0,
                         "dreb": to_int(vals.get("defensiveRebounds")) if not dnp else 0, "pf": to_int(vals.get("fouls")) if not dnp else 0,
                         "plus_minus": to_int(vals.get("plusMinus")) if not dnp else 0,

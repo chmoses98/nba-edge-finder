@@ -289,3 +289,62 @@ def test_run_history_pull_records_error_and_continues(tmp_path: Path, monkeypatc
 def test_run_history_pull_ignores_unknown_what(tmp_path: Path):
     assert H.run_history_pull(tmp_path, ["2024-25"], ["nothing"]) == 0
     assert not (tmp_path / "espn").exists()
+
+
+# ---- resilience: neither a malformed athlete nor a new season-type code may drop a game --------------------
+
+
+def _event(eid="401", stype=2, away="BOS", home="NYK"):
+    return {
+        "id": eid, "date": "2026-01-01T00:00:00Z", "season": {"type": stype, "year": 2026},
+        "competitions": [{
+            "status": {"type": {"completed": True}},
+            "competitors": [
+                {"homeAway": "home", "team": {"abbreviation": home}},
+                {"homeAway": "away", "team": {"abbreviation": away}},
+            ],
+        }],
+    }
+
+
+def test_unknown_season_type_is_labelled_not_dropped():
+    """Play-in games vanished from the first pull because their season.type was not in the allow-list."""
+    evs = H.scoreboard_events({"events": [_event("1", 2), _event("2", 5), _event("3", 99)]})
+    by = {e["event_id"]: e for e in evs}
+    assert set(by) == {"1", "2", "3"}, "no completed NBA game may be silently dropped"
+    assert by["1"]["season_type"] == "regular"
+    assert by["2"]["season_type"] == "playin"
+    assert by["3"]["season_type"] == "other"  # unrecognised code survives, labelled, with its raw value kept
+    assert by["3"]["espn_season_type"] == 99
+
+
+def test_non_nba_opponent_is_still_skipped():
+    """International preseason opponents (e.g. 'GUA') are genuinely out of scope and stay excluded."""
+    assert H.scoreboard_events({"events": [_event("4", 1, away="GUA")]}) == []
+
+
+def test_malformed_athlete_entry_does_not_lose_the_game():
+    """`KeyError: 'id'` on one athlete cost 48 games in the first 2025-26 pull."""
+    summary = {
+        "header": {"id": "401", "competitions": [{
+            "date": "2026-01-01T00:00:00Z", "status": {"type": {"completed": True}},
+            "competitors": [
+                {"homeAway": "home", "team": {"abbreviation": "NYK"}, "score": "110",
+                 "linescores": [{"displayValue": "30"}, {"displayValue": "25"}, {"displayValue": "28"}, {"displayValue": "27"}]},
+                {"homeAway": "away", "team": {"abbreviation": "BOS"}, "score": "100",
+                 "linescores": [{"displayValue": "25"}, {"displayValue": "25"}, {"displayValue": "25"}, {"displayValue": "25"}]},
+            ],
+        }]},
+        "boxscore": {"players": [{"team": {"abbreviation": "NYK"}, "statistics": [{
+            "keys": ["minutes", "points"],
+            "athletes": [
+                {"athlete": {"id": "7", "displayName": "Good Player"}, "stats": ["30", "20"]},
+                {"athlete": {"displayName": "No Id"}, "stats": ["10", "4"]},   # malformed: skipped
+                {"stats": ["5", "2"]},                                          # no athlete at all: skipped
+            ],
+        }]}]},
+    }
+    box, extra = H.parse_espn_summary_extended(summary)
+    assert box.home_pts == 110 and box.away_pts == 100  # the game survives
+    assert [p.nba_id for p in box.players] == [-7]
+    assert [e["nba_id"] for e in extra] == [-7]

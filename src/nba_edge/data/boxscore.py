@@ -149,6 +149,12 @@ def parse_espn_summary(payload: dict[str, Any], fetched_at_utc: datetime | None 
         for grp in tp.get("statistics", []):
             keys = grp.get("keys", [])
             for a in grp.get("athletes", []):
+                # Skip a malformed athlete entry rather than failing the whole box score. A player missing from
+                # the box makes settle_contract return UNSETTLEABLE for that player (fail-closed), which is the
+                # right outcome; losing the entire game's box score is not.
+                aid = ((a.get("athlete") or {}).get("id"))
+                if aid in (None, ""):
+                    continue
                 vals = dict(zip(keys, a.get("stats", []), strict=False))
                 dnp = a.get("didNotPlay", False)
                 mins = parse_espn_minutes(vals.get("minutes")) if not dnp else 0.0
@@ -156,7 +162,7 @@ def parse_espn_summary(payload: dict[str, Any], fetched_at_utc: datetime | None 
 
                 players.append(
                     PlayerLine(
-                        nba_id=-int(a["athlete"]["id"]), team_id=tid, name=a["athlete"].get("displayName", ""), played=not dnp and mins > 0,
+                        nba_id=-int(aid), team_id=tid, name=(a.get("athlete") or {}).get("displayName", ""), played=not dnp and mins > 0,
                         started=bool(a.get("starter")), minutes=mins, pts=_i("points"), reb=_i("rebounds"), ast=_i("assists"),
                         fg3m=_i("threePointFieldGoalsMade-threePointFieldGoalsAttempted"), stl=_i("steals"), blk=_i("blocks"), tov=_i("turnovers"),
                         dnp_reason=a.get("reason") if dnp else None,
