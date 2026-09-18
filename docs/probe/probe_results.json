@@ -1,12 +1,12 @@
 {
- "probed_at": "2026-09-18T07:06:30+00:00",
+ "probed_at": "2026-09-18T23:04:32+00:00",
  "results": [
   {
    "name": "kalshi_exchange_status",
    "url": "https://api.elections.kalshi.com/trade-api/v2/exchange/status",
    "ok": true,
    "status": 200,
-   "ms": 1275,
+   "ms": 178,
    "bytes": 667,
    "content_type": "application/json; charset=utf-8",
    "json_keys": [
@@ -21,8 +21,8 @@
    "url": "https://api.elections.kalshi.com/trade-api/v2/series?category=Sports&limit=200",
    "ok": true,
    "status": 200,
-   "ms": 225,
-   "bytes": 6046769,
+   "ms": 332,
+   "bytes": 6053733,
    "content_type": "application/json",
    "json_keys": [
     "series"
@@ -34,106 +34,106 @@
    "url": "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2_1.json",
    "ok": false,
    "status": 403,
-   "ms": 104,
-   "bytes": 427,
+   "ms": 169,
+   "bytes": 431,
    "content_type": "text/html",
-   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;cdn&#46;nba&#46;com&#47;static&#47;json&#47;staticData&#47;scheduleLeagueV2&#95;1&#46;json\" on this server.<P> Reference&#32;&#35;18&#46;4a6adc17&#46;1789715002&#4"
+   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;cdn&#46;nba&#46;com&#47;static&#47;json&#47;staticData&#47;scheduleLeagueV2&#95;1&#46;json\" on this server.<P> Reference&#32;&#35;18&#46;44a42617&#46;1789772492&#4"
   },
   {
    "name": "nba_cdn_todays_scoreboard",
    "url": "https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json",
    "ok": false,
    "status": 403,
-   "ms": 54,
+   "ms": 92,
    "bytes": 445,
    "content_type": "text/html",
-   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;cdn&#46;nba&#46;com&#47;static&#47;json&#47;liveData&#47;scoreboard&#47;todaysScoreboard&#95;00&#46;json\" on this server.<P> Reference&#32;&#35;18&#46;4d6adc17&#46"
+   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;cdn&#46;nba&#46;com&#47;static&#47;json&#47;liveData&#47;scoreboard&#47;todaysScoreboard&#95;00&#46;json\" on this server.<P> Reference&#32;&#35;18&#46;44a42617&#46"
   },
   {
    "name": "nba_cdn_boxscore_sample",
    "url": "https://cdn.nba.com/static/json/liveData/boxscore/boxscore_0022500001.json",
    "ok": false,
    "status": 403,
-   "ms": 49,
-   "bytes": 439,
+   "ms": 108,
+   "bytes": 443,
    "content_type": "text/html",
-   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;cdn&#46;nba&#46;com&#47;static&#47;json&#47;liveData&#47;boxscore&#47;boxscore&#95;0022500001&#46;json\" on this server.<P> Reference&#32;&#35;18&#46;4a6adc17&#46;1"
+   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;cdn&#46;nba&#46;com&#47;static&#47;json&#47;liveData&#47;boxscore&#47;boxscore&#95;0022500001&#46;json\" on this server.<P> Reference&#32;&#35;18&#46;53a42617&#46;1"
   },
   {
    "name": "nba_cdn_pbp_sample",
    "url": "https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_0022500001.json",
    "ok": false,
    "status": 403,
-   "ms": 58,
-   "bytes": 443,
+   "ms": 88,
+   "bytes": 447,
    "content_type": "text/html",
-   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;cdn&#46;nba&#46;com&#47;static&#47;json&#47;liveData&#47;playbyplay&#47;playbyplay&#95;0022500001&#46;json\" on this server.<P> Reference&#32;&#35;18&#46;4a6adc17&#"
+   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;cdn&#46;nba&#46;com&#47;static&#47;json&#47;liveData&#47;playbyplay&#47;playbyplay&#95;0022500001&#46;json\" on this server.<P> Reference&#32;&#35;18&#46;44a42617&#"
   },
   {
    "name": "nba_stats_leaguegamelog_team",
    "url": "https://stats.nba.com/stats/leaguegamelog?Counter=1000&DateFrom=&DateTo=&Direction=DESC&LeagueID=00&PlayerOrTeam=T&Season=2025-26&SeasonType=Regular+Season&Sorter=DATE",
    "ok": false,
    "error": "ReadTimeout: The read operation timed out",
-   "ms": 25171
+   "ms": 25155
   },
   {
    "name": "nba_stats_playergamelogs",
    "url": "https://stats.nba.com/stats/playergamelogs?Season=2025-26&SeasonType=Regular+Season&LeagueID=00",
    "ok": false,
    "error": "ReadTimeout: The read operation timed out",
-   "ms": 25196
+   "ms": 25172
   },
   {
    "name": "nba_stats_commonallplayers",
    "url": "https://stats.nba.com/stats/commonallplayers?IsOnlyCurrentSeason=0&LeagueID=00&Season=2025-26",
    "ok": false,
    "error": "ReadTimeout: The read operation timed out",
-   "ms": 25198
+   "ms": 25103
   },
   {
    "name": "nba_stats_scheduleleaguev2",
    "url": "https://stats.nba.com/stats/scheduleleaguev2?Season=2026-27&LeagueID=00",
    "ok": false,
    "error": "ReadTimeout: The read operation timed out",
-   "ms": 26468
+   "ms": 25142
   },
   {
    "name": "nba_stats_boxscoretraditionalv3",
    "url": "https://stats.nba.com/stats/boxscoretraditionalv3?GameID=0022500001&LeagueID=00&endPeriod=0&endRange=28800&rangeType=0&startPeriod=0&startRange=0",
    "ok": false,
    "error": "ReadTimeout: The read operation timed out",
-   "ms": 25195
+   "ms": 25189
   },
   {
    "name": "nba_stats_gamerotation",
    "url": "https://stats.nba.com/stats/gamerotation?GameID=0022500001&LeagueID=00",
    "ok": false,
    "error": "ReadTimeout: The read operation timed out",
-   "ms": 25204
+   "ms": 25100
   },
   {
    "name": "nba_stats_leaguedashptstats",
    "url": "https://stats.nba.com/stats/leaguedashptstats?College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&Height=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=&PtMeasureType=Possessions&Season=2025-26&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=&Weight=",
    "ok": false,
    "error": "ReadTimeout: The read operation timed out",
-   "ms": 25116
+   "ms": 25183
   },
   {
    "name": "nba_injury_report_pdf_index",
    "url": "https://official.nba.com/nba-injury-report-2025-26-season/",
    "ok": false,
    "status": 403,
-   "ms": 263,
+   "ms": 158,
    "bytes": 425,
    "content_type": "text/html",
-   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;failover&#45;waf&#46;nba&#46;com&#47;error&#45;pages&#47;nba&#47;index&#46;html&#63;\" on this server.<P> Reference&#32;&#35;18&#46;4d6adc17&#46;1789715180&#46;472a"
+   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;failover&#45;waf&#46;nba&#46;com&#47;error&#45;pages&#47;nba&#47;index&#46;html&#63;\" on this server.<P> Reference&#32;&#35;18&#46;44a42617&#46;1789772668&#46;c16a"
   },
   {
    "name": "nba_injury_report_pdf_sample",
    "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2025-12-26_06_00PM.pdf",
    "ok": true,
    "status": 200,
-   "ms": 274,
+   "ms": 214,
    "bytes": 85615,
    "content_type": "application/pdf",
    "text_head": "%PDF-1.4 %\ufffd\ufffd\ufffd\ufffd 1 0 obj << /CreationDate(D:20251226180003-05'00') /Creator(GemBox.Document 3.1 for .NET Framework 3.5 - 4.8) /Producer(GemBox.Document 3.1 for .NET Framework 3.5 - 4.8) >> endobj 2 0 obj << /Type/Metadata /Subtype/XML /Length 928 >> stream <?xpacket begin=\"\u010f\u00bb\u017c\" id=\"W5M0MpCehiHzreSzNTc"
@@ -143,17 +143,17 @@
    "url": "https://official.nba.com/referee-assignments/",
    "ok": false,
    "status": 403,
-   "ms": 65,
-   "bytes": 421,
+   "ms": 106,
+   "bytes": 425,
    "content_type": "text/html",
-   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;failover&#45;waf&#46;nba&#46;com&#47;error&#45;pages&#47;nba&#47;index&#46;html&#63;\" on this server.<P> Reference&#32;&#35;18&#46;4a6adc17&#46;1789715181&#46;9899"
+   "text_head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"http&#58;&#47;&#47;failover&#45;waf&#46;nba&#46;com&#47;error&#45;pages&#47;nba&#47;index&#46;html&#63;\" on this server.<P> Reference&#32;&#35;18&#46;45a42617&#46;1789772668&#46;b92e"
   },
   {
    "name": "espn_scoreboard",
    "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard",
    "ok": true,
    "status": 200,
-   "ms": 2739,
+   "ms": 170,
    "bytes": 9821,
    "content_type": "application/json;charset=UTF-8",
    "json_keys": [
@@ -170,8 +170,8 @@
    "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries",
    "ok": true,
    "status": 200,
-   "ms": 73,
-   "bytes": 860180,
+   "ms": 154,
+   "bytes": 859816,
    "content_type": "application/json;charset=UTF-8",
    "json_keys": [
     "timestamp",
@@ -185,7 +185,7 @@
    "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams",
    "ok": true,
    "status": 200,
-   "ms": 174,
+   "ms": 267,
    "bytes": 134851,
    "content_type": "application/json",
    "json_keys": [
@@ -197,7 +197,7 @@
    "url": "https://www.basketball-reference.com/leagues/NBA_2026_games.html",
    "ok": true,
    "status": 200,
-   "ms": 1106,
+   "ms": 177,
    "bytes": 268106,
    "content_type": "text/html",
    "text_head": " <!DOCTYPE html> <html data-version=\"klecko-\" data-root=\"/home/bbr/build\" lang=\"en\" class=\"no-js\" > <head>     <meta charset=\"utf-8\">     <meta http-equiv=\"x-ua-compatible\" content=\"ie=edge\">     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=2.0\" />     <link re"
@@ -207,7 +207,7 @@
    "url": "https://api.pbpstats.com/get-totals/nba?Season=2025-26&SeasonType=Regular%20Season&Type=Team",
    "ok": true,
    "status": 200,
-   "ms": 402,
+   "ms": 1369,
    "bytes": 213953,
    "content_type": "application/json",
    "json_keys": [
@@ -220,7 +220,7 @@
    "url": "https://www.rotowire.com/basketball/nba-lineups.php",
    "ok": true,
    "status": 200,
-   "ms": 2603,
+   "ms": 1042,
    "bytes": 343253,
    "content_type": "text/html; charset=UTF-8",
    "text_head": " <!DOCTYPE html> <html lang=\"en\">  <head>             <script src=\"https://bet.rotowire.com/js/app.js\"></script>              <script>         window.dataLayer = window.dataLayer || [];         window.dataLayer.push({\"sport_name\":\"nba\",\"sport_content\":\"fantasy\",\"event\":\"content_grouping\"});     </sc"
@@ -230,7 +230,7 @@
    "url": "https://api.the-odds-api.com/v4/sports/?apiKey=",
    "ok": false,
    "status": 401,
-   "ms": 141,
+   "ms": 279,
    "bytes": 152,
    "content_type": "application/json; charset=utf-8",
    "json_keys": [
@@ -244,7 +244,7 @@
    "url": "https://www.nbastuffer.com/",
    "ok": true,
    "status": 200,
-   "ms": 1913,
+   "ms": 298,
    "bytes": 168668,
    "content_type": "text/html; charset=UTF-8",
    "text_head": "<!DOCTYPE html> <html class=\"no-js\" lang=\"en-US\" prefix=\"og: https://ogp.me/ns#\"> <head><meta charset=\"UTF-8\"><script>if(navigator.userAgent.match(/MSIE|Internet Explorer/i)||navigator.userAgent.match(/Trident\\/7\\..*?rv:11/i)){var href=document.location.href;if(!href.match(/[?&]nowprocket/)){if(href"
