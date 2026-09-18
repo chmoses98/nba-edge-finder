@@ -17,3 +17,7 @@ data/raw/
 data/local/
 out/
 *.log
+
+# workflow-committed datasets: the pull workflows add these with `git add -f`; never re-add stale local copies
+data/history/espn/*.parquet
+data/history/espn/done_events_*.json

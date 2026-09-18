@@ -58,6 +58,6 @@ jobs:
           git add data/catalog docs/probe
           if git diff --cached --quiet; then echo "nothing to commit"; else
             git commit -m "catalog: discovery + probe results (run ${{ github.run_id }})"
-            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"  # binary data files: the run's version wins
             git push origin HEAD:"${GITHUB_REF_NAME}"
           fi
