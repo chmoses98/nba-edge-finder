@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+*.egg-info/
+build/
+dist/
+.env
+.env.*
+!.env.example
+# local caches (never committed; archive branch holds durable data)
+.cache/
+data/raw/
+data/local/
+out/
+*.log

@@ -1,0 +1,203 @@
+# NBA Kalshi market ontology (curated; discovery reports anything not covered here as UNRESOLVED).
+# Series tickers listed here are those observed by discovery runs (see data/catalog/discovery_summary.json)
+# plus expected-but-unverified tickers marked with `verified: false` semantics in descriptions.
+# Support states are set conservatively and only promoted when the pricing path + tests exist.
+version: "2026.09.18.1"
+families:
+  game_winner:
+    scope: game
+    stat: winner
+    period: FULL
+    support: PRICED
+    description: "Which team wins the game (incl. OT). YES on a team-specific market."
+    settlement_notes: "Settles on final score incl. overtime. Postponed games: Kalshi typically extends or voids; treat as UNRESOLVED until market result field says so."
+    series_tickers: [KXNBAGAME]
+  game_spread:
+    scope: game
+    stat: margin
+    period: FULL
+    support: PRICED
+    description: "Team wins by more than X points (X from floor_strike / yes_sub_title). Includes alternate spreads (one market per line)."
+    settlement_notes: "Margin incl. OT. Half-point lines have no push; integer lines: check rules_primary for push handling."
+    series_tickers: [KXNBASPREAD]
+  game_total:
+    scope: game
+    stat: total
+    period: FULL
+    support: PRICED
+    description: "Combined points over X (incl. OT). Alternate totals are separate markets in the same event."
+    settlement_notes: "Total incl. OT."
+    series_tickers: [KXNBATOTAL]
+  team_total:
+    scope: game
+    stat: team_total
+    period: FULL
+    support: PRICED
+    description: "Single team points over X (incl. OT)."
+    settlement_notes: "Team points incl. OT."
+    series_tickers: [KXNBATEAMTOTAL]
+  first_half_winner:
+    scope: game
+    stat: winner
+    period: 1H
+    support: BUILDABLE
+    description: "Team leads at halftime."
+    settlement_notes: "Tie at half: check rules (likely NO for both / void)."
+    series_tickers: [KXNBA1HWINNER, KXNBAFIRSTHALF, KXNBA1H]
+  first_half_spread:
+    scope: game
+    stat: margin
+    period: 1H
+    support: BUILDABLE
+    description: "First-half margin threshold."
+    series_tickers: [KXNBA1HSPREAD]
+  first_half_total:
+    scope: game
+    stat: total
+    period: 1H
+    support: BUILDABLE
+    description: "First-half combined points threshold."
+    series_tickers: [KXNBA1HTOTAL]
+  first_quarter_winner:
+    scope: game
+    stat: winner
+    period: 1Q
+    support: BUILDABLE
+    description: "Team leads after Q1."
+    series_tickers: [KXNBA1QWINNER, KXNBA1Q]
+  first_quarter_spread:
+    scope: game
+    stat: margin
+    period: 1Q
+    support: BUILDABLE
+    series_tickers: [KXNBA1QSPREAD]
+  first_quarter_total:
+    scope: game
+    stat: total
+    period: 1Q
+    support: BUILDABLE
+    series_tickers: [KXNBA1QTOTAL]
+  player_points:
+    scope: player
+    stat: pts
+    support: PRICED
+    description: "Player scores X+ points (threshold from floor_strike/custom_strike/yes_sub_title). Ladder markets share an event."
+    settlement_notes: "DNP: typically market resolves NO or void per rules_primary; engine fails closed unless rules parsed."
+    series_tickers: [KXNBAPTS, KXNBAPOINTS]
+  player_rebounds:
+    scope: player
+    stat: reb
+    support: PRICED
+    series_tickers: [KXNBAREB, KXNBAREBOUNDS]
+  player_assists:
+    scope: player
+    stat: ast
+    support: PRICED
+    series_tickers: [KXNBAAST, KXNBAASSISTS]
+  player_threes:
+    scope: player
+    stat: fg3m
+    support: PRICED
+    series_tickers: [KXNBA3PT, KXNBATHREES, KXNBA3PM, KXNBA3PTM]
+  player_steals:
+    scope: player
+    stat: stl
+    support: BUILDABLE
+    series_tickers: [KXNBASTL, KXNBASTEALS]
+  player_blocks:
+    scope: player
+    stat: blk
+    support: BUILDABLE
+    series_tickers: [KXNBABLK, KXNBABLOCKS]
+  player_turnovers:
+    scope: player
+    stat: tov
+    support: BUILDABLE
+    series_tickers: [KXNBATOV, KXNBATURNOVERS]
+  player_pra:
+    scope: player
+    stat: pra
+    support: PRICED
+    series_tickers: [KXNBAPRA]
+  player_pr:
+    scope: player
+    stat: pr
+    support: BUILDABLE
+    series_tickers: [KXNBAPR]
+  player_pa:
+    scope: player
+    stat: pa
+    support: BUILDABLE
+    series_tickers: [KXNBAPA]
+  player_ra:
+    scope: player
+    stat: ra
+    support: BUILDABLE
+    series_tickers: [KXNBARA]
+  player_double_double:
+    scope: player
+    stat: double_double
+    support: BUILDABLE
+    series_tickers: [KXNBADD, KXNBADOUBLEDOUBLE]
+  player_triple_double:
+    scope: player
+    stat: triple_double
+    support: BUILDABLE
+    series_tickers: [KXNBATD, KXNBATRIPLEDOUBLE]
+  first_basket:
+    scope: player
+    stat: first_basket
+    support: RESEARCH
+    description: "First field goal of the game. Requires opening-tip + first-possession model; not built."
+    series_tickers: [KXNBAFIRSTBASKET, KXNBAFB]
+  season_champion:
+    scope: season
+    stat: champion
+    period: SEASON
+    support: RESEARCH
+    description: "NBA champion. Needs season simulator (not one-game engine)."
+    series_tickers: [KXNBA, KXNBACHAMP]
+  conference_champion:
+    scope: season
+    stat: conference
+    period: SEASON
+    support: RESEARCH
+    series_tickers: [KXNBAEAST, KXNBAWEST, KXNBAECF, KXNBAWCF]
+  division_winner:
+    scope: season
+    stat: division
+    period: SEASON
+    support: RESEARCH
+    series_tickers: [KXNBADIV]
+  season_wins:
+    scope: season
+    stat: wins
+    period: SEASON
+    support: RESEARCH
+    series_tickers: [KXNBAWINS, KXNBAWINTOTAL, KXNBASEASONWINS]
+  playoffs_qualify:
+    scope: season
+    stat: playoffs
+    period: SEASON
+    support: RESEARCH
+    series_tickers: [KXNBAPLAYOFFS, KXNBAMAKEPLAYOFFS]
+  awards:
+    scope: season
+    stat: award
+    period: SEASON
+    support: UNMODELABLE
+    description: "Voting outcomes (MVP, DPOY, ROY, etc.). Not a basketball-simulation quantity."
+    series_tickers: [KXNBAMVP, KXNBADPOY, KXNBAROY, KXNBAMIP, KXNBA6MOY, KXNBACOY, KXNBAFMVP]
+  draft:
+    scope: other
+    stat: draft
+    period: SEASON
+    support: UNMODELABLE
+    series_tickers: [KXNBADRAFT, KXNBADRAFTPICK]
+  series_winner:
+    scope: season
+    stat: series
+    period: SEASON
+    support: RESEARCH
+    description: "Playoff series winner / series length."
+    series_tickers: [KXNBASERIES, KXNBASERIESWINNER, KXNBASERIESGAMES]
