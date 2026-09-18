@@ -180,7 +180,20 @@ def walk_forward_residual(df: pd.DataFrame, n_folds: int = 4, min_train: int = 4
     lm, ld = logit(d.p_market.to_numpy()), logit(d.p_data_only.to_numpy())
     diff = ld - lm
     y = d.outcome.to_numpy(dtype=float)
-    bounds = np.linspace(min_train, len(d), n_folds + 1).astype(int)
+    # Snap every fold boundary to a game boundary. A game contributes BOTH complementary sides, and
+    # they sort adjacently, so an arbitrary split can put one side in train and the other in test --
+    # and the two outcomes are exact complements, so the fit would have seen the test row's answer.
+    # It is at most one game per boundary, but it is outcome leakage, and this study exists to
+    # measure a small effect.
+    raw_bounds = np.linspace(min_train, len(d), n_folds + 1).astype(int)
+    game_of = d["game_id"].to_numpy()
+    def _snap(i: int) -> int:
+        if i <= 0 or i >= len(d):
+            return int(i)
+        while i < len(d) and game_of[i] == game_of[i - 1]:
+            i += 1
+        return int(i)
+    bounds = sorted({_snap(int(b)) for b in raw_bounds})
     folds: list[FoldResult] = []
     oos = {"y": [], "market_raw": [], "market_cal": [], "data": [], "hybrid": []}
     for lo, hi in zip(bounds[:-1], bounds[1:], strict=False):
@@ -208,6 +221,10 @@ def walk_forward_residual(df: pd.DataFrame, n_folds: int = 4, min_train: int = 4
     yy = cat["y"]
     res = {
         "n": int(len(d)), "n_oos": int(len(yy)), "n_folds": len(folds),
+        # Rows are NOT independent: a game contributes both complementary sides, so the effective
+        # sample is the number of distinct games. Point estimates are unaffected; any confidence
+        # interval computed from n_oos would be too narrow by roughly sqrt(2).
+        "n_oos_games": int(d["game_id"].iloc[len(d) - len(yy):].nunique()),
         "base_rate": float(yy.mean()),
         "residual_coefficient_mean": float(np.mean([f.c_residual for f in folds])),
         "residual_coefficient_per_fold": [round(f.c_residual, 4) for f in folds],
