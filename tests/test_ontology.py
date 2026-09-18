@@ -29,3 +29,13 @@ def test_classify_period_from_title():
     o = Ontology.load()
     c = classify_market({"ticker": "KXNBAFOO-26OCT21BOSNYK-X", "title": "First quarter total over 55.5"}, o)
     assert c.period == "1Q"
+
+
+def test_pattern_series_period_family():
+    o = Ontology.load()
+    c = classify_market({"ticker": "KXNBA3QSPREAD-26JUN10SASNYK-NYK", "title": "Knicks 3rd quarter spread"}, o)
+    assert c.family == "period_spread" and c.period == "3Q" and c.support == Support.BUILDABLE
+    c = classify_market({"ticker": "KXNBA1HTOTAL-26MAY19CLENYK-T110", "title": "First half total"}, o)
+    assert c.family == "period_total" and c.period == "1H"
+    c = classify_market({"ticker": "KXNBA1QTOTAL-26JUN05NYKSAS-T55", "title": "1st quarter total"}, o)
+    assert c.period == "1Q"

@@ -157,7 +157,7 @@ def discover(
 
     for s in sorted(nba_series_raw, key=lambda x: x.get("ticker", "")):
         st = s.get("ticker", "")
-        fam_name = ontology.series_to_family.get(st.upper(), "UNRESOLVED")
+        fam_name = ontology.family_for_series(st) or "UNRESOLVED"
         fam = ontology.families.get(fam_name)
         rep = SeriesReport(
             ticker=st, title=s.get("title", ""), category=s.get("category"), tags=list(s.get("tags") or []),

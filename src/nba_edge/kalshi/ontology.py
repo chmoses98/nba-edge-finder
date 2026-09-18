@@ -55,6 +55,7 @@ class FamilySpec:
     description: str = ""
     settlement_notes: str = ""
     series_tickers: list[str] = field(default_factory=list)
+    series_patterns: list[str] = field(default_factory=list)  # regexes matched against the series ticker
     title_patterns: list[str] = field(default_factory=list)
 
 
@@ -63,6 +64,17 @@ class Ontology:
     version: str
     families: dict[str, FamilySpec]
     series_to_family: dict[str, str]
+    pattern_rules: list[tuple[re.Pattern[str], str]] = field(default_factory=list)
+
+    def family_for_series(self, series_ticker: str) -> str | None:
+        st = (series_ticker or "").upper()
+        fam = self.series_to_family.get(st)
+        if fam:
+            return fam
+        for rx, name in self.pattern_rules:
+            if rx.match(st):
+                return name
+        return None
 
     @classmethod
     def load(cls, path: Path = ONTOLOGY_PATH) -> Ontology:
@@ -79,12 +91,17 @@ class Ontology:
                 description=spec.get("description", ""),
                 settlement_notes=spec.get("settlement_notes", ""),
                 series_tickers=list(spec.get("series_tickers", [])),
+                series_patterns=list(spec.get("series_patterns", [])),
                 title_patterns=list(spec.get("title_patterns", [])),
             )
             fams[name] = fs
             for st in fs.series_tickers:
                 s2f[st.upper()] = name
-        return cls(version=str(raw.get("version", "0")), families=fams, series_to_family=s2f)
+        rules: list[tuple[re.Pattern[str], str]] = []
+        for name, fs in fams.items():
+            for pat in fs.series_patterns:
+                rules.append((re.compile(pat, re.I), name))
+        return cls(version=str(raw.get("version", "0")), families=fams, series_to_family=s2f, pattern_rules=rules)
 
 
 # ---- heuristic classification from market fields -----------------------------------------------
@@ -112,6 +129,14 @@ _PERIOD_WORDS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\b(first|1st)\s+half\b|\b1H\b", re.I), "1H"),
     (re.compile(r"\b(second|2nd)\s+half\b|\b2H\b", re.I), "2H"),
 ]
+
+
+_SERIES_PERIOD_RE = re.compile(r"^KXNBA(?P<per>1Q|2Q|3Q|4Q|1H|2H)")
+
+
+def _period_from_series(series: str) -> str | None:
+    m = _SERIES_PERIOD_RE.match(series or "")
+    return m["per"] if m else None
 
 
 def _period_from_text(*texts: str) -> str:
@@ -146,10 +171,12 @@ def classify_market(market: dict[str, Any], ontology: Ontology) -> Classificatio
     title = market.get("title") or ""
     subtitle = market.get("subtitle") or market.get("yes_sub_title") or ""
     rules = market.get("rules_primary") or ""
-    fam = ontology.series_to_family.get(series)
+    fam = ontology.family_for_series(series)
     if fam:
         spec = ontology.families[fam]
         period = spec.period if spec.period != "FULL" else _period_from_text(title, subtitle)
+        if spec.period == "PATTERN":
+            period = _period_from_series(series) or _period_from_text(title, subtitle)
         return Classification(fam, spec.scope, spec.stat, period, spec.support, f"series {series} in ontology", "ontology")
 
     # Heuristics for unknown series. These land in UNRESOLVED (needs ontology entry) but carry a best guess

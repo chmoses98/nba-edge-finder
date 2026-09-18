@@ -36,47 +36,34 @@ families:
     description: "Single team points over X (incl. OT)."
     settlement_notes: "Team points incl. OT."
     series_tickers: [KXNBATEAMTOTAL]
-  first_half_winner:
+  period_winner:
     scope: game
     stat: winner
-    period: 1H
+    period: PATTERN
     support: BUILDABLE
-    description: "Team leads at halftime."
-    settlement_notes: "Tie at half: check rules (likely NO for both / void)."
-    series_tickers: [KXNBA1HWINNER, KXNBAFIRSTHALF, KXNBA1H]
-  first_half_spread:
+    description: "Team leads after a specific quarter/half (period from series ticker: KXNBA1Q.., KXNBA1H..). Quarter/half markets exclude OT."
+    settlement_notes: "Ties: consult rules_primary (may settle NO for both or void)."
+    series_patterns: ["^KXNBA(1Q|2Q|3Q|4Q|1H|2H)(WINNER|GAME|ML|MONEYLINE)?$"]
+  period_spread:
     scope: game
     stat: margin
-    period: 1H
+    period: PATTERN
     support: BUILDABLE
-    description: "First-half margin threshold."
-    series_tickers: [KXNBA1HSPREAD]
-  first_half_total:
+    description: "Period margin threshold (KXNBA1HSPREAD, KXNBA3QSPREAD, ...). Period points only; OT excluded."
+    series_patterns: ["^KXNBA(1Q|2Q|3Q|4Q|1H|2H)SPREAD$"]
+  period_total:
     scope: game
     stat: total
-    period: 1H
+    period: PATTERN
     support: BUILDABLE
-    description: "First-half combined points threshold."
-    series_tickers: [KXNBA1HTOTAL]
-  first_quarter_winner:
+    description: "Period combined points threshold (KXNBA1QTOTAL, KXNBA1HTOTAL, ...). OT excluded."
+    series_patterns: ["^KXNBA(1Q|2Q|3Q|4Q|1H|2H)TOTAL$"]
+  period_team_total:
     scope: game
-    stat: winner
-    period: 1Q
+    stat: team_total
+    period: PATTERN
     support: BUILDABLE
-    description: "Team leads after Q1."
-    series_tickers: [KXNBA1QWINNER, KXNBA1Q]
-  first_quarter_spread:
-    scope: game
-    stat: margin
-    period: 1Q
-    support: BUILDABLE
-    series_tickers: [KXNBA1QSPREAD]
-  first_quarter_total:
-    scope: game
-    stat: total
-    period: 1Q
-    support: BUILDABLE
-    series_tickers: [KXNBA1QTOTAL]
+    series_patterns: ["^KXNBA(1Q|2Q|3Q|4Q|1H|2H)TEAMTOTAL$"]
   player_points:
     scope: player
     stat: pts
