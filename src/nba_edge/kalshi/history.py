@@ -8,9 +8,15 @@ this job is deliberately belt-and-braces:
    (historical record wins on conflicting keys; live fills the gaps). Nothing is dropped and nothing is
    duplicated.
 3. Write one gzip JSONL per series: ``<out>/kalshi/markets_<series>.jsonl.gz``.
-4. Optionally fetch candlesticks (default hourly) from ``open_time`` to ``close_time`` for up to
-   ``max_markets_for_candles`` markets, prioritising the core game families, then player props. One row per
-   candlestick, each tagged with ``ticker`` / ``series_ticker``: ``<out>/kalshi/candles_<series>.jsonl.gz``.
+4. Optionally fetch candlesticks (default hourly) from ``open_time`` to ``close_time``. Two selection modes:
+   - ``sample_games=N``: pick N games evenly spread across the window and take EVERY market belonging to those
+     games, across all requested series. This is the mode research wants, because market-vs-model comparisons
+     need contemporaneous prices for different families on the *same* games.
+   - otherwise: a single global budget of ``max_markets_for_candles`` ordered by ``CANDLE_PRIORITY`` (which
+     lets a high-count family such as KXNBAGAME consume the whole budget — the reason sampling exists).
+   Candle pulls are INCREMENTAL: tickers already present in an existing ``candles_<series>.jsonl.gz`` are not
+   re-fetched, and new rows are merged into that file rather than replacing it (so successive runs widen
+   coverage instead of trading one family's coverage for another's).
 5. Write ``MANIFEST.json`` (counts, errors, pulled_at) and ``kalshi_team_uuids.json`` (Kalshi's
    ``custom_strike.basketball_team`` uuid -> team-name text seen on those markets, plus a tricode when the
    identity registry resolves it uniquely).
@@ -171,13 +177,81 @@ def build_team_uuid_map(markets: list[dict[str, Any]]) -> dict[str, dict[str, An
     return out
 
 
-def _candle_candidates(by_series: dict[str, list[dict[str, Any]]], budget: int) -> list[dict[str, Any]]:
+def game_key(ticker: str) -> tuple[str, str, str] | None:
+    """(game_date, away, home) from a game-scoped ticker, or None when the ticker is not game-scoped."""
+    from nba_edge.kalshi.ticker import parse_ticker
+
+    pt = parse_ticker(ticker)
+    if pt.game_date and pt.away_tricode and pt.home_tricode:
+        return (pt.game_date.isoformat(), pt.away_tricode, pt.home_tricode)
+    return None
+
+
+def sample_game_keys(keys: set[tuple[str, str, str]], n: int) -> set[tuple[str, str, str]]:
+    """Deterministically pick ``n`` game keys spread evenly across the sorted (date-ordered) list."""
+    ordered = sorted(keys)
+    if n <= 0 or n >= len(ordered):
+        return set(ordered)
+    stride = len(ordered) / n
+    return {ordered[min(int(i * stride), len(ordered) - 1)] for i in range(n)}
+
+
+def _read_candle_tickers(path: Path) -> set[str]:
+    """Tickers already present in an existing candles file (so we never re-fetch them)."""
+    if not path.exists():
+        return set()
+    seen: set[str] = set()
+    try:
+        with gzip.open(path, "rt") as f:
+            for line in f:
+                if line.strip():
+                    tk = json.loads(line).get("ticker")
+                    if tk:
+                        seen.add(tk)
+    except (OSError, json.JSONDecodeError) as e:  # corrupt/truncated file: re-fetch rather than trust it
+        log.warning(kv(event="candle_file_unreadable", path=str(path), err=str(e)[:160]))
+        return set()
+    return seen
+
+
+def _append_candle_rows(path: Path, new_rows: list[dict[str, Any]]) -> int:
+    """Merge ``new_rows`` into an existing candles file, deduped by (ticker, end_period_ts). Returns total rows."""
+    merged: dict[tuple[str, Any], dict[str, Any]] = {}
+    if path.exists():
+        try:
+            with gzip.open(path, "rt") as f:
+                for line in f:
+                    if line.strip():
+                        r = json.loads(line)
+                        merged[(r.get("ticker"), r.get("end_period_ts"))] = r
+        except (OSError, json.JSONDecodeError) as e:
+            log.warning(kv(event="candle_file_unreadable_on_merge", path=str(path), err=str(e)[:160]))
+            merged = {}
+    for r in new_rows:
+        merged[(r.get("ticker"), r.get("end_period_ts"))] = r
+    rows = [merged[k] for k in sorted(merged, key=lambda k: (str(k[0]), str(k[1])))]
+    _write_jsonl_gz(path, rows)
+    return len(rows)
+
+
+def _candle_candidates(
+    by_series: dict[str, list[dict[str, Any]]],
+    budget: int,
+    sample_games: int | None = None,
+    skip_tickers: set[str] | None = None,
+) -> list[dict[str, Any]]:
+    skip = skip_tickers or set()
     rows: list[dict[str, Any]] = []
     for series, ms in by_series.items():
         pri = CANDLE_PRIORITY.get(series, _DEFAULT_PRIORITY)
         for m in ms:
             if m.get("ticker") and _ts_or_none(m.get("open_time")) and _ts_or_none(m.get("close_time")):
                 rows.append({"_pri": pri, **m})
+    if sample_games:
+        keyed = [(game_key(m["ticker"]), m) for m in rows]
+        chosen = sample_game_keys({k for k, _ in keyed if k is not None}, sample_games)
+        rows = [m for k, m in keyed if k in chosen]
+    rows = [m for m in rows if m["ticker"] not in skip]
     rows.sort(key=lambda m: (m["_pri"], str(m.get("close_time") or ""), m["ticker"]))
     return rows[:budget]
 
@@ -190,6 +264,7 @@ def run_kalshi_history(
     with_candles: bool,
     candle_interval: int = 60,
     max_markets_for_candles: int = 3000,
+    sample_games: int | None = None,
     client: Any | None = None,
 ) -> int:
     client = client or KalshiClient()
@@ -204,6 +279,7 @@ def run_kalshi_history(
         "min_close_ts": min_ts,
         "max_close_ts": max_ts,
         "candle_interval": candle_interval if with_candles else None,
+        "sample_games": sample_games,
         "series": {},
         "errors": [],
     }
@@ -239,8 +315,11 @@ def run_kalshi_history(
         log.info(kv(event="kalshi_history_series", series=st, **{k: rep[k] for k in ("historical", "live", "merged")}))
 
     if with_candles:
-        cands = _candle_candidates(by_series, max_markets_for_candles)
+        already = {st: _read_candle_tickers(out / f"candles_{st}.jsonl.gz") for st in by_series}
+        skip = {tk for s_ in already.values() for tk in s_}
+        cands = _candle_candidates(by_series, max_markets_for_candles, sample_games, skip)
         manifest["candle_markets_selected"] = len(cands)
+        manifest["candle_markets_already_present"] = {st: len(v) for st, v in already.items() if v}
         rows_by_series: dict[str, list[dict[str, Any]]] = defaultdict(list)
         n_ok: Counter[str] = Counter()
         n_err: Counter[str] = Counter()
@@ -263,12 +342,16 @@ def run_kalshi_history(
                 rows_by_series[st].append({"ticker": tk, "series_ticker": st, "period_interval": candle_interval, **c})
         for st in by_series:
             rep = manifest["series"][st]
-            rep["candles_markets"] = n_ok[st]
+            rep["candles_markets_new"] = n_ok[st]
             rep["candles_errors"] = n_err[st]
-            rep["candles_rows"] = len(rows_by_series.get(st, []))
-            if rows_by_series.get(st):
+            path = out / f"candles_{st}.jsonl.gz"
+            if rows_by_series.get(st) or path.exists():
                 rep["candles_file"] = f"candles_{st}.jsonl.gz"
-                _write_jsonl_gz(out / rep["candles_file"], rows_by_series[st])
+                rep["candles_rows"] = _append_candle_rows(path, rows_by_series.get(st, []))
+                rep["candles_markets"] = len(_read_candle_tickers(path))
+            else:
+                rep["candles_rows"] = 0
+                rep["candles_markets"] = 0
 
     uuid_map = build_team_uuid_map(all_markets)
     (out / "kalshi_team_uuids.json").write_text(json.dumps(uuid_map, indent=1, sort_keys=True))

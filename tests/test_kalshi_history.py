@@ -118,7 +118,8 @@ def test_run_kalshi_history_writes_files_and_merges_without_duplicates(tmp_path)
     man = json.loads((out / "MANIFEST.json").read_text())
     assert man["series"]["KXNBAGAME"] == {
         "historical": 2, "live": 2, "merged": 3, "errors": [], "markets_file": "markets_KXNBAGAME.jsonl.gz",
-        "candles_markets": 2, "candles_errors": 0, "candles_rows": 4, "candles_file": "candles_KXNBAGAME.jsonl.gz",
+        "candles_markets": 2, "candles_markets_new": 2, "candles_errors": 0, "candles_rows": 4,
+        "candles_file": "candles_KXNBAGAME.jsonl.gz",
     }
     assert man["total_markets"] == 4 and man["pulled_at"].endswith("Z") and man["request_count"] == fc.request_count
 
@@ -236,3 +237,75 @@ def test_live_and_historical_hosts_are_independent():
     assert hosts == ["live.test", "hist.test"]
     c.close()
     assert c._client is None and c._hist_client is None
+
+
+# ---- candle selection: game sampling + incremental merge --------------------------------------------------
+
+
+def _cmkt(series, ticker, close="2026-01-05T00:00:00Z"):
+    return {"ticker": ticker, "series_ticker": series, "open_time": "2026-01-04T00:00:00Z", "close_time": close}
+
+
+def test_game_key_and_sampling():
+    from nba_edge.kalshi.history import game_key, sample_game_keys
+
+    assert game_key("KXNBAPTS-26JAN04DETCLE-DETCCUNNINGHAM2-40") == ("2026-01-04", "DET", "CLE")
+    assert game_key("KXNBAWINS-27UTA-60") is None  # season market: not game-scoped
+    keys = {(f"2026-01-{d:02d}", "AAA", "BBB") for d in range(1, 31)}
+    assert len(sample_game_keys(keys, 10)) == 10
+    assert sample_game_keys(keys, 10) == sample_game_keys(keys, 10)  # deterministic
+    assert sample_game_keys(keys, 100) == keys  # n >= population returns everything
+    assert sample_game_keys(keys, 0) == keys
+    spread = sorted(sample_game_keys(keys, 5))
+    assert spread[0][0] == "2026-01-01" and spread[-1][0] >= "2026-01-24"  # spread across the window, not clustered
+
+
+def test_sample_games_keeps_every_family_on_the_sampled_games():
+    """The failure this guards: a global budget let KXNBAGAME consume all 3000 slots, leaving props with zero."""
+    from nba_edge.kalshi.history import _candle_candidates
+
+    by_series = {
+        "KXNBAGAME": [_cmkt("KXNBAGAME", f"KXNBAGAME-26JAN{d:02d}DETCLE-DET") for d in range(1, 21)],
+        "KXNBAPTS": [
+            _cmkt("KXNBAPTS", f"KXNBAPTS-26JAN{d:02d}DETCLE-DETX-{k}") for d in range(1, 21) for k in range(5)
+        ],
+    }
+    # global budget mode: the priority-0 family crowds the props out
+    greedy = _candle_candidates(by_series, budget=20)
+    assert {m["series_ticker"] for m in greedy} == {"KXNBAGAME"}
+    # sampled mode: every family present for the sampled games
+    sampled = _candle_candidates(by_series, budget=1000, sample_games=4)
+    fams = {m["series_ticker"] for m in sampled}
+    assert fams == {"KXNBAGAME", "KXNBAPTS"}
+    assert len(sampled) == 4 * (1 + 5)  # all markets of 4 games
+
+
+def test_candle_candidates_skips_already_pulled_tickers():
+    from nba_edge.kalshi.history import _candle_candidates
+
+    by_series = {"KXNBAGAME": [_cmkt("KXNBAGAME", f"KXNBAGAME-26JAN{d:02d}DETCLE-DET") for d in range(1, 6)]}
+    skip = {"KXNBAGAME-26JAN01DETCLE-DET", "KXNBAGAME-26JAN02DETCLE-DET"}
+    got = _candle_candidates(by_series, budget=100, skip_tickers=skip)
+    assert {m["ticker"] for m in got} & skip == set()
+    assert len(got) == 3
+
+
+def test_append_candle_rows_merges_and_dedupes(tmp_path):
+    """A second run must widen an existing candle file, never replace it (the moneyline file was at risk)."""
+    from nba_edge.kalshi.history import _append_candle_rows, _read_candle_tickers
+
+    p = tmp_path / "candles_KXNBAGAME.jsonl.gz"
+    assert _append_candle_rows(p, [{"ticker": "A", "end_period_ts": 1}, {"ticker": "A", "end_period_ts": 2}]) == 2
+    assert _read_candle_tickers(p) == {"A"}
+    total = _append_candle_rows(p, [{"ticker": "A", "end_period_ts": 2}, {"ticker": "B", "end_period_ts": 1}])
+    assert total == 3  # A/2 deduped, B/1 added, A/1 preserved
+    assert _read_candle_tickers(p) == {"A", "B"}
+
+
+def test_read_candle_tickers_tolerates_missing_and_corrupt(tmp_path):
+    from nba_edge.kalshi.history import _read_candle_tickers
+
+    assert _read_candle_tickers(tmp_path / "nope.jsonl.gz") == set()
+    bad = tmp_path / "candles_X.jsonl.gz"
+    bad.write_bytes(b"not gzip")
+    assert _read_candle_tickers(bad) == set()  # unreadable -> re-fetch rather than silently skip

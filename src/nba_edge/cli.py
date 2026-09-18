@@ -82,7 +82,7 @@ def cmd_kalshi_history(args: argparse.Namespace) -> int:
     return run_kalshi_history(
         out_root=Path(args.out), series=[s for s in args.series.split(",") if s], min_close=args.min_close,
         max_close=args.max_close, with_candles=args.candles, candle_interval=args.candle_interval,
-        max_markets_for_candles=args.max_candle_markets,
+        max_markets_for_candles=args.max_candle_markets, sample_games=args.sample_games or None,
     )
 
 
@@ -151,7 +151,13 @@ def build_parser() -> argparse.ArgumentParser:
     kh.add_argument("--max-close", default="2026-07-01", help="Latest close date (YYYY-MM-DD or ISO-8601)")
     kh.add_argument("--candles", action="store_true", help="Also pull candlesticks for the top markets")
     kh.add_argument("--candle-interval", type=int, default=60, help="Candle period in minutes: 1, 60 or 1440")
-    kh.add_argument("--max-candle-markets", type=int, default=3000)
+    kh.add_argument("--max-candle-markets", type=int, default=3000, help="Hard cap on candle fetches this run")
+    kh.add_argument(
+        "--sample-games", type=int, default=0,
+        help="Pull candles for EVERY market of N games spread across the window (0 = global priority budget). "
+             "Use this for cross-family market-vs-model research: it guarantees contemporaneous prices for "
+             "spreads/totals/props on the same games.",
+    )
     kh.set_defaults(func=cmd_kalshi_history)
     return p
 

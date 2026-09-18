@@ -15,8 +15,11 @@ on:
         description: "Latest close date (YYYY-MM-DD)"
         default: "2026-07-01"
       max_candle_markets:
-        description: "Max markets to fetch candlesticks for"
+        description: "Hard cap on candle fetches this run"
         default: "3000"
+      sample_games:
+        description: "Pull candles for every market of N sampled games (0 = global priority budget)"
+        default: "0"
   push:
     paths:
       - ".trigger/kalshi_history"
@@ -26,6 +29,7 @@ env:
   MIN_CLOSE: ${{ inputs.min_close || '2025-10-01' }}
   MAX_CLOSE: ${{ inputs.max_close || '2026-07-01' }}
   MAX_CANDLE_MARKETS: ${{ inputs.max_candle_markets || '3000' }}
+  SAMPLE_GAMES: ${{ inputs.sample_games || '0' }}
 
 permissions:
   contents: write
@@ -46,13 +50,30 @@ jobs:
           cache: pip
       - name: Install
         run: pip install -e ".[dev]"
+      - name: Apply overrides from .trigger/kalshi_history (KEY=VALUE lines)
+        run: |
+          # Push-triggered runs cannot pass workflow inputs, so the trigger file carries them. Only these five
+          # keys are honoured and each value is validated, so file contents can never become shell code.
+          f=.trigger/kalshi_history
+          [ -f "$f" ] || exit 0
+          for key in SERIES MIN_CLOSE MAX_CLOSE MAX_CANDLE_MARKETS SAMPLE_GAMES; do
+            v="$(grep -E "^${key}=" "$f" | tail -1 | cut -d= -f2- | tr -d '[:space:]')" || true
+            [ -n "$v" ] || continue
+            case "$key" in
+              SERIES) echo "$v" | grep -Eq '^[A-Z0-9,]+$' || { echo "bad SERIES; ignored"; continue; } ;;
+              MIN_CLOSE|MAX_CLOSE) echo "$v" | grep -Eq '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' || { echo "bad $key; ignored"; continue; } ;;
+              MAX_CANDLE_MARKETS|SAMPLE_GAMES) echo "$v" | grep -Eq '^[0-9]{1,7}$' || { echo "bad $key; ignored"; continue; } ;;
+            esac
+            echo "$key=$v" >> "$GITHUB_ENV"
+            echo "override $key=$v"
+          done
       - name: Pull Kalshi historical markets + candlesticks
         env:
           NBA_EDGE_LOG_LEVEL: INFO
         run: >
           nba kalshi-history --out data/history --candles
           --series "$SERIES" --min-close "$MIN_CLOSE" --max-close "$MAX_CLOSE"
-          --max-candle-markets "$MAX_CANDLE_MARKETS"
+          --max-candle-markets "$MAX_CANDLE_MARKETS" --sample-games "$SAMPLE_GAMES"
       - name: Upload full pull (incl. candlesticks)
         if: always()
         uses: actions/upload-artifact@v4
