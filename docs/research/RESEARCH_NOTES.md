@@ -100,6 +100,30 @@ with 300 minutes of prior mass while the EWM(5) window only carried ~250 weighte
 pulled roughly halfway to the average. Fix: rates now use a 20-game half-life and 60 minutes of prior mass
 (minutes/role keep the 5-game half-life). v2 numbers are appended below.
 
+v2 (rate shrinkage fixed): Brier 0.191, log loss 0.600, mean P 0.227 vs 0.385 — bias largely remained. Direct
+inspection of a real game (LAL-CLE 2026-03-31) found the true cause: the historical "roster" contained every
+player who had ever played for the team in the window (traded/waived/long-absent players with their old minutes),
+so expected minutes summed to 325 for 15 players and the water-fill scaled stars down proportionally (Doncic
+simulated at 26 min / 23 pts vs a recent 38 min / 40 pts). Fixes: rotation membership = appeared in the team's
+last 10 games (leak-free), availability from recent participation (played last game → 1.0; ≥3 of last 10 → 0.6;
+else 0.15) when no injury report exists, and surplus minutes now come off low-stickiness bench players first.
+
+v3 result (100 games, 7,666 contracts): **Brier 0.165, log loss 0.504, ECE 0.075** (from 0.201 / 0.644 / 0.170).
+Per stat Brier: pts 0.173, reb 0.169, ast 0.163, threes 0.150. Mean P 0.311 vs base rate 0.386: a residual low
+bias concentrated in the upper tail (sim 4% → actual 8%; 14% → 23%; 25% → 39%; well calibrated above 0.45). The
+NB-from-sim-mean baseline is now indistinguishable (0.166), i.e. the simulator's value beyond a good mean is not
+yet demonstrated for props; its advantages (coherence across contracts, minutes uncertainty) are structural.
+Next levers: stars' minutes still slightly low, fat upper tails (usage spikes), and DNP/`scalar` handling.
+
+## 4d. Why DATA_ONLY game probabilities trail Elo — compression, not information
+On the v4 CSV, the simulator's expected margins correlate **0.962** with Elo-implied margins and predict the
+realised margin equally well (corr 0.579 vs 0.572), but their spread is 5.3 vs 8.5 points. Rescaling the sim
+margin in-sample by k gives log loss 0.569 (k=1) → 0.525 (1.6) → 0.506 (2.0, ≈ Elo) → 0.496 (2.4). The rating
+layer therefore ranks teams as well as Elo but under-states strength differences (shrinkage + the iterative
+opponent adjustment attenuating each other). A `rating_scale` parameter (default 1.6, deliberately below the
+in-sample optimum) now multiplies (rating − league). It must be re-estimated on a full-season walk-forward before
+anything is trusted; v5 numbers with the scale applied are appended below.
+
 ## 5. Kalshi market calibration (market_calibration.json) — negative/invalid result
 The first attempt used the `previous_*_dollars` quotes on settled markets as "closing" prices. They produced a
 Brier of 0.016 on moneylines — impossible for pregame prices — because those quotes are post-tip (in-game trading

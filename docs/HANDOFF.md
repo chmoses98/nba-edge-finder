@@ -98,9 +98,14 @@ point-in-time, 300 late-2025-26 games):
   **Negative result.** Diagnosis: the sim's expected margins were far too compressed (spread across games 5.1
   pts vs 8.5 implied by Elo; realised margin regresses on sim margin with slope 2.1) — over-shrunk ratings.
   Margin MAE still beat naive (12.6 vs 14.3), total MAE 15.3 vs 16.0.
-- Retuned dispersion + opponent-adjusted ratings (v2): calibration of intervals fixed (80% band covers 81%), win
-  probabilities still under-confident; a shrinkage sweep (half-life 25/40/60, prior 4/2/1 games) is recorded in
-  `docs/research/wf_hl*_p*.json` — see the appended results at the bottom of this file.
+- Retuned dispersion + opponent-adjusted ratings (v2): interval calibration fixed (80% band covers 81%), win
+  probabilities still under-confident. Shrinkage sweep: best log loss 0.556 at half-life 25 / prior 4. Diagnosis:
+  the sim's expected margins correlate 0.96 with Elo but are compressed ~0.6×; an in-sample rescale of 2× matches
+  Elo. A provisional `rating_scale` = 1.6 is in the feature builder pending a full-season re-estimate.
+- Player-prop walk-forward on 7,666 real settled Kalshi prop markets (100 games): v1 was badly biased low
+  (Brier 0.201) because historical rosters included traded/absent players and diluted stars' minutes; after
+  rotation-membership, recency availability and bench-first minute trimming: **Brier 0.165, log loss 0.504, ECE
+  0.075**, with a residual low bias in the upper tail (sim 25% → actual 39%). See RESEARCH_NOTES §4c.
 - Minutes: EWM half-life 5 is the best next-game minutes estimator (MAE 4.96; season mean 5.39; residual sd 6.4).
 - Distributions: negative binomial ≫ Poisson for points (log score −3.22 vs −3.78); points upper tail P(>mu+5) is
   17.5% empirically vs 13.6% NB — fat tails matter for ladders.
