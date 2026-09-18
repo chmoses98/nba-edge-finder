@@ -47,7 +47,7 @@ def elo_baseline(team_games: pd.DataFrame, k: float = 20.0, home_adv: float = 60
     return out
 
 
-def run(seasons: list[str], max_games: int, n_sims: int, warmup_games: int, hist_root: Path, out_path: Path, seed: int = 11) -> dict:
+def run(seasons: list[str], max_games: int, n_sims: int, warmup_games: int, hist_root: Path, out_path: Path, seed: int = 11, team_half_life: float = 15.0, team_prior_games: float = 12.0) -> dict:
     tg = load_team_games(hist_root, seasons)
     pg = load_player_games(hist_root, seasons)
     tg = tg[tg["season_type"] == "regular"].copy()
@@ -69,7 +69,7 @@ def run(seasons: list[str], max_games: int, n_sims: int, warmup_games: int, hist
             rd = rest_days_for(tid, date, tg)
             game[f"{side}_rest_days"] = rd if rd is not None else 2
             game[f"{side}_b2b"] = rd == 1
-        gp, rep = build_game_params(game, tg, pg, date, {h: {}, a: {}}, None, BuildConfig())
+        gp, rep = build_game_params(game, tg, pg, date, {h: {}, a: {}}, None, BuildConfig(team_half_life=team_half_life, team_prior_games=team_prior_games))
         if rep.team_games_used.get(h, 0) < 10 or rep.team_games_used.get(a, 0) < 10:
             continue
         sim = simulate(gp, n_sims, seed + i)
@@ -84,7 +84,9 @@ def run(seasons: list[str], max_games: int, n_sims: int, warmup_games: int, hist
     if df.empty:
         return {"error": "no evaluable games"}
     y = df["y"].to_numpy()
-    rep = {"n": int(len(df)), "seasons": seasons, "n_sims": n_sims, "date_range": [df["date"].min(), df["date"].max()]}
+    rep = {"n": int(len(df)), "seasons": seasons, "n_sims": n_sims, "date_range": [df["date"].min(), df["date"].max()], "team_half_life": team_half_life, "team_prior_games": team_prior_games}
+    rep["margin_slope_on_sim"] = float(np.polyfit(df["m_sim"], df["margin"], 1)[0])
+    rep["m_sim_sd_across_games"] = float(df["m_sim"].std())
     for name, col in (("sim", "p_sim"), ("elo", "p_elo"), ("const_home", "p_const")):
         p = df[col].to_numpy()
         rep[name] = {"log_loss": log_loss(p, y), "brier": brier(p, y), "ece": ece(p, y, 10), "calibration": calibration_table(p, y, 10)}
@@ -113,8 +115,10 @@ def main(argv=None) -> int:
     ap.add_argument("--warmup", type=int, default=200)
     ap.add_argument("--hist", default=str(REPO_ROOT / "data" / "history"))
     ap.add_argument("--out", default=str(REPO_ROOT / "docs" / "research" / "walk_forward_games.json"))
+    ap.add_argument("--team-half-life", type=float, default=15.0)
+    ap.add_argument("--team-prior", type=float, default=12.0)
     a = ap.parse_args(argv)
-    rep = run(a.seasons.split(","), a.max_games, a.sims, a.warmup, Path(a.hist), Path(a.out))
+    rep = run(a.seasons.split(","), a.max_games, a.sims, a.warmup, Path(a.hist), Path(a.out), team_half_life=a.team_half_life, team_prior_games=a.team_prior)
     print(json.dumps({k: v for k, v in rep.items() if k not in ("sim", "elo", "const_home")}, indent=1, default=str))
     for k in ("sim", "elo", "const_home"):
         if k in rep:
