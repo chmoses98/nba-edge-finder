@@ -62,3 +62,41 @@ def quote_cents(m: dict[str, Any]) -> dict[str, int | None]:
         if q[k] == 100:
             q[k] = None
     return q
+
+
+def _level_cents(level: Any) -> tuple[int, float] | None:
+    """A level is [price, qty] with price in cents (int) or dollars (str/float <= 1), or a dict with price/quantity keys."""
+    if isinstance(level, dict):
+        price = level.get("price") or level.get("price_dollars") or level.get("yes_price") or level.get("no_price")
+        qty = level.get("quantity") or level.get("count") or level.get("size") or level.get("quantity_fp") or 0
+    elif isinstance(level, (list, tuple)) and len(level) >= 2:
+        price, qty = level[0], level[1]
+    else:
+        return None
+    try:
+        pf = float(price)
+        q = float(qty)
+    except (TypeError, ValueError):
+        return None
+    cents = int(round(pf * 100)) if pf <= 1.0 and not float(pf).is_integer() or (isinstance(price, str) and "." in price) else int(round(pf))
+    if isinstance(price, str) and "." in price:
+        cents = int(round(pf * 100))
+    return cents, q
+
+
+def orderbook_levels(body: dict[str, Any]) -> dict[str, list[list[float]]]:
+    """Normalise an order-book response to {'yes': [[price_cents, qty], ...], 'no': [...]} (bids, best first)."""
+    ob = body.get("orderbook") if isinstance(body.get("orderbook"), dict) else body
+    out: dict[str, list[list[float]]] = {"yes": [], "no": []}
+    for side in ("yes", "no"):
+        raw = ob.get(side)
+        if raw is None:
+            raw = ob.get(f"{side}_dollars")
+        if raw is None:
+            raw = ob.get(f"{side}_levels")
+        for lv in raw or []:
+            parsed = _level_cents(lv)
+            if parsed is not None:
+                out[side].append([parsed[0], parsed[1]])
+        out[side].sort(key=lambda x: -x[0])
+    return out

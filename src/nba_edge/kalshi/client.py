@@ -206,7 +206,9 @@ class KalshiClient:
         return self.get(f"/markets/{ticker}").get("market", {})
 
     def get_orderbook(self, ticker: str, depth: int = 10) -> dict[str, Any]:
-        return self.get(f"/markets/{ticker}/orderbook", {"depth": depth}).get("orderbook", {})
+        """Returns the full response body (shape has changed across API versions: 'orderbook': {'yes': [[price, qty]..]}
+        vs dollar-denominated 'yes_dollars' levels). Callers parse with ``nba_edge.kalshi.normalize.orderbook_levels``."""
+        return self.get(f"/markets/{ticker}/orderbook", {"depth": depth})
 
     def iter_trades(
         self, ticker: str, min_ts: int | None = None, max_ts: int | None = None, max_pages: int | None = None

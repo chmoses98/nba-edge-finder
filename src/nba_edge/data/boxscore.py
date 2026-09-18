@@ -38,6 +38,23 @@ def parse_nba_minutes(s: str | None) -> float:
         return 0.0
 
 
+def parse_espn_minutes(v: Any) -> float:
+    """ESPN minutes come as '34', '34:12', '--' (did not play) or ''."""
+    if v in (None, "", "--", "-"):
+        return 0.0
+    s = str(v)
+    if ":" in s:
+        mm, ss = s.split(":")[:2]
+        try:
+            return int(mm) + float(ss) / 60.0
+        except ValueError:
+            return 0.0
+    try:
+        return float(s)
+    except ValueError:
+        return 0.0
+
+
 def _nba_status(game_status: int | None, text: str | None) -> GameStatus:
     t = (text or "").lower()
     if "ppd" in t or "postpone" in t:
@@ -122,7 +139,7 @@ def parse_espn_summary(payload: dict[str, Any], fetched_at_utc: datetime | None 
             for a in grp.get("athletes", []):
                 vals = dict(zip(keys, a.get("stats", []), strict=False))
                 dnp = a.get("didNotPlay", False)
-                mins = float(vals.get("minutes") or 0) if not dnp else 0.0
+                mins = parse_espn_minutes(vals.get("minutes")) if not dnp else 0.0
                 _i = _int_stat_getter(vals)
 
                 players.append(

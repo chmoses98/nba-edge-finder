@@ -54,7 +54,7 @@ PLAYER_COLUMNS = [
     "dreb", "fg3a", "ftm", "pf", "plus_minus", "dnp_reason", "team_pts", "opp_pts", "n_ot",
 ]
 TEAM_COLUMNS = [
-    "game_id", "game_date_et", "season", "season_type", "team_id", "opp_team_id", "home", "pts", "opp_pts", "q1", "q2",
+    "game_id", "game_date_et", "start_time_utc", "season", "season_type", "team_id", "opp_team_id", "home", "pts", "opp_pts", "q1", "q2",
     "q3", "q4", "ot_pts", "n_ot", "won", "margin", "total", "fga", "fta", "oreb", "tov", "possessions", "totals_source",
 ]
 
@@ -277,6 +277,7 @@ def _meta_fields(game_meta: dict[str, Any], box: FinalBoxScore) -> dict[str, Any
     return {
         "game_id": game_meta.get("game_id") or box.game_id, "game_date_et": game_meta.get("game_date_et") or (et_date(box.actual_tip_utc) if box.actual_tip_utc else None),
         "season": game_meta.get("season"), "season_type": game_meta.get("season_type"),
+        "start_time_utc": game_meta.get("start_time_utc") or (iso(box.actual_tip_utc) if box.actual_tip_utc else None),
     }
 
 

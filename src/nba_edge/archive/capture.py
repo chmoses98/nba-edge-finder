@@ -15,7 +15,7 @@ from nba_edge.archive.ledger import Ledger
 from nba_edge.config import settings
 from nba_edge.kalshi.client import KalshiClient, KalshiError
 from nba_edge.kalshi.discovery import is_nba_series
-from nba_edge.kalshi.normalize import quote_cents
+from nba_edge.kalshi.normalize import orderbook_levels, quote_cents
 from nba_edge.kalshi.ontology import Ontology, classify_market
 from nba_edge.log import get_logger, kv
 from nba_edge.timeutil import iso, parse_iso, utcnow
@@ -81,8 +81,9 @@ def snapshot_orderbooks(client: KalshiClient, markets: list[dict[str, Any]], max
     out = []
     for m in cands[:max_books]:
         try:
-            ob = client.get_orderbook(m["ticker"], depth=10)
-            out.append({"ticker": m["ticker"], "yes": ob.get("yes"), "no": ob.get("no"), "raw": ob})
+            body = client.get_orderbook(m["ticker"], depth=10)
+            lv = orderbook_levels(body)
+            out.append({"ticker": m["ticker"], "yes": lv["yes"], "no": lv["no"], "raw": body})
         except KalshiError as e:
             out.append({"ticker": m["ticker"], "_error": str(e)[:200]})
     return out

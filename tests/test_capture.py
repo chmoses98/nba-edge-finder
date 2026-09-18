@@ -26,7 +26,7 @@ class FakeClient:
     def get_orderbook(self, ticker, depth=10):
         if ticker.startswith("KXNBAWINS"):
             raise KalshiError("no book")
-        return {"yes": [[60, 100], [59, 50]], "no": [[38, 120]]}
+        return {"orderbook": {"yes_dollars": [["0.6000", "100.00"], ["0.5900", "50.00"]], "no_dollars": [["0.3800", "120.00"]]}}
 
 
 def test_snapshot_markets_dedupes_and_classifies():
@@ -45,8 +45,26 @@ def test_orderbooks_prioritise_open_and_record_errors(tmp_path):
     rows = snapshot_markets(FakeClient(), ["KXNBAGAME", "KXNBAWINS"], ["open"], onto)
     books = snapshot_orderbooks(FakeClient(), rows, max_books=5)
     by = {b["ticker"]: b for b in books}
-    assert by["KXNBAGAME-26OCT20OKCSAS-SAS"]["yes"][0] == [60, 100]
+    assert by["KXNBAGAME-26OCT20OKCSAS-SAS"]["yes"][0] == [60, 100.0]
     assert "_error" in by["KXNBAWINS-27UTA-60"]
     led = Ledger(tmp_path, run_id="t")
     e = led.append_rows("kalshi/orderbooks", books)
     assert e.rows == 2 and led.verify() == []
+
+
+def test_orderbook_levels_accepts_cents_and_dollar_shapes():
+    from nba_edge.kalshi.normalize import orderbook_levels
+
+    legacy = {"orderbook": {"yes": [[60, 100], [59, 50]], "no": [[38, 120]]}}
+    assert orderbook_levels(legacy) == {"yes": [[60, 100.0], [59, 50.0]], "no": [[38, 120.0]]}
+    dollars = {"orderbook": {"yes_dollars": [["0.5900", "50.00"], ["0.6000", "100.00"]], "no_dollars": [["0.3800", "120.00"]]}}
+    assert orderbook_levels(dollars) == {"yes": [[60, 100.0], [59, 50.0]], "no": [[38, 120.0]]}
+    assert orderbook_levels({"orderbook": {}}) == {"yes": [], "no": []}
+    assert orderbook_levels({"yes": [{"price": "0.4100", "quantity": "7"}], "no": None}) == {"yes": [[41, 7.0]], "no": []}
+
+
+def test_espn_minutes_parser():
+    from nba_edge.data.boxscore import parse_espn_minutes
+
+    assert parse_espn_minutes("--") == 0.0 and parse_espn_minutes("") == 0.0 and parse_espn_minutes(None) == 0.0
+    assert parse_espn_minutes("34") == 34.0 and abs(parse_espn_minutes("34:30") - 34.5) < 1e-9
