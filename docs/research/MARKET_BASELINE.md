@@ -74,3 +74,32 @@ A marginally better model is not a profitable one here; only a substantially bet
 future claim of moneyline edge should be read against this table first, and any claim resting on a
 few percentage points in one price bucket should be checked against both traps in §2 — they were
 each live in this very analysis before correction.
+
+## 5. A limitation of the price series itself
+
+The historical candles are **hourly** (`period_interval = 60` is the only value present). So the
+"final valid pre-tip observation" is not a closing price: it is the last hourly bar that closed
+before tip-off.
+
+| percentile | minutes before tip |
+|---|---:|
+| p5 | 30 |
+| p25 | 30 |
+| p50 | **60** |
+| p95 | 60 |
+
+Two-thirds of the "final" observations are a full hour old, and none is fresher than 30 minutes.
+
+This matters in three ways:
+
+1. **These are not closing lines.** Any closing-line-value claim needs a finer series than this, and
+   NBA prices move on late injury news precisely in the window this data cannot see.
+2. **It is conservative for the residual test, not flattering.** The model is being compared against
+   a price that is *staler* than what a real trader would face, so it makes the market look slightly
+   worse, not better. An edge measured here would shrink against the true closing price, never grow.
+3. **The T-30m horizon is only nominally distinct from `final`.** They select the same candle for
+   two-thirds of markets. Treat them as one observation, not two.
+
+Verified on the full 14,133-row table: **0 rows observed at or after tip**, every horizon respects
+its own bound, `final` is never earlier than a tighter horizon for the same ticker, and no executable
+price is ever better than the mid.
