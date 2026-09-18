@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -46,10 +47,13 @@ def main(argv=None) -> int:
     ap.add_argument("--warmup", type=int, default=300)
     ap.add_argument("--hist", default=str(REPO_ROOT / "data" / "history"))
     ap.add_argument("--out", default=str(REPO_ROOT / "docs" / "research" / "rating_scale.json"))
+    ap.add_argument("--scratch", default=None, help="where per-grid-point reports go; a temp dir by default")
     a = ap.parse_args(argv)
 
     grid = [float(x) for x in a.grid.split(",")]
-    scratch = Path(a.out).parent / "_rs"
+    # Per-grid-point reports are intermediates, not deliverables: the consolidated --out file holds
+    # everything the write-up quotes. Keep them out of the repo unless asked for explicitly.
+    scratch = Path(a.scratch) if a.scratch else Path(tempfile.mkdtemp(prefix="rating_scale_"))
     scratch.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
 

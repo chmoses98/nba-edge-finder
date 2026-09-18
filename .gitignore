@@ -21,3 +21,7 @@ out/
 # workflow-committed datasets: the pull workflows add these with `git add -f`; never re-add stale local copies
 data/history/espn/*.parquet
 data/history/espn/done_events_*.json
+
+# Per-grid-point intermediates from scripts/rating_scale_walkforward.py.
+# The deliverable is the consolidated docs/research/rating_scale.json; these are scratch.
+docs/research/_rs/
