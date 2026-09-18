@@ -35,6 +35,7 @@ jobs:
       simulate: ${{ steps.d.outputs.simulate }}
       settle: ${{ steps.d.outputs.settle }}
       evaluate: ${{ steps.d.outputs.evaluate }}
+      discover: ${{ steps.d.outputs.discover }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,7 +52,7 @@ jobs:
           nba conductor --data data --github-output "$GITHUB_OUTPUT"
           # a push to .trigger/conductor can force jobs by listing them in the file (e.g. "capture,context")
           if [[ -z "$FORCE" && -f .trigger/conductor ]]; then FORCE="$(grep -oE '[a-z,]+' .trigger/conductor | head -1)"; fi
-          for j in capture context simulate settle evaluate; do
+          for j in capture context simulate settle evaluate discover; do
             if [[ ",$FORCE," == *",$j,"* ]]; then echo "$j=true" >> "$GITHUB_OUTPUT"; fi
           done
 
@@ -95,6 +96,11 @@ jobs:
       - name: Evaluate
         if: needs.decide.outputs.evaluate == 'true'
         run: nba evaluate --data data --out data/archive/eval || echo "evaluate failed (non-fatal)"
+      - name: Discover market families (daily) and commit catalog to the code branch
+        if: needs.decide.outputs.discover == 'true'
+        run: |
+          nba discover --out data/catalog --statuses open,unopened --max-pages 10 || exit 0
+          git add data/catalog && (git diff --cached --quiet || (git commit -qm "catalog: daily discovery run ${{ github.run_id }}" && git pull -q --rebase origin "${GITHUB_REF_NAME}" && git push -q origin HEAD:"${GITHUB_REF_NAME}")) || echo "catalog commit skipped"
       - name: Verify archive immutability and push
         run: |
           cd data/archive

@@ -62,7 +62,9 @@ def decide(now: datetime, schedule_rows: list[dict[str, Any]], capture_age_min: 
     simulate = in_season and next_tip_h is not None and next_tip_h <= 26 and (last_sim_age_min is None or last_sim_age_min > 55)
     settle = bool(recent_final) and (last_settle_age_min is None or last_settle_age_min > 90)
     evaluate = settle or (in_season and hour == 10 and (last_eval_age_min is None or last_eval_age_min > 23 * 60))
+    discover = hour == 15 and now.minute < 10  # daily market-family discovery (new series never require code changes)
     return {
+        "discover": bool(discover),
         "now_utc": iso(now), "in_season": in_season, "next_tip_hours": None if next_tip_h is None else round(next_tip_h, 2), "n_upcoming": len(upcoming),
         "n_recent_final": len(recent_final), "capture": bool(capture), "context": bool(context), "simulate": bool(simulate), "settle": bool(settle), "evaluate": bool(evaluate),
         "capture_age_min": capture_age_min,
@@ -89,6 +91,6 @@ def run_conductor(data_root: Path, github_output: str | None = None) -> int:
     print(json.dumps(d, indent=1))
     if github_output:
         with open(github_output, "a") as f:
-            for k in ("capture", "context", "simulate", "settle", "evaluate", "in_season"):
+            for k in ("capture", "context", "simulate", "settle", "evaluate", "discover", "in_season"):
                 f.write(f"{k}={'true' if d[k] else 'false'}\n")
     return 0

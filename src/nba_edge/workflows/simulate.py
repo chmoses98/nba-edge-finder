@@ -228,6 +228,8 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
         if rep.team_games_used.get(home_id, 0) < 5 or rep.team_games_used.get(away_id, 0) < 5:
             reasons.append("fewer than 5 prior games for a team (priors dominate)")
         reasons.extend(w for w in rep.warnings if "CANNOT_TRUST" in w)
+        if g.get("season_type") == "preseason":
+            reasons.append("preseason game: rotations/minutes are not representative (systems-validation only)")
         trust = not reasons
         gsum = {
             "game_id": gid, "tip_utc": g["start_time_utc"], "home": g["home_tricode"], "away": g["away_tricode"], "p_home_win": float((sim.margin > 0).mean()),

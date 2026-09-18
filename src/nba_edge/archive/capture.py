@@ -63,16 +63,18 @@ def snapshot_markets(client: KalshiClient, series: list[str], statuses: list[str
     return rows
 
 
-def _priority(m: dict[str, Any], now_iso: str) -> tuple[int, str]:
-    # earliest close first; open before unopened; prefer markets with any quoted price
+LIVE_STATUSES = {"open", "active"}  # Kalshi's filter param says 'open'; the market object says 'active'
+
+
+def _priority(m: dict[str, Any]) -> tuple[int, str]:
+    """Earliest expected expiration first; quoted markets before unquoted ones."""
     quoted = 0 if (m.get("yes_bid") or m.get("yes_ask")) else 1
-    return (0 if m.get("status") == "open" else 1, str(m.get("close_time") or "9999")) if quoted == 0 else (2, str(m.get("close_time") or "9999"))
+    return (quoted, str(m.get("expected_expiration_time") or m.get("close_time") or "9999"))
 
 
 def snapshot_orderbooks(client: KalshiClient, markets: list[dict[str, Any]], max_books: int) -> list[dict[str, Any]]:
-    now = iso(utcnow())
-    cands = [m for m in markets if m.get("status") == "open" and m.get("ticker")]
-    cands.sort(key=lambda m: _priority(m, now))
+    cands = [m for m in markets if m.get("status") in LIVE_STATUSES and m.get("ticker")]
+    cands.sort(key=_priority)
     out = []
     for m in cands[:max_books]:
         try:
