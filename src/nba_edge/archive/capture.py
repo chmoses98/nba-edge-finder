@@ -17,7 +17,7 @@ from nba_edge.config import settings
 from nba_edge.kalshi.client import KalshiClient, KalshiError
 from nba_edge.kalshi.discovery import is_nba_series
 from nba_edge.kalshi.normalize import orderbook_levels, quote_cents
-from nba_edge.kalshi.ontology import Ontology, classify_market
+from nba_edge.kalshi.ontology import Ontology, Support, classify_market
 from nba_edge.log import get_logger, kv
 from nba_edge.timeutil import iso, utcnow
 
@@ -109,11 +109,46 @@ def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_o
         e2 = ledger.append_rows("kalshi/orderbooks", books, observed_at=t0, meta={"n": len(books)})
         log.info(kv(event="capture_books_written", path=e2.path, rows=e2.rows))
     # tiny status file (overwritten on purpose: it's a pointer, not an observation)
+    by_support = _count(markets, "_support")
     status = {"last_capture_utc": iso(t0), "n_markets": entry.rows, "n_series": len(series), "requests": client.request_count, "run_id": ledger.run_id,
-              "by_status": _count(markets, "status"), "by_support": _count(markets, "_support"), "by_family": _count(markets, "_family")}
+              "by_status": _count(markets, "status"), "by_support": by_support, "by_family": _count(markets, "_family")}
+    status["alarms"] = capture_alarms(markets, by_support, client, onto, max_orderbooks if with_orderbook else None)
+    status["alarm"] = bool(status["alarms"])
     (out_root / "STATUS_capture.json").write_text(json.dumps(status, indent=1))
     print(json.dumps(status, indent=1))
+    if status["alarm"]:
+        for a in status["alarms"]:
+            log.warning(kv(event="capture_alarm", detail=a))
     return 0
+
+
+def capture_alarms(markets: list[dict[str, Any]], by_support: dict[str, int], client: KalshiClient, onto: Ontology, max_orderbooks: int | None) -> list[str]:
+    """Everything this capture knows it did not fully account for.
+
+    The coverage invariant is "every market DISCOVERED is ACCOUNTED FOR", and until now a breach of
+    it was completely silent: an unknown series classifies UNRESOLVED and nothing failed, warned or
+    alerted, the only trace being a ``by_support`` bucket that nothing ever read back. A brand-new
+    Kalshi series -- precisely the event the ontology exists to survive -- would have appeared,
+    counted as UNRESOLVED and been ignored. These alarms are surfaced by the conductor workflow.
+    """
+    alarms: list[str] = []
+    n_unresolved = by_support.get(str(Support.UNRESOLVED), 0)
+    if n_unresolved:
+        fams = sorted({str(m.get("series_ticker")) for m in markets if m.get("_support") == str(Support.UNRESOLVED)})
+        alarms.append(f"{n_unresolved} market(s) classified UNRESOLVED across series {fams}: the ontology does not describe something on the board")
+    missing_class = [m.get("ticker") for m in markets if not m.get("_family") or not m.get("_support")]
+    if missing_class:
+        alarms.append(f"{len(missing_class)} captured market(s) carry no family/support at all, e.g. {missing_class[:3]}")
+    unknown_series = sorted({str(m.get("series_ticker")) for m in markets if m.get("series_ticker") and onto.family_for_series(str(m.get("series_ticker"))) is None})
+    if unknown_series:
+        alarms.append(f"series on the board with no ontology entry: {unknown_series}")
+    if client.truncations:
+        alarms.append(f"pagination stopped with a live cursor (results we did not see): {client.truncations[:5]}")
+    if max_orderbooks is not None:
+        live = sum(1 for m in markets if m.get("status") in LIVE_STATUSES and m.get("ticker"))
+        if live > max_orderbooks:
+            alarms.append(f"order books truncated: {live} live markets but max_orderbooks={max_orderbooks}")
+    return alarms
 
 
 def _count(rows: list[dict[str, Any]], key: str) -> dict[str, int]:

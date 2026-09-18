@@ -76,3 +76,39 @@ def test_espn_linescore_display_value():
     from nba_edge.data.boxscore import _linescore_value
 
     assert _linescore_value({"displayValue": "30"}) == 30 and _linescore_value({"value": 27.0}) == 27 and _linescore_value({}) == 0
+
+
+def test_coverage_alarms_make_silent_omissions_visible():
+    """An unexplained market must raise an alarm, not merely land in a bucket nobody reads.
+
+    The coverage invariant is "every market DISCOVERED is ACCOUNTED FOR". Before this, a breach was
+    completely silent: a brand-new Kalshi series would be captured, classified UNRESOLVED, and
+    ignored -- no failure, no warning, no alert anywhere in the workflows. The only trace was a
+    `by_support` count that nothing read back.
+    """
+    from nba_edge.archive.capture import capture_alarms
+    from nba_edge.kalshi.client import KalshiClient
+    from nba_edge.kalshi.ontology import Ontology, Support
+
+    onto = Ontology.load()
+    client = KalshiClient()
+
+    clean = [{"ticker": "KXNBAGAME-1", "series_ticker": "KXNBAGAME", "_family": "game_winner", "_support": str(Support.PRICED)}]
+    assert capture_alarms(clean, {str(Support.PRICED): 1}, client, onto, None) == []
+
+    # a series the ontology has never heard of
+    novel = clean + [{"ticker": "KXNBAWEIRD-1", "series_ticker": "KXNBAWEIRD", "_family": None, "_support": str(Support.UNRESOLVED)}]
+    alarms = capture_alarms(novel, {str(Support.PRICED): 1, str(Support.UNRESOLVED): 1}, client, onto, None)
+    assert alarms, "an unmodellable new series must alarm"
+    assert any("UNRESOLVED" in a for a in alarms)
+    assert any("KXNBAWEIRD" in a for a in alarms)
+
+    # a page we stopped reading while the API still had more to give
+    client.truncations.append({"endpoint": "/markets", "series_ticker": "KXNBAPTS", "pages": 20})
+    assert any("live cursor" in a for a in capture_alarms(clean, {str(Support.PRICED): 1}, client, onto, None))
+
+    # more live markets than the order-book cap
+    live = [{"ticker": f"KXNBAGAME-{i}", "series_ticker": "KXNBAGAME", "status": "active",
+             "_family": "game_winner", "_support": str(Support.PRICED)} for i in range(5)]
+    assert any("order books truncated" in a for a in capture_alarms(live, {str(Support.PRICED): 5}, KalshiClient(), onto, 2))
+    assert capture_alarms(live, {str(Support.PRICED): 5}, KalshiClient(), onto, 50) == []

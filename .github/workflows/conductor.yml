@@ -177,3 +177,26 @@ jobs:
           name: archive-snapshot-${{ github.run_id }}
           path: data/archive
           retention-days: 14
+      # Runs last, and deliberately after the archive push: a coverage alarm must make the run
+      # visibly fail, but it must never be the reason a captured snapshot is lost.
+      - name: Surface coverage alarms
+        if: always() && needs.decide.outputs.capture == 'true'
+        run: |
+          set -uo pipefail
+          f=data/archive/STATUS_capture.json
+          [ -f "$f" ] || { echo "no capture status to check"; exit 0; }
+          python - "$f" <<'PY'
+          import json, sys
+          st = json.load(open(sys.argv[1]))
+          alarms = st.get("alarms") or []
+          if not alarms:
+              print(f"coverage OK: {st.get('n_markets')} markets, by_support={st.get('by_support')}")
+              raise SystemExit(0)
+          # The coverage invariant is "every market DISCOVERED is ACCOUNTED FOR". A breach means the
+          # board contains something the ontology does not describe -- a new Kalshi series, a changed
+          # shape, or a truncated page. It must be visible, not buried in a status file nobody reads.
+          for a in alarms:
+              print(f"::warning title=Coverage alarm::{a}")
+          print("::error title=Coverage invariant breached::" + f"{len(alarms)} alarm(s); see the warnings above and data/archive/STATUS_capture.json")
+          raise SystemExit(1)
+          PY

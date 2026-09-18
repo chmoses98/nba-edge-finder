@@ -65,6 +65,13 @@ class KalshiClient:
     _client: httpx.Client | None = None
     _hist_client: httpx.Client | None = None
     request_count: int = 0
+    # Pagination loops that stopped at ``max_pages`` while the API still had a live cursor, i.e.
+    # results we know we did NOT see. A truncated page used to be indistinguishable from an
+    # exhausted one, which is how a silent omission becomes a wrong coverage count.
+    truncations: list[dict[str, Any]] = field(default_factory=list)
+
+    def _note_truncation(self, endpoint: str, **ctx: Any) -> None:
+        self.truncations.append({"endpoint": endpoint} | {k: v for k, v in ctx.items() if v is not None})
 
     def _make(self, base_url: str) -> httpx.Client:
         return httpx.Client(
@@ -199,7 +206,10 @@ class KalshiClient:
             yield from data.get("markets", [])
             pages += 1
             cursor = data.get("cursor")
-            if not cursor or (max_pages is not None and pages >= max_pages):
+            if not cursor:
+                break
+            if max_pages is not None and pages >= max_pages:
+                self._note_truncation("/markets", series_ticker=series_ticker, event_ticker=event_ticker, status=status, pages=pages)
                 break
 
     def get_market(self, ticker: str) -> dict[str, Any]:
