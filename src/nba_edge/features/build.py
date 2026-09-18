@@ -151,8 +151,8 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
         # role change sensitivity: the last `role_window` games get 50% extra weight
         w_role = w.copy()
         w_role[-cfg.role_window :] *= 1.5
-        min_mean = _wmean(mins, w_role, 12.0, 2.0)
-        min_sd = float(np.sqrt(max(_wmean((mins - min_mean) ** 2, w_role, 36.0, 2.0), 4.0)))
+        min_mean = _wmean(mins, w_role, 15.0, 1.0)
+        min_sd = float(np.sqrt(max(_wmean((mins - min_mean) ** 2, w_role, 36.0, 1.0), 4.0)))
         p_start = _wmean(played["started"].to_numpy(dtype=float), w_role, 0.0, 1.0)
         total_min = float(np.sum(w * mins))
         pm = cfg.player_prior_minutes
@@ -193,8 +193,11 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
     teams = {}
     for side in ("home", "away"):
         tid = int(game[f"{side}_team_id"])
-        rest = int(game.get(f"{side}_rest_days", 2))
-        b2b = bool(game.get(f"{side}_b2b", rest <= 1 and game.get(f"{side}_rest_days") is not None))
+        rest_known = game.get(f"{side}_rest_days")
+        if rest_known is None and not team_games.empty:
+            rest_known = rest_days_for(tid, cutoff_date, team_games)
+        rest = int(rest_known) if rest_known is not None else 2
+        b2b = bool(game.get(f"{side}_b2b", rest_known is not None and rest <= 1))
         tp = team_params(tid, str(game.get(f"{side}_tricode", tid)), team_games, cutoff_date, league, cfg, rest, b2b, report)
         tp.players = player_params(tid, player_games, cutoff_date, cfg, injuries_by_team.get(tid, {}), (rosters or {}).get(tid), report)
         if len([p for p in tp.players if p.p_play > 0]) < 8:
