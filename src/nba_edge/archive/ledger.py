@@ -51,6 +51,7 @@ class ManifestEntry:
     written_at_utc: str
     run_id: str
     meta: dict[str, Any]
+    observed_at_utc: str | None = None  # observation instant (partition time); older manifests lack it
 
 
 class Ledger:
@@ -85,7 +86,7 @@ class Ledger:
                 f.write(json.dumps(r, default=str, separators=(",", ":")) + "\n")
                 n += 1
         os.replace(tmp, path)
-        entry = ManifestEntry(path=str(path.relative_to(self.root)), kind=kind, rows=n, sha256=_sha256(path), written_at_utc=iso(utcnow()), run_id=self.run_id, meta=meta or {})
+        entry = ManifestEntry(path=str(path.relative_to(self.root)), kind=kind, rows=n, sha256=_sha256(path), written_at_utc=iso(utcnow()), run_id=self.run_id, meta=meta or {}, observed_at_utc=stamp)
         with self.manifest_path.open("a") as mf:
             mf.write(json.dumps(entry.__dict__, default=str) + "\n")
         return entry
@@ -100,7 +101,7 @@ class Ledger:
         tmp = path.with_suffix(path.suffix + ".tmp")
         tmp.write_bytes(data)
         os.replace(tmp, path)
-        entry = ManifestEntry(path=str(path.relative_to(self.root)), kind=kind, rows=1, sha256=_sha256(path), written_at_utc=iso(utcnow()), run_id=self.run_id, meta=meta or {})
+        entry = ManifestEntry(path=str(path.relative_to(self.root)), kind=kind, rows=1, sha256=_sha256(path), written_at_utc=iso(utcnow()), run_id=self.run_id, meta=meta or {}, observed_at_utc=iso(observed_at))
         with self.manifest_path.open("a") as mf:
             mf.write(json.dumps(entry.__dict__, default=str) + "\n")
         return entry
@@ -148,7 +149,12 @@ class Ledger:
         return problems
 
     def latest(self, kind: str) -> ManifestEntry | None:
+        """Newest entry by observation time (falls back to write time for legacy entries)."""
         entries = [e for e in self.manifest() if e.kind == kind]
         if not entries:
             return None
-        return max(entries, key=lambda e: parse_iso(e.written_at_utc))
+        return max(entries, key=lambda e: parse_iso(e.observed_at_utc or e.written_at_utc))
+
+
+def entry_observed_at(e: ManifestEntry) -> datetime:
+    return parse_iso(e.observed_at_utc or e.written_at_utc)
