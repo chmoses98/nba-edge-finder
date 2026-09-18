@@ -37,7 +37,7 @@ STATUS_P_PLAY = {InjuryStatus.OUT: 0.0, InjuryStatus.DOUBTFUL: 0.15, InjuryStatu
 class BuildConfig:
     team_half_life: float = 15.0
     team_prior_games: float = 12.0
-    player_half_life: float = 10.0
+    player_half_life: float = 5.0  # research/minutes_study: EWM half-life 5 minimises out-of-sample minutes MAE
     player_prior_minutes: float = 300.0
     role_window: int = 5
     include_preseason: bool = False
@@ -77,7 +77,43 @@ def league_rates(team_games: pd.DataFrame) -> dict[str, float]:
     return {"pace": float(pace48.mean()) if len(pace48) else LEAGUE["pace"], "ppp": float(ppp.mean()) if len(ppp) else LEAGUE["ppp"]}
 
 
-def team_params(team_id: int, tricode: str, team_games: pd.DataFrame, cutoff_date: str, league: dict[str, float], cfg: BuildConfig, rest_days: int, b2b: bool, report: BuildReport) -> TeamParams:
+def opponent_adjusted_ratings(team_games: pd.DataFrame, cutoff_date: str, half_life: float, prior_games: float, league: dict[str, float], n_iter: int = 6, include_preseason: bool = False) -> dict[int, tuple[float, float, float]]:
+    """Point-in-time opponent-adjusted (off_ppp, def_ppp, effective_n) per team.
+
+    Iterative strength-of-schedule adjustment: a team's offensive rating in a game is its points per possession
+    minus the opponent's (current estimate of) defensive strength relative to league average; likewise for defence.
+    Ratings are EWM-weighted (half-life in games) and shrunk to the league mean with ``prior_games`` of prior mass.
+    Home-court is removed from game-level ppp before rating (half of LEAGUE home edge to each side)."""
+    g = team_games[team_games["game_date_et"] < cutoff_date]
+    if not include_preseason:
+        g = g[g["season_type"] != "preseason"]
+    g = g[g["possessions"] > 0].sort_values("game_date_et")
+    if g.empty:
+        return {}
+    teams = sorted(set(g["team_id"]) | set(g["opp_team_id"]))
+    off = {t: league["ppp"] for t in teams}
+    dfn = {t: league["ppp"] for t in teams}
+    home_adj = LEAGUE["home_ppp_edge"] / 2.0
+    by_team = {t: sub for t, sub in g.groupby("team_id")}
+    eff_n: dict[int, float] = {}
+    for _ in range(n_iter):
+        new_off, new_dfn = {}, {}
+        for t, sub in by_team.items():
+            w = _ewm_weights(len(sub), half_life)
+            poss = sub["possessions"].to_numpy(dtype=float)
+            hc = np.where(sub["home"].to_numpy(dtype=bool), home_adj, -home_adj)
+            opp = sub["opp_team_id"].to_numpy()
+            o_raw = sub["pts"].to_numpy(dtype=float) / poss - hc - np.array([dfn[o] - league["ppp"] for o in opp])
+            d_raw = sub["opp_pts"].to_numpy(dtype=float) / poss + hc - np.array([off[o] - league["ppp"] for o in opp])
+            new_off[t] = _wmean(o_raw, w, league["ppp"], prior_games)
+            new_dfn[t] = _wmean(d_raw, w, league["ppp"], prior_games)
+            eff_n[t] = float(w.sum())
+        off.update(new_off)
+        dfn.update(new_dfn)
+    return {t: (off[t], dfn[t], eff_n.get(t, 0.0)) for t in teams}
+
+
+def team_params(team_id: int, tricode: str, team_games: pd.DataFrame, cutoff_date: str, league: dict[str, float], cfg: BuildConfig, rest_days: int, b2b: bool, report: BuildReport, ratings: dict[int, tuple[float, float, float]] | None = None) -> TeamParams:
     g = team_games[(team_games["team_id"] == team_id) & (team_games["game_date_et"] < cutoff_date)]
     if not cfg.include_preseason:
         g = g[g["season_type"] != "preseason"]
@@ -96,8 +132,11 @@ def team_params(team_id: int, tricode: str, team_games: pd.DataFrame, cutoff_dat
     off = np.where(poss > 0, g["pts"].to_numpy(dtype=float) / np.maximum(poss, 1), league["ppp"])
     dfn = np.where(poss > 0, g["opp_pts"].to_numpy(dtype=float) / np.maximum(poss, 1), league["ppp"])
     tp.pace = _wmean(pace48, w, league["pace"], cfg.team_prior_games)
-    tp.off_ppp = _wmean(off, w, league["ppp"], cfg.team_prior_games)
-    tp.def_ppp = _wmean(dfn, w, league["ppp"], cfg.team_prior_games)
+    if ratings and team_id in ratings:
+        tp.off_ppp, tp.def_ppp, _ = ratings[team_id]  # opponent-adjusted (strength of schedule) ratings
+    else:
+        tp.off_ppp = _wmean(off, w, league["ppp"], cfg.team_prior_games)
+        tp.def_ppp = _wmean(dfn, w, league["ppp"], cfg.team_prior_games)
     eff_n = float(w.sum())
     tp.rating_sd = float(np.clip(0.045 / np.sqrt(1 + eff_n / 10.0), 0.012, 0.045))
     if "oreb" in g and "fga" in g:
@@ -190,6 +229,7 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
     report = BuildReport(cutoff_date=cutoff_date)
     league = league_rates(team_games[team_games["game_date_et"] < cutoff_date]) if not team_games.empty else league_rates(team_games)
     report.league = league
+    ratings = opponent_adjusted_ratings(team_games, cutoff_date, cfg.team_half_life, cfg.team_prior_games, league, include_preseason=cfg.include_preseason) if not team_games.empty else {}
     teams = {}
     for side in ("home", "away"):
         tid = int(game[f"{side}_team_id"])
@@ -198,7 +238,7 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
             rest_known = rest_days_for(tid, cutoff_date, team_games)
         rest = int(rest_known) if rest_known is not None else 2
         b2b = bool(game.get(f"{side}_b2b", rest_known is not None and rest <= 1))
-        tp = team_params(tid, str(game.get(f"{side}_tricode", tid)), team_games, cutoff_date, league, cfg, rest, b2b, report)
+        tp = team_params(tid, str(game.get(f"{side}_tricode", tid)), team_games, cutoff_date, league, cfg, rest, b2b, report, ratings)
         tp.players = player_params(tid, player_games, cutoff_date, cfg, injuries_by_team.get(tid, {}), (rosters or {}).get(tid), report)
         if len([p for p in tp.players if p.p_play > 0]) < 8:
             report.warnings.append(f"team {tp.tricode}: fewer than 8 available players known; CANNOT_TRUST_INPUTS")

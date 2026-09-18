@@ -68,3 +68,9 @@ def test_espn_minutes_parser():
 
     assert parse_espn_minutes("--") == 0.0 and parse_espn_minutes("") == 0.0 and parse_espn_minutes(None) == 0.0
     assert parse_espn_minutes("34") == 34.0 and abs(parse_espn_minutes("34:30") - 34.5) < 1e-9
+
+
+def test_espn_linescore_display_value():
+    from nba_edge.data.boxscore import _linescore_value
+
+    assert _linescore_value({"displayValue": "30"}) == 30 and _linescore_value({"value": 27.0}) == 27 and _linescore_value({}) == 0

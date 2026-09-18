@@ -107,6 +107,18 @@ def fetch_nba_cdn_boxscore(game_id: str, ttl_s: float | None = None) -> FinalBox
     return parse_nba_cdn_boxscore(f.json(), parse_iso(f.fetched_at_utc))
 
 
+def _linescore_value(x: Any) -> int:
+    """ESPN summary linescores carry 'displayValue' ('30'); scoreboard linescores carry numeric 'value'."""
+    for k in ("value", "displayValue"):
+        v = x.get(k) if isinstance(x, dict) else None
+        if v not in (None, ""):
+            try:
+                return int(float(v))
+            except (TypeError, ValueError):
+                continue
+    return 0
+
+
 def parse_espn_summary(payload: dict[str, Any], fetched_at_utc: datetime | None = None) -> FinalBoxScore:
     """ESPN summary -> FinalBoxScore. Player ids here are ESPN athlete ids (negative-encoded so they can never be
     confused with NBA ids); identity aliasing maps them to NBA ids before settlement."""
@@ -121,8 +133,8 @@ def parse_espn_summary(payload: dict[str, Any], fetched_at_utc: datetime | None 
     home_c, away_c = comps["home"], comps["away"]
     home = reg.by_tricode(home_c["team"]["abbreviation"])
     away = reg.by_tricode(away_c["team"]["abbreviation"])
-    hl = [int(x.get("value", 0)) for x in home_c.get("linescores", [])]
-    al = [int(x.get("value", 0)) for x in away_c.get("linescores", [])]
+    hl = [_linescore_value(x) for x in home_c.get("linescores", [])]
+    al = [_linescore_value(x) for x in away_c.get("linescores", [])]
     periods: dict[str, tuple[int, int]] = {}
     n_ot = 0
     for i in range(max(len(hl), len(al))):

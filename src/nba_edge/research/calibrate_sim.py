@@ -37,8 +37,14 @@ def empirical(team_games: pd.DataFrame) -> dict:
     g["team_season_mean"] = g.groupby(["season", "team_id"])["pts"].transform("mean")
     out["team_pts_resid_sd"] = float((g["pts"] - g["team_season_mean"]).std())
     out["ot_rate"] = float((home["n_ot"] > 0).mean())
-    q = home[["q1", "q2", "q3", "q4"]].sum() + g[g["home"] == False][["q1", "q2", "q3", "q4"]].sum()  # noqa: E712
+    qcols = ["q1", "q2", "q3", "q4"]
+    valid = g.dropna(subset=qcols)
+    valid = valid[(valid[qcols].sum(axis=1) + valid["ot_pts"].fillna(0)) == valid["pts"]]
+    q = valid[qcols].sum()
     out["quarter_shares"] = (q / q.sum()).round(4).tolist()
+    out["quarter_share_n_games"] = int(len(valid) // 2)
+    out["q1_total_sd"] = float((valid[valid["home"] == True]["q1"].to_numpy() + valid[valid["home"] == False]["q1"].to_numpy()).std()) if len(valid) else None  # noqa: E712
+    out["first_half_total_sd"] = float(((valid[valid["home"] == True][["q1", "q2"]].sum(axis=1)).to_numpy() + (valid[valid["home"] == False][["q1", "q2"]].sum(axis=1)).to_numpy()).std()) if len(valid) else None  # noqa: E712
     reg_min = 48 + 5 * home["n_ot"]
     out["pace_mean"] = float((home["possessions"] / reg_min * 48).mean())
     out["pace_sd_between_games"] = float((home["possessions"] / reg_min * 48).std())

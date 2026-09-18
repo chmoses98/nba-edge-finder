@@ -10,15 +10,15 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 LEAGUE = {
-    "pace": 99.0,  # possessions per team per 48 min
-    "pace_sd": 3.0,  # game-level pace uncertainty (sd of realised possessions around expectation)
-    "ppp": 1.145,  # points per possession (2024-26 era offensive rating ~114.5)
+    "pace": 97.4,  # possessions per team per 48 min (ESPN-derived 2023-26 regular season; research/calibrate_sim)
+    "pace_sd": 3.5,  # game-level pace uncertainty (sd of realised possessions around expectation)
+    "ppp": 1.17,  # points per possession (ESPN-derived 2023-26; possessions formula 0.96*(FGA+0.44FTA-OREB+TOV))
     "home_ppp_edge": 0.015,  # ~1.5 pts/100 home-court edge split as +/- 0.0075 to each side
     "b2b_ppp_penalty": 0.020,  # points per possession lost on the second night of a back-to-back (~2 pts/100)
-    "team_shooting_shock_sd": 0.03,  # logit-scale shared shooting shock per team per game (calibrated with team_fga_resid_sd to team pts sd ~12.5)
-    "game_env_shock_sd": 0.08,  # logit-scale shooting shock shared by BOTH teams (game environment); drives home/away score correlation
-    "team_fga_resid_sd": 2.0,
-    "endgame_compression": 0.18,  # fraction of raw margin transferred leader->trailer (calibrates margin sd ~13.5 vs total sd ~19); crude game-script term  # residual sd of team FGA given possessions (pace variance is already in possessions)
+    "team_shooting_shock_sd": 0.04,  # logit-scale shared shooting shock per team per game (calibrated with team_fga_resid_sd to team pts sd ~12.5)
+    "game_env_shock_sd": 0.06,  # logit-scale shooting shock shared by BOTH teams (game environment); drives home/away score correlation
+    "team_fga_resid_sd": 2.5,
+    "endgame_compression": 0.03,  # fraction of raw margin transferred leader->trailer; empirical margin sd is 16.0 (2023-26) so only a small term is needed  # residual sd of team FGA given possessions (pace variance is already in possessions)
     "player_shooting_shock_sd": 0.06,
     "three_share": 0.42,  # share of FGA that are 3PA
     "fg2_pct": 0.545,
@@ -30,7 +30,7 @@ LEAGUE = {
     "tov_per_poss": 0.135,
     "stl_share_of_opp_tov": 0.55,
     "blk_per_opp_2pa": 0.080,
-    "ot_rate_target": 0.055,
+    "ot_rate_target": 0.048,  # empirical 2023-26 regular season (research/calibrate_sim)
     "quarter_shares": (0.253, 0.247, 0.255, 0.245),
     "quarter_dirichlet_conc": 60.0,
     "blowout_margin": 18,

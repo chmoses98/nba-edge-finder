@@ -184,7 +184,7 @@ def test_star_pra_and_double_double_consistent(synthetic_sim):
 
 
 def test_dispersion_calibration(synthetic_sim):
-    assert 12.0 <= synthetic_sim.margin.std() <= 16.0
+    assert 14.0 <= synthetic_sim.margin.std() <= 18.5  # empirical 2023-26 regular season: 16.0
     assert 17.0 <= synthetic_sim.total.std() <= 24.0
     assert 10.5 <= synthetic_sim.home_pts.std() <= 14.5
     assert 105.0 <= synthetic_sim.home_pts.mean() <= 122.0
