@@ -13,9 +13,9 @@ is open.
 | id | finding | why it matters |
 |---|---|---|
 | **R1** | **`impact_ppp` is unestimated**, so the simulator has no team-level injury response. The algebra is now correct but the coefficient is 0.0 for every real player. | Ruling out a 29.7-ppg star moves the team by 0.68 points. Estimating it needs on/off or lineup data not yet ingested. **This alone blocks SHADOW.** |
-| **R2** | `rating_scale = 1.6` was fitted on the same 300 games it is reported on; ~0.047 nats of the reported 0.569 → 0.522 gain is in-sample — larger than the sim-vs-Elo gap it is cited to support. | The headline "the simulator beats Elo" claim is not established. Needs multi-season walk-forward with tuning and evaluation on disjoint games. |
+| ~~R2~~ **RESOLVED** | `rating_scale` re-estimated out of sample and raised 1.6 → **1.9** (`docs/research/RATING_SCALE.md`): tuned on 2023-24/24-25, confirmed once on a 2025-26 holdout sharing no games, paired per game, 95% CI [+0.0015, +0.0140] excludes zero. | The **second half of R2 stands and is now measured**: on the holdout, Elo scores 0.5170 against the simulator's 0.5247. The paired intervals contain zero, so sim and Elo are **statistically indistinguishable on moneylines, with Elo's point estimate ahead**. "The simulator beats Elo" remains **not established**. |
 | **R3** | `LEAGUE` constants were calibrated on the full sample. | Same in-sample concern, smaller magnitude. |
-| **R4** | Upper-tail player points are underpredicted. | Ablations needed, not a multiplier. |
+| ~~R4~~ **RESOLVED (and re-framed)** | Not a tail problem: the model under-predicts `P(over)` at every line level in every prop family, 13–25% low on all four counting stats (`docs/research/PROP_BIAS_DIAGNOSIS.md`). | Cause is **minutes, not efficiency** — points per minute is accurate. The simulator gives ≥5 minutes to **13.56 players per team against 10.07 in reality**, so starters are starved by roster dilution. Fix belongs in minutes allocation; a multiplier would be wrong for the bench players already over-served. |
 | **R5** | `usage_elasticity` is declared, documented and never read. Bench players get exactly zero OT minutes. `_endgame_compression` moves points without moving makes (24 draws with `pts < 3·fg3m`). | Each distorts prop tails specifically. |
 
 ## Execution safety (fix before any real order is sized)

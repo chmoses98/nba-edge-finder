@@ -45,7 +45,14 @@ class BuildConfig:
     min_player_games: int = 1
     max_roster: int = 15
     recent_team_games: int = 10  # rotation membership window (team games before cutoff); replaces the earlier per-player proxy
-    rating_scale: float = 1.6  # multiplier on (rating - league) after shrinkage; walk-forward 2026-03/04: sim margins correlate 0.96 with Elo but are compressed ~0.6x
+    # Multiplier on (rating - league) after shrinkage: how far apart team strength is spread.
+    # 1.9 from docs/research/RATING_SCALE.md -- grid searched on seasons 2023-24/24-25 and confirmed
+    # ONCE on a 2025-26 holdout that shares no games with the tune set, paired per game: 1.6 is
+    # worse by 0.0079 nats, 95% CI [0.0015, 0.0140], so the interval excludes zero. The previous
+    # 1.6 was fitted on the same ~300 games it was reported on.
+    # Not refined past this grid on purpose: a finer search against the same holdout would make it
+    # a tune set, which is the error this replaced.
+    rating_scale: float = 1.9
 
 
 @dataclass
