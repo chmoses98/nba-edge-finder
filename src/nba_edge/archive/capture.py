@@ -12,13 +12,14 @@ from pathlib import Path
 from typing import Any
 
 from nba_edge.archive.ledger import Ledger
+from nba_edge.archive.status import status_age_minutes
 from nba_edge.config import settings
 from nba_edge.kalshi.client import KalshiClient, KalshiError
 from nba_edge.kalshi.discovery import is_nba_series
 from nba_edge.kalshi.normalize import orderbook_levels, quote_cents
 from nba_edge.kalshi.ontology import Ontology, classify_market
 from nba_edge.log import get_logger, kv
-from nba_edge.timeutil import iso, parse_iso, utcnow
+from nba_edge.timeutil import iso, utcnow
 
 log = get_logger(__name__)
 
@@ -124,11 +125,5 @@ def _count(rows: list[dict[str, Any]], key: str) -> dict[str, int]:
 
 
 def last_capture_age_minutes(out_root: Path) -> float | None:
-    p = out_root / "STATUS_capture.json"
-    if not p.exists():
-        return None
-    try:
-        ts = parse_iso(json.loads(p.read_text())["last_capture_utc"])
-    except (KeyError, ValueError, json.JSONDecodeError):
-        return None
-    return (utcnow() - ts).total_seconds() / 60
+    """Re-exported from ``nba_edge.archive.status``; see that module for why it lives there."""
+    return status_age_minutes(out_root / "STATUS_capture.json", "last_capture_utc")

@@ -1,7 +1,7 @@
 name: ci
 on:
   push:
-    branches: ["**"]
+    branches-ignore: ["data-archive"]  # the bot pushes snapshots there every few minutes; it carries no code to test
   pull_request:
 permissions:
   contents: read
