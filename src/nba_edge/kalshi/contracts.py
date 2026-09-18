@@ -187,7 +187,7 @@ def build_contract(m: dict[str, Any], ontology: Ontology | None = None, reg: Tea
         conf = "low"
     if cls.period in ("1Q", "2Q", "3Q", "4Q", "1H", "2H") and "regulation" not in rules.lower() and rules:
         notes.append("period market rules do not mention regulation; verify OT handling")
-    if conf == "low" and support in (Support.PRICED, Support.BUILDABLE):
+    if conf == "low" and support in (Support.MODELABLE, Support.BUILDABLE):
         support = Support.UNRESOLVED
         notes.append("support downgraded: semantics not proven")
 

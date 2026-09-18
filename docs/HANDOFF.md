@@ -16,7 +16,7 @@ What now exists is a working, tested, automated pipeline from Kalshi discovery t
   total, team total, first-half, player points/rebounds/assists/threes, win totals) and 3,931 ESPN box scores
   (2023-24..2025-26, 105,891 player-game rows).
 - A coherent joint Monte Carlo game simulator (availability → minutes → possessions → opportunity → efficiency →
-  bottom-up team scores → OT → quarters → rebounds/assists/steals/blocks/turnovers) prices every PRICED contract
+  bottom-up team scores → OT → quarters → rebounds/assists/steals/blocks/turnovers) prices every MODELABLE contract
   from the same draws, with convergence-driven draw counts and 14 enforced invariants.
 - Fee-aware YES/NO economics, bet-up-to, thesis grouping with simulated correlations, fail-closed gates that
   distinguish NO_EDGE from CANNOT_TRUST_INPUTS, immutable prediction rows carrying model/sim/feature versions,
@@ -48,7 +48,7 @@ What now exists is a working, tested, automated pipeline from Kalshi discovery t
 
 ## C. Kalshi market map
 
-Discovery (live API, off-season): 256 NBA-related series. Under the ontology (v2026.09.18.2): PRICED 9 series,
+Discovery (live API, off-season): 256 NBA-related series. Under the ontology (v2026.09.18.2): MODELABLE 9 series,
 BUILDABLE 53, RESEARCH 82, UNMODELABLE 112, UNRESOLVED 0. Live markets on 2026-09-18: 2,818 active (6 opening-night
 game winners, 312 win totals, futures/awards/all-NBA/transactions dominate the rest).
 
@@ -56,7 +56,7 @@ Historical (2025-26 season, settled): KXNBAPTS 23,562 · KXNBAREB 22,656 · KXNB
 KXNBA3PT 16,619 · KXNBATOTAL 14,787 · KXNBATEAMTOTAL 9,486 · KXNBA1HSPREAD 5,823 · KXNBA1HTOTAL 4,707 · KXNBAGAME
 2,898 · KXNBA1HWINNER 1,569 · KXNBAWINS 270 · KXNBAPRA 0 (series exists but had no markets).
 
-Families and states: game_winner/spread/total/team_total and player pts/reb/ast/3pt/PRA are PRICED (semantics
+Families and states: game_winner/spread/total/team_total and player pts/reb/ast/3pt/PRA are MODELABLE (semantics
 proven against real markets with high confidence; tests in `tests/test_contracts_real.py`); quarters/halves, win
 margin, OT, steals/blocks/turnovers, PR/PA/RA, double/triple-double, head-to-head, parlays are BUILDABLE; futures,
 series props, first basket, race-to-X, starting lineups, season specials are RESEARCH; awards, draft, all-NBA
@@ -182,7 +182,7 @@ settled evidence per family (thresholds in `evaluation/authority.py` are placeho
 4. Player-prop walk-forward: simulate historical games, price the settled ladders, evaluate by threshold distance.
 5. Merge to `main` so the conductor schedule runs; watch the first preseason slate end to end.
 6. Estimate rest/b2b, home-court and pace effects from the dataset (replace literature priors).
-7. Period (1Q/1H) dispersion calibration → promote period families to PRICED if calibrated.
+7. Period (1Q/1H) dispersion calibration → promote period families to MODELABLE if calibrated.
 8. Correlated availability and starter-lineup confirmation from the official injury report near tip.
-9. Season simulator wiring (remaining schedule from ESPN, ratings) → win totals / playoff qualification BUILDABLE→PRICED.
+9. Season simulator wiring (remaining schedule from ESPN, ratings) → win totals / playoff qualification BUILDABLE→MODELABLE.
 10. Portfolio sizing that respects the thin player-prop books (median volume ~400–1,100 contracts).

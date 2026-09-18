@@ -23,7 +23,7 @@ def test_player_props_parse_with_high_confidence(onto, series, family, stat):
         c = build_contract(m, onto)
         assert c.family == family and c.stat == stat and c.scope == "player"
         assert c.comparator == "gt" and c.threshold == float(m["floor_strike"])
-        assert c.semantics_confidence == "high" and c.support == "PRICED", c.notes
+        assert c.semantics_confidence == "high" and c.support == "MODELABLE", c.notes
         assert c.entity_name and c.entity_name in m["title"]
         assert c.kalshi_entity_uuid
         assert c.team_id is not None  # from ticker suffix tricode
@@ -33,7 +33,7 @@ def test_player_props_parse_with_high_confidence(onto, series, family, stat):
 def test_game_markets_parse(onto, series, family):
     for m in FIX[series]:
         c = build_contract(m, onto)
-        assert c.family == family and c.support == "PRICED" and c.semantics_confidence == "high", (m["ticker"], c.notes)
+        assert c.family == family and c.support == "MODELABLE" and c.semantics_confidence == "high", (m["ticker"], c.notes)
         if family != "game_total":
             assert c.team_id is not None
 

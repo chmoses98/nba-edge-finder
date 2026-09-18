@@ -98,7 +98,7 @@ def _contract_from_row(r) -> Contract:
         game_id=r.game_id, team_id=None if pd.isna(r.team_id) else int(r.team_id),
         nba_id=None if pd.isna(r.player_id) else int(r.player_id),
         threshold=None if pd.isna(r.threshold) else float(r.threshold),
-        comparator=r.comparator, support="PRICED", semantics_confidence="high",
+        comparator=r.comparator, support="MODELABLE", semantics_confidence="high",
     )
 
 

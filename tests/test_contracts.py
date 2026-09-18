@@ -18,7 +18,7 @@ def test_game_winner_sample(onto):
     c = build_contract(FIX["KXNBAGAME"], onto)
     assert c.family == "game_winner" and c.stat == "winner" and c.comparator == "gt" and c.threshold == 0.0
     assert c.team_id == 1610612759  # SAS from suffix
-    assert c.semantics_confidence == "high" and c.support == "PRICED"
+    assert c.semantics_confidence == "high" and c.support == "MODELABLE"
 
 
 def test_spread_from_summer_league_shape(onto):

@@ -69,14 +69,27 @@ def snapshot_markets(client: KalshiClient, series: list[str], statuses: list[str
 LIVE_STATUSES = {"open", "active"}  # Kalshi's filter param says 'open'; the market object says 'active'
 
 
-_SUPPORT_RANK = {"PRICED": 0, "BUILDABLE": 1, "RESEARCH": 2, "UNRESOLVED": 2, "UNMODELABLE": 3}
+_SUPPORT_RANK = {
+    Support.MODELABLE: 0, Support.BUILDABLE: 1, Support.RESEARCH: 2, Support.UNRESOLVED: 2, Support.UNMODELABLE: 3,
+}
+_UNKNOWN_SUPPORT_RANK = 2
 
 
 def _priority(m: dict[str, Any]) -> tuple[int, int, str]:
-    """Priceable families first, then quoted markets, then earliest expected expiration."""
+    """Modelable families first, then quoted markets, then earliest expected expiration."""
     q = m.get("_quote_cents") or {}
     quoted = 0 if (q.get("yes_bid") or q.get("yes_ask")) else 1
-    return (_SUPPORT_RANK.get(str(m.get("_support")), 2), quoted, str(m.get("expected_expiration_time") or m.get("close_time") or "9999"))
+    raw = m.get("_support")
+    # Support.parse accepts names persisted before the MODELABLE rename, so archived rows keep
+    # ranking correctly. An unrecognised state used to fall silently to rank 2, which is how a
+    # future rename would quietly demote every modelable market without anyone noticing.
+    state = Support.parse(raw)
+    if state is None:
+        log.warning(kv(event="unknown_support_state", support=str(raw), ticker=str(m.get("ticker"))))
+        rank = _UNKNOWN_SUPPORT_RANK
+    else:
+        rank = _SUPPORT_RANK[state]
+    return (rank, quoted, str(m.get("expected_expiration_time") or m.get("close_time") or "9999"))
 
 
 def snapshot_orderbooks(client: KalshiClient, markets: list[dict[str, Any]], max_books: int) -> list[dict[str, Any]]:

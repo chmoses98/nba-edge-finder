@@ -8,7 +8,7 @@ Two layers:
    ``UNRESOLVED`` with a reason — never silently dropped.
 
 Support states (coverage invariant; every ticker gets exactly one):
-    PRICED      : simulator + contract semantics produce a probability we stand behind (subject to gates)
+    MODELABLE   : simulator + contract semantics produce a probability we stand behind (subject to gates)
     BUILDABLE   : semantics understood, sim output exists or is near, but pricing not wired/validated
     RESEARCH    : semantics understood, but we do not yet have a defensible model (e.g. first basket)
     UNMODELABLE : semantics understood; we will not model (e.g. awards voting, draft)
@@ -31,11 +31,43 @@ ONTOLOGY_PATH = REPO_ROOT / "data" / "catalog" / "market_ontology.yaml"
 
 
 class Support(StrEnum):
-    PRICED = "PRICED"
-    BUILDABLE = "BUILDABLE"
-    RESEARCH = "RESEARCH"
-    UNMODELABLE = "UNMODELABLE"
-    UNRESOLVED = "UNRESOLVED"
+    """How far along a market family is TECHNICALLY: can we parse it, model it, settle it?
+
+    This is a different axis from betting authority (RESEARCH / SHADOW / LIMITED / TRUSTED) and the
+    two must never be read as one. The technical state used to be called ``PRICED``, which reads as
+    a completed act on a real market -- an authority claim -- and a slate row emitted
+    ``"support": "MODELABLE"`` next to ``"authority": "RESEARCH"`` where ``Support.RESEARCH`` and
+    ``Authority.RESEARCH`` are the same string meaning different things. ``MODELABLE`` says only
+    what is true: we can model this family. It also pairs properly with BUILDABLE and UNMODELABLE.
+    """
+
+    MODELABLE = "MODELABLE"  # semantics proven against real observed markets; we can price and settle it
+    BUILDABLE = "BUILDABLE"  # the simulator can produce the quantity, but the market side is unproven
+    RESEARCH = "RESEARCH"  # interesting, not modelled
+    UNMODELABLE = "UNMODELABLE"  # we do not expect to model this
+    UNRESOLVED = "UNRESOLVED"  # we do not know what this is -- always fail closed
+
+    @classmethod
+    def parse(cls, value: str | None) -> Support | None:
+        """Read a support state, accepting names persisted before the MODELABLE rename.
+
+        The archive is append-only and already holds rows written under the old name, so those must
+        keep resolving forever. Never write a legacy name back out.
+        """
+        if value is None:
+            return None
+        v = str(value).strip().upper()
+        if v in _LEGACY_SUPPORT_NAMES:
+            return cls(_LEGACY_SUPPORT_NAMES[v])
+        try:
+            return cls(v)
+        except ValueError:
+            return None
+
+
+# Support states written before a rename. Keys are the persisted spelling, values the current one.
+# The immutable archive already contains the old name; it must never stop resolving.
+_LEGACY_SUPPORT_NAMES = {"PRICED": "MODELABLE"}
 
 
 class Scope(StrEnum):

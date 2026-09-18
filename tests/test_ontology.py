@@ -14,7 +14,7 @@ def test_ontology_loads_and_has_no_duplicate_series():
 def test_classify_known_series():
     o = Ontology.load()
     c = classify_market({"ticker": "KXNBAGAME-26OCT21BOSNYK-BOS", "title": "Boston wins?"}, o)
-    assert c.family == "game_winner" and c.support == Support.PRICED and c.via == "ontology"
+    assert c.family == "game_winner" and c.support == Support.MODELABLE and c.via == "ontology"
 
 
 def test_classify_unknown_series_is_unresolved_with_guess():
@@ -58,17 +58,17 @@ def test_every_discovered_series_resolves_to_a_family():
         assert o.family_for_series(t) in o.families
 
 
-def test_priced_families_are_exactly_the_eight_with_observed_markets():
-    """PRICED must mean "we have seen real markets of this shape and proved their semantics".
+def test_modelable_families_are_exactly_the_eight_with_observed_markets():
+    """MODELABLE must mean "we have seen real markets of this shape and proved their semantics".
 
-    player_pra was PRICED on zero evidence: 0 KXNBAPRA markets in the entire historical pull and 0
+    player_pra was MODELABLE (then called PRICED) on zero evidence: 0 KXNBAPRA markets in the entire historical pull and 0
     in every discovery status. The simulator can draw PRA, which makes it BUILDABLE -- but nothing
     had ever confirmed how Kalshi words, strikes or voids such a market, and build_contract would
     have priced the assumed shape with semantics_confidence='high'. This test is the gate: a family
     joins this set only after real markets of that family have been observed and replayed.
     """
     o = Ontology.load()
-    priced = {name for name, f in o.families.items() if f.support == Support.PRICED}
+    priced = {name for name, f in o.families.items() if f.support == Support.MODELABLE}
     assert priced == {
         "game_winner", "game_spread", "game_total", "team_total",
         "player_points", "player_rebounds", "player_assists", "player_threes",
@@ -96,3 +96,27 @@ def test_offcourt_series_are_unmodelable_not_unresolved():
         assert o.families[o.family_for_series(t)].support == Support.RESEARCH, t
     for t in ("KXNBAWINMARGIN", "KXNBAOT", "KXNBAH2HPRA", "KXNBA2D", "KXNBAFTM", "KXNBAPREPACK2ML"):
         assert o.families[o.family_for_series(t)].support == Support.BUILDABLE, t
+
+
+def test_legacy_priced_name_still_resolves_from_the_immutable_archive():
+    """The archive already holds ``"_support": "PRICED"`` rows and is append-only.
+
+    The technical state was renamed PRICED -> MODELABLE because "PRICED" reads as a completed act on
+    a real market, i.e. an authority claim, and a slate row emitted ``"support": "PRICED"`` right
+    next to ``"authority": "RESEARCH"`` -- where Support.RESEARCH and Authority.RESEARCH are the
+    same string on different axes. Renaming a value that has been persisted is only safe if the old
+    spelling keeps resolving forever, so that is pinned here.
+    """
+    assert Support.parse("PRICED") is Support.MODELABLE
+    assert Support.parse("priced") is Support.MODELABLE
+    assert Support.parse("MODELABLE") is Support.MODELABLE
+    assert Support.parse("UNRESOLVED") is Support.UNRESOLVED
+    assert Support.parse("nonsense") is None and Support.parse(None) is None
+
+    # ranking must be identical for the old and new spelling, or archived markets silently demote
+    from nba_edge.archive.capture import _priority
+    assert _priority({"_support": "PRICED"})[0] == _priority({"_support": "MODELABLE"})[0]
+
+    # and we must never write the legacy name back out
+    assert str(Support.MODELABLE) == "MODELABLE"
+    assert not hasattr(Support, "PRICED")

@@ -33,10 +33,10 @@ def main(out: Path = REPO_ROOT / "docs" / "KALSHI_MARKET_MAP.md") -> int:
     L = ["# Kalshi NBA market map", "", f"Discovery run: `{s['discovered_at']}` · ontology `{onto.version}` · {s['n_series_total']} series enumerated on Kalshi · {len(s['nba_series'])} NBA-related series · {s['total_markets']} NBA markets scanned (all lifecycle statuses, live API).", "",
          "Off-season caveat: game/player series had 0 live markets on the discovery date (season starts 2026-10-20; last season's markets are archived to the historical API). Market counts for those families come from the summer-league analogues and from `data/history/kalshi` once the historical pull lands.", "",
          "## Coverage invariant", "", "| support | series | markets (live scan) |", "|---|---:|---:|"]
-    for k in ("PRICED", "BUILDABLE", "RESEARCH", "UNMODELABLE", "UNRESOLVED"):
+    for k in ("MODELABLE", "BUILDABLE", "RESEARCH", "UNMODELABLE", "UNRESOLVED"):
         L.append(f"| {k} | {support_series.get(k, 0)} | {support_markets.get(k, 0)} |")
     L += ["", "## Families", ""]
-    for support in ("PRICED", "BUILDABLE", "RESEARCH", "UNMODELABLE"):
+    for support in ("MODELABLE", "BUILDABLE", "RESEARCH", "UNMODELABLE"):
         L += [f"### {support}", ""]
         for fam, spec in onto.families.items():
             if str(spec.support) != support:

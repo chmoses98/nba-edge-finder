@@ -238,7 +238,7 @@ def summary_markdown(s: DiscoverySummary) -> str:
         "| support | markets |",
         "|---|---:|",
     ]
-    for k in ("PRICED", "BUILDABLE", "RESEARCH", "UNMODELABLE", "UNRESOLVED"):
+    for k in ("MODELABLE", "BUILDABLE", "RESEARCH", "UNMODELABLE", "UNRESOLVED"):
         lines.append(f"| {k} | {s.support_counts.get(k, 0)} |")
     lines += ["", "## NBA series", "", "| series | family | support | fee | unopened | open | closed | settled | strike_types | parse |", "|---|---|---|---|---:|---:|---:|---:|---|---|"]
     for r in s.nba_series:

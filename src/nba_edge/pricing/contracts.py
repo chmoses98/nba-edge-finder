@@ -1,7 +1,7 @@
 """Price a ``Contract`` against a ``SimResult``: P(YES) with Monte Carlo standard error and the per-draw YES
 indicator (used for correlation / best-expression analysis).
 
-The contract's semantics must already be proven (support PRICED/BUILDABLE, confidence high/medium) — otherwise
+The contract's semantics must already be proven (support MODELABLE/BUILDABLE, confidence high/medium) — otherwise
 ``price_contract`` returns ``Priced(supported=False)`` with a reason, never a number.
 """
 
@@ -14,7 +14,7 @@ import numpy as np
 from nba_edge.schemas.market import Contract
 from nba_edge.sim.result import SimResult
 
-PRICEABLE_SUPPORT = {"PRICED", "BUILDABLE"}
+PRICEABLE_SUPPORT = {"MODELABLE", "BUILDABLE"}
 PRICEABLE_CONF = {"high", "medium"}
 PLAYER_STATS = {"pts", "reb", "ast", "fg3m", "stl", "blk", "tov", "pra", "pr", "pa", "ra", "double_double", "triple_double"}
 

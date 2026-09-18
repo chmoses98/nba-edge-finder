@@ -1,6 +1,6 @@
 # Kalshi NBA market map
 
-Discovery run: `2026-09-18T07:06:30Z` · ontology `2026.09.18.2` · 14154 series enumerated on Kalshi · 256 NBA-related series · 5552 NBA markets scanned (all lifecycle statuses, live API).
+Discovery run: `2026-09-18T07:06:30Z` · ontology `2026.09.18.3` · 14154 series enumerated on Kalshi · 256 NBA-related series · 5552 NBA markets scanned (all lifecycle statuses, live API).
 
 Off-season caveat: game/player series had 0 live markets on the discovery date (season starts 2026-10-20; last season's markets are archived to the historical API). Market counts for those families come from the summer-league analogues and from `data/history/kalshi` once the historical pull lands.
 
@@ -8,15 +8,15 @@ Off-season caveat: game/player series had 0 live markets on the discovery date (
 
 | support | series | markets (live scan) |
 |---|---:|---:|
-| PRICED | 9 | 6 |
-| BUILDABLE | 53 | 2 |
+| MODELABLE | 8 | 6 |
+| BUILDABLE | 54 | 2 |
 | RESEARCH | 82 | 2856 |
 | UNMODELABLE | 112 | 2688 |
 | UNRESOLVED | 0 | 0 |
 
 ## Families
 
-### PRICED
+### MODELABLE
 
 **game_winner** — scope `game`, stat `winner`, period `FULL`. Which team wins the game (incl. OT). YES on a team-specific market.
   - settlement: Settles on final score incl. overtime. Postponed games: Kalshi typically extends or voids; treat as UNRESOLVED until market result field says so.
@@ -46,9 +46,6 @@ Off-season caveat: game/player series had 0 live markets on the discovery date (
 
 **player_threes** — scope `player`, stat `fg3m`, period `FULL`. 
   - series observed: `KXNBA3PT` (0)
-
-**player_pra** — scope `player`, stat `pra`, period `FULL`. 
-  - series observed: `KXNBAPRA` (0)
 
 ### BUILDABLE
 
@@ -90,6 +87,9 @@ Off-season caveat: game/player series had 0 live markets on the discovery date (
 **parlay_combo** — scope `other`, stat `parlay`, period `FULL`. Pre-packaged combos / multivariate event contracts (2-3 leg moneyline parlays, MVE single/multi game). Price from joint sim once legs are parsed.
   - patterns: `^KXNBAPREPACK`, `^KXMVENBA`
   - series observed: `KXMVENBAMULTIGAMEEXTENDED` (0), `KXMVENBASINGLEGAME` (0), `KXNBAPREPACK2ML` (0), `KXNBAPREPACK3ML` (0)
+
+**player_pra** — scope `player`, stat `pra`, period `FULL`. 
+  - series observed: `KXNBAPRA` (0)
 
 **player_steals** — scope `player`, stat `stl`, period `FULL`. 
   - series observed: `KXNBASTL` (0)

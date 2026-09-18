@@ -1,278 +1,278 @@
 # Kalshi NBA discovery summary
 
-- discovered_at: `2026-09-18T07:06:30Z`  ontology: `2026.09.18.1`  requests: 1062
+- discovered_at: `2026-09-18T07:06:30Z`  ontology: `2026.09.18.3`  requests: 1062
 - series enumerated: 14154; NBA series: 256; markets scanned: 5552
 
 ## Support states (coverage invariant)
 
 | support | markets |
 |---|---:|
-| PRICED | 6 |
-| BUILDABLE | 0 |
-| RESEARCH | 372 |
-| UNMODELABLE | 163 |
-| UNRESOLVED | 5011 |
+| MODELABLE | 6 |
+| BUILDABLE | 2 |
+| RESEARCH | 2856 |
+| UNMODELABLE | 2688 |
+| UNRESOLVED | 0 |
 
 ## NBA series
 
 | series | family | support | fee | unopened | open | closed | settled | strike_types | parse |
 |---|---|---|---|---:|---:|---:|---:|---|---|
-| KXALBUMRELEASEDATENBAYOUNGBOY | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXCITYNBAEXPAND | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 2 | 0 | 0 | custom | {'medium': 2} |
-| KXCOACHOUTNBA | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXCOACHOUTNBADATE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 9 | 0 | 0 | custom | {'low': 9} |
-| KXESPYNBA | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXFIRSTPICKNBA | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXKXSPOTIFYALBUMRELEASEDATESC | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXLEADERNBA3PT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXLEADERNBAAST | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXLEADERNBABLK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXLEADERNBAPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXLEADERNBAREB | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXLEADERNBASTL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXMEDIACOVERNBA2K | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXMVENBAMULTIGAMEEXTENDED | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXMVENBASINGLEGAME | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXALBUMRELEASEDATENBAYOUNGBOY | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXCITYNBAEXPAND | franchise_business | UNMODELABLE | quadratic/1 | 0 | 2 | 0 | 0 | custom | {'medium': 2} |
+| KXCOACHOUTNBA | coaching | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXCOACHOUTNBADATE | coaching | UNMODELABLE | quadratic/1 | 0 | 9 | 0 | 0 | custom | {'low': 9} |
+| KXESPYNBA | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXFIRSTPICKNBA | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXKXSPOTIFYALBUMRELEASEDATESC | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXLEADERNBA3PT | season_stat_leader | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXLEADERNBAAST | season_stat_leader | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXLEADERNBABLK | season_stat_leader | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXLEADERNBAPTS | season_stat_leader | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXLEADERNBAREB | season_stat_leader | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXLEADERNBASTL | season_stat_leader | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXMEDIACOVERNBA2K | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXMVENBAMULTIGAMEEXTENDED | parlay_combo | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXMVENBASINGLEGAME | parlay_combo | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA | season_champion | RESEARCH | quadratic_with_maker_fees/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
-| KXNBA1H | first_half_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1HSPREAD | first_half_spread | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1HTEAMTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1HTOTAL | first_half_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1HWINNER | first_half_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1Q | first_quarter_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1QSPREAD | first_quarter_spread | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1QTEAMTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1QTOTAL | first_quarter_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1QWINNER | first_quarter_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1STTEAM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 39 | 0 | 0 | structured | {'low': 39} |
-| KXNBA1STTEAMDEF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 41 | 0 | 0 | structured | {'low': 41} |
-| KXNBA2D | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2H | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2HSPREAD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2HTEAMTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2HTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2HWINNER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2KCOVER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 20 | custom | {'low': 20} |
-| KXNBA2NDTEAM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 55 | 0 | 0 | structured | {'low': 55} |
-| KXNBA2NDTEAMDEF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 51 | 0 | 0 | structured | {'low': 51} |
-| KXNBA2Q | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2QSPREAD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2QTEAMTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2QTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2QWINNER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA30COMEBACK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3D | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3PEAT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3PT | player_threes | PRICED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3PTALLGAMES | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3PTCONTEST | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3Q | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3QSPREAD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3QTEAMTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3QTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3QWINNER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3RDTEAM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 55 | 0 | 0 | structured | {'low': 55} |
-| KXNBA4Q | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA4QSPREAD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA4QTEAMTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA4QTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA4QWINNER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAALLSTAR | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAALLSTARGAME | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAALLSTARMVP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAALLSTARS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 60 | 0 | 0 | structured | {'low': 60} |
-| KXNBAAPOLOGY | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAAST | player_assists | PRICED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAATLANTIC | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
-| KXNBAATTEND | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBABENCHPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1H | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1HSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1HTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1HTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1HWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1Q | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1QTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1QWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA1STTEAM | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 39 | 0 | 0 | structured | {'low': 39} |
+| KXNBA1STTEAMDEF | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 41 | 0 | 0 | structured | {'low': 41} |
+| KXNBA2D | player_double_double | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2H | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2HSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2HTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2HTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2HWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2KCOVER | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 20 | custom | {'low': 20} |
+| KXNBA2NDTEAM | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 55 | 0 | 0 | structured | {'low': 55} |
+| KXNBA2NDTEAMDEF | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 51 | 0 | 0 | structured | {'low': 51} |
+| KXNBA2Q | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2QTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA2QWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA30COMEBACK | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3D | player_triple_double | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3PEAT | champion_special | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3PT | player_threes | MODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3PTALLGAMES | season_player_streak | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3PTCONTEST | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3Q | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3QTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3QWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA3RDTEAM | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 55 | 0 | 0 | structured | {'low': 55} |
+| KXNBA4Q | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA4QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA4QTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA4QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBA4QWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAALLSTAR | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAALLSTARGAME | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAALLSTARMVP | awards | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAALLSTARS | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 60 | 0 | 0 | structured | {'low': 60} |
+| KXNBAAPOLOGY | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAAST | player_assists | MODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAATLANTIC | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
+| KXNBAATTEND | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBABENCHPTS | team_bench_points | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBABLK | player_blocks | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBACELEBRITY3PT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBACELEBRITYGAME | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBACENTRAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
-| KXNBACLUTCH | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBACOACHOUT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBACOMPETE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | custom | {'low': 1} |
-| KXNBACONF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 2 | 0 | 0 | structured | {'low': 2} |
+| KXNBACELEBRITY3PT | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBACELEBRITYGAME | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBACENTRAL | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
+| KXNBACLUTCH | awards | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBACOACHOUT | coaching | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBACOMPETE | transactions | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | custom | {'low': 1} |
+| KXNBACONF | champion_special | RESEARCH | quadratic/1 | 0 | 2 | 0 | 0 | structured | {'low': 2} |
 | KXNBACOY | awards | UNMODELABLE | quadratic_with_maker_fees/1 | 0 | 30 | 0 | 0 | custom | {'low': 30} |
-| KXNBACUP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
-| KXNBACUPMVP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 75 | 0 | 0 | structured | {'low': 75} |
-| KXNBACUPQUAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 60 | 0 | 0 | structured | {'low': 60} |
+| KXNBACUP | nba_cup | RESEARCH | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
+| KXNBACUPMVP | awards | UNMODELABLE | quadratic/1 | 0 | 75 | 0 | 0 | structured | {'low': 75} |
+| KXNBACUPQUAL | nba_cup | RESEARCH | quadratic/1 | 0 | 60 | 0 | 0 | structured | {'low': 60} |
 | KXNBADPOY | awards | UNMODELABLE | quadratic/1 | 0 | 48 | 0 | 0 | structured,custom | {'low': 48} |
-| KXNBADRAFT1 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFT10 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFT2 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 12 | 0 | custom | {'low': 12} |
-| KXNBADRAFT3 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFT4 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFT5 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFT6 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFT7 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFT8 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFT9 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTCAT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTCOMP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTCONF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTINT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTMATCHUP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTOU | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT1 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT10 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT2 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 12 | 0 | custom | {'low': 12} |
+| KXNBADRAFT3 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT4 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT5 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT6 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT7 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT8 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFT9 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTCAT | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTCOMP | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTCONF | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTINT | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTMATCHUP | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTOU | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBADRAFTPICK | draft | UNMODELABLE | quadratic/1 | 0 | 15 | 0 | 0 | custom | {'low': 15} |
-| KXNBADRAFTTEAM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTTOP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTTOP10 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTTOP15 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTTOP20 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTTOP25 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTTOP30 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTTOP5 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBADRAFTTRADE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTEAM | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTOP | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTOP10 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTOP15 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTOP20 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTOP25 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTOP30 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTOP5 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBADRAFTTRADE | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAEAST | conference_champion | RESEARCH | quadratic_with_maker_fees/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
-| KXNBAEAST1SEED | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
-| KXNBAECFQUAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
-| KXNBAEFINMVP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 50 | 0 | 0 | structured | {'low': 50} |
-| KXNBAFINALSEXACT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAFINALSMENTION | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAFINALSMVP | UNRESOLVED | UNRESOLVED | quadratic_with_maker_fees/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAFINALSPRICE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 21 | 0 | greater | {'low': 21} |
-| KXNBAFINALSVIEWER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAFINALSVIEWERGAME7 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAFINBLOWOUT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAFINMVP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 75 | 0 | 0 | structured | {'low': 75} |
+| KXNBAEAST1SEED | playoff_seed | RESEARCH | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
+| KXNBAECFQUAL | playoff_round_reach | RESEARCH | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
+| KXNBAEFINMVP | awards | UNMODELABLE | quadratic/1 | 0 | 50 | 0 | 0 | structured | {'low': 50} |
+| KXNBAFINALSEXACT | series_winner | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAFINALSMENTION | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAFINALSMVP | awards | UNMODELABLE | quadratic_with_maker_fees/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAFINALSPRICE | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 21 | 0 | greater | {'low': 21} |
+| KXNBAFINALSVIEWER | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAFINALSVIEWERGAME7 | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAFINBLOWOUT | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAFINMVP | awards | UNMODELABLE | quadratic/1 | 0 | 75 | 0 | 0 | structured | {'low': 75} |
 | KXNBAFIRSTBASKET | first_basket | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAFIRSTOPPONENT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 145 | structured | {'low': 145} |
-| KXNBAFTM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAGAME | game_winner | PRICED | quadratic_with_maker_fees/1 | 0 | 6 | 0 | 0 | structured | {'high': 6} |
-| KXNBAGAME7 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAGAMES | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAGAMESPECIALS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 27 | 0 | 0 | custom | {'low': 27} |
-| KXNBAH2H3PT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAH2HBENCHPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAH2HPRA | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 2 | 0 | structured | {'high': 2} |
-| KXNBAH2HPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAH2HTEAM3PT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAHALLOFFAME | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 28 | 0 | 0 | custom | {'low': 28} |
-| KXNBAHOMECLINCH | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAJOINCONF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBALASVEGAS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBALOTTERY | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBALOTTERYODDS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAMATCHUP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAMENTION | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 52 | 0 | custom | {'high': 52} |
-| KXNBAMIMP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 45 | 0 | 0 | structured | {'low': 45} |
-| KXNBAMOSTWINS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 4 | 0 | 0 | greater_or_equal | {'low': 4} |
+| KXNBAFIRSTOPPONENT | schedule_announcement | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 145 | structured | {'low': 145} |
+| KXNBAFTM | player_free_throws | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAGAME | game_winner | MODELABLE | quadratic_with_maker_fees/1 | 0 | 6 | 0 | 0 | structured | {'high': 6} |
+| KXNBAGAME7 | series_winner | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAGAMES | series_winner | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAGAMESPECIALS | season_specials | RESEARCH | quadratic/1 | 0 | 27 | 0 | 0 | custom | {'low': 27} |
+| KXNBAH2H3PT | h2h_player_stat | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAH2HBENCHPTS | h2h_team_stat | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAH2HPRA | h2h_player_stat | BUILDABLE | quadratic/1 | 0 | 0 | 2 | 0 | structured | {'high': 2} |
+| KXNBAH2HPTS | h2h_player_stat | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAH2HTEAM3PT | h2h_team_stat | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAHALLOFFAME | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 28 | 0 | 0 | custom | {'low': 28} |
+| KXNBAHOMECLINCH | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAJOINCONF | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
+| KXNBALASVEGAS | franchise_business | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBALOTTERY | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBALOTTERYODDS | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAMATCHUP | playoff_seed | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAMENTION | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 52 | 0 | custom | {'high': 52} |
+| KXNBAMIMP | awards | UNMODELABLE | quadratic/1 | 0 | 45 | 0 | 0 | structured | {'low': 45} |
+| KXNBAMOSTWINS | season_record | RESEARCH | quadratic/1 | 0 | 4 | 0 | 0 | greater_or_equal | {'low': 4} |
 | KXNBAMVP | awards | UNMODELABLE | quadratic_with_maker_fees/1 | 0 | 53 | 0 | 0 | structured,custom | {'low': 53} |
-| KXNBAMVPDPOY | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | structured | {'low': 1} |
-| KXNBANEWCHAMP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBANEWCHAMPION | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBANEXTCONTRACT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 19 | greater_or_equal | {'high': 19} |
-| KXNBANEXTGOVERNOR | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 6 | 0 | 0 | custom | {'low': 6} |
-| KXNBANEXTTEAM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 186 | 0 | 94 | structured | {'low': 280} |
-| KXNBANEXTTEAMCONF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 3 | structured | {'low': 3} |
-| KXNBANEXTTEAMOUTLET | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 10 | custom | {'high': 10} |
-| KXNBANORTHWEST | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
-| KXNBAOT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAOVERTIME | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAMVPDPOY | awards | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | structured | {'low': 1} |
+| KXNBANEWCHAMP | champion_special | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBANEWCHAMPION | champion_special | RESEARCH | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
+| KXNBANEXTCONTRACT | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 19 | greater_or_equal | {'high': 19} |
+| KXNBANEXTGOVERNOR | franchise_business | UNMODELABLE | quadratic/1 | 0 | 6 | 0 | 0 | custom | {'low': 6} |
+| KXNBANEXTTEAM | transactions | UNMODELABLE | quadratic/1 | 0 | 186 | 0 | 94 | structured | {'low': 280} |
+| KXNBANEXTTEAMCONF | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 3 | structured | {'low': 3} |
+| KXNBANEXTTEAMOUTLET | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 10 | custom | {'high': 10} |
+| KXNBANORTHWEST | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
+| KXNBAOT | game_overtime | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAOVERTIME | game_overtime | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAPA | player_pa | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPACIFIC | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
-| KXNBAPIADVANCE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPICKTRADE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPLAYERDEAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 1 | custom | {'low': 1} |
-| KXNBAPLAYERSPECIALS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPLAYIN | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
-| KXNBAPLAYOFF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
-| KXNBAPLAYOFF3D | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPLAYOFFPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPLAYOFFWINS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPLAYTOGETHER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPOLOSE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPACIFIC | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
+| KXNBAPIADVANCE | playoffs_qualify | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPICKTRADE | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPLAYERDEAL | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 1 | custom | {'low': 1} |
+| KXNBAPLAYERSPECIALS | season_specials | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPLAYIN | playoffs_qualify | RESEARCH | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
+| KXNBAPLAYOFF | playoffs_qualify | RESEARCH | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
+| KXNBAPLAYOFF3D | series_player_stat | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPLAYOFFPTS | series_player_stat | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPLAYOFFWINS | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPLAYTOGETHER | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPOLOSE | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAPR | player_pr | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPRA | player_pra | PRICED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPREPACK2ML | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPREPACK3ML | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPTS | player_points | PRICED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPTSALLGAMES | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPTSLEADER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPRA | player_pra | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPREPACK2ML | parlay_combo | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPREPACK3ML | parlay_combo | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPTS | player_points | MODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPTSALLGAMES | season_player_streak | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAPTSLEADER | game_points_leader | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBARA | player_ra | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBARACE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAREB | player_rebounds | PRICED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBARECORD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 60 | 0 | 0 | structured | {'low': 60} |
-| KXNBARELOCATION | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 11 | 0 | 0 | custom | {'low': 11} |
-| KXNBARETIRE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 25 | 0 | 4 | structured | {'low': 29} |
-| KXNBARETURN | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBARISINGSTARS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAROOKIE1STTEAM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
-| KXNBAROOKIE2NDTEAM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 40 | 0 | 0 | structured | {'low': 40} |
+| KXNBARACE | game_race_to | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAREB | player_rebounds | MODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBARECORD | season_record | RESEARCH | quadratic/1 | 0 | 60 | 0 | 0 | structured | {'low': 60} |
+| KXNBARELOCATION | franchise_business | UNMODELABLE | quadratic/1 | 0 | 11 | 0 | 0 | custom | {'low': 11} |
+| KXNBARETIRE | transactions | UNMODELABLE | quadratic/1 | 0 | 25 | 0 | 4 | structured | {'low': 29} |
+| KXNBARETURN | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBARISINGSTARS | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAROOKIE1STTEAM | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
+| KXNBAROOKIE2NDTEAM | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 40 | 0 | 0 | structured | {'low': 40} |
 | KXNBAROY | awards | UNMODELABLE | quadratic_with_maker_fees/1 | 0 | 17 | 0 | 0 | structured,custom | {'low': 17} |
-| KXNBARULE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBASEATTLE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBASEED | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBARULE | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
+| KXNBASEATTLE | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
+| KXNBASEED | playoff_seed | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBASERIES | series_winner | RESEARCH | quadratic_with_maker_fees/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIES3PMLEADER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESASTLEADER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESCOMEBACK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIES3PMLEADER | series_player_stat | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESASTLEADER | series_player_stat | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESCOMEBACK | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBASERIESGAMES | series_winner | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESGCOMEBACK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESOT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESPTSLEADER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESPTSSPREAD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESREBLEADER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESROADWIN | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESROADWINS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESSCORE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESSPREAD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASERIESTOTALPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASHOOTINGSTARS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASIXTH | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 74 | 0 | 0 | structured | {'low': 74} |
-| KXNBASLAMDUNK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASOUTHEAST | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
-| KXNBASOUTHWEST | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
-| KXNBASPORTSMANSHIP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASPREAD | game_spread | PRICED | quadratic_with_maker_fees/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASTADIUM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBASTAKESALE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBASTARTERS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 133 | 0 | 0 | structured | {'low': 133} |
+| KXNBASERIESGCOMEBACK | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESOT | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESPTS | series_player_stat | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESPTSLEADER | series_player_stat | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESPTSSPREAD | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESREBLEADER | series_player_stat | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESROADWIN | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESROADWINS | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESSCORE | series_winner | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESSPREAD | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASERIESTOTALPTS | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASHOOTINGSTARS | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASIXTH | awards | UNMODELABLE | quadratic/1 | 0 | 74 | 0 | 0 | structured | {'low': 74} |
+| KXNBASLAMDUNK | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASOUTHEAST | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
+| KXNBASOUTHWEST | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
+| KXNBASPORTSMANSHIP | awards | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASPREAD | game_spread | MODELABLE | quadratic_with_maker_fees/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASTADIUM | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
+| KXNBASTAKESALE | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
+| KXNBASTARTERS | starting_lineup | RESEARCH | quadratic/1 | 0 | 133 | 0 | 0 | structured | {'low': 133} |
 | KXNBASTL | player_steals | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASTOCK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASTOCKS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASUMMER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 30 | structured | {'low': 30} |
-| KXNBASUMMER1HSPREAD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 273 | greater | {'high': 273} |
-| KXNBASUMMER1HTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 294 | greater | {'high': 294} |
-| KXNBASUMMER1HWINNER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 108 | structured | {'high': 108} |
-| KXNBASUMMERGAME | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 98 | structured | {'high': 98} |
-| KXNBASUMMERMVP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 12 | 21 | structured,custom | {'low': 33} |
-| KXNBASUMMERPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBASUMMERSPREAD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 619 | greater | {'high': 619} |
-| KXNBASUMMERTOTAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 595 | greater | {'high': 595} |
-| KXNBASWEEP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBATEAM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBATEAMANNOUNCE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 24 | custom | {'low': 24} |
-| KXNBATEAMSALE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | structured | {'low': 1} |
-| KXNBATEAMTOTAL | team_total | PRICED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBATOP3 | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBATOP5ROTY | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBATOPPICK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBATOTAL | game_total | PRICED | quadratic_with_maker_fees/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBATRADE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 48 | 0 | 5 | structured | {'medium': 53} |
-| KXNBAUNBEATEN | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAUPSET | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAWCFQUAL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
+| KXNBASTOCK | player_stocks | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASTOCKS | player_stocks | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASUMMER | summer_league_season | RESEARCH | quadratic/1 | 0 | 0 | 0 | 30 | structured | {'low': 30} |
+| KXNBASUMMER1HSPREAD | summer_league_spread | RESEARCH | quadratic/1 | 0 | 0 | 0 | 273 | greater | {'high': 273} |
+| KXNBASUMMER1HTOTAL | summer_league_total | RESEARCH | quadratic/1 | 0 | 0 | 0 | 294 | greater | {'high': 294} |
+| KXNBASUMMER1HWINNER | summer_league_game | RESEARCH | quadratic/1 | 0 | 0 | 0 | 108 | structured | {'high': 108} |
+| KXNBASUMMERGAME | summer_league_game | RESEARCH | quadratic/1 | 0 | 0 | 0 | 98 | structured | {'high': 98} |
+| KXNBASUMMERMVP | awards | UNMODELABLE | quadratic/1 | 0 | 0 | 12 | 21 | structured,custom | {'low': 33} |
+| KXNBASUMMERPTS | summer_league_player | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBASUMMERSPREAD | summer_league_spread | RESEARCH | quadratic/1 | 0 | 0 | 0 | 619 | greater | {'high': 619} |
+| KXNBASUMMERTOTAL | summer_league_total | RESEARCH | quadratic/1 | 0 | 0 | 0 | 595 | greater | {'high': 595} |
+| KXNBASWEEP | series_winner | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBATEAM | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
+| KXNBATEAMANNOUNCE | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 24 | custom | {'low': 24} |
+| KXNBATEAMSALE | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | structured | {'low': 1} |
+| KXNBATEAMTOTAL | team_total | MODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBATOP3 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBATOP5ROTY | awards | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBATOPPICK | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBATOTAL | game_total | MODELABLE | quadratic_with_maker_fees/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBATRADE | transactions | UNMODELABLE | quadratic/1 | 0 | 48 | 0 | 5 | structured | {'medium': 53} |
+| KXNBAUNBEATEN | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAUPSET | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAWCFQUAL | playoff_round_reach | RESEARCH | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
 | KXNBAWEST | conference_champion | RESEARCH | quadratic_with_maker_fees/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
-| KXNBAWEST1SEED | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
-| KXNBAWFINMVP | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 50 | 0 | 0 | structured | {'low': 50} |
-| KXNBAWHATTEND | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBAWINMARGIN | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAWINRECORD | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAWEST1SEED | playoff_seed | RESEARCH | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
+| KXNBAWFINMVP | awards | UNMODELABLE | quadratic/1 | 0 | 50 | 0 | 0 | structured | {'low': 50} |
+| KXNBAWHATTEND | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
+| KXNBAWINMARGIN | game_win_margin | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAWINRECORD | season_record | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAWINS | season_wins | RESEARCH | quadratic/1 | 0 | 312 | 0 | 0 | greater_or_equal | {'low': 312} |
-| KXNBAXMASOPPONENT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 150 | structured,custom | {'low': 150} |
-| KXNEXTCOACHOUTNBA | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNEXTNBACOACH | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 14 | 0 | 0 | custom | {'low': 14} |
-| KXNEXTTEAMNBA | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 731 | 0 | 122 | structured,custom | {'low': 853} |
-| KXPLAYEROPTIONNBA | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXTEAMSINNBAEF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXTEAMSINNBAF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXTEAMSINNBAWF | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXTOP3NBADRAFT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXTRUMPNBAFINALS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAXMASOPPONENT | schedule_announcement | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 150 | structured,custom | {'low': 150} |
+| KXNEXTCOACHOUTNBA | coaching | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNEXTNBACOACH | coaching | UNMODELABLE | quadratic/1 | 0 | 14 | 0 | 0 | custom | {'low': 14} |
+| KXNEXTTEAMNBA | transactions | UNMODELABLE | quadratic/1 | 0 | 731 | 0 | 122 | structured,custom | {'low': 853} |
+| KXPLAYEROPTIONNBA | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXTEAMSINNBAEF | playoff_round_reach | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXTEAMSINNBAF | playoff_round_reach | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXTEAMSINNBAWF | playoff_round_reach | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXTOP3NBADRAFT | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXTRUMPNBAFINALS | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 
 ## Title templates per series
 

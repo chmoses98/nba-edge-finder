@@ -37,7 +37,7 @@ def test_snapshot_markets_dedupes_and_classifies():
     assert {r["_family"] for r in rows if "_family" in r} == {"game_winner", "season_wins"}
     errs = [r for r in rows if "_error" in r]
     assert len(errs) == 2 and all(e["series_ticker"] == "KXNBAPTS" for e in errs)  # one per status, never silent
-    assert _count(rows, "_support") == {"None": 2, "PRICED": 1, "RESEARCH": 1}
+    assert _count(rows, "_support") == {"None": 2, "MODELABLE": 1, "RESEARCH": 1}
 
 
 def test_orderbooks_prioritise_open_and_record_errors(tmp_path):
@@ -93,22 +93,22 @@ def test_coverage_alarms_make_silent_omissions_visible():
     onto = Ontology.load()
     client = KalshiClient()
 
-    clean = [{"ticker": "KXNBAGAME-1", "series_ticker": "KXNBAGAME", "_family": "game_winner", "_support": str(Support.PRICED)}]
-    assert capture_alarms(clean, {str(Support.PRICED): 1}, client, onto, None) == []
+    clean = [{"ticker": "KXNBAGAME-1", "series_ticker": "KXNBAGAME", "_family": "game_winner", "_support": str(Support.MODELABLE)}]
+    assert capture_alarms(clean, {str(Support.MODELABLE): 1}, client, onto, None) == []
 
     # a series the ontology has never heard of
     novel = clean + [{"ticker": "KXNBAWEIRD-1", "series_ticker": "KXNBAWEIRD", "_family": None, "_support": str(Support.UNRESOLVED)}]
-    alarms = capture_alarms(novel, {str(Support.PRICED): 1, str(Support.UNRESOLVED): 1}, client, onto, None)
+    alarms = capture_alarms(novel, {str(Support.MODELABLE): 1, str(Support.UNRESOLVED): 1}, client, onto, None)
     assert alarms, "an unmodellable new series must alarm"
     assert any("UNRESOLVED" in a for a in alarms)
     assert any("KXNBAWEIRD" in a for a in alarms)
 
     # a page we stopped reading while the API still had more to give
     client.truncations.append({"endpoint": "/markets", "series_ticker": "KXNBAPTS", "pages": 20})
-    assert any("live cursor" in a for a in capture_alarms(clean, {str(Support.PRICED): 1}, client, onto, None))
+    assert any("live cursor" in a for a in capture_alarms(clean, {str(Support.MODELABLE): 1}, client, onto, None))
 
     # more live markets than the order-book cap
     live = [{"ticker": f"KXNBAGAME-{i}", "series_ticker": "KXNBAGAME", "status": "active",
-             "_family": "game_winner", "_support": str(Support.PRICED)} for i in range(5)]
-    assert any("order books truncated" in a for a in capture_alarms(live, {str(Support.PRICED): 5}, KalshiClient(), onto, 2))
-    assert capture_alarms(live, {str(Support.PRICED): 5}, KalshiClient(), onto, 50) == []
+             "_family": "game_winner", "_support": str(Support.MODELABLE)} for i in range(5)]
+    assert any("order books truncated" in a for a in capture_alarms(live, {str(Support.MODELABLE): 5}, KalshiClient(), onto, 2))
+    assert capture_alarms(live, {str(Support.MODELABLE): 5}, KalshiClient(), onto, 50) == []

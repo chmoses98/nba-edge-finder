@@ -32,9 +32,9 @@ def schedule_row(status: GameStatus = GameStatus.SCHEDULED) -> dict:
 
 
 def contract_rows() -> list[dict]:
-    winner = Contract(ticker=WINNER, family="game_winner", scope="game", stat="winner", period="FULL", game_id=GAME, team_id=HOME, support="PRICED", semantics_confidence="high")
+    winner = Contract(ticker=WINNER, family="game_winner", scope="game", stat="winner", period="FULL", game_id=GAME, team_id=HOME, support="MODELABLE", semantics_confidence="high")
     pts = Contract(
-        ticker=PTS, family="player_pts", scope="player", stat="pts", period="FULL", game_id=GAME, nba_id=TATUM, threshold=25.5, comparator="gt", support="PRICED", semantics_confidence="high",
+        ticker=PTS, family="player_pts", scope="player", stat="pts", period="FULL", game_id=GAME, nba_id=TATUM, threshold=25.5, comparator="gt", support="MODELABLE", semantics_confidence="high",
     )
     return [winner.model_dump(mode="json"), pts.model_dump(mode="json")]
 
@@ -52,7 +52,7 @@ def prediction_row(pid: str, at: datetime, ticker: str = WINNER, **over) -> dict
 def market_obs(ticker: str, at: datetime, yes_bid: int | None, yes_ask: int | None, status: str = "open", result: str = "", family: str = "game_winner") -> dict:
     return {
         "ticker": ticker, "status": status, "result": result, "yes_bid": yes_bid, "yes_ask": yes_ask, "no_bid": None if yes_ask is None else 100 - yes_ask,
-        "no_ask": None if yes_bid is None else 100 - yes_bid, "last_price": yes_bid, "_observed_at_utc": iso(at), "_family": family, "_support": "PRICED",
+        "no_ask": None if yes_bid is None else 100 - yes_bid, "last_price": yes_bid, "_observed_at_utc": iso(at), "_family": family, "_support": "MODELABLE",
     }
 
 
@@ -152,7 +152,7 @@ def test_late_contract_is_settled_against_archived_box(tmp_path):
     run_settle(tmp_path, tmp_path / "data", fetch_box=fetch, now=NOW)
     spread = Contract(
         ticker="KXNBASPREAD-26OCT21NYKBOS-BOS5", family="game_spread", scope="game", stat="margin", period="FULL", game_id=GAME, team_id=HOME, threshold=5.5,
-        comparator="gt", support="PRICED", semantics_confidence="high",
+        comparator="gt", support="MODELABLE", semantics_confidence="high",
     )
     Ledger(tmp_path, run_id="late").append_rows("contracts", [spread.model_dump(mode="json")], observed_at=NOW + timedelta(minutes=5))
     run_settle(tmp_path, tmp_path / "data", fetch_box=fetch, now=NOW + timedelta(hours=1))

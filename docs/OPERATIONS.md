@@ -38,7 +38,7 @@ None required. Optional (see `.env.example`): `KALSHI_BASE_URL`, `KALSHI_HISTORI
 Discovery reports it under UNRESOLVED in `data/catalog/discovery_summary.md`. Add a family (or a `series_patterns`
 regex) to `data/catalog/market_ontology.yaml` with a conservative support state, extend `kalshi/contracts.py` if the
 strike shape is new, add a fixture from the real market to `tests/test_contracts_real.py`, and only then consider
-PRICED. `tests/test_ontology.py` fails if any discovered series is unmapped.
+MODELABLE. `tests/test_ontology.py` fails if any discovered series is unmapped.
 
 ## Promoting authority
 Never by hand from backtests. `evaluation/authority.py` computes per-family stages from prospective, pregame,

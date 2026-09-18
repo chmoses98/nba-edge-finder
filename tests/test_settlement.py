@@ -53,7 +53,7 @@ def contract(**over) -> Contract:
         period="FULL",
         game_id=GAME,
         team_id=HOME,
-        support="PRICED",
+        support="MODELABLE",
         semantics_confidence="high",
     )
     base.update(over)

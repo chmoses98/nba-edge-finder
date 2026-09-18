@@ -67,9 +67,9 @@ def test_run_simulate_end_to_end(tmp_path):
     assert by["KXNBASPREAD-26OCT20OKCSAS-SAS4"]["p_data_only"] < by["KXNBAGAME-26OCT20OKCSAS-SAS"]["p_data_only"]
     assert by["KXNBATOTAL-26OCT20OKCSAS-228"]["p_data_only"] is not None
     p = by["KXNBAPTS-26OCT20OKCSAS-PLAYER75900-20"]
-    assert p["nba_id"] == -75900 and p["p_data_only"] is not None and p["support"] == "PRICED"
+    assert p["nba_id"] == -75900 and p["p_data_only"] is not None and p["support"] == "MODELABLE"
     assert by["KXNBAFIRSTBASKET-26OCT20OKCSAS-X"]["gate"] == "UNSUPPORTED"
-    assert slate["coverage"].get("RESEARCH", 0) == 1 and slate["coverage"].get("PRICED", 0) == 4
+    assert slate["coverage"].get("RESEARCH", 0) == 1 and slate["coverage"].get("MODELABLE", 0) == 4
     # predictions frozen in ledger; hybrid weight recorded; market view separate from data view
     preds = list(led.iter_rows("predictions"))
     assert len(preds) == 5

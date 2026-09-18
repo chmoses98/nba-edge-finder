@@ -19,7 +19,7 @@ GAME = "SYNTH-0001"
 
 def _c(ticker: str, **kw) -> Contract:
     base = {"family": "test", "scope": "game", "stat": None, "period": "FULL", "game_id": GAME, "comparator": "gt",
-            "support": "PRICED", "semantics_confidence": "high"}
+            "support": "MODELABLE", "semantics_confidence": "high"}
     base.update(kw)
     return Contract(ticker=ticker, **base)
 

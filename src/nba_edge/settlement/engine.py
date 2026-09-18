@@ -4,7 +4,7 @@ Fail-closed rules (see ``settle_contract``):
 
 * Only a FINAL, ``is_final`` box score can settle anything. Postponed / cancelled / suspended games are
   UNSETTLEABLE; Kalshi decides whether they void, we never guess.
-* Only contracts whose semantics we have proven (support PRICED/BUILDABLE, confidence high/medium) settle.
+* Only contracts whose semantics we have proven (support MODELABLE/BUILDABLE, confidence high/medium) settle.
 * Player DNPs are UNSETTLEABLE unless Kalshi's own result is supplied; exchange rules for DNP vary by series.
 * A supplied ``kalshi_result`` never overrides our computed YES/NO; a disagreement is flagged in the reason
   with the ``DISAGREES_WITH_KALSHI:`` prefix so the caller must surface it.
@@ -26,7 +26,7 @@ from nba_edge.timeutil import utcnow
 
 ENGINE_VERSION = "settle-1.0"
 
-SETTLEABLE_SUPPORT = frozenset({"PRICED", "BUILDABLE"})
+SETTLEABLE_SUPPORT = frozenset({"MODELABLE", "BUILDABLE"})
 SETTLEABLE_CONFIDENCE = frozenset({"high", "medium"})
 COMPARATORS = frozenset({"ge", "gt", "le", "lt", "eq", "in_range"})
 PUSH_ON_TIE_NOTE = "push_on_tie"

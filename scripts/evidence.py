@@ -272,7 +272,7 @@ def render(f: dict) -> str:
             "| support state | series | markets |",
             "|---|---:|---:|",
         ]
-        for k in ("PRICED", "MODELABLE", "BUILDABLE", "RESEARCH", "UNMODELABLE", "UNRESOLVED"):
+        for k in ("MODELABLE", "MODELABLE", "BUILDABLE", "RESEARCH", "UNMODELABLE", "UNRESOLVED"):
             if k in cat["series_by_support"] or k in cat["markets_by_support"]:
                 L.append(f"| {k} | {cat['series_by_support'].get(k, 0)} | {cat['markets_by_support'].get(k, 0)} |")
     L += ["", "## Historical research datasets", ""]

@@ -272,12 +272,12 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
                     pid, how = names.find_in_text(f"{m.get('yes_sub_title','')} {m.get('title','')}", [home_id, away_id])
                 if pid is not None:
                     c = c.model_copy(update={"nba_id": pid, "notes": c.notes + [f"player resolved via {how}"]})
-                elif c.support in ("PRICED", "BUILDABLE"):
+                elif c.support in ("MODELABLE", "BUILDABLE"):
                     c = c.model_copy(update={"support": "UNRESOLVED", "semantics_confidence": "low", "notes": c.notes + [f"player identity {how}"]})
                 else:
                     c = c.model_copy(update={"notes": c.notes + [f"player identity {how}"]})
             pr = price_contract(c, sim)
-            coverage[c.support if pr.supported else (c.support if c.support not in ("PRICED", "BUILDABLE") else "UNRESOLVED")] += 1
+            coverage[c.support if pr.supported else (c.support if c.support not in ("MODELABLE", "BUILDABLE") else "UNRESOLVED")] += 1
             mkt_obs = parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None
             snap = {k: m.get(k) for k in ("yes_bid", "yes_ask", "no_bid", "no_ask", "last_price", "volume", "open_interest", "liquidity")} | {"observed_at_utc": m.get("_observed_at_utc")}
             mi = market_implied_probability(snap)
