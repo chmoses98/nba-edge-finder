@@ -1,6 +1,6 @@
 """Phase 8: re-estimate `rating_scale` with tuning and evaluation on disjoint seasons.
 
-`rating_scale` (currently 1.6) multiplies each team's opponent-adjusted rating deviation from the
+`rating_scale` (1.6 at the time of this study, now 1.9) multiplies each team's opponent-adjusted rating deviation from the
 league mean, so it controls how far apart the simulator spreads team strength. It was set from a
 note that "sim margins correlate 0.96 with Elo but are compressed ~0.6x" -- and, critically, it was
 fitted on the same ~300 games it was then reported on. Roughly 0.047 nats of the reported
