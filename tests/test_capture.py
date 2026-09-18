@@ -60,6 +60,8 @@ def test_orderbook_levels_accepts_cents_and_dollar_shapes():
     dollars = {"orderbook": {"yes_dollars": [["0.5900", "50.00"], ["0.6000", "100.00"]], "no_dollars": [["0.3800", "120.00"]]}}
     assert orderbook_levels(dollars) == {"yes": [[60, 100.0], [59, 50.0]], "no": [[38, 120.0]]}
     assert orderbook_levels({"orderbook": {}}) == {"yes": [], "no": []}
+    live = {"orderbook_fp": {"no_dollars": [["0.3900", "1734.01"], ["0.4800", "110.02"]], "yes_dollars": [["0.2500", "0.01"], ["0.5000", "89.74"]]}}
+    assert orderbook_levels(live) == {"yes": [[50, 89.74], [25, 0.01]], "no": [[48, 110.02], [39, 1734.01]]}
     assert orderbook_levels({"yes": [{"price": "0.4100", "quantity": "7"}], "no": None}) == {"yes": [[41, 7.0]], "no": []}
 
 

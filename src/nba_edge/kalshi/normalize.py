@@ -86,7 +86,11 @@ def _level_cents(level: Any) -> tuple[int, float] | None:
 
 def orderbook_levels(body: dict[str, Any]) -> dict[str, list[list[float]]]:
     """Normalise an order-book response to {'yes': [[price_cents, qty], ...], 'no': [...]} (bids, best first)."""
-    ob = body.get("orderbook") if isinstance(body.get("orderbook"), dict) else body
+    ob = body
+    for key in ("orderbook_fp", "orderbook"):  # observed 2026-09: {'orderbook_fp': {'yes_dollars': [[price, qty]...]}}
+        if isinstance(body.get(key), dict):
+            ob = body[key]
+            break
     out: dict[str, list[list[float]]] = {"yes": [], "no": []}
     for side in ("yes", "no"):
         raw = ob.get(side)
