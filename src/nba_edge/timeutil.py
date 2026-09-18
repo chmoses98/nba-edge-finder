@@ -32,6 +32,16 @@ def et_date(dt: datetime) -> str:
     return dt.astimezone(ET).date().isoformat()
 
 
+def et_midnight_utc(date_et: str) -> datetime:
+    """Start of an ET calendar day as a real UTC instant.
+
+    The ET offset is -04:00 in October and -05:00 in January, so a hardcoded offset is wrong for most of an NBA
+    season. This is used as a prediction's data cutoff, which is recorded immutably, so being an hour out would
+    misstate what the model was allowed to know.
+    """
+    return datetime.fromisoformat(f"{date_et}T00:00:00").replace(tzinfo=ET).astimezone(UTC)
+
+
 def minutes_until(target: datetime, now: datetime | None = None) -> float:
     now = now or utcnow()
     return (target - now) / timedelta(minutes=1)

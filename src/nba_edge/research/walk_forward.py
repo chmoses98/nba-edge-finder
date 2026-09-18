@@ -29,8 +29,17 @@ from nba_edge.sim.engine import simulate
 
 
 def elo_baseline(team_games: pd.DataFrame, k: float = 20.0, home_adv: float = 60.0) -> dict[str, float]:
-    """Sequential Elo probabilities for home wins keyed by game_id (uses only prior games)."""
-    home = team_games[team_games["home"] == True].sort_values("game_date_et")  # noqa: E712
+    """Sequential Elo probabilities for home wins keyed by game_id (uses only genuinely prior games).
+
+    Ordering by calendar date alone is not enough: most game-days hold several games, and a date-only sort lets
+    a game be rated from another game that tipped LATER the same evening. That makes the Elo benchmark look
+    better than it is, which in turn flatters the simulator's comparison. Sort by actual tip instant where the
+    dataset has one, falling back to date + game_id for a stable order.
+    """
+    home = team_games[team_games["home"] == True].copy()  # noqa: E712
+    home["_order"] = home["start_time_utc"] if "start_time_utc" in home.columns else None
+    home["_order"] = home["_order"].fillna(home["game_date_et"].astype(str))
+    home = home.sort_values(["_order", "game_id"])
     rating: dict[int, float] = {}
     out = {}
     for _, r in home.iterrows():

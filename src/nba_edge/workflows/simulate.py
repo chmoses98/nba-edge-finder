@@ -44,7 +44,7 @@ from nba_edge.schemas.market import Contract
 from nba_edge.schemas.prediction import Authority, ContractPrediction, Gate
 from nba_edge.sim.convergence import simulate_until_converged
 from nba_edge.sim.engine import SIM_VERSION
-from nba_edge.timeutil import ET, iso, parse_iso, utcnow
+from nba_edge.timeutil import ET, et_midnight_utc, iso, parse_iso, utcnow
 
 log = get_logger(__name__)
 HYBRID_MARKET_WEIGHT = 0.70  # default prior for player/period families; NOT learned. Recorded on every prediction row.
@@ -257,6 +257,8 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
         }
         slate_games.append(gsum)
         # contracts
+        cutoff_utc = et_midnight_utc(cutoff)
+        tip_utc = parse_iso(g["start_time_utc"])
         gms = markets_for_game(markets, g)
         contracts: list[Contract] = []
         probs: dict[str, float] = {}
@@ -276,6 +278,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
                     c = c.model_copy(update={"notes": c.notes + [f"player identity {how}"]})
             pr = price_contract(c, sim)
             coverage[c.support if pr.supported else (c.support if c.support not in ("PRICED", "BUILDABLE") else "UNRESOLVED")] += 1
+            mkt_obs = parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None
             snap = {k: m.get(k) for k in ("yes_bid", "yes_ask", "no_bid", "no_ask", "last_price", "volume", "open_interest", "liquidity")} | {"observed_at_utc": m.get("_observed_at_utc")}
             mi = market_implied_probability(snap)
             p_mkt = mi.p_mid
@@ -291,13 +294,18 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             else:
                 gate, greasons = Gate.OK, []
             ts = iso(now)
+            # `pregame` is a claim about this prediction that the archive freezes forever, so derive it from the
+            # authoritative tip rather than asserting it: a slate that runs long, or a market snapshot taken after
+            # an early tip, must not be frozen as pregame. Evaluation recomputes this independently, but a false
+            # value in the immutable ledger would still misrepresent what we knew.
+            is_pregame = now < tip_utc and (mkt_obs is None or mkt_obs < tip_utc)
             pred = ContractPrediction(
                 prediction_id=_pred_id(m["ticker"], ts, MODEL_VERSION), ticker=m["ticker"], game_id=gid, family=c.family, predicted_at_utc=now,
-                data_cutoff_utc=parse_iso(f"{cutoff}T00:00:00-04:00"), model_version=MODEL_VERSION, sim_version=SIM_VERSION, feature_version=FEATURE_VERSION, n_sims=sim.n_sims,
+                data_cutoff_utc=cutoff_utc, model_version=MODEL_VERSION, sim_version=SIM_VERSION, feature_version=FEATURE_VERSION, n_sims=sim.n_sims,
                 p_data_only=p_data, p_market=p_mkt, p_hybrid=p_h, p_production=p_h, p_data_only_se=pr.se if pr.supported else None,
-                market_observed_at_utc=parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None, market_yes_bid=m.get("yes_bid"), market_yes_ask=m.get("yes_ask"),
+                market_observed_at_utc=mkt_obs, market_yes_bid=m.get("yes_bid"), market_yes_ask=m.get("yes_ask"),
                 market_no_bid=m.get("no_bid"), market_no_ask=m.get("no_ask"), gate=gate, gate_reasons=[str(x) for x in greasons][:8], authority=Authority.RESEARCH, support=c.support,
-                pregame=True, thesis_group=None, input_snapshot_ids={"markets": mkt_entry.path if mkt_entry else "", "injuries": inj_entry.path if inj_entry else "", "hybrid_market_weight": str(HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))},
+                pregame=is_pregame, thesis_group=None, input_snapshot_ids={"markets": mkt_entry.path if mkt_entry else "", "injuries": inj_entry.path if inj_entry else "", "hybrid_market_weight": str(HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))},
             )
             pred_rows.append(pred.model_dump(mode="json"))
             contract_rows.append(c.model_dump(mode="json"))

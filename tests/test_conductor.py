@@ -42,3 +42,16 @@ def test_bootstrap_without_schedule_forces_context():
     now = datetime(2026, 9, 18, 3, 0, tzinfo=UTC)
     d = decide(now, [], capture_age_min=None, last_sim_age_min=None, last_settle_age_min=None, last_eval_age_min=None)
     assert d["context"]
+
+
+# ---- ET-midnight cutoffs must follow DST, not a hardcoded offset ------------------------------------------
+
+
+def test_et_midnight_utc_tracks_daylight_saving():
+    """A prediction's data cutoff is frozen in the archive; an hour's error misstates what the model knew."""
+    from nba_edge.timeutil import et_midnight_utc, iso
+
+    assert iso(et_midnight_utc("2026-10-20")) == "2026-10-20T04:00:00Z"  # EDT, UTC-4
+    assert iso(et_midnight_utc("2027-01-15")) == "2027-01-15T05:00:00Z"  # EST, UTC-5
+    # the old hardcoded "-04:00" would have produced 04:00Z for the January date too
+    assert et_midnight_utc("2027-01-15").hour == 5
