@@ -122,7 +122,13 @@ margin in-sample by k gives log loss 0.569 (k=1) → 0.525 (1.6) → 0.506 (2.0,
 layer therefore ranks teams as well as Elo but under-states strength differences (shrinkage + the iterative
 opponent adjustment attenuating each other). A `rating_scale` parameter (default 1.6, deliberately below the
 in-sample optimum) now multiplies (rating − league). It must be re-estimated on a full-season walk-forward before
-anything is trusted; v5 numbers with the scale applied are appended below.
+anything is trusted.
+
+v5 (rotation membership + recency availability + bench-first trimming + rating_scale 1.6), same 300 games:
+**log loss 0.522, Brier 0.172, ECE 0.102** (v1: 0.569 / 0.190 / 0.187; Elo: 0.500 / 0.162 / 0.078). Margin slope
+1.00 (scale now unbiased), sim-margin spread 10.0 pts, margin MAE 11.5 (naive 14.3), 80% interval coverage 0.83,
+total MAE 15.6 (naive 16.0). DATA_ONLY is still behind Elo on win probability by 0.02 log loss on this
+late-season window but is now in the same class, and it produces the joint player/period universe Elo cannot.
 
 ## 5. Kalshi market calibration (market_calibration.json) — negative/invalid result
 The first attempt used the `previous_*_dollars` quotes on settled markets as "closing" prices. They produced a

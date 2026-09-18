@@ -102,6 +102,8 @@ point-in-time, 300 late-2025-26 games):
   probabilities still under-confident. Shrinkage sweep: best log loss 0.556 at half-life 25 / prior 4. Diagnosis:
   the sim's expected margins correlate 0.96 with Elo but are compressed ~0.6×; an in-sample rescale of 2× matches
   Elo. A provisional `rating_scale` = 1.6 is in the feature builder pending a full-season re-estimate.
+- v5 (all fixes): **log loss 0.522, Brier 0.172, ECE 0.10**, margin slope 1.0, margin MAE 11.5, 80% coverage
+  0.83 — within 0.02 log loss of Elo on the same games, with the full joint player universe attached.
 - Player-prop walk-forward on 7,666 real settled Kalshi prop markets (100 games): v1 was badly biased low
   (Brier 0.201) because historical rosters included traded/absent players and diluted stars' minutes; after
   rotation-membership, recency availability and bench-first minute trimming: **Brier 0.165, log loss 0.504, ECE
