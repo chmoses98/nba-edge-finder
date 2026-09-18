@@ -44,7 +44,8 @@ class BuildConfig:
     include_preseason: bool = False
     min_player_games: int = 1
     max_roster: int = 15
-    participation_proxy: bool = False  # walk-forward v3 (2026-09-18): the proxy worsened game log loss (0.556 -> 0.571); off until understood
+    recent_team_games: int = 10  # rotation membership window (team games before cutoff); replaces the earlier per-player proxy
+    rating_scale: float = 1.6  # multiplier on (rating - league) after shrinkage; walk-forward 2026-03/04: sim margins correlate 0.96 with Elo but are compressed ~0.6x
 
 
 @dataclass
@@ -171,6 +172,11 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
     if not cfg.include_preseason:
         pg = pg[pg["season_type"] != "preseason"]
     out: list[PlayerParams] = []
+    # the team's recent games (leak-free: all strictly before cutoff) define who is actually in the rotation
+    team_dates = sorted(pg["game_date_et"].unique())
+    recent_dates = set(team_dates[-cfg.recent_team_games :])
+    last_date = team_dates[-1] if team_dates else None
+    played_dates: dict[int, set] = {int(k): set(v) for k, v in pg[pg["played"]].groupby("nba_id")["game_date_et"]}
     ids = roster_ids if roster_ids is not None else list(pg["nba_id"].unique())
     for pid in ids:
         rows = pg[pg["nba_id"] == pid].sort_values("game_date_et")
@@ -179,15 +185,26 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
         report.player_games_used[int(pid)] = n
         name = str(rows["player_name"].iloc[-1]) if len(rows) else f"player {pid}"
         status = injuries.get(int(pid))
-        p_play = STATUS_P_PLAY.get(status, 1.0) if status is not None else 1.0
         notes = []
-        if cfg.participation_proxy and status is None and not injuries and len(rows) >= 3:
-            # no injury report for this team at all (e.g. historical research): use the prior-games participation
-            # rate over the team's last 3 games as a leak-free availability proxy
-            recent = rows.tail(3)["played"].to_numpy(dtype=float)
-            p_play = float(np.clip(0.25 + 0.75 * recent.mean(), 0.05, 1.0))
+        pdates = played_dates.get(int(pid), set())
+        n_recent = len(pdates & recent_dates)
+        if status is None and roster_ids is None and team_dates and n_recent == 0:
+            continue  # not seen in the team's last N games and not on the report: traded / waived / long-term out
+        if status is not None:
+            p_play = STATUS_P_PLAY.get(status, 1.0)
+        elif team_dates and last_date in pdates:
+            p_play = 1.0
+        elif n_recent >= 3:
+            p_play = 0.6
+            notes.append("missed the team's last game")
+        elif team_dates:
+            p_play = 0.15
+            notes.append("rarely used in the team's recent games")
+        else:
+            p_play = 1.0
         if status is None and n and (pd.Timestamp(cutoff_date) - pd.Timestamp(str(rows["game_date_et"].iloc[-1]))).days > 30:
-            p_play, _ = 0.5, notes.append("no recent games and not on injury report")
+            p_play = min(p_play, 0.5)
+            notes.append("no games in 30+ days and not on injury report")
         if n < cfg.min_player_games:
             out.append(PlayerParams(nba_id=int(pid), team_id=team_id, name=name, p_play=min(p_play, 0.9), p_start=0.0, min_mean=6.0, min_sd=5.0, fga_per_min=0.25))
             report.warnings.append(f"player {name} ({pid}): no prior games; deep-bench prior used")
@@ -229,7 +246,11 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
         out.append(pp)
     # keep the most relevant players (by expected minutes * p_play), bounded roster
     out.sort(key=lambda p: -(p.min_mean * max(p.p_play, 0.05)))
-    return out[: cfg.max_roster]
+    out = out[: cfg.max_roster]
+    exp_min = sum(p.min_mean * p.p_play for p in out)
+    if out and not 200 <= exp_min <= 290:
+        report.warnings.append(f"team {team_id}: expected minutes {exp_min:.0f} vs 240 (rotation dilution/thin roster risk)")
+    return out
 
 
 def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_games: pd.DataFrame, cutoff_date: str, injuries_by_team: dict[int, dict[int, InjuryStatus]], rosters: dict[int, list[int]] | None = None, cfg: BuildConfig | None = None) -> tuple[GameParams, BuildReport]:
@@ -238,6 +259,9 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
     league = league_rates(team_games[team_games["game_date_et"] < cutoff_date]) if not team_games.empty else league_rates(team_games)
     report.league = league
     ratings = opponent_adjusted_ratings(team_games, cutoff_date, cfg.team_half_life, cfg.team_prior_games, league, include_preseason=cfg.include_preseason) if not team_games.empty else {}
+    if cfg.rating_scale != 1.0:
+        L = league["ppp"]
+        ratings = {t: (L + (o - L) * cfg.rating_scale, L + (d - L) * cfg.rating_scale, n) for t, (o, d, n) in ratings.items()}
     teams = {}
     for side in ("home", "away"):
         tid = int(game[f"{side}_team_id"])

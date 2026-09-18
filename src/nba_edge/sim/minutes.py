@@ -43,11 +43,13 @@ def draw_starters(rng: np.random.Generator, players: list[PlayerParams], played:
     return started
 
 
-def water_fill(raw: np.ndarray, caps: np.ndarray, total: np.ndarray, iters: int = 6) -> np.ndarray:
+def water_fill(raw: np.ndarray, caps: np.ndarray, total: np.ndarray, iters: int = 6, stickiness: np.ndarray | None = None) -> np.ndarray:
     """Scale minutes so each row sums to ``total`` without exceeding per-player caps (rows: draws, cols: players).
-    Zero entries (unavailable players) stay zero."""
+    Zero entries (unavailable players) stay zero. ``stickiness`` in [0, 1) (e.g. 0.7 * p_start) makes surplus
+    minutes come off low-stickiness (bench) players first instead of proportionally off everyone."""
     avail = raw > 0
     m = np.minimum(raw, np.where(avail, caps[None, :], 0.0))
+    give_w = (1.0 - stickiness)[None, :] if stickiness is not None else np.ones((1, raw.shape[1]))
     for _ in range(iters):
         s = m.sum(axis=1)
         deficit = total - s
@@ -60,8 +62,11 @@ def water_fill(raw: np.ndarray, caps: np.ndarray, total: np.ndarray, iters: int 
         share = np.where((head_sum > 0)[:, None], head / np.maximum(head_sum, 1e-9)[:, None], 0.0)
         m = np.where(need[:, None], m + share * deficit[:, None], m)
         surplus = deficit < 0
-        scale = np.where(s > 0, total / np.maximum(s, 1e-9), 1.0)
-        m = np.where(surplus[:, None], m * scale[:, None], m)
+        if surplus.any():
+            cut_w = m * give_w
+            cut_sum = cut_w.sum(axis=1)
+            cut = np.where((surplus & (cut_sum > 0))[:, None], cut_w / np.maximum(cut_sum, 1e-9)[:, None] * (-deficit)[:, None], 0.0)
+            m = np.maximum(m - cut, 0.0)
         m = np.minimum(m, np.where(avail, caps[None, :], 0.0))
     return m
 
@@ -74,7 +79,8 @@ def draw_minutes(rng: np.random.Generator, players: list[PlayerParams], played: 
     raw = rng.normal(mean[None, :], sd[None, :], size=(n, k))
     raw = np.clip(raw, 0.0, caps[None, :])
     raw = np.where(played, np.maximum(raw, 0.5), 0.0)  # anyone who plays gets at least 30 seconds
-    return water_fill(raw, caps, total_minutes)
+    stick = np.clip(0.7 * np.array([pl.p_start for pl in players]), 0.0, 0.95)
+    return water_fill(raw, caps, total_minutes, stickiness=stick)
 
 
 def apply_blowout(minutes: np.ndarray, started: np.ndarray, margin: np.ndarray, blowout_margin: float = LEAGUE["blowout_margin"], starter_cut: float = LEAGUE["blowout_starter_cut"]) -> np.ndarray:

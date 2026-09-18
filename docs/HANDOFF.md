@@ -140,12 +140,15 @@ settled evidence per family (thresholds in `evaluation/authority.py` are placeho
 
 ## K. Risks / blockers
 
-1. Player identity across Kalshi ↔ ESPN is name-based (unique normalised match within the game's two rosters);
-   Kalshi UUIDs are captured but not yet mapped to ESPN ids. Ambiguities fail closed.
+1. Player identity: all 175 Kalshi player UUIDs seen in 2025-26 props resolve uniquely to ESPN ids
+   (`data/identity/players.jsonl`, `scripts/build_player_identity.py`, `docs/identity_report.md`); the simulate job
+   uses these aliases first and falls back to unique-name matching within the game's rosters. New players
+   (rookies, call-ups) will need the script re-run after their first prop market; ambiguities fail closed.
 2. NBA.com endpoints are blocked from cloud runners; production depends on undocumented ESPN endpoints.
 3. The HYBRID weight (0.70 market) is a prior, not learned.
 4. Order-book capture prioritises by expiration; in season it must prioritise game markets (trivial change).
-5. Historical quarter line scores were zero in the first pull (parser fixed; re-pull in progress at handoff).
+5. Historical quarter line scores were zero in the first pull (parser fixed; full re-pull was running at handoff —
+   check `data/history/espn/MANIFEST.json` and re-run `python -m nba_edge.research.calibrate_sim`).
 6. Archive growth (~5 MB/day in season) will eventually need Parquet compaction / object storage.
 7. Off-season: no game contexts have been exercised end-to-end against live data; the first preseason games
    (2026-10-03) are the systems test.
@@ -154,8 +157,10 @@ settled evidence per family (thresholds in `evaluation/authority.py` are placeho
 
 1. Fix rating shrinkage from the sweep, then full-season walk-forward (2024-25, 2025-26) vs Elo and vs Kalshi
    pregame candles; learn the HYBRID weight prospectively.
-2. Candle-based pregame market calibration + CLV baseline per family; make `kalshi_history` pull candles for all
-   game/spread/total markets (budget permitting) and player props at primary lines.
+2. Candle-based pregame market calibration + CLV baseline per family. Hourly candles for all 2,898 KXNBAGAME
+   markets (174k rows) and 102 spreads are committed under `data/history/kalshi/candles_*.jsonl.gz`;
+   `research/market_calibration.study_candles` joins them to tip times once the re-pulled ESPN rows carry
+   `start_time_utc`. Extend the candle pull to spreads/totals/team totals and primary prop lines (budget ~5 req/s).
 3. Kalshi player UUID ↔ ESPN athlete id registry from the 100k+ historical prop titles; promote to durable aliases.
 4. Player-prop walk-forward: simulate historical games, price the settled ladders, evaluate by threshold distance.
 5. Merge to `main` so the conductor schedule runs; watch the first preseason slate end to end.
