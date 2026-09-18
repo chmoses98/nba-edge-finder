@@ -35,8 +35,8 @@ STATUS_P_PLAY = {InjuryStatus.OUT: 0.0, InjuryStatus.DOUBTFUL: 0.15, InjuryStatu
 
 @dataclass
 class BuildConfig:
-    team_half_life: float = 15.0
-    team_prior_games: float = 12.0
+    team_half_life: float = 25.0  # research/walk_forward shrinkage sweep (2026-09-18): hl25/prior4 best log loss
+    team_prior_games: float = 4.0
     player_half_life: float = 5.0  # research/minutes_study: EWM half-life 5 minimises out-of-sample minutes MAE
     player_prior_minutes: float = 300.0
     role_window: int = 5
@@ -179,6 +179,11 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
         status = injuries.get(int(pid))
         p_play = STATUS_P_PLAY.get(status, 1.0) if status is not None else 1.0
         notes = []
+        if status is None and not injuries and len(rows) >= 3:
+            # no injury report for this team at all (e.g. historical research): use the prior-games participation
+            # rate over the team's last 3 games as a leak-free availability proxy
+            recent = rows.tail(3)["played"].to_numpy(dtype=float)
+            p_play = float(np.clip(0.25 + 0.75 * recent.mean(), 0.05, 1.0))
         if status is None and n and (pd.Timestamp(cutoff_date) - pd.Timestamp(str(rows["game_date_et"].iloc[-1]))).days > 30:
             p_play, _ = 0.5, notes.append("no recent games and not on injury report")
         if n < cfg.min_player_games:

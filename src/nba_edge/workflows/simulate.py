@@ -91,12 +91,24 @@ def load_history(data_root: Path, archive: Ledger) -> tuple[pd.DataFrame, pd.Dat
 
 
 class NameIndex:
-    """Name -> nba_id resolution from rosters + history, scoped per team; ambiguous -> None."""
+    """Identity resolution for contracts: durable aliases first (data/identity/players.jsonl: Kalshi uuid -> id),
+    then unique normalised-name match within the game's rosters; ambiguous -> None (never guessed)."""
 
-    def __init__(self, rosters: list[dict[str, Any]], player_games: pd.DataFrame):
+    def __init__(self, rosters: list[dict[str, Any]], player_games: pd.DataFrame, registry_path: Path | None = None):
         self.by_team: dict[int, dict[str, set[int]]] = {}
         self.names: dict[int, str] = {}
+        self.by_kalshi_uuid: dict[str, int] = {}
         reg = registry()
+        try:
+            from nba_edge.identity.players import PLAYERS_JSONL, PlayerRegistry
+
+            preg = PlayerRegistry.load(registry_path or PLAYERS_JSONL)
+            for rec in preg.records.values():
+                if "kalshi_uuid" in rec.aliases:
+                    self.by_kalshi_uuid[rec.aliases["kalshi_uuid"]] = rec.nba_id
+                    self.names.setdefault(rec.nba_id, rec.full_name)
+        except Exception as e:  # noqa: BLE001 - registry is optional; name matching still applies
+            log.warning(kv(event="player_registry_unavailable", err=str(e)[:120]))
         for r in rosters:
             try:
                 tid = reg.by_tricode(r.get("team_abbreviation", "")).team_id
@@ -249,7 +261,9 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             c = build_contract(m, onto)
             c = c.model_copy(update={"game_id": gid})
             if c.scope == "player" and c.nba_id is None:
-                pid, how = names.find_in_text(f"{m.get('yes_sub_title','')} {m.get('title','')}", [home_id, away_id])
+                pid, how = (names.by_kalshi_uuid.get(c.kalshi_entity_uuid), "kalshi_uuid_alias") if c.kalshi_entity_uuid in names.by_kalshi_uuid else (None, "")
+                if pid is None:
+                    pid, how = names.find_in_text(f"{m.get('yes_sub_title','')} {m.get('title','')}", [home_id, away_id])
                 if pid is not None:
                     c = c.model_copy(update={"nba_id": pid, "notes": c.notes + [f"player resolved via {how}"]})
                 elif c.support in ("PRICED", "BUILDABLE"):
