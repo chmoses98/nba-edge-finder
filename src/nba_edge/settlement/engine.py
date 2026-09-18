@@ -158,12 +158,29 @@ def player_stat_value(line: PlayerLine, stat: str) -> float:
     raise KeyError(f"unsupported player stat {stat!r}")
 
 
+# Kalshi's own settlement vocabulary. "scalar" is the one that does not read like what it is: the
+# market settled to a value between 0 and 100 rather than to a side, which for NBA player props is
+# how a DNP is resolved (the contract pays out at roughly its pre-game mark). It is 2.4% of settled
+# markets -- 4.27% of KXNBAPTS -- so leaving it out of this map was not a corner case. Two things
+# went wrong without it: the reason string called a well-understood marker "(unrecognised)", and,
+# worse, a market that Kalshi VOIDED while the player did in fact play came back as a confident
+# YES/NO with no disagreement flag at all, because an unmapped result skips the cross-check.
+#
+# VOID here means "did not resolve to a side", which is what every consumer needs (all the research
+# code already excludes these from binary scoring). It does NOT mean the stake was returned: a
+# scalar settlement pays the mark, so treat it as a price, not a refund.
+_KALSHI_RESULTS = {
+    "yes": SettlementOutcome.YES,
+    "no": SettlementOutcome.NO,
+    "void": SettlementOutcome.VOID,
+    "scalar": SettlementOutcome.VOID,
+}
+
+
 def _kalshi_outcome(kalshi_result: str | None) -> SettlementOutcome | None:
     if kalshi_result is None:
         return None
-    return {"yes": SettlementOutcome.YES, "no": SettlementOutcome.NO, "void": SettlementOutcome.VOID}.get(
-        kalshi_result.strip().lower()
-    )
+    return _KALSHI_RESULTS.get(kalshi_result.strip().lower())
 
 
 def _settle_dnp(kalshi_result: str | None) -> tuple[SettlementOutcome, float | None, str]:

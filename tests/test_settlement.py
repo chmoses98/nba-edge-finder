@@ -241,3 +241,39 @@ def test_ge_outcome_monotone_in_threshold(thresholds):
     rank = {SettlementOutcome.YES: 0, SettlementOutcome.NO: 1}
     ranks = [rank[o] for o in outcomes]
     assert ranks == sorted(ranks)
+
+
+def test_kalshi_scalar_is_the_void_marker_that_actually_occurs():
+    """`scalar` is how Kalshi voids an NBA market, and it was the one result not in the map.
+
+    Across all 137,059 settled markets in the historical pull the only three results are `no`
+    (57.94%), `yes` (39.62%) and `scalar` (2.44%). `void` -- the value the map did handle -- never
+    appears once. So the mapping covered a result that does not occur and missed the one that does.
+
+    The consequence was not merely a cosmetic "(unrecognised)" in the reason string. An unmapped
+    result skips the cross-check entirely, so a market Kalshi VOIDED while the player did in fact
+    play came back as a confident YES/NO with no disagreement flag at all.
+    """
+    from nba_edge.settlement.engine import _kalshi_outcome
+
+    assert _kalshi_outcome("scalar") is SettlementOutcome.VOID
+    assert _kalshi_outcome("SCALAR") is SettlementOutcome.VOID
+    assert _kalshi_outcome("  scalar  ") is SettlementOutcome.VOID
+    assert _kalshi_outcome("void") is SettlementOutcome.VOID
+    assert _kalshi_outcome("yes") is SettlementOutcome.YES
+    assert _kalshi_outcome("no") is SettlementOutcome.NO
+    # anything we genuinely do not understand must still return None so the caller fails closed
+    assert _kalshi_outcome("partially") is None
+    assert _kalshi_outcome(None) is None
+
+
+def test_a_voided_market_disagrees_when_we_settled_it_to_a_side():
+    """If we say YES and Kalshi voided, that must surface as a disagreement, not silent agreement."""
+    from nba_edge.settlement.engine import DISAGREE_PREFIX, _reconcile_with_kalshi
+
+    outcome, reason = _reconcile_with_kalshi(SettlementOutcome.YES, "player scored 22 > 19.5", "scalar")
+    assert outcome is SettlementOutcome.YES, "we never override our own outcome"
+    assert reason.startswith(DISAGREE_PREFIX) and "kalshi=VOID" in reason
+
+    agree, reason2 = _reconcile_with_kalshi(SettlementOutcome.YES, "player scored 22 > 19.5", "yes")
+    assert agree is SettlementOutcome.YES and "agrees with Kalshi" in reason2
