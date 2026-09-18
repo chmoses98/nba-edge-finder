@@ -64,6 +64,23 @@ def scheduled_date_from_rules(rules: str | None) -> date | None:
         return None
 
 
+def _team_id_or_none(reg: TeamRegistry, code: str, notes: list[str]) -> int | None:
+    """Resolve a tricode, or record why we could not and return None.
+
+    Kalshi lists preseason games against non-NBA clubs (e.g. KXNBAGAME-25OCT13GUAMIN-GUA, a real
+    settled market against a Guatemalan side), so an unknown tricode is a normal fact about the
+    board, not an exceptional condition. Raising here used to abort the ENTIRE slate -- every game
+    and every family -- on one such ticker. Returning None instead leaves the contract without a
+    team, which keeps semantics_confidence at 'low' and so downgrades support to UNRESOLVED below:
+    the market is skipped, loudly and in the coverage accounting, rather than priced or crashed on.
+    """
+    try:
+        return reg.by_tricode(code).team_id
+    except TeamIdentityError as e:
+        notes.append(f"unknown team tricode {code!r} ({e}); not an NBA club or an identity gap")
+        return None
+
+
 def _team_from_text(text: str, reg: TeamRegistry, candidates: list[str]) -> int | None:
     """Find which of the two game teams (by tricode) the text names. Uses city/nickname/full-name matching and
     requires exactly one hit."""
@@ -121,7 +138,7 @@ def build_contract(m: dict[str, Any], ontology: Ontology | None = None, reg: Tea
             suffix_team = code
     if cls.scope.value == "game":
         if suffix_team:
-            team_id = reg.by_tricode(suffix_team).team_id
+            team_id = _team_id_or_none(reg, suffix_team, notes)
         elif cls.stat in ("winner", "margin", "team_total"):
             team_id = _team_from_text(ysub or title, reg, game_candidates)
         if cls.stat == "winner" and strike_type == "structured" and cs.get("basketball_team") and team_id is not None:
@@ -178,7 +195,7 @@ def build_contract(m: dict[str, Any], ontology: Ontology | None = None, reg: Tea
     if cls.scope.value == "player" and team_id is None:
         for code in game_candidates:
             if pt.market_suffix.upper().startswith(code):
-                team_id = reg.by_tricode(code).team_id
+                team_id = _team_id_or_none(reg, code, notes)
     return Contract(
         ticker=ticker, family=cls.family, scope=cls.scope.value, stat=cls.stat, period=cls.period, game_id=None, team_id=team_id, nba_id=nba_id,
         threshold=threshold, comparator=comparator, upper=upper, support=str(support), semantics_confidence=conf, notes=notes,

@@ -58,13 +58,22 @@ def test_every_discovered_series_resolves_to_a_family():
         assert o.family_for_series(t) in o.families
 
 
-def test_priced_families_are_exactly_the_core_nine():
+def test_priced_families_are_exactly_the_eight_with_observed_markets():
+    """PRICED must mean "we have seen real markets of this shape and proved their semantics".
+
+    player_pra was PRICED on zero evidence: 0 KXNBAPRA markets in the entire historical pull and 0
+    in every discovery status. The simulator can draw PRA, which makes it BUILDABLE -- but nothing
+    had ever confirmed how Kalshi words, strikes or voids such a market, and build_contract would
+    have priced the assumed shape with semantics_confidence='high'. This test is the gate: a family
+    joins this set only after real markets of that family have been observed and replayed.
+    """
     o = Ontology.load()
     priced = {name for name, f in o.families.items() if f.support == Support.PRICED}
     assert priced == {
         "game_winner", "game_spread", "game_total", "team_total",
-        "player_points", "player_rebounds", "player_assists", "player_threes", "player_pra",
+        "player_points", "player_rebounds", "player_assists", "player_threes",
     }
+    assert o.families["player_pra"].support == Support.BUILDABLE
 
 
 def test_period_winner_regex_covers_bare_and_winner_forms():

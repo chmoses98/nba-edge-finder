@@ -11,7 +11,7 @@
 #   BUILDABLE   : semantics understood and the one-game simulator emits the quantity; pricing not wired
 #   RESEARCH    : semantics understood; needs a model we do not have (season sim, play-by-play, lineups)
 #   UNMODELABLE : not a basketball on-court outcome (voting, draft, transactions, business, media)
-version: "2026.09.18.2"
+version: "2026.09.18.3"
 families:
   # ------------------------------------------------------------------ game-level, full game (PRICED)
   game_winner:
@@ -166,7 +166,16 @@ families:
   player_pra:
     scope: player
     stat: pra
-    support: PRICED
+    # BUILDABLE, not PRICED: the simulator draws PRA coherently from the same universe as points,
+    # rebounds and assists, so the MODEL side is ready -- but the MARKET side is entirely unobserved.
+    # The 2025-10-01..2026-07-01 historical pull returned 0 KXNBAPRA markets, and discovery finds
+    # 0 in every lifecycle status. Its strike_type, half-line convention, DNP rule and title
+    # template are all assumed by analogy to the other player families, never verified against a
+    # real market. build_contract would nonetheless return semantics_confidence='high' for the
+    # assumed shape, so PRICED meant it would have been priced and settled silently on zero
+    # evidence. Promote it the day a real KXNBAPRA market is observed and its semantics proven the
+    # way the other eight were.
+    support: BUILDABLE
     series_tickers: [KXNBAPRA]
   player_steals:
     scope: player
