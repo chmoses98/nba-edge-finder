@@ -1,0 +1,113 @@
+name: conductor
+# Schedule-aware orchestrator. Runs cheaply every 10 minutes (only on the default branch — GitHub ignores
+# schedules on other branches) and dispatches the expensive jobs only when the NBA calendar says they matter.
+# Archive data lives on the `data-archive` branch so code branches never accumulate snapshots.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Comma list of jobs to force (capture,context,simulate,settle,evaluate)"
+        default: ""
+  push:
+    paths:
+      - ".trigger/conductor"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: conductor-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FORCE: ${{ inputs.force || '' }}
+  ARCHIVE_BRANCH: data-archive
+
+jobs:
+  decide:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      capture: ${{ steps.d.outputs.capture }}
+      context: ${{ steps.d.outputs.context }}
+      simulate: ${{ steps.d.outputs.simulate }}
+      settle: ${{ steps.d.outputs.settle }}
+      evaluate: ${{ steps.d.outputs.evaluate }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Fetch archive branch (read-only)
+        run: |
+          git fetch origin "$ARCHIVE_BRANCH" --depth=1 2>/dev/null && git worktree add data/archive "origin/$ARCHIVE_BRANCH" || mkdir -p data/archive
+      - id: d
+        name: Decide
+        run: |
+          nba conductor --data data --github-output "$GITHUB_OUTPUT"
+          for j in capture context simulate settle evaluate; do
+            if [[ ",$FORCE," == *",$j,"* ]]; then echo "$j=true" >> "$GITHUB_OUTPUT"; fi
+          done
+
+  run:
+    needs: decide
+    if: needs.decide.outputs.capture == 'true' || needs.decide.outputs.context == 'true' || needs.decide.outputs.simulate == 'true' || needs.decide.outputs.settle == 'true' || needs.decide.outputs.evaluate == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Checkout archive branch (create orphan if missing)
+        run: |
+          git config user.name "nba-edge-bot"
+          git config user.email "nba-edge-bot@users.noreply.github.com"
+          if git fetch origin "$ARCHIVE_BRANCH" 2>/dev/null; then
+            git worktree add data/archive "origin/$ARCHIVE_BRANCH"
+            (cd data/archive && git checkout -B "$ARCHIVE_BRANCH")
+          else
+            mkdir -p data/archive && cd data/archive && git init -q && git checkout -q --orphan "$ARCHIVE_BRANCH" \
+              && git config user.name "nba-edge-bot" && git config user.email "nba-edge-bot@users.noreply.github.com" \
+              && git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+              && echo "# NBA Edge Finder immutable archive" > README.md && git add README.md && git commit -qm "init archive"
+          fi
+      - name: Context refresh
+        if: needs.decide.outputs.context == 'true'
+        run: nba context --out data/archive || echo "context failed (non-fatal)"
+      - name: Market capture
+        if: needs.decide.outputs.capture == 'true'
+        run: nba capture --out data/archive --orderbook --max-orderbooks 300
+      - name: Simulate + price
+        if: needs.decide.outputs.simulate == 'true'
+        run: nba simulate --data data --out data/archive/slates || echo "simulate failed (non-fatal)"
+      - name: Settle
+        if: needs.decide.outputs.settle == 'true'
+        run: nba settle --data data --out data/archive || echo "settle failed (non-fatal)"
+      - name: Evaluate
+        if: needs.decide.outputs.evaluate == 'true'
+        run: nba evaluate --data data --out data/archive/eval || echo "evaluate failed (non-fatal)"
+      - name: Verify archive immutability and push
+        run: |
+          cd data/archive
+          python - <<'PY'
+          from pathlib import Path
+          from nba_edge.archive.ledger import Ledger
+          problems = Ledger(Path('.')).verify()
+          assert not problems, problems
+          print('archive verified')
+          PY
+          git add -A
+          if git diff --cached --quiet; then echo "no archive changes"; exit 0; fi
+          git commit -qm "archive: $(date -u +%Y-%m-%dT%H:%M:%SZ) run ${{ github.run_id }}"
+          for i in 1 2 3 4; do
+            git push origin "HEAD:$ARCHIVE_BRANCH" && break
+            git fetch origin "$ARCHIVE_BRANCH" && git rebase "origin/$ARCHIVE_BRANCH" || true
+            sleep $((2**i))
+          done

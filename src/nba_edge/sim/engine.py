@@ -153,6 +153,30 @@ def _secondary_stats(rng: np.random.Generator, home: _TeamDraw, away: _TeamDraw,
         td.blk = _multinomial_rows(rng, blk_team, _weights(td.team.players, "blk_weight", td.minutes))
 
 
+def _endgame_compression(rng: np.random.Generator, h: _TeamDraw, a: _TeamDraw, c: float) -> None:
+    """Crude game-script term: real NBA margins are less dispersed than independent shot noise implies (leaders
+    coast, trailers foul and shoot quickly). Transfer c/2 of the raw margin from the leader to the trailer, taking
+    points from / giving points to players in proportion to their points, so team totals stay the sum of player
+    points and the game total is unchanged. To be replaced by a possession-level endgame model."""
+    if c <= 0:
+        return
+    margin = h.pts.sum(axis=1) - a.pts.sum(axis=1)
+    move = np.rint(np.abs(margin) * c / 2.0).astype(np.int64)
+    if not move.any():
+        return
+    lead_h = margin > 0
+    for leader, trailer, mask in ((h, a, lead_h), (a, h, ~lead_h)):
+        m = mask & (move > 0)
+        if not m.any():
+            continue
+        idx = np.where(m)[0]
+        take = _multinomial_rows(rng, move[idx], leader.pts[idx].astype(float))
+        take = np.minimum(take, leader.pts[idx])
+        leader.pts[idx] -= take
+        give = _multinomial_rows(rng, take.sum(axis=1), np.maximum(trailer.pts[idx], 1).astype(float) * (trailer.minutes[idx] > 0))
+        trailer.pts[idx] += give
+
+
 def _closing_minutes(minutes: np.ndarray, extra: float) -> np.ndarray:
     """OT minutes: split ``extra`` (25 per OT) across the five highest-minute players, 5 each."""
     n, k = minutes.shape
@@ -175,13 +199,14 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
     pace_mean = (home.pace + away.pace) / 2.0 - (1.0 if home.b2b else 0.0) - (1.0 if away.b2b else 0.0)
     poss = np.maximum(rng.normal(pace_mean, gp.pace_sd, n), 70.0)
 
+    env_shock = rng.normal(0.0, LEAGUE["game_env_shock_sd"], n)
     draws: list[_TeamDraw] = []
     for team, opp, is_home in ((home, away, True), (away, home, False)):
         played = draw_availability(rng, team.players, n)
         started = draw_starters(rng, team.players, played)
         minutes = draw_minutes(rng, team.players, played, np.full(n, LEAGUE["regulation_minutes"]))
         mu = _team_ppp_mu(team, opp, is_home, gp.neutral_site, played, rng, n)
-        shock = rng.normal(0.0, LEAGUE["team_shooting_shock_sd"], n)
+        shock = rng.normal(0.0, LEAGUE["team_shooting_shock_sd"], n) + env_shock
         draws.append(_TeamDraw(team, played, started, minutes, mu, shock))
     h, a = draws
 
@@ -192,6 +217,7 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
 
     _shoot(rng, h, poss, h.minutes)
     _shoot(rng, a, poss, a.minutes)
+    _endgame_compression(rng, h, a, LEAGUE["endgame_compression"])
     reg_h, reg_a = h.pts.sum(axis=1), a.pts.sum(axis=1)
 
     # overtime: regulation ties get extra periods; also inflate near-ties to hit the empirical OT rate
