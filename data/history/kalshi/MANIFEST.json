@@ -1,10 +1,11 @@
 {
- "pulled_at": "2026-09-18T07:45:47Z",
+ "pulled_at": "2026-09-18T21:43:10Z",
  "min_close": "2025-10-01",
  "max_close": "2026-07-01",
  "min_close_ts": 1759276800,
  "max_close_ts": 1782864000,
  "candle_interval": 60,
+ "sample_games": 220,
  "series": {
   "KXNBAGAME": {
    "historical": 2898,
@@ -12,10 +13,11 @@
    "merged": 2898,
    "errors": [],
    "markets_file": "markets_KXNBAGAME.jsonl.gz",
-   "candles_markets": 2898,
+   "candles_markets_new": 0,
    "candles_errors": 0,
+   "candles_file": "candles_KXNBAGAME.jsonl.gz",
    "candles_rows": 174132,
-   "candles_file": "candles_KXNBAGAME.jsonl.gz"
+   "candles_markets": 2898
   },
   "KXNBASPREAD": {
    "historical": 16937,
@@ -23,10 +25,11 @@
    "merged": 16937,
    "errors": [],
    "markets_file": "markets_KXNBASPREAD.jsonl.gz",
-   "candles_markets": 102,
+   "candles_markets_new": 2472,
    "candles_errors": 0,
-   "candles_rows": 2100,
-   "candles_file": "candles_KXNBASPREAD.jsonl.gz"
+   "candles_file": "candles_KXNBASPREAD.jsonl.gz",
+   "candles_rows": 66743,
+   "candles_markets": 2574
   },
   "KXNBATOTAL": {
    "historical": 14787,
@@ -34,9 +37,11 @@
    "merged": 14787,
    "errors": [],
    "markets_file": "markets_KXNBATOTAL.jsonl.gz",
-   "candles_markets": 0,
+   "candles_markets_new": 2228,
    "candles_errors": 0,
-   "candles_rows": 0
+   "candles_file": "candles_KXNBATOTAL.jsonl.gz",
+   "candles_rows": 58656,
+   "candles_markets": 2228
   },
   "KXNBATEAMTOTAL": {
    "historical": 9486,
@@ -44,9 +49,11 @@
    "merged": 9486,
    "errors": [],
    "markets_file": "markets_KXNBATEAMTOTAL.jsonl.gz",
-   "candles_markets": 0,
+   "candles_markets_new": 1422,
    "candles_errors": 0,
-   "candles_rows": 0
+   "candles_file": "candles_KXNBATEAMTOTAL.jsonl.gz",
+   "candles_rows": 32020,
+   "candles_markets": 1403
   },
   "KXNBAPTS": {
    "historical": 23562,
@@ -54,9 +61,11 @@
    "merged": 23562,
    "errors": [],
    "markets_file": "markets_KXNBAPTS.jsonl.gz",
-   "candles_markets": 0,
+   "candles_markets_new": 3522,
    "candles_errors": 0,
-   "candles_rows": 0
+   "candles_file": "candles_KXNBAPTS.jsonl.gz",
+   "candles_rows": 79458,
+   "candles_markets": 3519
   },
   "KXNBAREB": {
    "historical": 22656,
@@ -64,9 +73,11 @@
    "merged": 22656,
    "errors": [],
    "markets_file": "markets_KXNBAREB.jsonl.gz",
-   "candles_markets": 0,
+   "candles_markets_new": 3293,
    "candles_errors": 0,
-   "candles_rows": 0
+   "candles_file": "candles_KXNBAREB.jsonl.gz",
+   "candles_rows": 70180,
+   "candles_markets": 3284
   },
   "KXNBAAST": {
    "historical": 17745,
@@ -74,9 +85,11 @@
    "merged": 17745,
    "errors": [],
    "markets_file": "markets_KXNBAAST.jsonl.gz",
-   "candles_markets": 0,
+   "candles_markets_new": 2605,
    "candles_errors": 0,
-   "candles_rows": 0
+   "candles_file": "candles_KXNBAAST.jsonl.gz",
+   "candles_rows": 54071,
+   "candles_markets": 2599
   },
   "KXNBA3PT": {
    "historical": 16619,
@@ -84,64 +97,20 @@
    "merged": 16619,
    "errors": [],
    "markets_file": "markets_KXNBA3PT.jsonl.gz",
-   "candles_markets": 0,
+   "candles_markets_new": 2384,
    "candles_errors": 0,
-   "candles_rows": 0
-  },
-  "KXNBAPRA": {
-   "historical": 0,
-   "live": 0,
-   "merged": 0,
-   "errors": [],
-   "markets_file": "markets_KXNBAPRA.jsonl.gz",
-   "candles_markets": 0,
-   "candles_errors": 0,
-   "candles_rows": 0
-  },
-  "KXNBA1HSPREAD": {
-   "historical": 5823,
-   "live": 0,
-   "merged": 5823,
-   "errors": [],
-   "markets_file": "markets_KXNBA1HSPREAD.jsonl.gz",
-   "candles_markets": 0,
-   "candles_errors": 0,
-   "candles_rows": 0
-  },
-  "KXNBA1HTOTAL": {
-   "historical": 4707,
-   "live": 0,
-   "merged": 4707,
-   "errors": [],
-   "markets_file": "markets_KXNBA1HTOTAL.jsonl.gz",
-   "candles_markets": 0,
-   "candles_errors": 0,
-   "candles_rows": 0
-  },
-  "KXNBA1HWINNER": {
-   "historical": 1569,
-   "live": 0,
-   "merged": 1569,
-   "errors": [],
-   "markets_file": "markets_KXNBA1HWINNER.jsonl.gz",
-   "candles_markets": 0,
-   "candles_errors": 0,
-   "candles_rows": 0
-  },
-  "KXNBAWINS": {
-   "historical": 270,
-   "live": 0,
-   "merged": 270,
-   "errors": [],
-   "markets_file": "markets_KXNBAWINS.jsonl.gz",
-   "candles_markets": 0,
-   "candles_errors": 0,
-   "candles_rows": 0
+   "candles_file": "candles_KXNBA3PT.jsonl.gz",
+   "candles_rows": 50739,
+   "candles_markets": 2376
   }
  },
  "errors": [],
- "candle_markets_selected": 3000,
- "total_markets": 137059,
- "team_uuids": 32,
- "request_count": 3297
+ "candle_markets_selected": 17926,
+ "candle_markets_already_present": {
+  "KXNBAGAME": 2898,
+  "KXNBASPREAD": 102
+ },
+ "total_markets": 124690,
+ "team_uuids": 31,
+ "request_count": 18919
 }
