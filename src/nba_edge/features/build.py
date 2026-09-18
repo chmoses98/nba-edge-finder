@@ -38,7 +38,8 @@ class BuildConfig:
     team_half_life: float = 25.0  # research/walk_forward shrinkage sweep (2026-09-18): hl25/prior4 best log loss
     team_prior_games: float = 4.0
     player_half_life: float = 5.0  # research/minutes_study: EWM half-life 5 minimises out-of-sample minutes MAE
-    player_prior_minutes: float = 300.0
+    player_prior_minutes: float = 60.0  # prop walk-forward (2026-09-18): 300 min of prior mass toward league rates biased stars' means low
+    rate_half_life: float = 20.0  # per-minute rates are far more stable than minutes; weight a longer history
     role_window: int = 5
     include_preseason: bool = False
     min_player_games: int = 1
@@ -191,10 +192,11 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
             out.append(PlayerParams(nba_id=int(pid), team_id=team_id, name=name, p_play=min(p_play, 0.9), p_start=0.0, min_mean=6.0, min_sd=5.0, fga_per_min=0.25))
             report.warnings.append(f"player {name} ({pid}): no prior games; deep-bench prior used")
             continue
-        w = _ewm_weights(n, cfg.player_half_life)
+        w = _ewm_weights(n, cfg.rate_half_life)  # for rates
+        w_min = _ewm_weights(n, cfg.player_half_life)  # for minutes / role
         mins = played["minutes"].to_numpy(dtype=float)
         # role change sensitivity: the last `role_window` games get 50% extra weight
-        w_role = w.copy()
+        w_role = w_min.copy()
         w_role[-cfg.role_window :] *= 1.5
         min_mean = _wmean(mins, w_role, 15.0, 1.0)
         min_sd = float(np.sqrt(max(_wmean((mins - min_mean) ** 2, w_role, 36.0, 1.0), 4.0)))

@@ -79,6 +79,27 @@ margin sd 13.7 vs empirical 16.0, and ratings that ignored opponent strength. v2
 opponent-adjusted ratings) are appended below when the run completes. The late-season window (tanking, rest)
 is also a hard regime; a full-season walk-forward is a next step.
 
+## 4b. Rating-shrinkage sweep and availability proxy (wf_hl*_p*.json, wf_v3_availability.json)
+Same 300 games, 3,000 draws. Team-rating EWM half-life / prior games → DATA_ONLY log loss (Elo 0.500):
+15/12 (v1): 0.569 · 25/4: **0.556** · 40/2: 0.559 · 60/1: 0.564. The realised-margin-on-sim-margin slope stayed at
+1.5–1.6 for every setting (sim margins spread 6.2–6.3 pts across games vs 8.5 implied by Elo), so shrinkage was
+only part of the compression; the rest is in the rating → points translation and is the top open item. A
+leak-free availability proxy (prior-games participation rate when no injury report exists) made things worse
+(0.571, slope 2.0) and is now behind a flag (`participation_proxy=False`).
+
+## 4c. Player-prop walk-forward on real settled Kalshi markets (prop_walk_forward*.json)
+100 games from the end of 2025-26, 7,646 settled KXNBAPTS/REB/AST/3PT markets (players resolved through the
+Kalshi-uuid registry; 'scalar' DNP settlements excluded), 4,000 draws per game, strict point-in-time features.
+
+v1 result — **strongly negative, with a clear diagnosis**: mean P(yes) 0.216 vs base rate 0.386; Brier 0.201,
+log loss 0.644. By threshold distance to the simulated mean: at (−1, +1] the sim said 45% and 65% cleared; at
+(+1, +3] 16% vs 38%; (+3, +6] 6% vs 22%; (+6, +99] 3% vs 16%. A negative-binomial baseline built from the same
+simulated means shows the identical bias (Brier 0.201), so the *means* are biased low, not the distribution shape.
+Root cause found in the feature builder: per-minute rates were shrunk toward a rotation-player league average
+with 300 minutes of prior mass while the EWM(5) window only carried ~250 weighted minutes, so stars' usage was
+pulled roughly halfway to the average. Fix: rates now use a 20-game half-life and 60 minutes of prior mass
+(minutes/role keep the 5-game half-life). v2 numbers are appended below.
+
 ## 5. Kalshi market calibration (market_calibration.json) — negative/invalid result
 The first attempt used the `previous_*_dollars` quotes on settled markets as "closing" prices. They produced a
 Brier of 0.016 on moneylines — impossible for pregame prices — because those quotes are post-tip (in-game trading
