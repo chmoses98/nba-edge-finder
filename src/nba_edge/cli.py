@@ -76,6 +76,16 @@ def cmd_history(args: argparse.Namespace) -> int:
     return run_history_pull(out_root=Path(args.out), seasons=args.seasons.split(","), what=args.what.split(","))
 
 
+def cmd_kalshi_history(args: argparse.Namespace) -> int:
+    from nba_edge.kalshi.history import run_kalshi_history
+
+    return run_kalshi_history(
+        out_root=Path(args.out), series=[s for s in args.series.split(",") if s], min_close=args.min_close,
+        max_close=args.max_close, with_candles=args.candles, candle_interval=args.candle_interval,
+        max_markets_for_candles=args.max_candle_markets,
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="nba", description="NBA Edge Finder")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -129,6 +139,20 @@ def build_parser() -> argparse.ArgumentParser:
     h.add_argument("--seasons", default="2023-24,2024-25,2025-26")
     h.add_argument("--what", default="team_logs,player_logs")
     h.set_defaults(func=cmd_history)
+
+    kh = sub.add_parser("kalshi-history", help="Pull settled Kalshi NBA markets (+ candlesticks) from the historical API")
+    kh.add_argument("--out", default="data/history")
+    kh.add_argument(
+        "--series",
+        default="KXNBAGAME,KXNBASPREAD,KXNBATOTAL,KXNBATEAMTOTAL,KXNBAPTS,KXNBAREB,KXNBAAST,KXNBA3PT,KXNBAPRA,"
+        "KXNBA1HSPREAD,KXNBA1HTOTAL,KXNBA1HWINNER,KXNBAWINS",
+    )
+    kh.add_argument("--min-close", default="2025-10-01", help="Earliest close date (YYYY-MM-DD or ISO-8601)")
+    kh.add_argument("--max-close", default="2026-07-01", help="Latest close date (YYYY-MM-DD or ISO-8601)")
+    kh.add_argument("--candles", action="store_true", help="Also pull candlesticks for the top markets")
+    kh.add_argument("--candle-interval", type=int, default=60, help="Candle period in minutes: 1, 60 or 1440")
+    kh.add_argument("--max-candle-markets", type=int, default=3000)
+    kh.set_defaults(func=cmd_kalshi_history)
     return p
 
 

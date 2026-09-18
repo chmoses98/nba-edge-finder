@@ -1,0 +1,58 @@
+name: history-pull
+# Manual: pull historical NBA box scores (ESPN site API) into Parquet from a network-capable runner and commit
+# the compact dataset back to the branch it ran on. Resumable: re-runs only fetch games not already in
+# data/history/espn/done_events_<season>.json, so a timed-out run can simply be re-triggered.
+on:
+  workflow_dispatch:
+    inputs:
+      seasons:
+        description: "Comma list of seasons (YYYY-YY)"
+        default: "2023-24,2024-25,2025-26"
+      what:
+        description: "Comma list of datasets (espn | team_logs | player_logs)"
+        default: "espn"
+  push:
+    paths:
+      - ".trigger/history"
+
+env:
+  SEASONS: ${{ inputs.seasons || '2023-24,2024-25,2025-26' }}
+  WHAT: ${{ inputs.what || 'espn' }}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: history-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  history:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Pull history
+        env:
+          NBA_EDGE_LOG_LEVEL: INFO
+        run: nba history --out data/history --seasons "$SEASONS" --what "$WHAT"
+      - name: Show manifest
+        if: always()
+        run: cat data/history/espn/MANIFEST.json || true
+      - name: Commit history dataset
+        if: always()
+        run: |
+          git config user.name "nba-edge-bot"
+          git config user.email "nba-edge-bot@users.noreply.github.com"
+          git add -f data/history/espn/*.parquet data/history/espn/MANIFEST.json data/history/espn/done_events_*.json 2>/dev/null || true
+          if git diff --cached --quiet; then echo "nothing to commit"; else
+            git commit -m "history: ESPN box-score dataset ($SEASONS) (run ${{ github.run_id }})"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi

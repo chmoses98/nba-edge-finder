@@ -17,6 +17,10 @@ def _env(name: str, default: str = "") -> str:
 @dataclass(frozen=True)
 class Settings:
     kalshi_base_url: str = field(default_factory=lambda: _env("KALSHI_BASE_URL", "https://api.elections.kalshi.com/trade-api/v2"))
+    # Kalshi archives settled markets on a separate host (endpoint shapes unverified; client is tolerant).
+    kalshi_historical_base_url: str = field(
+        default_factory=lambda: _env("KALSHI_HISTORICAL_BASE_URL", "https://external-api.kalshi.com/trade-api/v2/historical")
+    )
     kalshi_api_key_id: str = field(default_factory=lambda: _env("KALSHI_API_KEY_ID"))
     kalshi_private_key_path: str = field(default_factory=lambda: _env("KALSHI_PRIVATE_KEY_PEM_PATH"))
     odds_api_key: str = field(default_factory=lambda: _env("ODDS_API_KEY"))

@@ -9,6 +9,10 @@ Design notes
   so the archive can store exactly what Kalshi said (no lossy re-modelling at capture time).
 - Retries with exponential backoff on 429/5xx/network errors; never retries 4xx policy errors.
 - A small token-bucket rate limiter keeps us well under Kalshi's basic-tier read limits.
+- Settled markets are archived by Kalshi on a *second* host (``Settings.kalshi_historical_base_url``). The
+  ``*_historical*`` methods talk to it with the same retry/rate policy. The historical endpoint shapes are
+  unverified, so those readers are tolerant about response keys (``markets``/``data``, ``candlesticks``/
+  ``candles``) and callers should treat ``KalshiPolicyError`` from them as "not available" rather than fatal.
 """
 
 from __future__ import annotations
@@ -57,31 +61,51 @@ class RateLimiter:
 class KalshiClient:
     cfg: Settings = field(default_factory=settings)
     rate: RateLimiter = field(default_factory=RateLimiter)
+    transport: httpx.BaseTransport | None = None  # tests inject httpx.MockTransport here
     _client: httpx.Client | None = None
+    _hist_client: httpx.Client | None = None
     request_count: int = 0
+
+    def _make(self, base_url: str) -> httpx.Client:
+        return httpx.Client(
+            base_url=base_url,
+            timeout=self.cfg.http_timeout_s,
+            headers={"User-Agent": self.cfg.user_agent, "Accept": "application/json"},
+            transport=self.transport,
+        )
 
     def _http(self) -> httpx.Client:
         if self._client is None:
-            self._client = httpx.Client(
-                base_url=self.cfg.kalshi_base_url,
-                timeout=self.cfg.http_timeout_s,
-                headers={"User-Agent": self.cfg.user_agent, "Accept": "application/json"},
-            )
+            self._client = self._make(self.cfg.kalshi_base_url)
         return self._client
 
+    def _http_hist(self) -> httpx.Client:
+        if self._hist_client is None:
+            self._hist_client = self._make(self.cfg.kalshi_historical_base_url)
+        return self._hist_client
+
     def close(self) -> None:
-        if self._client is not None:
-            self._client.close()
-            self._client = None
+        for attr in ("_client", "_hist_client"):
+            c = getattr(self, attr)
+            if c is not None:
+                c.close()
+                setattr(self, attr, None)
 
     def get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+        return self._get(self._http(), path, params)
+
+    def get_historical(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+        """GET against the historical (archived/settled markets) host."""
+        return self._get(self._http_hist(), path, params)
+
+    def _get(self, http: httpx.Client, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         params = {k: v for k, v in (params or {}).items() if v is not None}
         last_exc: Exception | None = None
         for attempt in range(self.cfg.http_max_retries + 1):
             self.rate.wait()
             try:
                 self.request_count += 1
-                r = self._http().get(path, params=params)
+                r = http.get(path, params=params)
             except (httpx.TransportError, httpx.TimeoutException) as e:
                 last_exc = e
                 self._sleep(attempt)
@@ -208,3 +232,83 @@ class KalshiClient:
             {"start_ts": start_ts, "end_ts": end_ts, "period_interval": period_interval},
         )
         return data.get("candlesticks", [])
+
+    # ---- historical (archived / settled) endpoints ---------------------------
+    # Endpoint shapes assumed (UNVERIFIED against Kalshi docs; verify on first network run):
+    #   GET {hist}/markets?series_ticker=&event_ticker=&tickers=&status=&limit=&cursor=&min_close_ts=&max_close_ts=
+    #   GET {hist}/markets/{ticker}
+    #   GET {hist}/markets/{ticker}/candlesticks?start_ts=&end_ts=&period_interval=1|60|1440
+    #   GET {hist}/trades?ticker=&limit=&cursor=&min_ts=&max_ts=
+
+    @staticmethod
+    def _rows(data: dict[str, Any], *keys: str) -> list[dict[str, Any]]:
+        """Tolerant list extraction: first present key wins; a bare list payload is accepted too."""
+        if isinstance(data, list):
+            return list(data)
+        for k in keys:
+            v = data.get(k)
+            if isinstance(v, list):
+                return v
+        return []
+
+    def iter_historical_markets(
+        self,
+        series_ticker: str | None = None,
+        event_ticker: str | None = None,
+        status: str | None = None,
+        tickers: list[str] | None = None,
+        min_close_ts: int | None = None,
+        max_close_ts: int | None = None,
+        max_pages: int | None = None,
+        limit: int = 1000,
+    ) -> Iterator[dict[str, Any]]:
+        cursor = None
+        pages = 0
+        while True:
+            data = self.get_historical(
+                "/markets",
+                {
+                    "series_ticker": series_ticker,
+                    "event_ticker": event_ticker,
+                    "status": status,
+                    "tickers": ",".join(tickers) if tickers else None,
+                    "min_close_ts": min_close_ts,
+                    "max_close_ts": max_close_ts,
+                    "limit": limit,
+                    "cursor": cursor,
+                },
+            )
+            yield from self._rows(data, "markets", "data")
+            pages += 1
+            cursor = data.get("cursor") if isinstance(data, dict) else None
+            if not cursor or (max_pages is not None and pages >= max_pages):
+                break
+
+    def get_historical_market(self, ticker: str) -> dict[str, Any]:
+        data = self.get_historical(f"/markets/{ticker}")
+        return data.get("market", data) if isinstance(data, dict) else {}
+
+    def historical_candlesticks(
+        self, ticker: str, start_ts: int, end_ts: int, period_interval: int = 60
+    ) -> list[dict[str, Any]]:
+        data = self.get_historical(
+            f"/markets/{ticker}/candlesticks",
+            {"start_ts": start_ts, "end_ts": end_ts, "period_interval": period_interval},
+        )
+        return self._rows(data, "candlesticks", "candles", "data")
+
+    def iter_historical_trades(
+        self, ticker: str, min_ts: int | None = None, max_ts: int | None = None, max_pages: int | None = None,
+        limit: int = 1000,
+    ) -> Iterator[dict[str, Any]]:
+        cursor = None
+        pages = 0
+        while True:
+            data = self.get_historical(
+                "/trades", {"ticker": ticker, "min_ts": min_ts, "max_ts": max_ts, "limit": limit, "cursor": cursor}
+            )
+            yield from self._rows(data, "trades", "data")
+            pages += 1
+            cursor = data.get("cursor") if isinstance(data, dict) else None
+            if not cursor or (max_pages is not None and pages >= max_pages):
+                break
