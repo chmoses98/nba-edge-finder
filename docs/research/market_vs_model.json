@@ -1,16 +1,511 @@
 {
  "overall": {
-  "n": 2873,
+  "n": 16090,
+  "n_oos": 15789,
+  "n_folds": 4,
+  "n_oos_games": 1264,
+  "base_rate": 0.4351130533916017,
+  "residual_coefficient_mean": -0.08111078227479386,
+  "residual_coefficient_per_fold": [
+   -0.2453,
+   0.0278,
+   -0.0341,
+   -0.073
+  ],
+  "residual_coefficient_positive_in_all_folds": false,
+  "oos": {
+   "market_raw": {
+    "log_loss": 0.5330157254186673,
+    "brier": 0.17871582272468176,
+    "ece": 0.009080055735005371
+   },
+   "market_calibrated": {
+    "log_loss": 0.5332566378919532,
+    "brier": 0.1788295554383162,
+    "ece": 0.012511414588868078
+   },
+   "data_only": {
+    "log_loss": 0.581772179147923,
+    "brier": 0.19741009676755908,
+    "ece": 0.05506669826206192
+   },
+   "hybrid": {
+    "log_loss": 0.5347159438480953,
+    "brier": 0.17943171302430597,
+    "ece": 0.009653872550172029
+   }
+  },
+  "hybrid_beats_calibrated_market": false,
+  "log_loss_gain_vs_calibrated_market": -0.0014593059561420763,
+  "calibration": {
+   "by_market_price": [
+    {
+     "bin": "(0.013999999999999999, 0.17]",
+     "n": 3248,
+     "mean_p_market": 0.0988392857142857,
+     "mean_p_data": 0.10010723037694091,
+     "base_rate": 0.10498768472906404,
+     "mean_edge": 0.001267944662655197
+    },
+    {
+     "bin": "(0.17, 0.325]",
+     "n": 3192,
+     "mean_p_market": 0.24739505012531326,
+     "mean_p_data": 0.2392160421244465,
+     "base_rate": 0.23934837092731828,
+     "mean_edge": -0.00817900800086678
+    },
+    {
+     "bin": "(0.325, 0.495]",
+     "n": 3253,
+     "mean_p_market": 0.41424531201967413,
+     "mean_p_data": 0.3635107455157955,
+     "base_rate": 0.4226867506916692,
+     "mean_edge": -0.05073456650387869
+    },
+    {
+     "bin": "(0.495, 0.685]",
+     "n": 3282,
+     "mean_p_market": 0.5914366240097501,
+     "mean_p_data": 0.5031117058664462,
+     "base_rate": 0.6072516758074344,
+     "mean_edge": -0.08832491814330402
+    },
+    {
+     "bin": "(0.685, 0.98]",
+     "n": 3115,
+     "mean_p_market": 0.8034799357945426,
+     "mean_p_data": 0.7213139320600231,
+     "base_rate": 0.8134831460674158,
+     "mean_edge": -0.08216600373451945
+    }
+   ],
+   "by_market_price_and_edge_sign": [
+    {
+     "bin": "(0.013999999999999999, 0.17]",
+     "side": "model_above_market",
+     "n": 855,
+     "mean_p_market": 0.11555555555555555,
+     "base_rate": 0.11345029239766082,
+     "market_minus_actual": 0.002105263157894735
+    },
+    {
+     "bin": "(0.013999999999999999, 0.17]",
+     "side": "model_below_market",
+     "n": 1670,
+     "mean_p_market": 0.09871556886227546,
+     "base_rate": 0.10179640718562874,
+     "market_minus_actual": -0.003080838323353277
+    },
+    {
+     "bin": "(0.17, 0.325]",
+     "side": "model_above_market",
+     "n": 1114,
+     "mean_p_market": 0.24721723518850985,
+     "base_rate": 0.2414721723518851,
+     "market_minus_actual": 0.005745062836624765
+    },
+    {
+     "bin": "(0.17, 0.325]",
+     "side": "model_below_market",
+     "n": 1678,
+     "mean_p_market": 0.2483104886769964,
+     "base_rate": 0.2520858164481526,
+     "market_minus_actual": -0.0037753277711561894
+    },
+    {
+     "bin": "(0.325, 0.495]",
+     "side": "model_above_market",
+     "n": 885,
+     "mean_p_market": 0.409231638418079,
+     "base_rate": 0.40451977401129946,
+     "market_minus_actual": 0.0047118644067795645
+    },
+    {
+     "bin": "(0.325, 0.495]",
+     "side": "model_below_market",
+     "n": 2043,
+     "mean_p_market": 0.4170998531571219,
+     "base_rate": 0.43073910915320607,
+     "market_minus_actual": -0.013639255996084176
+    },
+    {
+     "bin": "(0.495, 0.685]",
+     "side": "model_above_market",
+     "n": 635,
+     "mean_p_market": 0.5893385826771654,
+     "base_rate": 0.5905511811023622,
+     "market_minus_actual": -0.0012125984251967203
+    },
+    {
+     "bin": "(0.495, 0.685]",
+     "side": "model_below_market",
+     "n": 2350,
+     "mean_p_market": 0.5914978723404255,
+     "base_rate": 0.6131914893617021,
+     "market_minus_actual": -0.02169361702127659
+    },
+    {
+     "bin": "(0.685, 0.98]",
+     "side": "model_above_market",
+     "n": 409,
+     "mean_p_market": 0.7840342298288508,
+     "base_rate": 0.7677261613691931,
+     "market_minus_actual": 0.01630806845965771
+    },
+    {
+     "bin": "(0.685, 0.98]",
+     "side": "model_below_market",
+     "n": 2203,
+     "mean_p_market": 0.7988379482523832,
+     "base_rate": 0.813890149795733,
+     "market_minus_actual": -0.015052201543349852
+    }
+   ]
+  }
+ },
+ "game_spread": {
+  "n": 2391,
+  "n_oos": 2089,
+  "n_folds": 4,
+  "n_oos_games": 172,
+  "base_rate": 0.31450454763044516,
+  "residual_coefficient_mean": -0.08841315369197146,
+  "residual_coefficient_per_fold": [
+   -0.1796,
+   -0.1908,
+   0.0126,
+   0.0042
+  ],
+  "residual_coefficient_positive_in_all_folds": false,
+  "oos": {
+   "market_raw": {
+    "log_loss": 0.5328615276377331,
+    "brier": 0.17679881522259452,
+    "ece": 0.009135950215414091
+   },
+   "market_calibrated": {
+    "log_loss": 0.536565304614283,
+    "brier": 0.1782307498190031,
+    "ece": 0.025063564609577323
+   },
+   "data_only": {
+    "log_loss": 0.5708536753275649,
+    "brier": 0.1926358339779799,
+    "ece": 0.03845102920057444
+   },
+   "hybrid": {
+    "log_loss": 0.5379476510659623,
+    "brier": 0.17877759095579734,
+    "ece": 0.02542161166695927
+   }
+  },
+  "hybrid_beats_calibrated_market": false,
+  "log_loss_gain_vs_calibrated_market": -0.0013823464516793393,
+  "calibration": {
+   "by_market_price": [
+    {
+     "bin": "(0.013999999999999999, 0.145]",
+     "n": 503,
+     "mean_p_market": 0.1106958250497018,
+     "mean_p_data": 0.1802644135188867,
+     "base_rate": 0.1172962226640159,
+     "mean_edge": 0.0695685884691849
+    },
+    {
+     "bin": "(0.145, 0.215]",
+     "n": 459,
+     "mean_p_market": 0.18043572984749454,
+     "mean_p_data": 0.23951394335511986,
+     "base_rate": 0.16993464052287582,
+     "mean_edge": 0.05907821350762527
+    },
+    {
+     "bin": "(0.215, 0.32]",
+     "n": 483,
+     "mean_p_market": 0.266656314699793,
+     "mean_p_data": 0.31642153209109725,
+     "base_rate": 0.2505175983436853,
+     "mean_edge": 0.04976521739130435
+    },
+    {
+     "bin": "(0.32, 0.485]",
+     "n": 477,
+     "mean_p_market": 0.39571278825995815,
+     "mean_p_data": 0.4150018867924528,
+     "base_rate": 0.37945492662473795,
+     "mean_edge": 0.019289098532494758
+    },
+    {
+     "bin": "(0.485, 0.905]",
+     "n": 469,
+     "mean_p_market": 0.6344776119402986,
+     "mean_p_data": 0.5780091684434969,
+     "base_rate": 0.6332622601279317,
+     "mean_edge": -0.056468443496801704
+    }
+   ],
+   "by_market_price_and_edge_sign": [
+    {
+     "bin": "(0.013999999999999999, 0.145]",
+     "side": "model_above_market",
+     "n": 355,
+     "mean_p_market": 0.11083098591549295,
+     "base_rate": 0.11830985915492957,
+     "market_minus_actual": -0.00747887323943662
+    },
+    {
+     "bin": "(0.013999999999999999, 0.145]",
+     "side": "model_below_market",
+     "n": 50,
+     "mean_p_market": 0.1245,
+     "base_rate": 0.1,
+     "market_minus_actual": 0.024499999999999994
+    },
+    {
+     "bin": "(0.145, 0.215]",
+     "side": "model_above_market",
+     "n": 289,
+     "mean_p_market": 0.1807439446366782,
+     "base_rate": 0.18685121107266436,
+     "market_minus_actual": -0.006107266435986164
+    },
+    {
+     "bin": "(0.145, 0.215]",
+     "side": "model_below_market",
+     "n": 86,
+     "mean_p_market": 0.18174418604651166,
+     "base_rate": 0.1744186046511628,
+     "market_minus_actual": 0.0073255813953488624
+    },
+    {
+     "bin": "(0.215, 0.32]",
+     "side": "model_above_market",
+     "n": 274,
+     "mean_p_market": 0.26697080291970804,
+     "base_rate": 0.2518248175182482,
+     "market_minus_actual": 0.015145985401459838
+    },
+    {
+     "bin": "(0.215, 0.32]",
+     "side": "model_below_market",
+     "n": 128,
+     "mean_p_market": 0.2682421875,
+     "base_rate": 0.296875,
+     "market_minus_actual": -0.028632812499999993
+    },
+    {
+     "bin": "(0.32, 0.485]",
+     "side": "model_above_market",
+     "n": 234,
+     "mean_p_market": 0.3967307692307693,
+     "base_rate": 0.36324786324786323,
+     "market_minus_actual": 0.03348290598290604
+    },
+    {
+     "bin": "(0.32, 0.485]",
+     "side": "model_below_market",
+     "n": 174,
+     "mean_p_market": 0.39790229885057476,
+     "base_rate": 0.3793103448275862,
+     "market_minus_actual": 0.018591954022988577
+    },
+    {
+     "bin": "(0.485, 0.905]",
+     "side": "model_above_market",
+     "n": 125,
+     "mean_p_market": 0.6059200000000001,
+     "base_rate": 0.576,
+     "market_minus_actual": 0.02992000000000017
+    },
+    {
+     "bin": "(0.485, 0.905]",
+     "side": "model_below_market",
+     "n": 289,
+     "mean_p_market": 0.6477681660899653,
+     "base_rate": 0.6505190311418685,
+     "market_minus_actual": -0.0027508650519031397
+    }
+   ]
+  }
+ },
+ "game_total": {
+  "n": 2053,
+  "n_oos": 1744,
+  "n_folds": 4,
+  "n_oos_games": 161,
+  "base_rate": 0.5223623853211009,
+  "residual_coefficient_mean": -0.11614656524706932,
+  "residual_coefficient_per_fold": [
+   -0.0203,
+   -0.1085,
+   -0.1044,
+   -0.2313
+  ],
+  "residual_coefficient_positive_in_all_folds": false,
+  "oos": {
+   "market_raw": {
+    "log_loss": 0.5956527231844292,
+    "brier": 0.20386315940366972,
+    "ece": 0.01954701834862387
+   },
+   "market_calibrated": {
+    "log_loss": 0.6000272253508971,
+    "brier": 0.20516835677014103,
+    "ece": 0.03587360366001255
+   },
+   "data_only": {
+    "log_loss": 0.6564865083664713,
+    "brier": 0.2305919928956422,
+    "ece": 0.07507723623853214
+   },
+   "hybrid": {
+    "log_loss": 0.6037429638726661,
+    "brier": 0.20659532287343807,
+    "ece": 0.04310568643136704
+   }
+  },
+  "hybrid_beats_calibrated_market": false,
+  "log_loss_gain_vs_calibrated_market": -0.0037157385217689853,
+  "calibration": {
+   "by_market_price": [
+    {
+     "bin": "(0.124, 0.305]",
+     "n": 424,
+     "mean_p_market": 0.2388443396226415,
+     "mean_p_data": 0.2533584905660377,
+     "base_rate": 0.21933962264150944,
+     "mean_edge": 0.014514150943396231
+    },
+    {
+     "bin": "(0.305, 0.435]",
+     "n": 398,
+     "mean_p_market": 0.3707537688442211,
+     "mean_p_data": 0.3454424623115577,
+     "base_rate": 0.36180904522613067,
+     "mean_edge": -0.025311306532663322
+    },
+    {
+     "bin": "(0.435, 0.585]",
+     "n": 420,
+     "mean_p_market": 0.5116666666666667,
+     "mean_p_data": 0.45143404761904765,
+     "base_rate": 0.5142857142857142,
+     "mean_edge": -0.060232619047619056
+    },
+    {
+     "bin": "(0.585, 0.718]",
+     "n": 400,
+     "mean_p_market": 0.6537875,
+     "mean_p_data": 0.5782955,
+     "base_rate": 0.7,
+     "mean_edge": -0.07549199999999999
+    },
+    {
+     "bin": "(0.718, 0.91]",
+     "n": 411,
+     "mean_p_market": 0.7848296836982969,
+     "mean_p_data": 0.6963690997566909,
+     "base_rate": 0.805352798053528,
+     "mean_edge": -0.08846058394160583
+    }
+   ],
+   "by_market_price_and_edge_sign": [
+    {
+     "bin": "(0.124, 0.305]",
+     "side": "model_above_market",
+     "n": 163,
+     "mean_p_market": 0.230920245398773,
+     "base_rate": 0.20245398773006135,
+     "market_minus_actual": 0.028466257668711664
+    },
+    {
+     "bin": "(0.124, 0.305]",
+     "side": "model_below_market",
+     "n": 193,
+     "mean_p_market": 0.2484715025906736,
+     "base_rate": 0.24870466321243523,
+     "market_minus_actual": -0.00023316062176162444
+    },
+    {
+     "bin": "(0.305, 0.435]",
+     "side": "model_above_market",
+     "n": 131,
+     "mean_p_market": 0.37145038167938926,
+     "base_rate": 0.3435114503816794,
+     "market_minus_actual": 0.027938931297709857
+    },
+    {
+     "bin": "(0.305, 0.435]",
+     "side": "model_below_market",
+     "n": 231,
+     "mean_p_market": 0.3709523809523809,
+     "base_rate": 0.38095238095238093,
+     "market_minus_actual": -0.010000000000000009
+    },
+    {
+     "bin": "(0.435, 0.585]",
+     "side": "model_above_market",
+     "n": 112,
+     "mean_p_market": 0.5104464285714286,
+     "base_rate": 0.5089285714285714,
+     "market_minus_actual": 0.0015178571428572374
+    },
+    {
+     "bin": "(0.435, 0.585]",
+     "side": "model_below_market",
+     "n": 262,
+     "mean_p_market": 0.5134541984732826,
+     "base_rate": 0.5190839694656488,
+     "market_minus_actual": -0.005629770992366279
+    },
+    {
+     "bin": "(0.585, 0.718]",
+     "side": "model_above_market",
+     "n": 91,
+     "mean_p_market": 0.6517032967032967,
+     "base_rate": 0.6923076923076923,
+     "market_minus_actual": -0.04060439560439555
+    },
+    {
+     "bin": "(0.585, 0.718]",
+     "side": "model_below_market",
+     "n": 262,
+     "mean_p_market": 0.6540458015267177,
+     "base_rate": 0.7137404580152672,
+     "market_minus_actual": -0.05969465648854955
+    },
+    {
+     "bin": "(0.718, 0.91]",
+     "side": "model_above_market",
+     "n": 71,
+     "mean_p_market": 0.7729577464788734,
+     "base_rate": 0.7887323943661971,
+     "market_minus_actual": -0.015774647887323745
+    },
+    {
+     "bin": "(0.718, 0.91]",
+     "side": "model_below_market",
+     "n": 279,
+     "mean_p_market": 0.7870071684587813,
+     "base_rate": 0.8172043010752689,
+     "market_minus_actual": -0.0301971326164876
+    }
+   ]
+  }
+ },
+ "game_winner": {
+  "n": 2772,
   "n_oos": 2472,
   "n_folds": 4,
   "n_oos_games": 1236,
   "base_rate": 0.5,
-  "residual_coefficient_mean": -0.058789076148153444,
+  "residual_coefficient_mean": -0.01527886028676749,
   "residual_coefficient_per_fold": [
-   -0.1097,
-   0.0099,
-   -0.0406,
-   -0.0947
+   -0.055,
+   0.0714,
+   -0.0051,
+   -0.0725
   ],
   "residual_coefficient_positive_in_all_folds": false,
   "oos": {
@@ -20,9 +515,9 @@
     "ece": 0.02128236245954694
    },
    "market_calibrated": {
-    "log_loss": 0.5748023624283157,
-    "brier": 0.1963197920604493,
-    "ece": 0.016839698611311918
+    "log_loss": 0.5771976149345505,
+    "brier": 0.19712258028796154,
+    "ece": 0.020074603094847786
    },
    "data_only": {
     "log_loss": 0.607408911204894,
@@ -30,236 +525,22 @@
     "ece": 0.018005582524271823
    },
    "hybrid": {
-    "log_loss": 0.5750997166948251,
-    "brier": 0.19647424437943523,
-    "ece": 0.014475708111650951
+    "log_loss": 0.5777051146643014,
+    "brier": 0.19732913213849718,
+    "ece": 0.021493484655031467
    }
   },
   "hybrid_beats_calibrated_market": false,
-  "log_loss_gain_vs_calibrated_market": -0.00029735426650934205,
-  "calibration": {
-   "by_market_price": [
-    {
-     "bin": "(0.024, 0.275]",
-     "n": 600,
-     "mean_p_market": 0.1811666666666667,
-     "mean_p_data": 0.2442143333333333,
-     "base_rate": 0.17,
-     "mean_edge": 0.06304766666666667
-    },
-    {
-     "bin": "(0.275, 0.415]",
-     "n": 569,
-     "mean_p_market": 0.3521968365553602,
-     "mean_p_data": 0.391792618629174,
-     "base_rate": 0.3602811950790861,
-     "mean_edge": 0.03959578207381371
-    },
-    {
-     "bin": "(0.415, 0.566]",
-     "n": 555,
-     "mean_p_market": 0.49409009009009003,
-     "mean_p_data": 0.49600396396396396,
-     "base_rate": 0.4900900900900901,
-     "mean_edge": 0.0019138738738738652
-    },
-    {
-     "bin": "(0.566, 0.715]",
-     "n": 594,
-     "mean_p_market": 0.6422053872053872,
-     "mean_p_data": 0.6040193602693603,
-     "base_rate": 0.632996632996633,
-     "mean_edge": -0.038186026936026934
-    },
-    {
-     "bin": "(0.715, 0.975]",
-     "n": 555,
-     "mean_p_market": 0.8200540540540542,
-     "mean_p_data": 0.7523304504504504,
-     "base_rate": 0.818018018018018,
-     "mean_edge": -0.0677236036036036
-    }
-   ],
-   "by_market_price_and_edge_sign": [
-    {
-     "bin": "(0.024, 0.275]",
-     "side": "model_above_market",
-     "n": 395,
-     "mean_p_market": 0.1759873417721519,
-     "base_rate": 0.1468354430379747,
-     "market_minus_actual": 0.0291518987341772
-    },
-    {
-     "bin": "(0.024, 0.275]",
-     "side": "model_below_market",
-     "n": 120,
-     "mean_p_market": 0.19437500000000002,
-     "base_rate": 0.25833333333333336,
-     "market_minus_actual": -0.06395833333333334
-    },
-    {
-     "bin": "(0.275, 0.415]",
-     "side": "model_above_market",
-     "n": 313,
-     "mean_p_market": 0.34928115015974437,
-     "base_rate": 0.34824281150159747,
-     "market_minus_actual": 0.0010383386581468979
-    },
-    {
-     "bin": "(0.275, 0.415]",
-     "side": "model_below_market",
-     "n": 169,
-     "mean_p_market": 0.35748520710059173,
-     "base_rate": 0.38461538461538464,
-     "market_minus_actual": -0.027130177514792908
-    },
-    {
-     "bin": "(0.415, 0.566]",
-     "side": "model_above_market",
-     "n": 248,
-     "mean_p_market": 0.4871572580645161,
-     "base_rate": 0.4879032258064516,
-     "market_minus_actual": -0.0007459677419355271
-    },
-    {
-     "bin": "(0.415, 0.566]",
-     "side": "model_below_market",
-     "n": 239,
-     "mean_p_market": 0.5011924686192468,
-     "base_rate": 0.49372384937238495,
-     "market_minus_actual": 0.007468619246861874
-    },
-    {
-     "bin": "(0.566, 0.715]",
-     "side": "model_above_market",
-     "n": 181,
-     "mean_p_market": 0.637707182320442,
-     "base_rate": 0.6132596685082873,
-     "market_minus_actual": 0.02444751381215471
-    },
-    {
-     "bin": "(0.566, 0.715]",
-     "side": "model_below_market",
-     "n": 323,
-     "mean_p_market": 0.6446439628482972,
-     "base_rate": 0.6346749226006192,
-     "market_minus_actual": 0.009969040247677974
-    },
-    {
-     "bin": "(0.715, 0.975]",
-     "side": "model_above_market",
-     "n": 100,
-     "mean_p_market": 0.8057,
-     "base_rate": 0.73,
-     "market_minus_actual": 0.07569999999999999
-    },
-    {
-     "bin": "(0.715, 0.975]",
-     "side": "model_below_market",
-     "n": 380,
-     "mean_p_market": 0.8243815789473684,
-     "base_rate": 0.8368421052631579,
-     "market_minus_actual": -0.012460526315789533
-    }
-   ]
-  }
- },
- "game_spread": {
-  "n": 101,
-  "error": "insufficient rows for a walk-forward fit",
-  "calibration": {
-   "by_market_price": [
-    {
-     "bin": "(0.109, 0.175]",
-     "n": 23,
-     "mean_p_market": 0.1441304347826087,
-     "mean_p_data": 0.16291304347826085,
-     "base_rate": 0.08695652173913043,
-     "mean_edge": 0.018782608695652177
-    },
-    {
-     "bin": "(0.175, 0.235]",
-     "n": 19,
-     "mean_p_market": 0.20157894736842105,
-     "mean_p_data": 0.2557789473684211,
-     "base_rate": 0.10526315789473684,
-     "mean_edge": 0.05419999999999999
-    },
-    {
-     "bin": "(0.235, 0.315]",
-     "n": 19,
-     "mean_p_market": 0.2765789473684211,
-     "mean_p_data": 0.3256894736842105,
-     "base_rate": 0.15789473684210525,
-     "mean_edge": 0.04911052631578947
-    },
-    {
-     "bin": "(0.315, 0.42]",
-     "n": 20,
-     "mean_p_market": 0.36975,
-     "mean_p_data": 0.42774999999999996,
-     "base_rate": 0.35,
-     "mean_edge": 0.05799999999999998
-    },
-    {
-     "bin": "(0.42, 0.71]",
-     "n": 20,
-     "mean_p_market": 0.5539999999999999,
-     "mean_p_data": 0.58609,
-     "base_rate": 0.45,
-     "mean_edge": 0.032090000000000014
-    }
-   ],
-   "by_market_price_and_edge_sign": []
-  }
- },
- "game_winner": {
-  "n": 2772,
-  "n_oos": 2372,
-  "n_folds": 4,
-  "n_oos_games": 1186,
-  "base_rate": 0.5,
-  "residual_coefficient_mean": 0.0041889311235291625,
-  "residual_coefficient_per_fold": [
-   0.0963,
-   0.0149,
-   -0.0147,
-   -0.0798
-  ],
-  "residual_coefficient_positive_in_all_folds": false,
-  "oos": {
-   "market_raw": {
-    "log_loss": 0.5714890556372588,
-    "brier": 0.19522366146711634,
-    "ece": 0.023695193929173693
-   },
-   "market_calibrated": {
-    "log_loss": 0.5739133650755229,
-    "brier": 0.1959357625837386,
-    "ece": 0.018995174261793587
-   },
-   "data_only": {
-    "log_loss": 0.6081302572398194,
-    "brier": 0.2092543946711636,
-    "ece": 0.019392748735244533
-   },
-   "hybrid": {
-    "log_loss": 0.5740426053449361,
-    "brier": 0.19602485501467584,
-    "ece": 0.0134350839862829
-   }
-  },
-  "hybrid_beats_calibrated_market": false,
-  "log_loss_gain_vs_calibrated_market": -0.0001292402694131889,
+  "log_loss_gain_vs_calibrated_market": -0.0005074997297509487,
   "calibration": {
    "by_market_price": [
     {
      "bin": "(0.024, 0.285]",
      "n": 575,
-     "mean_p_market": 0.18550434782608696,
-     "mean_p_data": 0.2503006956521739,
+     "mean_p_market": 0.18550434782608693,
+     "mean_p_data": 0.25030069565217394,
      "base_rate": 0.18956521739130436,
-     "mean_edge": 0.06479634782608697
+     "mean_edge": 0.06479634782608695
     },
     {
      "bin": "(0.285, 0.425]",
@@ -275,20 +556,20 @@
      "mean_p_market": 0.5055555555555555,
      "mean_p_data": 0.5023096539162113,
      "base_rate": 0.5027322404371585,
-     "mean_edge": -0.0032459016393442666
+     "mean_edge": -0.0032459016393442675
     },
     {
      "bin": "(0.575, 0.719]",
      "n": 541,
-     "mean_p_market": 0.6478835489833641,
-     "mean_p_data": 0.6083255083179296,
+     "mean_p_market": 0.6478835489833642,
+     "mean_p_data": 0.6083255083179298,
      "base_rate": 0.6395563770794824,
      "mean_edge": -0.039558040665434384
     },
     {
      "bin": "(0.719, 0.975]",
      "n": 555,
-     "mean_p_market": 0.8200540540540542,
+     "mean_p_market": 0.8200540540540541,
      "mean_p_data": 0.7523304504504504,
      "base_rate": 0.818018018018018,
      "mean_edge": -0.0677236036036036
@@ -339,9 +620,9 @@
      "bin": "(0.425, 0.575]",
      "side": "model_below_market",
      "n": 246,
-     "mean_p_market": 0.513739837398374,
+     "mean_p_market": 0.5137398373983739,
      "base_rate": 0.5,
-     "market_minus_actual": 0.013739837398374033
+     "market_minus_actual": 0.013739837398373922
     },
     {
      "bin": "(0.575, 0.719]",
@@ -355,25 +636,722 @@
      "bin": "(0.575, 0.719]",
      "side": "model_below_market",
      "n": 294,
-     "mean_p_market": 0.6508503401360545,
+     "mean_p_market": 0.6508503401360543,
      "base_rate": 0.6428571428571429,
-     "market_minus_actual": 0.007993197278911568
+     "market_minus_actual": 0.007993197278911346
     },
     {
      "bin": "(0.719, 0.975]",
      "side": "model_above_market",
      "n": 100,
-     "mean_p_market": 0.8057,
+     "mean_p_market": 0.8056999999999997,
      "base_rate": 0.73,
-     "market_minus_actual": 0.07569999999999999
+     "market_minus_actual": 0.07569999999999977
     },
     {
      "bin": "(0.719, 0.975]",
      "side": "model_below_market",
      "n": 380,
-     "mean_p_market": 0.8243815789473684,
+     "mean_p_market": 0.8243815789473685,
      "base_rate": 0.8368421052631579,
-     "market_minus_actual": -0.012460526315789533
+     "market_minus_actual": -0.012460526315789422
+    }
+   ]
+  }
+ },
+ "player_assists": {
+  "n": 1708,
+  "n_oos": 1408,
+  "n_folds": 4,
+  "n_oos_games": 96,
+  "base_rate": 0.45454545454545453,
+  "residual_coefficient_mean": 0.42786498955423824,
+  "residual_coefficient_per_fold": [
+   0.647,
+   0.6252,
+   0.2439,
+   0.1954
+  ],
+  "residual_coefficient_positive_in_all_folds": true,
+  "oos": {
+   "market_raw": {
+    "log_loss": 0.46668928565099127,
+    "brier": 0.15349856178977273,
+    "ece": 0.0371981534090909
+   },
+   "market_calibrated": {
+    "log_loss": 0.464557673780174,
+    "brier": 0.15260264660350586,
+    "ece": 0.0303452897931363
+   },
+   "data_only": {
+    "log_loss": 0.5313225244348433,
+    "brier": 0.17495689410777018,
+    "ece": 0.11825114728479634
+   },
+   "hybrid": {
+    "log_loss": 0.4674029508621981,
+    "brier": 0.15413126787918074,
+    "ece": 0.02483154325983579
+   }
+  },
+  "hybrid_beats_calibrated_market": false,
+  "log_loss_gain_vs_calibrated_market": -0.002845277082024089,
+  "calibration": {
+   "by_market_price": [
+    {
+     "bin": "(0.019, 0.1]",
+     "n": 343,
+     "mean_p_market": 0.05865889212827988,
+     "mean_p_data": 0.03188101158717891,
+     "base_rate": 0.06997084548104957,
+     "mean_edge": -0.026777880541100963
+    },
+    {
+     "bin": "(0.1, 0.284]",
+     "n": 340,
+     "mean_p_market": 0.1794705882352941,
+     "mean_p_data": 0.11321232075359262,
+     "base_rate": 0.17647058823529413,
+     "mean_edge": -0.06625826748170148
+    },
+    {
+     "bin": "(0.284, 0.495]",
+     "n": 348,
+     "mean_p_market": 0.4050862068965517,
+     "mean_p_data": 0.280202264658066,
+     "base_rate": 0.45977011494252873,
+     "mean_edge": -0.12488394223848573
+    },
+    {
+     "bin": "(0.495, 0.71]",
+     "n": 338,
+     "mean_p_market": 0.5963017751479289,
+     "mean_p_data": 0.4610449752004661,
+     "base_rate": 0.6242603550295858,
+     "mean_edge": -0.13525679994746295
+    },
+    {
+     "bin": "(0.71, 0.965]",
+     "n": 339,
+     "mean_p_market": 0.855117994100295,
+     "mean_p_data": 0.7754568576510513,
+     "base_rate": 0.9085545722713865,
+     "mean_edge": -0.07966113644924369
+    }
+   ],
+   "by_market_price_and_edge_sign": [
+    {
+     "bin": "(0.019, 0.1]",
+     "side": "model_below_market",
+     "n": 246,
+     "mean_p_market": 0.06170731707317073,
+     "base_rate": 0.07723577235772358,
+     "market_minus_actual": -0.01552845528455285
+    },
+    {
+     "bin": "(0.1, 0.284]",
+     "side": "model_below_market",
+     "n": 279,
+     "mean_p_market": 0.1814695340501792,
+     "base_rate": 0.17562724014336917,
+     "market_minus_actual": 0.005842293906810042
+    },
+    {
+     "bin": "(0.284, 0.495]",
+     "side": "model_below_market",
+     "n": 305,
+     "mean_p_market": 0.4045081967213115,
+     "base_rate": 0.4491803278688525,
+     "market_minus_actual": -0.04467213114754098
+    },
+    {
+     "bin": "(0.495, 0.71]",
+     "side": "model_below_market",
+     "n": 293,
+     "mean_p_market": 0.5941808873720137,
+     "base_rate": 0.6143344709897611,
+     "market_minus_actual": -0.02015358361774744
+    },
+    {
+     "bin": "(0.71, 0.965]",
+     "side": "model_below_market",
+     "n": 241,
+     "mean_p_market": 0.8384024896265561,
+     "base_rate": 0.8879668049792531,
+     "market_minus_actual": -0.04956431535269701
+    }
+   ]
+  }
+ },
+ "player_points": {
+  "n": 2586,
+  "n_oos": 2276,
+  "n_folds": 4,
+  "n_oos_games": 116,
+  "base_rate": 0.3835676625659051,
+  "residual_coefficient_mean": 0.13407854767038335,
+  "residual_coefficient_per_fold": [
+   0.2062,
+   0.2001,
+   0.1138,
+   0.0162
+  ],
+  "residual_coefficient_positive_in_all_folds": true,
+  "oos": {
+   "market_raw": {
+    "log_loss": 0.48758092927276125,
+    "brier": 0.16034756151142354,
+    "ece": 0.013892794376098413
+   },
+   "market_calibrated": {
+    "log_loss": 0.4900839784539915,
+    "brier": 0.1612952146747781,
+    "ece": 0.01800691110691343
+   },
+   "data_only": {
+    "log_loss": 0.558537612963589,
+    "brier": 0.18709758057567663,
+    "ece": 0.10715688636921843
+   },
+   "hybrid": {
+    "log_loss": 0.49075167334301484,
+    "brier": 0.16162679070470337,
+    "ece": 0.02346046083556709
+   }
+  },
+  "hybrid_beats_calibrated_market": false,
+  "log_loss_gain_vs_calibrated_market": -0.0006676948890233514,
+  "calibration": {
+   "by_market_price": [
+    {
+     "bin": "(0.019, 0.11]",
+     "n": 531,
+     "mean_p_market": 0.06854048964218455,
+     "mean_p_data": 0.05381988482301437,
+     "base_rate": 0.0583804143126177,
+     "mean_edge": -0.014720604819170181
+    },
+    {
+     "bin": "(0.11, 0.26]",
+     "n": 511,
+     "mean_p_market": 0.1826614481409002,
+     "mean_p_data": 0.11621410096559345,
+     "base_rate": 0.1780821917808219,
+     "mean_edge": -0.06644734717530675
+    },
+    {
+     "bin": "(0.26, 0.47]",
+     "n": 527,
+     "mean_p_market": 0.3678937381404174,
+     "mean_p_data": 0.23752462387692386,
+     "base_rate": 0.349146110056926,
+     "mean_edge": -0.1303691142634936
+    },
+    {
+     "bin": "(0.47, 0.66]",
+     "n": 503,
+     "mean_p_market": 0.5622564612326044,
+     "mean_p_data": 0.3761082623439686,
+     "base_rate": 0.6083499005964215,
+     "mean_edge": -0.18614819888863576
+    },
+    {
+     "bin": "(0.66, 0.965]",
+     "n": 514,
+     "mean_p_market": 0.7755447470817121,
+     "mean_p_data": 0.6131430519406653,
+     "base_rate": 0.791828793774319,
+     "mean_edge": -0.16240169514104677
+    }
+   ],
+   "by_market_price_and_edge_sign": [
+    {
+     "bin": "(0.019, 0.11]",
+     "side": "model_above_market",
+     "n": 63,
+     "mean_p_market": 0.05880952380952382,
+     "base_rate": 0.015873015873015872,
+     "market_minus_actual": 0.042936507936507946
+    },
+    {
+     "bin": "(0.019, 0.11]",
+     "side": "model_below_market",
+     "n": 327,
+     "mean_p_market": 0.07585626911314984,
+     "base_rate": 0.06116207951070336,
+     "market_minus_actual": 0.014694189602446478
+    },
+    {
+     "bin": "(0.11, 0.26]",
+     "side": "model_above_market",
+     "n": 41,
+     "mean_p_market": 0.1704878048780488,
+     "base_rate": 0.1951219512195122,
+     "market_minus_actual": -0.02463414634146341
+    },
+    {
+     "bin": "(0.11, 0.26]",
+     "side": "model_below_market",
+     "n": 429,
+     "mean_p_market": 0.18467365967365967,
+     "base_rate": 0.18181818181818182,
+     "market_minus_actual": 0.0028554778554778504
+    },
+    {
+     "bin": "(0.26, 0.47]",
+     "side": "model_above_market",
+     "n": 38,
+     "mean_p_market": 0.3607894736842105,
+     "base_rate": 0.3684210526315789,
+     "market_minus_actual": -0.007631578947368434
+    },
+    {
+     "bin": "(0.26, 0.47]",
+     "side": "model_below_market",
+     "n": 469,
+     "mean_p_market": 0.36855010660980814,
+     "base_rate": 0.34968017057569295,
+     "market_minus_actual": 0.018869936034115187
+    },
+    {
+     "bin": "(0.47, 0.66]",
+     "side": "model_below_market",
+     "n": 476,
+     "mean_p_market": 0.563813025210084,
+     "base_rate": 0.615546218487395,
+     "market_minus_actual": -0.05173319327731096
+    },
+    {
+     "bin": "(0.66, 0.965]",
+     "side": "model_below_market",
+     "n": 478,
+     "mean_p_market": 0.7759937238493723,
+     "base_rate": 0.797071129707113,
+     "market_minus_actual": -0.02107740585774076
+    }
+   ]
+  }
+ },
+ "player_rebounds": {
+  "n": 2332,
+  "n_oos": 2031,
+  "n_folds": 4,
+  "n_oos_games": 106,
+  "base_rate": 0.46971935007385524,
+  "residual_coefficient_mean": 0.19052508407116034,
+  "residual_coefficient_per_fold": [
+   0.4584,
+   0.1013,
+   0.0978,
+   0.1045
+  ],
+  "residual_coefficient_positive_in_all_folds": true,
+  "oos": {
+   "market_raw": {
+    "log_loss": 0.5249092804803913,
+    "brier": 0.1752107459379616,
+    "ece": 0.023237321516494325
+   },
+   "market_calibrated": {
+    "log_loss": 0.5388924292958155,
+    "brier": 0.18042867167900395,
+    "ece": 0.03723202133271463
+   },
+   "data_only": {
+    "log_loss": 0.573853990945545,
+    "brier": 0.19307840335957768,
+    "ece": 0.10148353551891122
+   },
+   "hybrid": {
+    "log_loss": 0.5392277018254049,
+    "brier": 0.18064169016898332,
+    "ece": 0.03601287612956053
+   }
+  },
+  "hybrid_beats_calibrated_market": false,
+  "log_loss_gain_vs_calibrated_market": -0.00033527252958942544,
+  "calibration": {
+   "by_market_price": [
+    {
+     "bin": "(0.024, 0.155]",
+     "n": 476,
+     "mean_p_market": 0.08878151260504202,
+     "mean_p_data": 0.057394554879235386,
+     "base_rate": 0.09453781512605042,
+     "mean_edge": -0.03138695772580664
+    },
+    {
+     "bin": "(0.155, 0.365]",
+     "n": 468,
+     "mean_p_market": 0.25180555555555556,
+     "mean_p_data": 0.16939667847526557,
+     "base_rate": 0.26282051282051283,
+     "mean_edge": -0.08240887708029
+    },
+    {
+     "bin": "(0.365, 0.52]",
+     "n": 461,
+     "mean_p_market": 0.4489587852494577,
+     "mean_p_data": 0.3364768195241496,
+     "base_rate": 0.455531453362256,
+     "mean_edge": -0.11248196572530814
+    },
+    {
+     "bin": "(0.52, 0.734]",
+     "n": 460,
+     "mean_p_market": 0.6152826086956522,
+     "mean_p_data": 0.4913333121817682,
+     "base_rate": 0.6326086956521739,
+     "mean_edge": -0.123949296513884
+    },
+    {
+     "bin": "(0.734, 0.98]",
+     "n": 467,
+     "mean_p_market": 0.856456102783726,
+     "mean_p_data": 0.8014180183352515,
+     "base_rate": 0.8436830835117773,
+     "mean_edge": -0.055038084448474286
+    }
+   ],
+   "by_market_price_and_edge_sign": [
+    {
+     "bin": "(0.024, 0.155]",
+     "side": "model_below_market",
+     "n": 335,
+     "mean_p_market": 0.09508955223880598,
+     "base_rate": 0.09253731343283582,
+     "market_minus_actual": 0.002552238805970164
+    },
+    {
+     "bin": "(0.155, 0.365]",
+     "side": "model_below_market",
+     "n": 405,
+     "mean_p_market": 0.2534197530864198,
+     "base_rate": 0.2740740740740741,
+     "market_minus_actual": -0.020654320987654295
+    },
+    {
+     "bin": "(0.365, 0.52]",
+     "side": "model_below_market",
+     "n": 403,
+     "mean_p_market": 0.44893300248138956,
+     "base_rate": 0.45905707196029777,
+     "market_minus_actual": -0.010124069478908204
+    },
+    {
+     "bin": "(0.52, 0.734]",
+     "side": "model_below_market",
+     "n": 405,
+     "mean_p_market": 0.614925925925926,
+     "base_rate": 0.6395061728395062,
+     "market_minus_actual": -0.024580246913580184
+    },
+    {
+     "bin": "(0.734, 0.98]",
+     "side": "model_above_market",
+     "n": 48,
+     "mean_p_market": 0.8754166666666666,
+     "base_rate": 0.875,
+     "market_minus_actual": 0.0004166666666666208
+    },
+    {
+     "bin": "(0.734, 0.98]",
+     "side": "model_below_market",
+     "n": 283,
+     "mean_p_market": 0.8335689045936395,
+     "base_rate": 0.8091872791519434,
+     "market_minus_actual": 0.024381625441696086
+    }
+   ]
+  }
+ },
+ "player_threes": {
+  "n": 1493,
+  "n_oos": 1191,
+  "n_folds": 4,
+  "n_oos_games": 83,
+  "base_rate": 0.3963056255247691,
+  "residual_coefficient_mean": 0.3646698820900045,
+  "residual_coefficient_per_fold": [
+   0.0412,
+   0.6587,
+   0.3459,
+   0.413
+  ],
+  "residual_coefficient_positive_in_all_folds": true,
+  "oos": {
+   "market_raw": {
+    "log_loss": 0.48849164515458804,
+    "brier": 0.16102059193954663,
+    "ece": 0.023413098236775818
+   },
+   "market_calibrated": {
+    "log_loss": 0.49346205091215073,
+    "brier": 0.1624815588524179,
+    "ece": 0.043079983514144216
+   },
+   "data_only": {
+    "log_loss": 0.510115139437557,
+    "brier": 0.16889438916836985,
+    "ece": 0.05791668283704178
+   },
+   "hybrid": {
+    "log_loss": 0.49799475302028146,
+    "brier": 0.1644560881951339,
+    "ece": 0.04246899386725832
+   }
+  },
+  "hybrid_beats_calibrated_market": false,
+  "log_loss_gain_vs_calibrated_market": -0.004532702108130726,
+  "calibration": {
+   "by_market_price": [
+    {
+     "bin": "(0.013999999999999999, 0.09]",
+     "n": 312,
+     "mean_p_market": 0.05564102564102564,
+     "mean_p_data": 0.039418681495144825,
+     "base_rate": 0.07051282051282051,
+     "mean_edge": -0.016222344145880824
+    },
+    {
+     "bin": "(0.09, 0.22]",
+     "n": 287,
+     "mean_p_market": 0.15337979094076654,
+     "mean_p_data": 0.1087951658797471,
+     "base_rate": 0.17073170731707318,
+     "mean_edge": -0.04458462506101946
+    },
+    {
+     "bin": "(0.22, 0.431]",
+     "n": 297,
+     "mean_p_market": 0.32964646464646463,
+     "mean_p_data": 0.25216151457905167,
+     "base_rate": 0.3501683501683502,
+     "mean_edge": -0.07748495006741295
+    },
+    {
+     "bin": "(0.431, 0.68]",
+     "n": 300,
+     "mean_p_market": 0.55675,
+     "mean_p_data": 0.46244215123828536,
+     "base_rate": 0.5766666666666667,
+     "mean_edge": -0.09430784876171468
+    },
+    {
+     "bin": "(0.68, 0.965]",
+     "n": 297,
+     "mean_p_market": 0.8148821548821549,
+     "mean_p_data": 0.7603166144467732,
+     "base_rate": 0.797979797979798,
+     "mean_edge": -0.054565540435381574
+    }
+   ],
+   "by_market_price_and_edge_sign": [
+    {
+     "bin": "(0.013999999999999999, 0.09]",
+     "side": "model_below_market",
+     "n": 158,
+     "mean_p_market": 0.05974683544303798,
+     "base_rate": 0.056962025316455694,
+     "market_minus_actual": 0.002784810126582285
+    },
+    {
+     "bin": "(0.09, 0.22]",
+     "side": "model_below_market",
+     "n": 224,
+     "mean_p_market": 0.15850446428571427,
+     "base_rate": 0.16071428571428573,
+     "market_minus_actual": -0.002209821428571457
+    },
+    {
+     "bin": "(0.22, 0.431]",
+     "side": "model_below_market",
+     "n": 248,
+     "mean_p_market": 0.3335887096774194,
+     "base_rate": 0.3548387096774194,
+     "market_minus_actual": -0.02124999999999999
+    },
+    {
+     "bin": "(0.431, 0.68]",
+     "side": "model_below_market",
+     "n": 268,
+     "mean_p_market": 0.5572388059701493,
+     "base_rate": 0.5783582089552238,
+     "market_minus_actual": -0.02111940298507453
+    },
+    {
+     "bin": "(0.68, 0.965]",
+     "side": "model_below_market",
+     "n": 223,
+     "mean_p_market": 0.8131614349775784,
+     "base_rate": 0.8071748878923767,
+     "market_minus_actual": 0.005986547085201743
+    }
+   ]
+  }
+ },
+ "team_total": {
+  "n": 755,
+  "n_oos": 443,
+  "n_folds": 4,
+  "n_oos_games": 39,
+  "base_rate": 0.5869074492099323,
+  "residual_coefficient_mean": -0.45464338404598187,
+  "residual_coefficient_per_fold": [
+   -0.8718,
+   -0.6488,
+   -0.35,
+   0.052
+  ],
+  "residual_coefficient_positive_in_all_folds": false,
+  "oos": {
+   "market_raw": {
+    "log_loss": 0.6148650302542873,
+    "brier": 0.2132111738148984,
+    "ece": 0.09013544018058695
+   },
+   "market_calibrated": {
+    "log_loss": 0.6372690326270669,
+    "brier": 0.22225657516959813,
+    "ece": 0.13238631664510825
+   },
+   "data_only": {
+    "log_loss": 0.6361199683198212,
+    "brier": 0.22081677534988714,
+    "ece": 0.07138645598194131
+   },
+   "hybrid": {
+    "log_loss": 0.6565562162386629,
+    "brier": 0.23042642514886535,
+    "ece": 0.13864925271917045
+   }
+  },
+  "hybrid_beats_calibrated_market": false,
+  "log_loss_gain_vs_calibrated_market": -0.01928718361159598,
+  "calibration": {
+   "by_market_price": [
+    {
+     "bin": "(0.084, 0.294]",
+     "n": 151,
+     "mean_p_market": 0.22271523178807945,
+     "mean_p_data": 0.2813794701986755,
+     "base_rate": 0.23178807947019867,
+     "mean_edge": 0.05866423841059602
+    },
+    {
+     "bin": "(0.294, 0.435]",
+     "n": 153,
+     "mean_p_market": 0.36372549019607836,
+     "mean_p_data": 0.38091176470588234,
+     "base_rate": 0.39869281045751637,
+     "mean_edge": 0.017186274509803923
+    },
+    {
+     "bin": "(0.435, 0.56]",
+     "n": 150,
+     "mean_p_market": 0.5015666666666667,
+     "mean_p_data": 0.49964800000000004,
+     "base_rate": 0.5133333333333333,
+     "mean_edge": -0.001918666666666678
+    },
+    {
+     "bin": "(0.56, 0.695]",
+     "n": 157,
+     "mean_p_market": 0.630828025477707,
+     "mean_p_data": 0.6183394904458599,
+     "base_rate": 0.6687898089171974,
+     "mean_edge": -0.01248853503184713
+    },
+    {
+     "bin": "(0.695, 0.92]",
+     "n": 144,
+     "mean_p_market": 0.7719097222222222,
+     "mean_p_data": 0.7495638888888888,
+     "base_rate": 0.7847222222222222,
+     "mean_edge": -0.022345833333333332
+    }
+   ],
+   "by_market_price_and_edge_sign": [
+    {
+     "bin": "(0.084, 0.294]",
+     "side": "model_above_market",
+     "n": 89,
+     "mean_p_market": 0.21353932584269658,
+     "base_rate": 0.19101123595505617,
+     "market_minus_actual": 0.022528089887640407
+    },
+    {
+     "bin": "(0.084, 0.294]",
+     "side": "model_below_market",
+     "n": 42,
+     "mean_p_market": 0.23380952380952377,
+     "base_rate": 0.3333333333333333,
+     "market_minus_actual": -0.09952380952380954
+    },
+    {
+     "bin": "(0.294, 0.435]",
+     "side": "model_above_market",
+     "n": 73,
+     "mean_p_market": 0.362945205479452,
+     "base_rate": 0.4246575342465753,
+     "market_minus_actual": -0.06171232876712329
+    },
+    {
+     "bin": "(0.294, 0.435]",
+     "side": "model_below_market",
+     "n": 58,
+     "mean_p_market": 0.3653448275862068,
+     "base_rate": 0.3620689655172414,
+     "market_minus_actual": 0.003275862068965407
+    },
+    {
+     "bin": "(0.435, 0.56]",
+     "side": "model_above_market",
+     "n": 63,
+     "mean_p_market": 0.5008730158730159,
+     "base_rate": 0.5396825396825397,
+     "market_minus_actual": -0.03880952380952374
+    },
+    {
+     "bin": "(0.435, 0.56]",
+     "side": "model_below_market",
+     "n": 67,
+     "mean_p_market": 0.5035820895522387,
+     "base_rate": 0.5223880597014925,
+     "market_minus_actual": -0.01880597014925378
+    },
+    {
+     "bin": "(0.56, 0.695]",
+     "side": "model_above_market",
+     "n": 63,
+     "mean_p_market": 0.6307936507936508,
+     "base_rate": 0.6984126984126984,
+     "market_minus_actual": -0.06761904761904758
+    },
+    {
+     "bin": "(0.56, 0.695]",
+     "side": "model_below_market",
+     "n": 71,
+     "mean_p_market": 0.6327464788732393,
+     "base_rate": 0.647887323943662,
+     "market_minus_actual": -0.015140845070422682
+    },
+    {
+     "bin": "(0.695, 0.92]",
+     "side": "model_above_market",
+     "n": 59,
+     "mean_p_market": 0.7767796610169492,
+     "base_rate": 0.8135593220338984,
+     "market_minus_actual": -0.03677966101694918
+    },
+    {
+     "bin": "(0.695, 0.92]",
+     "side": "model_below_market",
+     "n": 62,
+     "mean_p_market": 0.7689516129032259,
+     "base_rate": 0.7903225806451613,
+     "market_minus_actual": -0.021370967741935365
     }
    ]
   }
