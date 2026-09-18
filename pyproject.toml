@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nba-edge-finder"
+version = "0.1.0"
+description = "NBA Kalshi market research and execution workstation: coherent simulation, executable pricing, immutable capture, settlement, calibration."
+requires-python = ">=3.11"
+readme = "README.md"
+dependencies = [
+  "numpy==2.4.6",
+  "scipy==1.17.1",
+  "pandas==3.0.6",
+  "pyarrow==25.0.1",
+  "polars==1.44.2",
+  "pydantic==2.13.5",
+  "httpx==0.28.1",
+  "pyyaml>=6.0.2",
+  "orjson>=3.10",
+  "nba_api==1.11.4",
+  "pypdf>=5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.4.2",
+  "pytest-xdist>=3.6",
+  "hypothesis==6.168.0",
+  "ruff>=0.8",
+]
+
+[project.scripts]
+nba = "nba_edge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+nba_edge = ["**/*.yaml", "**/*.json", "**/*.csv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = ["slow: end-to-end tests that run a full simulation"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "W"]
+ignore = ["E501", "B008", "B905"]

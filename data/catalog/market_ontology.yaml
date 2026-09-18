@@ -1,0 +1,467 @@
+# NBA Kalshi market ontology (curated; discovery reports anything not covered here as UNRESOLVED).
+#
+# Source of truth for the series universe: data/catalog/discovery_summary.json (256 NBA-tagged series).
+# Every series ticker observed there maps to a family here, either by exact ticker or by regex pattern
+# (`series_patterns`). Exact tickers win over patterns. Series that are NBA-adjacent but not on-court
+# basketball outcomes (album releases, ticket prices, viewership, 2K covers...) map to
+# `non_basketball_or_offcourt` so they are never UNRESOLVED and never priced.
+#
+# Support states are CONSERVATIVE and only promoted when the pricing path + tests exist:
+#   PRICED      : exactly the 9 core families (game winner/spread/total/team total, player pts/reb/ast/3pt/pra)
+#   BUILDABLE   : semantics understood and the one-game simulator emits the quantity; pricing not wired
+#   RESEARCH    : semantics understood; needs a model we do not have (season sim, play-by-play, lineups)
+#   UNMODELABLE : not a basketball on-court outcome (voting, draft, transactions, business, media)
+version: "2026.09.18.3"
+families:
+  # ------------------------------------------------------------------ game-level, full game (PRICED)
+  game_winner:
+    scope: game
+    stat: winner
+    period: FULL
+    support: MODELABLE
+    description: "Which team wins the game (incl. OT). YES on a team-specific market."
+    settlement_notes: "Settles on final score incl. overtime. Postponed games: Kalshi typically extends or voids; treat as UNRESOLVED until market result field says so."
+    series_tickers: [KXNBAGAME]
+  game_spread:
+    scope: game
+    stat: margin
+    period: FULL
+    support: MODELABLE
+    description: "Team wins by more than X points (X from floor_strike / yes_sub_title). Includes alternate spreads (one market per line)."
+    settlement_notes: "Margin incl. OT. Half-point lines have no push; integer lines: check rules_primary for push handling."
+    series_tickers: [KXNBASPREAD]
+  game_total:
+    scope: game
+    stat: total
+    period: FULL
+    support: MODELABLE
+    description: "Combined points over X (incl. OT). Alternate totals are separate markets in the same event."
+    settlement_notes: "Total incl. OT."
+    series_tickers: [KXNBATOTAL]
+  team_total:
+    scope: game
+    stat: team_total
+    period: FULL
+    support: MODELABLE
+    description: "Single team points over X (incl. OT)."
+    settlement_notes: "Team points incl. OT."
+    series_tickers: [KXNBATEAMTOTAL]
+
+  # ------------------------------------------------------------------ game-level, period markets (BUILDABLE)
+  period_winner:
+    scope: game
+    stat: winner
+    period: PATTERN
+    support: BUILDABLE
+    description: "Team leads after a specific quarter/half (period from series ticker: KXNBA1Q, KXNBA1H, KXNBA1HWINNER, ...). Quarter/half markets exclude OT."
+    settlement_notes: "Ties: consult rules_primary (may settle NO for both or void)."
+    series_patterns: ["^KXNBA(1Q|2Q|3Q|4Q|1H|2H)(WINNER|GAME|ML|MONEYLINE)?$"]
+  period_spread:
+    scope: game
+    stat: margin
+    period: PATTERN
+    support: BUILDABLE
+    description: "Period margin threshold (KXNBA1HSPREAD, KXNBA3QSPREAD, ...). Period points only; OT excluded."
+    series_patterns: ["^KXNBA(1Q|2Q|3Q|4Q|1H|2H)SPREAD$"]
+  period_total:
+    scope: game
+    stat: total
+    period: PATTERN
+    support: BUILDABLE
+    description: "Period combined points threshold (KXNBA1QTOTAL, KXNBA1HTOTAL, ...). OT excluded."
+    series_patterns: ["^KXNBA(1Q|2Q|3Q|4Q|1H|2H)TOTAL$"]
+  period_team_total:
+    scope: game
+    stat: team_total
+    period: PATTERN
+    support: BUILDABLE
+    description: "Period single-team points threshold (KXNBA1QTEAMTOTAL, KXNBA2HTEAMTOTAL, ...). OT excluded."
+    series_patterns: ["^KXNBA(1Q|2Q|3Q|4Q|1H|2H)TEAMTOTAL$"]
+
+  # ------------------------------------------------------------------ game-level specials
+  game_win_margin:
+    scope: game
+    stat: margin_bucket
+    period: FULL
+    support: BUILDABLE
+    description: "Winning margin falls in a bucket (e.g. 'Boston by 1-5'). Sim margin distribution gives it directly; bucket parsing not wired."
+    series_tickers: [KXNBAWINMARGIN]
+  game_overtime:
+    scope: game
+    stat: overtime
+    period: FULL
+    support: BUILDABLE
+    description: "Game goes to overtime (yes/no). Sim emits regulation tie probability."
+    series_tickers: [KXNBAOT, KXNBAOVERTIME]
+  game_points_leader:
+    scope: game
+    stat: pts_leader
+    period: FULL
+    support: RESEARCH
+    description: "Which player scores the most points in the game. Needs joint player-points draw with correlations validated; not built."
+    series_tickers: [KXNBAPTSLEADER]
+  game_race_to:
+    scope: game
+    stat: race_to
+    period: FULL
+    support: RESEARCH
+    description: "First team to reach X points. Requires play-by-play (possession-level) simulation."
+    series_tickers: [KXNBARACE]
+  team_bench_points:
+    scope: game
+    stat: bench_pts
+    period: FULL
+    support: BUILDABLE
+    description: "Team bench points threshold. Needs starter/bench split from lineup model; sim has per-player points."
+    series_tickers: [KXNBABENCHPTS]
+  h2h_player_stat:
+    scope: player
+    stat: h2h
+    period: FULL
+    support: BUILDABLE
+    description: "Player A records more of a stat than player B (points, threes, PRA...). Needs two-entity joint pricing from the same sim draw."
+    settlement_notes: "Ties: consult rules_primary."
+    series_tickers: [KXNBAH2HPTS, KXNBAH2H3PT, KXNBAH2HPRA]
+    series_patterns: ["^KXNBAH2H(PTS|REB|AST|3PT|PRA|PR|PA|RA|STL|BLK|TOV|FTM)$"]
+  h2h_team_stat:
+    scope: game
+    stat: h2h
+    period: FULL
+    support: BUILDABLE
+    description: "Team A records more of a stat than team B (threes, bench points). Needs joint pricing of both teams' stat draws."
+    series_tickers: [KXNBAH2HTEAM3PT, KXNBAH2HBENCHPTS]
+    series_patterns: ["^KXNBAH2HTEAM"]
+  parlay_combo:
+    scope: other
+    stat: parlay
+    period: FULL
+    support: BUILDABLE
+    description: "Pre-packaged combos / multivariate event contracts (2-3 leg moneyline parlays, MVE single/multi game). Price from joint sim once legs are parsed."
+    series_tickers: [KXNBAPREPACK2ML, KXNBAPREPACK3ML, KXMVENBASINGLEGAME, KXMVENBAMULTIGAMEEXTENDED]
+    series_patterns: ["^KXNBAPREPACK", "^KXMVENBA"]
+
+  # ------------------------------------------------------------------ player props, single game
+  player_points:
+    scope: player
+    stat: pts
+    support: MODELABLE
+    description: "Player scores X+ points (threshold from floor_strike/custom_strike/yes_sub_title). Ladder markets share an event."
+    settlement_notes: "DNP: typically market resolves NO or void per rules_primary; engine fails closed unless rules parsed."
+    series_tickers: [KXNBAPTS, KXNBAPOINTS]
+  player_rebounds:
+    scope: player
+    stat: reb
+    support: MODELABLE
+    series_tickers: [KXNBAREB, KXNBAREBOUNDS]
+  player_assists:
+    scope: player
+    stat: ast
+    support: MODELABLE
+    series_tickers: [KXNBAAST, KXNBAASSISTS]
+  player_threes:
+    scope: player
+    stat: fg3m
+    support: MODELABLE
+    series_tickers: [KXNBA3PT, KXNBATHREES, KXNBA3PM, KXNBA3PTM]
+  player_pra:
+    scope: player
+    stat: pra
+    # BUILDABLE, not PRICED: the simulator draws PRA coherently from the same universe as points,
+    # rebounds and assists, so the MODEL side is ready -- but the MARKET side is entirely unobserved.
+    # The 2025-10-01..2026-07-01 historical pull returned 0 KXNBAPRA markets, and discovery finds
+    # 0 in every lifecycle status. Its strike_type, half-line convention, DNP rule and title
+    # template are all assumed by analogy to the other player families, never verified against a
+    # real market. build_contract would nonetheless return semantics_confidence='high' for the
+    # assumed shape, so PRICED meant it would have been priced and settled silently on zero
+    # evidence. Promote it the day a real KXNBAPRA market is observed and its semantics proven the
+    # way the other eight were.
+    support: BUILDABLE
+    series_tickers: [KXNBAPRA]
+  player_steals:
+    scope: player
+    stat: stl
+    support: BUILDABLE
+    series_tickers: [KXNBASTL, KXNBASTEALS]
+  player_blocks:
+    scope: player
+    stat: blk
+    support: BUILDABLE
+    series_tickers: [KXNBABLK, KXNBABLOCKS]
+  player_turnovers:
+    scope: player
+    stat: tov
+    support: BUILDABLE
+    series_tickers: [KXNBATOV, KXNBATURNOVERS]
+  player_stocks:
+    scope: player
+    stat: stocks
+    support: BUILDABLE
+    description: "Steals + blocks combined threshold (Kalshi titles: 'NBA Player Steals + Blocks')."
+    series_tickers: [KXNBASTOCK, KXNBASTOCKS]
+  player_free_throws:
+    scope: player
+    stat: ftm
+    support: BUILDABLE
+    description: "Free throws made threshold."
+    series_tickers: [KXNBAFTM]
+  player_pr:
+    scope: player
+    stat: pr
+    support: BUILDABLE
+    series_tickers: [KXNBAPR]
+  player_pa:
+    scope: player
+    stat: pa
+    support: BUILDABLE
+    series_tickers: [KXNBAPA]
+  player_ra:
+    scope: player
+    stat: ra
+    support: BUILDABLE
+    series_tickers: [KXNBARA]
+  player_double_double:
+    scope: player
+    stat: double_double
+    support: BUILDABLE
+    series_tickers: [KXNBADD, KXNBADOUBLEDOUBLE, KXNBA2D]
+  player_triple_double:
+    scope: player
+    stat: triple_double
+    support: BUILDABLE
+    series_tickers: [KXNBATD, KXNBATRIPLEDOUBLE, KXNBA3D]
+  first_basket:
+    scope: player
+    stat: first_basket
+    support: RESEARCH
+    description: "First field goal of the game. Requires opening-tip + first-possession model; not built."
+    series_tickers: [KXNBAFIRSTBASKET, KXNBAFB]
+  starting_lineup:
+    scope: player
+    stat: starter
+    support: RESEARCH
+    description: "Player starts a specific game (often the season opener). Lineup model could price these later; treat as research until the lineup model is validated."
+    series_tickers: [KXNBASTARTERS]
+
+  # ------------------------------------------------------------------ season / futures (RESEARCH)
+  season_champion:
+    scope: season
+    stat: champion
+    period: SEASON
+    support: RESEARCH
+    description: "NBA champion. Needs season simulator (not one-game engine)."
+    series_tickers: [KXNBA, KXNBACHAMP]
+  champion_special:
+    scope: season
+    stat: champion_derived
+    period: SEASON
+    support: RESEARCH
+    description: "Championship-derived propositions: first-time champion, three-peat, which conference the champion comes from. Derived from a season simulator's champion distribution."
+    series_tickers: [KXNBANEWCHAMPION, KXNBANEWCHAMP, KXNBA3PEAT, KXNBACONF]
+  conference_champion:
+    scope: season
+    stat: conference
+    period: SEASON
+    support: RESEARCH
+    series_tickers: [KXNBAEAST, KXNBAWEST, KXNBAECF, KXNBAWCF]
+  playoff_round_reach:
+    scope: season
+    stat: round_reach
+    period: SEASON
+    support: RESEARCH
+    description: "Team reaches a playoff round (conference finals / Finals qualifiers)."
+    series_tickers: [KXNBAECFQUAL, KXNBAWCFQUAL, KXTEAMSINNBAEF, KXTEAMSINNBAWF, KXTEAMSINNBAF]
+    series_patterns: ["^KXTEAMSINNBA"]
+  division_winner:
+    scope: season
+    stat: division
+    period: SEASON
+    support: RESEARCH
+    series_tickers: [KXNBADIV, KXNBAATLANTIC, KXNBACENTRAL, KXNBANORTHWEST, KXNBAPACIFIC, KXNBASOUTHEAST, KXNBASOUTHWEST]
+  season_wins:
+    scope: season
+    stat: wins
+    period: SEASON
+    support: RESEARCH
+    series_tickers: [KXNBAWINS, KXNBAWINTOTAL, KXNBASEASONWINS]
+  season_record:
+    scope: season
+    stat: record
+    period: SEASON
+    support: RESEARCH
+    description: "League-wide record propositions: best/worst regular-season record, any team reaching X wins, single-team win record."
+    series_tickers: [KXNBARECORD, KXNBAMOSTWINS, KXNBAWINRECORD]
+  playoffs_qualify:
+    scope: season
+    stat: playoffs
+    period: SEASON
+    support: RESEARCH
+    description: "Make the playoffs / play-in, advance from play-in."
+    series_tickers: [KXNBAPLAYOFFS, KXNBAMAKEPLAYOFFS, KXNBAPLAYOFF, KXNBAPLAYIN, KXNBAPIADVANCE]
+  playoff_seed:
+    scope: season
+    stat: seed
+    period: SEASON
+    support: RESEARCH
+    description: "Final regular-season seeding (1 seed by conference, exact seed) and resulting first-round matchup."
+    series_tickers: [KXNBASEED, KXNBAEAST1SEED, KXNBAWEST1SEED, KXNBAMATCHUP]
+  nba_cup:
+    scope: season
+    stat: cup
+    period: SEASON
+    support: RESEARCH
+    description: "In-season tournament (Emirates NBA Cup) champion / knockout qualifiers. Needs group-stage tiebreak model."
+    series_tickers: [KXNBACUP, KXNBACUPQUAL]
+    series_patterns: ["^KXNBACUP(?!MVP)"]
+  series_winner:
+    scope: season
+    stat: series
+    period: SEASON
+    support: RESEARCH
+    description: "Playoff series winner / series length / exact series score / sweep / game 7."
+    series_tickers: [KXNBASERIES, KXNBASERIESWINNER, KXNBASERIESGAMES, KXNBASERIESSCORE, KXNBAFINALSEXACT, KXNBASWEEP, KXNBAGAME7, KXNBAGAMES]
+  series_props:
+    scope: season
+    stat: series_prop
+    period: SEASON
+    support: RESEARCH
+    description: "Playoff series propositions: series spreads/totals, road wins, comebacks (3-0), clinch at home, overtime in series, blowouts, undefeated runs, upsets per round, team playoff win/loss counts."
+    series_tickers: [KXNBASERIESSPREAD, KXNBASERIESPTSSPREAD, KXNBASERIESTOTALPTS, KXNBASERIESROADWIN, KXNBASERIESROADWINS, KXNBASERIESOT, KXNBASERIESCOMEBACK, KXNBASERIESGCOMEBACK, KXNBA30COMEBACK, KXNBAHOMECLINCH, KXNBAFINBLOWOUT, KXNBAUNBEATEN, KXNBAUPSET, KXNBAPLAYOFFWINS, KXNBAPOLOSE]
+    series_patterns: ["^KXNBASERIES"]
+  series_player_stat:
+    scope: player
+    stat: series_player
+    period: SEASON
+    support: RESEARCH
+    description: "Player stat aggregated over a playoff series / playoffs (series points, series stat leaders, playoff points, playoff triple-doubles)."
+    series_tickers: [KXNBASERIESPTS, KXNBASERIESPTSLEADER, KXNBASERIESREBLEADER, KXNBASERIESASTLEADER, KXNBASERIES3PMLEADER, KXNBAPLAYOFFPTS, KXNBAPLAYOFF3D]
+  season_stat_leader:
+    scope: player
+    stat: season_leader
+    period: SEASON
+    support: RESEARCH
+    description: "Regular-season per-game stat leader (PPG, RPG, APG, BPG, SPG, 3PG)."
+    series_tickers: [KXLEADERNBAPTS, KXLEADERNBAREB, KXLEADERNBAAST, KXLEADERNBABLK, KXLEADERNBASTL, KXLEADERNBA3PT]
+    series_patterns: ["^KXLEADERNBA"]
+  season_player_streak:
+    scope: player
+    stat: all_games
+    period: SEASON
+    support: RESEARCH
+    description: "Player hits a threshold in every game of a span (points / threes in every game)."
+    series_tickers: [KXNBAPTSALLGAMES, KXNBA3PTALLGAMES]
+  season_specials:
+    scope: season
+    stat: special
+    period: SEASON
+    support: RESEARCH
+    description: "Season-long 'any player/game records X' propositions (e.g. any player 70+ points this season)."
+    series_tickers: [KXNBAGAMESPECIALS, KXNBAPLAYERSPECIALS]
+
+  # ------------------------------------------------------------------ summer league (not NBA regular season; excluded from training)
+  summer_league_game:
+    scope: game
+    stat: winner
+    period: FULL
+    support: RESEARCH
+    description: "Summer League game / half winner. Not NBA regular season; excluded from training."
+    series_tickers: [KXNBASUMMERGAME, KXNBASUMMER1HWINNER]
+  summer_league_spread:
+    scope: game
+    stat: margin
+    period: FULL
+    support: RESEARCH
+    description: "Summer League full-game / half spread. Not NBA regular season; excluded from training."
+    series_tickers: [KXNBASUMMERSPREAD, KXNBASUMMER1HSPREAD]
+  summer_league_total:
+    scope: game
+    stat: total
+    period: FULL
+    support: RESEARCH
+    description: "Summer League full-game / half total. Not NBA regular season; excluded from training."
+    series_tickers: [KXNBASUMMERTOTAL, KXNBASUMMER1HTOTAL]
+  summer_league_player:
+    scope: player
+    stat: pts
+    period: FULL
+    support: RESEARCH
+    description: "Summer League player props. Not NBA regular season; excluded from training."
+    series_tickers: [KXNBASUMMERPTS]
+  summer_league_season:
+    scope: season
+    stat: champion
+    period: SEASON
+    support: RESEARCH
+    description: "Summer League champion and any other summer-league series not listed explicitly. Not NBA regular season; excluded from training."
+    series_tickers: [KXNBASUMMER]
+    series_patterns: ["^KXNBASUMMER(?!MVP)"]
+
+  # ------------------------------------------------------------------ UNMODELABLE: voting, draft, transactions, business, media
+  awards:
+    scope: season
+    stat: award
+    period: SEASON
+    support: UNMODELABLE
+    description: "Voting outcomes (MVP, DPOY, ROY, MIP, 6MOY, COY, Finals/conference-finals/Cup/Summer/All-Star MVP, Clutch POY, Sportsmanship). Not a basketball-simulation quantity."
+    series_tickers: [KXNBAMVP, KXNBADPOY, KXNBAROY, KXNBAMIP, KXNBAMIMP, KXNBA6MOY, KXNBASIXTH, KXNBACOY, KXNBAFMVP, KXNBAFINMVP, KXNBAFINALSMVP, KXNBAEFINMVP, KXNBAWFINMVP, KXNBACUPMVP, KXNBASUMMERMVP, KXNBAALLSTARMVP, KXNBASPORTSMANSHIP, KXNBACLUTCH, KXNBAMVPDPOY, KXNBATOP5ROTY]
+  all_nba_selections:
+    scope: season
+    stat: selection
+    period: SEASON
+    support: UNMODELABLE
+    description: "All-NBA / All-Defensive / All-Rookie team selections and All-Star selections (voting)."
+    series_tickers: [KXNBA1STTEAM, KXNBA2NDTEAM, KXNBA3RDTEAM, KXNBA1STTEAMDEF, KXNBA2NDTEAMDEF, KXNBAROOKIE1STTEAM, KXNBAROOKIE2NDTEAM, KXNBAALLSTARS]
+    series_patterns: ["^KXNBA(1ST|2ND|3RD)TEAM(DEF)?$", "^KXNBAROOKIE(1ST|2ND)TEAM$"]
+  all_star_events:
+    scope: other
+    stat: exhibition
+    period: SEASON
+    support: UNMODELABLE
+    description: "All-Star weekend exhibitions: All-Star game, Rising Stars, Shooting Stars, dunk / 3-point / skills contests."
+    series_tickers: [KXNBAALLSTAR, KXNBAALLSTARGAME, KXNBARISINGSTARS, KXNBASHOOTINGSTARS, KXNBASLAMDUNK, KXNBA3PTCONTEST, KXNBASKILLS]
+    series_patterns: ["^KXNBAALLSTAR"]
+  draft:
+    scope: other
+    stat: draft
+    period: SEASON
+    support: UNMODELABLE
+    description: "Draft position, lottery, draft-night trades and draft category propositions."
+    series_tickers: [KXNBADRAFT, KXNBADRAFTPICK, KXNBADRAFT1, KXNBADRAFT2, KXNBADRAFT3, KXNBADRAFT4, KXNBADRAFT5, KXNBADRAFT6, KXNBADRAFT7, KXNBADRAFT8, KXNBADRAFT9, KXNBADRAFT10, KXNBADRAFTCAT, KXNBADRAFTCOMP, KXNBADRAFTCONF, KXNBADRAFTINT, KXNBADRAFTMATCHUP, KXNBADRAFTOU, KXNBADRAFTTEAM, KXNBADRAFTTOP, KXNBADRAFTTOP5, KXNBADRAFTTOP10, KXNBADRAFTTOP15, KXNBADRAFTTOP20, KXNBADRAFTTOP25, KXNBADRAFTTOP30, KXNBADRAFTTRADE, KXTOP3NBADRAFT, KXFIRSTPICKNBA, KXNBATOPPICK, KXNBALOTTERY, KXNBALOTTERYODDS, KXNBAPICKTRADE, KXNBATOP3]
+    series_patterns: ["^KXNBADRAFT", "^KXNBALOTTERY"]
+  transactions:
+    scope: other
+    stat: transaction
+    period: SEASON
+    support: UNMODELABLE
+    description: "Player movement and contracts: trades, next team, contract size, retirement, return, playing together, brand deals, player options, team announcements."
+    series_tickers: [KXNBATRADE, KXNBANEXTTEAM, KXNEXTTEAMNBA, KXNBANEXTTEAMCONF, KXNBANEXTTEAMOUTLET, KXNBANEXTCONTRACT, KXNBAPLAYERDEAL, KXNBARETIRE, KXNBARETURN, KXNBACOMPETE, KXNBAPLAYTOGETHER, KXPLAYEROPTIONNBA, KXNBATEAMANNOUNCE]
+    series_patterns: ["^KXNBANEXTTEAM", "^KXNEXTTEAMNBA"]
+  coaching:
+    scope: other
+    stat: coach
+    period: SEASON
+    support: UNMODELABLE
+    description: "Coach firings / hirings."
+    series_tickers: [KXCOACHOUTNBA, KXCOACHOUTNBADATE, KXNEXTNBACOACH, KXNBACOACHOUT, KXNEXTCOACHOUTNBA]
+    series_patterns: ["^KXCOACHOUTNBA", "^KXNEXTCOACHOUTNBA", "^KXNEXTNBACOACH"]
+  franchise_business:
+    scope: other
+    stat: business
+    period: SEASON
+    support: UNMODELABLE
+    description: "League/franchise business: expansion cities, relocation, team/stake sales, governors, new franchises, conference realignment, rule changes, arena completion."
+    series_tickers: [KXCITYNBAEXPAND, KXNBASEATTLE, KXNBALASVEGAS, KXNBARELOCATION, KXNBATEAMSALE, KXNBASTAKESALE, KXNBANEXTGOVERNOR, KXNBATEAM, KXNBAJOINCONF, KXNBARULE, KXNBASTADIUM]
+  schedule_announcement:
+    scope: other
+    stat: schedule
+    period: SEASON
+    support: UNMODELABLE
+    description: "Schedule-release propositions (season-opening opponent, Christmas Day opponent). Determined by the league office, not on-court play."
+    series_tickers: [KXNBAFIRSTOPPONENT, KXNBAXMASOPPONENT]
+  non_basketball_or_offcourt:
+    scope: other
+    stat: null
+    period: SEASON
+    support: UNMODELABLE
+    description: "NBA-tagged series that are not basketball outcomes: music releases, video-game covers, politics, broadcast mentions, viewership, ticket prices, apologies, ESPYs, White House visits, Hall of Fame, celebrity events, attendance."
+    series_tickers: [KXALBUMRELEASEDATENBAYOUNGBOY, KXKXSPOTIFYALBUMRELEASEDATESC, KXMEDIACOVERNBA2K, KXNBA2KCOVER, KXTRUMPNBAFINALS, KXNBAMENTION, KXNBAFINALSMENTION, KXNBAFINALSVIEWER, KXNBAFINALSVIEWERGAME7, KXNBAFINALSPRICE, KXNBAAPOLOGY, KXESPYNBA, KXNBAWHATTEND, KXNBAHALLOFFAME, KXNBACELEBRITY3PT, KXNBACELEBRITYGAME, KXNBAATTEND]
+    series_patterns: ["^KXNBAFINALSVIEWER", "^KXNBACELEBRITY"]

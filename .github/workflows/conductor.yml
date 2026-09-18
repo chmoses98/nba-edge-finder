@@ -1,0 +1,202 @@
+name: conductor
+# Schedule-aware orchestrator. Wakes every 10 minutes (only on the default branch -- GitHub ignores
+# schedules elsewhere), decides in ~0.1s whether anything is worth doing, and dispatches the
+# expensive job only when the NBA calendar says so. Archive data lives on the `data-archive` branch
+# so code branches never accumulate snapshots.
+#
+# The decide job deliberately does NOT `pip install -e .`: the conductor's import chain is
+# stdlib-only (see nba_edge/archive/status.py), so it runs straight off PYTHONPATH. The install was
+# ~23s and ~690MB per wake, 144x/day, to read five timestamps.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Comma list of jobs to force (capture,context,simulate,settle,evaluate,discover)"
+        default: ""
+  push:
+    paths:
+      - ".trigger/conductor"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Deliberately NOT keyed to github.ref. ARCHIVE_BRANCH is a constant, so two runs from different
+  # refs write the same branch; a ref-keyed group would put them in different groups and let them
+  # race for it. One group means one writer.
+  group: conductor-archive
+  cancel-in-progress: false
+
+env:
+  FORCE: ${{ inputs.force || '' }}
+  ARCHIVE_BRANCH: data-archive
+
+jobs:
+  decide:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      capture: ${{ steps.d.outputs.capture }}
+      context: ${{ steps.d.outputs.context }}
+      simulate: ${{ steps.d.outputs.simulate }}
+      settle: ${{ steps.d.outputs.settle }}
+      evaluate: ${{ steps.d.outputs.evaluate }}
+      discover: ${{ steps.d.outputs.discover }}
+      calendar_known: ${{ steps.d.outputs.calendar_known }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Fetch archive branch (read-only)
+        run: |
+          git fetch origin "$ARCHIVE_BRANCH" --depth=1 2>/dev/null && git worktree add data/archive "origin/$ARCHIVE_BRANCH" || mkdir -p data/archive
+      - id: d
+        name: Decide
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -uo pipefail
+          PYTHONPATH=src python -m nba_edge.workflows.conductor --data data --github-output "$GITHUB_OUTPUT"
+          # A push to .trigger/conductor may force jobs by listing them in the file. This is gated on
+          # the push event on purpose: the guard used to be `-f .trigger/conductor`, and because the
+          # file was committed to the repo it was true on every SCHEDULED wake too -- so every wake
+          # forced a full capture, 144x/day, year-round, and the real decision was overwritten.
+          if [[ -z "$FORCE" && "$EVENT_NAME" == "push" && -f .trigger/conductor ]]; then
+            FORCE="$(grep -oE '[a-z,]+' .trigger/conductor | head -1)"
+          fi
+          for j in capture context simulate settle evaluate discover; do
+            if [[ ",$FORCE," == *",$j,"* ]]; then echo "$j=true" >> "$GITHUB_OUTPUT"; fi
+          done
+      - name: Alarm if the season calendar is exhausted
+        if: steps.d.outputs.calendar_known == 'false'
+        run: |
+          echo "::warning title=Season calendar exhausted::The conductor is past every announced NBA calendar and is running on the fallback Oct-Jun rule. Add the new season to SEASON_CALENDAR in src/nba_edge/workflows/conductor.py."
+
+  run:
+    needs: decide
+    if: >-
+      needs.decide.outputs.capture == 'true' || needs.decide.outputs.context == 'true' ||
+      needs.decide.outputs.simulate == 'true' || needs.decide.outputs.settle == 'true' ||
+      needs.decide.outputs.evaluate == 'true' || needs.decide.outputs.discover == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Checkout archive branch (create orphan if missing)
+        run: |
+          set -uo pipefail
+          git config user.name "nba-edge-bot"
+          git config user.email "nba-edge-bot@users.noreply.github.com"
+          # --depth=1: the archive branch grows without bound, and a full fetch of it every run is
+          # both the slowest step here and a cost that compounds all season.
+          if git fetch origin "$ARCHIVE_BRANCH" --depth=1 2>/dev/null; then
+            git worktree add data/archive "origin/$ARCHIVE_BRANCH"
+            (cd data/archive && git checkout -B "$ARCHIVE_BRANCH")
+          else
+            mkdir -p data/archive && cd data/archive && git init -q && git checkout -q --orphan "$ARCHIVE_BRANCH" \
+              && git config user.name "nba-edge-bot" && git config user.email "nba-edge-bot@users.noreply.github.com" \
+              && git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+              && echo "# NBA Edge Finder immutable archive" > README.md && git add README.md && git commit -qm "init archive"
+          fi
+      - name: Context refresh
+        if: needs.decide.outputs.context == 'true'
+        continue-on-error: true
+        run: nba context --out data/archive
+      - name: Market capture
+        if: needs.decide.outputs.capture == 'true'
+        continue-on-error: true
+        run: nba capture --out data/archive --orderbook --max-orderbooks 300
+      - name: Simulate + price
+        if: needs.decide.outputs.simulate == 'true'
+        continue-on-error: true
+        run: nba simulate --data data --out data/archive
+      - name: Settle
+        if: needs.decide.outputs.settle == 'true'
+        continue-on-error: true
+        run: nba settle --data data --out data/archive
+      - name: Evaluate
+        if: needs.decide.outputs.evaluate == 'true'
+        continue-on-error: true
+        run: nba evaluate --data data --out data/archive/eval
+      - name: Discover market families (daily)
+        if: needs.decide.outputs.discover == 'true'
+        continue-on-error: true
+        run: |
+          # The catalog is written into the ARCHIVE worktree, not committed to the code branch.
+          # It used to `git push origin HEAD:$GITHUB_REF_NAME`, i.e. straight to main, unattended,
+          # on a schedule -- an automated commit to the default branch with no review.
+          nba discover --out data/archive/catalog --statuses open,unopened --max-pages 10
+
+      - name: Verify archive immutability and push
+        id: push
+        run: |
+          set -uo pipefail
+          cd data/archive
+          python - <<'PY'
+          from pathlib import Path
+          from nba_edge.archive.ledger import Ledger
+          problems = Ledger(Path('.')).verify()
+          assert not problems, problems
+          print('archive verified')
+          PY
+          # Both sides of a concurrent run only ever APPEND to manifest.jsonl, so a plain rebase
+          # conflicts every single time. union-merge is the correct driver and keeps both runs.
+          grep -qs 'manifest.jsonl merge=union' .gitattributes || echo 'manifest.jsonl merge=union' >> .gitattributes
+          git add -A
+          if git diff --cached --quiet; then echo "no archive changes"; exit 0; fi
+          git commit -qm "archive: $(date -u +%Y-%m-%dT%H:%M:%SZ) run ${{ github.run_id }}"
+          pushed=0
+          for i in 1 2 3 4 5; do
+            if git push origin "HEAD:$ARCHIVE_BRANCH"; then pushed=1; break; fi
+            # Leaving a failed rebase in place used to detach HEAD at the OTHER run's tip, so the
+            # next push was a no-op that returned 0 -- a green job that had silently dropped this
+            # run's entire snapshot. Always abort before retrying, and never swallow the failure.
+            git rebase --abort 2>/dev/null || true
+            git fetch origin "$ARCHIVE_BRANCH" || true
+            git rebase "origin/$ARCHIVE_BRANCH" || { git rebase --abort 2>/dev/null || true; }
+            sleep $((2**i))
+          done
+          if [ "$pushed" != 1 ]; then
+            echo "::error title=Archive push failed::Could not push this run's snapshot to $ARCHIVE_BRANCH after 5 attempts. The data is preserved in this run's artifact."
+            exit 1
+          fi
+      - name: Preserve the snapshot if the push failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive-snapshot-${{ github.run_id }}
+          path: data/archive
+          retention-days: 14
+      # Runs last, and deliberately after the archive push: a coverage alarm must make the run
+      # visibly fail, but it must never be the reason a captured snapshot is lost.
+      - name: Surface coverage alarms
+        if: always() && needs.decide.outputs.capture == 'true'
+        run: |
+          set -uo pipefail
+          f=data/archive/STATUS_capture.json
+          [ -f "$f" ] || { echo "no capture status to check"; exit 0; }
+          python - "$f" <<'PY'
+          import json, sys
+          st = json.load(open(sys.argv[1]))
+          alarms = st.get("alarms") or []
+          if not alarms:
+              print(f"coverage OK: {st.get('n_markets')} markets, by_support={st.get('by_support')}")
+              raise SystemExit(0)
+          # The coverage invariant is "every market DISCOVERED is ACCOUNTED FOR". A breach means the
+          # board contains something the ontology does not describe -- a new Kalshi series, a changed
+          # shape, or a truncated page. It must be visible, not buried in a status file nobody reads.
+          for a in alarms:
+              print(f"::warning title=Coverage alarm::{a}")
+          print("::error title=Coverage invariant breached::" + f"{len(alarms)} alarm(s); see the warnings above and data/archive/STATUS_capture.json")
+          raise SystemExit(1)
+          PY
