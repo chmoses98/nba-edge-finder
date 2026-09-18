@@ -10,6 +10,13 @@ on:
       max_pages:
         description: "Max 1000-market pages per series/status"
         default: "40"
+  push:
+    paths:
+      - ".trigger/probe"
+
+env:
+  STATUSES: ${{ inputs.statuses || 'unopened,open,closed,settled' }}
+  MAX_PAGES: ${{ inputs.max_pages || '40' }}
 
 permissions:
   contents: write
@@ -35,7 +42,7 @@ jobs:
       - name: Discover Kalshi NBA universe
         env:
           NBA_EDGE_LOG_LEVEL: INFO
-        run: nba discover --out data/catalog --raw-dir out/raw/kalshi --statuses "${{ inputs.statuses }}" --max-pages "${{ inputs.max_pages }}"
+        run: nba discover --out data/catalog --raw-dir out/raw/kalshi --statuses "$STATUSES" --max-pages "$MAX_PAGES"
       - name: Upload raw dumps
         uses: actions/upload-artifact@v4
         with:
