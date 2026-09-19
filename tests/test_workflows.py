@@ -65,19 +65,38 @@ def test_every_embedded_python_heredoc_parses(wf: Path):
                     pytest.fail(f"{wf.name}:{name} ({step.get('name')}) embedded python is invalid: {e}\n{body}")
 
 
-def test_the_conductor_force_file_is_not_committed():
-    """A committed .trigger/conductor made every scheduled wake force a full capture.
+def test_no_trigger_file_is_committed():
+    """A trigger file is a push MECHANISM, never repository content.
 
-    The guard is now gated on the push event, so the file's presence is no longer sufficient to
-    force a run -- but committing it again would still mean every push to it re-forces, and it was
-    the root of a 144x/day storm. Keep it out of the repo; pushing a new one still triggers the
-    workflow through its `paths:` filter.
+    Two distinct incidents came from committing them. `.trigger/conductor` made every scheduled wake
+    force a full capture, 144x/day. And because `.trigger/history`, `.trigger/kalshi_history` and
+    `.trigger/probe` were committed on the feature branch, **merging PR #1 pushed them to main for
+    the first time, matched their `paths:` filters, and fired all three expensive data pulls, each
+    of which then committed straight to the default branch.** A merge is a push.
+
+    Pushing a trigger file still starts a run -- that is the mechanism and it still works. What must
+    not happen is the file living in the repo, where any future merge re-fires it.
     """
     root = Path(__file__).resolve().parents[1]
     tracked = subprocess.run(
-        ["git", "ls-files", ".trigger/conductor"], cwd=root, capture_output=True, text=True
-    ).stdout.strip()
-    assert tracked == "", ".trigger/conductor must not be committed"
+        ["git", "ls-files", ".trigger/"], cwd=root, capture_output=True, text=True
+    ).stdout.split()
+    assert tracked == [], f"trigger files must not be committed, found: {tracked}"
+
+
+def test_every_trigger_path_a_workflow_watches_is_gitignored():
+    """Whatever path a workflow triggers on must be ignored, or it can be committed by accident."""
+    root = Path(__file__).resolve().parents[1]
+    ignored = (root / ".gitignore").read_text()
+    watched = set()
+    for wf in WORKFLOWS:
+        on = yaml.safe_load(wf.read_text()).get(True) or yaml.safe_load(wf.read_text()).get("on") or {}
+        push = (on or {}).get("push") or {}
+        for p in (push.get("paths") or []):
+            if p.startswith(".trigger/"):
+                watched.add(p)
+    assert watched, "expected at least one workflow to use the .trigger push mechanism"
+    assert ".trigger/" in ignored, f"paths {sorted(watched)} are push triggers; .trigger/ must be gitignored"
 
 
 def test_conductor_forcing_requires_a_push_event():
