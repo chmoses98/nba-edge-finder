@@ -16,6 +16,7 @@ on:
       - ".trigger/history"
 
 env:
+  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
   SEASONS: ${{ inputs.seasons || '2023-24,2024-25,2025-26' }}
   WHAT: ${{ inputs.what || 'espn' }}
 
@@ -53,6 +54,21 @@ jobs:
           git add -f data/history/espn/*.parquet data/history/espn/MANIFEST.json data/history/espn/done_events_*.json 2>/dev/null || true
           if git diff --cached --quiet; then echo "nothing to commit"; else
             git commit -m "history: ESPN box-score dataset ($SEASONS) (run ${{ github.run_id }})"
-            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"  # binary data files: the run's version wins
-            git push origin HEAD:"${GITHUB_REF_NAME}"
+            # Never rewrite the default branch unattended. Merging PR #1 pushed the committed
+            # .trigger/* files to main, matched this workflow's `paths:` filter, and fired this
+            # pull -- which then committed data straight to main with no review. The trigger files
+            # are gone now, but a data pull should refuse this on its own rather than rely on that.
+            if [ "${GITHUB_REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
+              echo "::warning title=Refusing to push to the default branch::Ran on ${GITHUB_REF_NAME}. The data is in this run's workspace/artifact; re-run this workflow on a branch to commit it."
+            else
+              git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"  # binary data files: the run's version wins
+              git push origin HEAD:"${GITHUB_REF_NAME}"
+            fi
           fi
+      - name: Preserve the dataset as an artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: history-dataset-${{ github.run_id }}
+          path: data/history/espn
+          retention-days: 14
