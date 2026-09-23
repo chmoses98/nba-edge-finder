@@ -24,7 +24,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from nba_edge.sim.minutes import apply_blowout, draw_availability, draw_minutes, draw_starters
+from nba_edge.sim.minutes import apply_blowout, draw_availability, draw_minutes_auto, draw_starters
 from nba_edge.sim.params import LEAGUE, GameParams, PlayerParams, TeamParams
 from nba_edge.sim.result import PlayerSim, SimResult
 
@@ -236,7 +236,7 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
     for team, opp, is_home in ((home, away, True), (away, home, False)):
         played = draw_availability(rng, team.players, n)
         started = draw_starters(rng, team.players, played)
-        minutes = draw_minutes(rng, team.players, played, np.full(n, LEAGUE["regulation_minutes"]))
+        minutes = draw_minutes_auto(rng, team.players, played, np.full(n, LEAGUE["regulation_minutes"]))
         mu = _team_ppp_mu(team, opp, is_home, gp.neutral_site, played, rng, n)
         shock = rng.normal(0.0, LEAGUE["team_shooting_shock_sd"], n) + env_shock
         draws.append(_TeamDraw(team, played, started, minutes, mu, shock))

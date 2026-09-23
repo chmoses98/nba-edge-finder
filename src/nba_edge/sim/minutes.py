@@ -83,6 +83,37 @@ def draw_minutes(rng: np.random.Generator, players: list[PlayerParams], played: 
     return water_fill(raw, caps, total_minutes, stickiness=stick)
 
 
+def has_rotation_profiles(players: list[PlayerParams]) -> bool:
+    """True when every player carries a rotation estimate, so the mixture model can be used.
+
+    All-or-nothing on purpose: mixing water-filled and mixture-drawn players in one team would make
+    the team total conserve across two different allocation rules, and the resulting distribution
+    would belong to neither model.
+    """
+    return bool(players) and all(
+        pl.p_rotation is not None and pl.rot_min_mean is not None and pl.rot_min_sd is not None
+        for pl in players
+    )
+
+
+def draw_minutes_auto(rng: np.random.Generator, players: list[PlayerParams], played: np.ndarray, total_minutes: np.ndarray) -> np.ndarray:
+    """Rotation mixture when profiles are present, otherwise the legacy water-fill."""
+    if not has_rotation_profiles(players):
+        return draw_minutes(rng, players, played, total_minutes)
+    from nba_edge.sim.rotation import RotationProfile, classify_role, draw_rotation_minutes
+
+    profiles = [
+        RotationProfile(
+            nba_id=pl.nba_id, p_rotation=float(pl.p_rotation), rot_min_mean=float(pl.rot_min_mean),
+            rot_min_sd=float(pl.rot_min_sd),
+            role=classify_role(float(pl.p_rotation), float(pl.rot_min_mean), pl.p_start),
+        )
+        for pl in players
+    ]
+    caps = np.array([pl.min_cap for pl in players], dtype=float)
+    return draw_rotation_minutes(rng, profiles, played, caps, total_minutes)
+
+
 def apply_blowout(minutes: np.ndarray, started: np.ndarray, margin: np.ndarray, blowout_margin: float = LEAGUE["blowout_margin"], starter_cut: float = LEAGUE["blowout_starter_cut"]) -> np.ndarray:
     """In blowout draws, move a share of starters' minutes to the bench (same team). Team total unchanged."""
     m = minutes.copy()
