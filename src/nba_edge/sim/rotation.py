@@ -77,6 +77,38 @@ def classify_role(p_rotation: float, rot_min_mean: float, p_start: float) -> Rol
     return Role.FRINGE
 
 
+def _calibrate_logits(p_rot: np.ndarray, played: np.ndarray, expected_size: float) -> np.ndarray:
+    """Shift membership log-odds so they are consistent with the rotation actually having a size.
+
+    Per-player estimates are made independently and shrunk toward a prior, so nothing makes them add
+    up: on a representative roster they sum to 7.68 while real rotations average 9.1. Selecting 9
+    players from probabilities that only account for 7.68 has to inflate somebody, and it inflates
+    the middle -- a 0.48 bench player was being selected 63% of the time.
+
+    A single additive offset on the log-odds fixes the total while preserving the ordering and the
+    relative gaps, which is the least assuming correction available: solve for d such that
+    sum_i sigmoid(logit_i + d) equals the expected rotation size. Lowering the selection noise was
+    tried first and made calibration worse, not better, because it collapses towards a deterministic
+    top-k where marginals go to 1 and 0.
+    """
+    q = np.clip(p_rot, 1e-6, 1 - 1e-6)
+    logit = np.log(q / (1 - q))
+    avail = played.mean(axis=0) > 0.5  # players who are essentially always available this game
+    if avail.sum() < 2:
+        return logit
+    target = min(expected_size, float(avail.sum()) - 0.5)
+
+    lo, hi = -8.0, 8.0
+    for _ in range(40):
+        mid = 0.5 * (lo + hi)
+        tot = float(np.sum(1.0 / (1.0 + np.exp(-(logit[avail] + mid)))))
+        if tot < target:
+            lo = mid
+        else:
+            hi = mid
+    return logit + 0.5 * (lo + hi)
+
+
 def draw_rotation_minutes(
     rng: np.random.Generator,
     profiles: list[RotationProfile],
@@ -111,7 +143,7 @@ def draw_rotation_minutes(
     n_avail = played.sum(axis=1)
     target = np.minimum(target, n_avail)  # a short-handed team cannot field a full rotation
 
-    logit = np.log(np.clip(p_rot, 1e-6, 1 - 1e-6) / (1 - np.clip(p_rot, 1e-6, 1 - 1e-6)))
+    logit = _calibrate_logits(p_rot, played, float(np.mean(target)))
     gumbel = -np.log(-np.log(np.clip(rng.random((n, k)), 1e-12, 1.0)))
     score = np.where(played, logit[None, :] + gumbel, -np.inf)
     order = np.argsort(-score, axis=1)
