@@ -94,21 +94,28 @@ def test_coverage_alarms_make_silent_omissions_visible():
     client = KalshiClient()
 
     clean = [{"ticker": "KXNBAGAME-1", "series_ticker": "KXNBAGAME", "_family": "game_winner", "_support": str(Support.MODELABLE)}]
-    assert capture_alarms(clean, {str(Support.MODELABLE): 1}, client, onto, None) == []
+    assert capture_alarms(clean, {str(Support.MODELABLE): 1}, client, onto) == []
 
     # a series the ontology has never heard of
     novel = clean + [{"ticker": "KXNBAWEIRD-1", "series_ticker": "KXNBAWEIRD", "_family": None, "_support": str(Support.UNRESOLVED)}]
-    alarms = capture_alarms(novel, {str(Support.MODELABLE): 1, str(Support.UNRESOLVED): 1}, client, onto, None)
+    alarms = capture_alarms(novel, {str(Support.MODELABLE): 1, str(Support.UNRESOLVED): 1}, client, onto)
     assert alarms, "an unmodellable new series must alarm"
     assert any("UNRESOLVED" in a for a in alarms)
     assert any("KXNBAWEIRD" in a for a in alarms)
 
     # a page we stopped reading while the API still had more to give
     client.truncations.append({"endpoint": "/markets", "series_ticker": "KXNBAPTS", "pages": 20})
-    assert any("live cursor" in a for a in capture_alarms(clean, {str(Support.MODELABLE): 1}, client, onto, None))
+    assert any("live cursor" in a for a in capture_alarms(clean, {str(Support.MODELABLE): 1}, client, onto))
 
-    # more live markets than the order-book cap
+    # A configured order-book cap is NOT an alarm. It used to be, and the conductor went red every
+    # day at the 16:00 UTC capture because 3,463 live markets met a deliberate cap of 300. The
+    # market universe is still captured in full; only depth snapshots are sampled, by priority.
+    from nba_edge.archive.capture import capture_notes
+
     live = [{"ticker": f"KXNBAGAME-{i}", "series_ticker": "KXNBAGAME", "status": "active",
              "_family": "game_winner", "_support": str(Support.MODELABLE)} for i in range(5)]
-    assert any("order books truncated" in a for a in capture_alarms(live, {str(Support.MODELABLE): 5}, KalshiClient(), onto, 2))
-    assert capture_alarms(live, {str(Support.MODELABLE): 5}, KalshiClient(), onto, 50) == []
+    assert capture_alarms(live, {str(Support.MODELABLE): 5}, KalshiClient(), onto) == [], (
+        "hitting a configured cap must never fail the run"
+    )
+    assert any("sampled by priority" in n for n in capture_notes(live, 2)), "but it must still be recorded"
+    assert capture_notes(live, 50) == []

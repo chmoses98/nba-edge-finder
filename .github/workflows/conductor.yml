@@ -189,6 +189,11 @@ jobs:
           import json, sys
           st = json.load(open(sys.argv[1]))
           alarms = st.get("alarms") or []
+          # Notes are expected, configured truncation (e.g. the order-book cap). They are printed so
+          # the sampling is visible, and they never fail the run -- a daily red build on an
+          # unattended workflow is how real alarms get ignored.
+          for n in st.get("notes") or []:
+              print(f"::notice title=Capture note::{n}")
           if not alarms:
               print(f"coverage OK: {st.get('n_markets')} markets, by_support={st.get('by_support')}")
               raise SystemExit(0)
