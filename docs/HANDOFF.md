@@ -108,7 +108,8 @@ point-in-time, 300 late-2025-26 games):
 - Retuned dispersion + opponent-adjusted ratings (v2): interval calibration fixed (80% band covers 81%), win
   probabilities still under-confident. Shrinkage sweep: best log loss 0.556 at half-life 25 / prior 4. Diagnosis:
   the sim's expected margins correlate 0.96 with Elo but are compressed ~0.6×; an in-sample rescale of 2× matches
-  Elo. A provisional `rating_scale` = 1.6 is in the feature builder pending a full-season re-estimate.
+  Elo. `rating_scale` is now **1.9**, re-estimated out of sample (docs/research/RATING_SCALE.md); on the
+  holdout season the simulator and Elo are statistically indistinguishable, with Elo's point estimate ahead.
 - v5 (all fixes): **log loss 0.522, Brier 0.172, ECE 0.10**, margin slope 1.0, margin MAE 11.5, 80% coverage
   0.83 — within 0.02 log loss of Elo on the same games, with the full joint player universe attached.
 - Player-prop walk-forward on 7,666 real settled Kalshi prop markets (100 games): v1 was badly biased low

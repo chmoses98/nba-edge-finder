@@ -28,6 +28,7 @@ import pandas as pd
 
 from nba_edge.schemas.core import InjuryStatus
 from nba_edge.sim.params import LEAGUE, GameParams, PlayerParams, TeamParams
+from nba_edge.sim.rotation import estimate_profile
 
 FEATURE_VERSION = "features-0.1.0"
 STATUS_P_PLAY = {InjuryStatus.OUT: 0.0, InjuryStatus.DOUBTFUL: 0.15, InjuryStatus.QUESTIONABLE: 0.5, InjuryStatus.PROBABLE: 0.85, InjuryStatus.AVAILABLE: 1.0, InjuryStatus.UNKNOWN: 0.5}
@@ -45,7 +46,16 @@ class BuildConfig:
     min_player_games: int = 1
     max_roster: int = 15
     recent_team_games: int = 10  # rotation membership window (team games before cutoff); replaces the earlier per-player proxy
-    rating_scale: float = 1.6  # multiplier on (rating - league) after shrinkage; walk-forward 2026-03/04: sim margins correlate 0.96 with Elo but are compressed ~0.6x
+    rotation_window: int = 20  # team games used to estimate P(in rotation); longer than the availability window because role is more stable than availability
+    rotation_half_life: float = 6.0  # recency weighting inside that window
+    # Multiplier on (rating - league) after shrinkage: how far apart team strength is spread.
+    # 1.9 from docs/research/RATING_SCALE.md -- grid searched on seasons 2023-24/24-25 and confirmed
+    # ONCE on a 2025-26 holdout that shares no games with the tune set, paired per game: 1.6 is
+    # worse by 0.0079 nats, 95% CI [0.0015, 0.0140], so the interval excludes zero. The previous
+    # 1.6 was fitted on the same ~300 games it was reported on.
+    # Not refined past this grid on purpose: a finer search against the same holdout would make it
+    # a tune set, which is the error this replaced.
+    rating_scale: float = 1.9
 
 
 @dataclass
@@ -206,7 +216,8 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
             p_play = min(p_play, 0.5)
             notes.append("no games in 30+ days and not on injury report")
         if n < cfg.min_player_games:
-            out.append(PlayerParams(nba_id=int(pid), team_id=team_id, name=name, p_play=min(p_play, 0.9), p_start=0.0, min_mean=6.0, min_sd=5.0, fga_per_min=0.25))
+            out.append(PlayerParams(nba_id=int(pid), team_id=team_id, name=name, p_play=min(p_play, 0.9), p_start=0.0, min_mean=6.0, min_sd=5.0, fga_per_min=0.25,
+                                    p_rotation=0.08, rot_min_mean=12.0, rot_min_sd=5.0))
             report.warnings.append(f"player {name} ({pid}): no prior games; deep-bench prior used")
             continue
         w = _ewm_weights(n, cfg.rate_half_life)  # for rates
@@ -218,6 +229,16 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
         min_mean = _wmean(mins, w_role, 15.0, 1.0)
         min_sd = float(np.sqrt(max(_wmean((mins - min_mean) ** 2, w_role, 36.0, 1.0), 4.0)))
         p_start = _wmean(played["started"].to_numpy(dtype=float), w_role, 0.0, 1.0)
+
+        # Rotation profile: membership and conditional minutes are estimated from a series aligned to
+        # the TEAM's games, with an explicit 0 for every game the player did not appear in. Those
+        # zeros are the entire signal for whether he is in the rotation, so they cannot be dropped --
+        # `played` above has already filtered them out, which is why this rebuilds the series.
+        mins_by_date = dict(zip(played["game_date_et"].astype(str), mins, strict=True))
+        rot_dates = team_dates[-cfg.rotation_window :]
+        rot_series = np.array([mins_by_date.get(str(d), 0.0) for d in rot_dates], dtype=float)
+        rot_w = _ewm_weights(len(rot_series), cfg.rotation_half_life) if len(rot_series) else np.zeros(0)
+        rot = estimate_profile(rot_series, rot_w, p_start=float(np.clip(p_start, 0, 1)))
         total_min = float(np.sum(w * mins))
         pm = cfg.player_prior_minutes
 
@@ -242,6 +263,7 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
             fta_per_fga=float(np.clip(fta_per_fga, 0.02, 0.8)),
             ast_weight=rate("ast", 0.09) / 0.09, oreb_weight=rate("oreb", 0.04) / 0.04, dreb_weight=rate("dreb", 0.13) / 0.13,
             stl_weight=rate("stl", 0.03) / 0.03, blk_weight=rate("blk", 0.02) / 0.02, tov_weight=rate("tov", 0.055) / 0.055,
+            p_rotation=rot.p_rotation, rot_min_mean=rot.rot_min_mean, rot_min_sd=rot.rot_min_sd,
         )
         out.append(pp)
     # keep the most relevant players (by expected minutes * p_play), bounded roster

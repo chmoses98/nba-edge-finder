@@ -77,6 +77,12 @@ class PlayerParams:
     # the rating was earned with this player available", i.e. a baseline of 1.0.
     p_play_baseline: float | None = None
     minutes_dispersion: float = 1.0
+    # Rotation model (nba_edge.sim.rotation). None means "not estimated", and the simulator falls
+    # back to the older water-filled minutes. Both paths stay live until walk-forward validation
+    # says which one is actually better out of sample -- see docs/research/MINUTES_MODEL.md.
+    p_rotation: float | None = None
+    rot_min_mean: float | None = None
+    rot_min_sd: float | None = None
 
 
 @dataclass

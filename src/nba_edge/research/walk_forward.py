@@ -56,7 +56,7 @@ def elo_baseline(team_games: pd.DataFrame, k: float = 20.0, home_adv: float = 60
     return out
 
 
-def run(seasons: list[str], max_games: int, n_sims: int, warmup_games: int, hist_root: Path, out_path: Path, seed: int = 11, team_half_life: float = 25.0, team_prior_games: float = 4.0, rating_scale: float = 1.6) -> dict:
+def run(seasons: list[str], max_games: int, n_sims: int, warmup_games: int, hist_root: Path, out_path: Path, seed: int = 11, team_half_life: float = 25.0, team_prior_games: float = 4.0, rating_scale: float = 1.9) -> dict:
     tg = load_team_games(hist_root, seasons)
     pg = load_player_games(hist_root, seasons)
     tg = tg[tg["season_type"] == "regular"].copy()
@@ -126,7 +126,7 @@ def main(argv=None) -> int:
     ap.add_argument("--out", default=str(REPO_ROOT / "docs" / "research" / "walk_forward_games.json"))
     ap.add_argument("--team-half-life", type=float, default=25.0)
     ap.add_argument("--team-prior", type=float, default=4.0)
-    ap.add_argument("--rating-scale", type=float, default=1.6)
+    ap.add_argument("--rating-scale", type=float, default=1.9)
     a = ap.parse_args(argv)
     rep = run(a.seasons.split(","), a.max_games, a.sims, a.warmup, Path(a.hist), Path(a.out), team_half_life=a.team_half_life, team_prior_games=a.team_prior, rating_scale=a.rating_scale)
     print(json.dumps({k: v for k, v in rep.items() if k not in ("sim", "elo", "const_home")}, indent=1, default=str))

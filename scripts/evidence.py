@@ -222,9 +222,12 @@ def render(f: dict) -> str:
         f"| worktree clean | {g['worktree_clean']} |",
         f"| remote branches | {', '.join(b.replace('origin/', '') for b in g['remote_branches'])} |",
         "",
-        "The two commit metrics differ by exactly one: the shared `Initial commit` is reachable from the branch",
-        "but already present on main, so it is not part of the PR. Quoting the reachable count for a PR is the",
-        "bookkeeping error that produced the 30-vs-29 discrepancy in the overnight handoff.",
+        # Computed, not asserted. The first version of this paragraph hardcoded "differ by exactly one",
+        # which stopped being true the moment the branch was merged -- the same class of drift the whole
+        # script exists to prevent.
+        f"The two commit metrics differ by {int(g['commits_reachable']) - int(g['commits_ahead_of_main'])}: everything reachable from the branch that is",
+        "already on main is not part of the PR. Quoting the reachable count for a PR is the bookkeeping error",
+        "that produced the 30-vs-29 discrepancy in the overnight handoff.",
         "",
         "## Tests and lint",
         "",
