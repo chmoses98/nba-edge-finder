@@ -1,9 +1,0 @@
-# Phase 3: contemporaneous prices for props/totals/team totals on the SAME games as moneylines.
-# The prior run's global 3000 budget was consumed entirely by KXNBAGAME (2898) + KXNBASPREAD (102),
-# leaving every prop family with zero candles. Sampled mode fixes that; moneyline candles already on
-# disk are skipped incrementally rather than overwritten.
-SERIES=KXNBAGAME,KXNBASPREAD,KXNBATOTAL,KXNBATEAMTOTAL,KXNBAPTS,KXNBAREB,KXNBAAST,KXNBA3PT
-MIN_CLOSE=2025-10-01
-MAX_CLOSE=2026-07-01
-SAMPLE_GAMES=220
-MAX_CANDLE_MARKETS=26000

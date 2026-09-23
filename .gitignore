@@ -21,3 +21,8 @@ out/
 # workflow-committed datasets: the pull workflows add these with `git add -f`; never re-add stale local copies
 data/history/espn/*.parquet
 data/history/espn/done_events_*.json
+# Trigger files are a PUSH mechanism, never repository content. A committed trigger file re-fires
+# its workflow on any push that carries it -- including a merge to main, which is how merging PR #1
+# fired three data pulls that committed straight to the default branch. Push one to trigger a run;
+# do not commit it.
+.trigger/

@@ -25,6 +25,7 @@ on:
       - ".trigger/kalshi_history"
 
 env:
+  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
   SERIES: ${{ inputs.series || 'KXNBAGAME,KXNBASPREAD,KXNBATOTAL,KXNBATEAMTOTAL,KXNBAPTS,KXNBAREB,KXNBAAST,KXNBA3PT,KXNBAPRA,KXNBA1HSPREAD,KXNBA1HTOTAL,KXNBA1HWINNER,KXNBAWINS' }}
   MIN_CLOSE: ${{ inputs.min_close || '2025-10-01' }}
   MAX_CLOSE: ${{ inputs.max_close || '2026-07-01' }}
@@ -90,6 +91,14 @@ jobs:
           git add -f data/history/kalshi/candles_*.jsonl.gz || true
           if git diff --cached --quiet; then echo "nothing to commit"; else
             git commit -m "history: kalshi settled markets (run ${{ github.run_id }})"
-            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"  # binary data files: the run's version wins
-            git push origin HEAD:"${GITHUB_REF_NAME}"
+            # Never rewrite the default branch unattended. Merging PR #1 pushed the committed
+            # .trigger/* files to main, matched this workflow's `paths:` filter, and fired this
+            # pull -- which then committed data straight to main with no review. The trigger files
+            # are gone now, but a data pull should refuse this on its own rather than rely on that.
+            if [ "${GITHUB_REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
+              echo "::warning title=Refusing to push to the default branch::Ran on ${GITHUB_REF_NAME}. The data is in this run's workspace/artifact; re-run this workflow on a branch to commit it."
+            else
+              git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"  # binary data files: the run's version wins
+              git push origin HEAD:"${GITHUB_REF_NAME}"
+            fi
           fi
