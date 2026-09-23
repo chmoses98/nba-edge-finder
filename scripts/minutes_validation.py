@@ -28,7 +28,6 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from nba_edge.features.build import BuildConfig, build_game_params  # noqa: E402
-from nba_edge.identity.teams import registry  # noqa: E402
 from nba_edge.research.walk_forward import (  # noqa: E402
     load_player_games,
     load_team_games,
@@ -53,7 +52,6 @@ def collect(hist: Path, seasons: list[str], n_games: int, n_sims: int, seed: int
     pgr = pg[pg.season_type == "regular"]
     pg = pg.copy()
     pg["minutes"] = pd.to_numeric(pg["minutes"], errors="coerce").fillna(0.0)
-    reg = registry()
     home = tgr[tgr.home == True].sort_values("game_date_et").tail(n_games)  # noqa: E712
 
     rows = []
