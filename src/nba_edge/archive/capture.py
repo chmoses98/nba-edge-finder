@@ -125,7 +125,8 @@ def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_o
     by_support = _count(markets, "_support")
     status = {"last_capture_utc": iso(t0), "n_markets": entry.rows, "n_series": len(series), "requests": client.request_count, "run_id": ledger.run_id,
               "by_status": _count(markets, "status"), "by_support": by_support, "by_family": _count(markets, "_family")}
-    status["alarms"] = capture_alarms(markets, by_support, client, onto, max_orderbooks if with_orderbook else None)
+    status["alarms"] = capture_alarms(markets, by_support, client, onto)
+    status["notes"] = capture_notes(markets, max_orderbooks if with_orderbook else None)
     status["alarm"] = bool(status["alarms"])
     (out_root / "STATUS_capture.json").write_text(json.dumps(status, indent=1))
     print(json.dumps(status, indent=1))
@@ -135,7 +136,7 @@ def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_o
     return 0
 
 
-def capture_alarms(markets: list[dict[str, Any]], by_support: dict[str, int], client: KalshiClient, onto: Ontology, max_orderbooks: int | None) -> list[str]:
+def capture_alarms(markets: list[dict[str, Any]], by_support: dict[str, int], client: KalshiClient, onto: Ontology) -> list[str]:
     """Everything this capture knows it did not fully account for.
 
     The coverage invariant is "every market DISCOVERED is ACCOUNTED FOR", and until now a breach of
@@ -157,11 +158,29 @@ def capture_alarms(markets: list[dict[str, Any]], by_support: dict[str, int], cl
         alarms.append(f"series on the board with no ontology entry: {unknown_series}")
     if client.truncations:
         alarms.append(f"pagination stopped with a live cursor (results we did not see): {client.truncations[:5]}")
+    return alarms
+
+
+def capture_notes(markets: list[dict[str, Any]], max_orderbooks: int | None) -> list[str]:
+    """Expected, configured truncation. Worth recording; never a reason to fail the run.
+
+    Order-book depth is sampled on purpose: the workflow passes ``--max-orderbooks 300`` and
+    ``snapshot_orderbooks`` takes the highest-priority markets. Hitting that cap is the cap doing its
+    job, not a coverage-invariant breach -- the market universe is still captured in full, only the
+    depth snapshots are a sample.
+
+    This started life as an alarm, and the conductor went red every single day at the 16:00 UTC
+    capture as a result (3,463 live markets against a cap of 300). A daily red run on an unattended
+    workflow teaches people to ignore alarms, which costs more than the alarm was ever worth. The
+    genuine breaches -- UNRESOLVED markets, unclassified markets, unknown series, and *pagination*
+    truncation, which silently drops markets from the universe -- stay in ``capture_alarms``.
+    """
+    notes: list[str] = []
     if max_orderbooks is not None:
         live = sum(1 for m in markets if m.get("status") in LIVE_STATUSES and m.get("ticker"))
         if live > max_orderbooks:
-            alarms.append(f"order books truncated: {live} live markets but max_orderbooks={max_orderbooks}")
-    return alarms
+            notes.append(f"order books sampled by priority: {live} live markets, cap {max_orderbooks}")
+    return notes
 
 
 def _count(rows: list[dict[str, Any]], key: str) -> dict[str, int]:
