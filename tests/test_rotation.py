@@ -131,3 +131,81 @@ def test_roles_are_labelled_sensibly():
 
 def test_rotation_threshold_is_a_stated_choice():
     assert ROTATION_MIN == pytest.approx(10.0)
+
+
+# --- membership calibration ---------------------------------------------------------------------
+
+
+def test_calibration_makes_membership_sum_to_a_real_rotation_size():
+    """Per-player estimates are made independently, so nothing makes them add up.
+
+    On a representative roster they summed to 7.78 while real rotations average 9.12. Selecting nine
+    players from probabilities accounting for 7.78 has to inflate somebody, and it inflated the
+    middle: a 0.48 bench player was being selected 63% of the time.
+    """
+    from nba_edge.sim.rotation import _calibrate_logits
+
+    p = np.array([0.94, 0.94, 0.90, 0.85, 0.85, 0.72, 0.65, 0.55, 0.48, 0.30, 0.22, 0.15, 0.10, 0.08, 0.05])
+    played = np.ones((50, len(p)), dtype=bool)
+    cal = 1 / (1 + np.exp(-_calibrate_logits(p, played, 9.12)))
+    assert cal.sum() == pytest.approx(9.12, abs=0.02)
+    assert p.sum() < 8.0, "the raw estimates really do fall short -- that is the defect"
+
+
+def test_calibration_preserves_ordering_and_relative_gaps():
+    """A single additive offset on the log-odds is the least assuming correction available."""
+    from nba_edge.sim.rotation import _calibrate_logits
+
+    p = np.array([0.95, 0.80, 0.60, 0.40, 0.20, 0.05])
+    played = np.ones((10, len(p)), dtype=bool)
+    lg = _calibrate_logits(p, played, 3.5)
+    assert np.all(np.diff(lg) < 0), "ordering must be untouched"
+    raw = np.log(p / (1 - p))
+    shifts = lg - raw
+    assert np.allclose(shifts, shifts[0], atol=1e-6), "every player must move by the SAME amount"
+
+
+def test_calibration_cannot_demand_more_players_than_are_available():
+    from nba_edge.sim.rotation import _calibrate_logits
+
+    p = np.array([0.9, 0.8, 0.7, 0.6, 0.5])
+    played = np.ones((10, len(p)), dtype=bool)
+    cal = 1 / (1 + np.exp(-_calibrate_logits(p, played, 20.0)))  # absurd target
+    assert cal.sum() <= len(p)
+
+
+def test_calibration_is_a_no_op_when_there_is_nothing_to_calibrate():
+    from nba_edge.sim.rotation import _calibrate_logits
+
+    p = np.array([0.9, 0.5])
+    played = np.zeros((10, 2), dtype=bool)  # nobody available
+    lg = _calibrate_logits(p, played, 9.0)
+    assert np.allclose(lg, np.log(p / (1 - p)))
+
+
+def test_lowering_selection_noise_is_not_the_fix_for_membership_error():
+    """Pinned because this was tried and it made calibration WORSE, not better.
+
+    Low noise collapses Gumbel-top-k towards a deterministic top-k, where marginals go to 1 and 0
+    and every intermediate player is badly served. Measured: mean |marginal - p| rose from 0.089 at
+    temperature 1.0 to 0.157 at 0.15.
+    """
+    from nba_edge.sim.rotation import ROTATION_SIZE_PMF
+
+    rng = np.random.default_rng(0)
+    p = np.array([0.94, 0.90, 0.85, 0.72, 0.65, 0.55, 0.48, 0.30, 0.22, 0.15, 0.10, 0.05])
+    n, k = 8000, len(p)
+    sizes = np.array(sorted(ROTATION_SIZE_PMF))
+    probs = np.array([ROTATION_SIZE_PMF[s] for s in sizes])
+    target = rng.choice(sizes, size=n, p=probs / probs.sum())
+    target = np.minimum(target, k)
+    logit = np.log(p / (1 - p))
+
+    def marginal_err(temp):
+        g = -np.log(-np.log(np.clip(rng.random((n, k)), 1e-12, 1.0))) * temp
+        order = np.argsort(-(logit[None, :] + g), axis=1)
+        ranks = np.empty_like(order)
+        np.put_along_axis(ranks, order, np.arange(k)[None, :].repeat(n, axis=0), axis=1)
+        return float(np.abs((ranks < target[:, None]).mean(axis=0) - p).mean())
+
+    assert marginal_err(0.15) > marginal_err(1.0), "sharpening selection does not improve calibration"
