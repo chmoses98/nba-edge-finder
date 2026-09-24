@@ -316,3 +316,38 @@ def test_the_worker_pushes_to_the_branch_the_environment_names(tmp_path, monkeyp
 
     monkeypatch.delenv("ARCHIVE_BRANCH")
     assert R.archive_branch() == R.DEFAULT_ARCHIVE_BRANCH
+
+
+def test_the_worker_runs_the_same_commands_the_conductor_does():
+    """The worker replaced the conductor's scheduled runs, so it must invoke the same things.
+
+    conductor.yml's invocations are production-proven -- they captured every snapshot on the
+    archive. If someone changes a flag there (say the order-book cap) and the worker keeps the old
+    one, the two diverge silently and the difference only shows up in the data months later.
+    """
+    import re
+    from pathlib import Path
+
+    from nba_edge.worker.run import Worker
+
+    yaml_text = Path(".github/workflows/conductor.yml").read_text()
+    conductor = {}
+    for m in re.finditer(r"\bnba (capture|context|simulate|settle|evaluate|discover)\b([^\n]*)", yaml_text):
+        conductor[m.group(1)] = f"nba {m.group(1)}{m.group(2)}".strip()
+
+    rendered = {
+        name: " ".join(p.replace("ARCHIVE", "data/archive").replace("DATA", "data") for p in tmpl)
+        for name, tmpl, _ in Worker.SLOW_JOBS
+    }
+    # Derived from the worker's own constant, NOT restated here. An earlier version of this test
+    # hardcoded the capture string and so compared conductor.yml against a copy of itself -- it
+    # passed happily while the worker used a different order-book cap.
+    rendered["capture"] = " ".join(
+        p.replace("ARCHIVE", "data/archive") for p in Worker.CAPTURE_CMD
+    )
+
+    assert set(conductor) == set(rendered), (
+        f"conductor.yml has {sorted(conductor)}, worker has {sorted(rendered)}"
+    )
+    for job, expected in sorted(conductor.items()):
+        assert rendered[job] == expected, f"{job}: worker runs {rendered[job]!r}, conductor runs {expected!r}"

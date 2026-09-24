@@ -284,8 +284,8 @@ class Worker:
         if cyc.should_capture:
             captured = True
             rc, out = self.run_cmd(
-                ["nba", "capture", "--out", str(self.archive_root), "--orderbook", "--max-orderbooks", "300"],
-                600,
+                [p.replace("ARCHIVE", str(self.archive_root)) for p in self.CAPTURE_CMD],
+                self.CAPTURE_BUDGET_S,
             )
             capture_ok = rc == 0
             if not capture_ok:
@@ -330,6 +330,11 @@ class Worker:
             hours_to_next_tip=cyc.hours_to_next_tip,
             reason=cyc.reason,
         )
+
+    # The capture command, as a constant rather than inline, so a test can compare it against
+    # conductor.yml's production-proven invocation instead of against a copy of itself.
+    CAPTURE_CMD = ("nba", "capture", "--out", "ARCHIVE", "--orderbook", "--max-orderbooks", "300")
+    CAPTURE_BUDGET_S = 600.0
 
     # The slow jobs, in dependency order, with the command each runs and how long it may take.
     # Ordered deliberately: context before simulate (a simulation wants the freshest roster), and
