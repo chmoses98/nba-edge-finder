@@ -25,9 +25,10 @@ permissions:
   actions: write
 
 concurrency:
-  # Keyed on the packed string, so every link of one experiment's chain contends for one group --
-  # which is precisely the single-writer property the capture worker needs, tested for real.
-  group: chainlab-${{ inputs.statuses }}
+  # A single constant group for every lab run. GitHub expressions have no split(), so the group
+  # cannot be derived from one field of the packed string -- and a constant is what the experiment
+  # needs anyway: it is the same shape production uses, one group for the whole capture chain.
+  group: chainlab
   cancel-in-progress: false
 
 jobs:
