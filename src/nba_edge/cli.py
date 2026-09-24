@@ -103,6 +103,17 @@ def cmd_capture_health(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_evidence_health(args: argparse.Namespace) -> int:
+    """The daily dataset-completeness dashboard."""
+    import json
+
+    from nba_edge.ops.evidence_health import run_evidence_health
+
+    report = run_evidence_health(Path(args.archive), Path(args.out) if args.out else None)
+    print(json.dumps(report, indent=2, sort_keys=True, default=str))
+    return 0
+
+
 def cmd_context(args: argparse.Namespace) -> int:
     from nba_edge.data.context import run_context_refresh
 
@@ -204,6 +215,11 @@ def build_parser() -> argparse.ArgumentParser:
     ch.add_argument("--days", type=int, default=30, help="Only grade games tipped within N days")
     ch.add_argument("--gate", action="store_true", help="Exit 1 if the Phase 5 acceptance criteria fail")
     ch.set_defaults(func=cmd_capture_health)
+
+    eh = sub.add_parser("evidence-health", help="Daily dataset-completeness dashboard")
+    eh.add_argument("--archive", default="data/archive")
+    eh.add_argument("--out", default=None)
+    eh.set_defaults(func=cmd_evidence_health)
 
     x = sub.add_parser("context", help="Refresh schedule/rosters/injuries snapshot (point-in-time)")
     x.add_argument("--out", default="data/archive")

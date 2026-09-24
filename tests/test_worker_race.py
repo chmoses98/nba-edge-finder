@@ -286,3 +286,13 @@ def test_a_retired_worker_releases_the_lease_for_its_successor(tmp_path):
     assert final.released_at, "retirement must release the lease"
     # A watchdog bootstrap holding no successor nonce can take over immediately.
     assert L.may_write(final, "watchdog-run", clock.now())[0] is True
+
+
+def test_retirement_writes_the_evidence_dashboard(tmp_path):
+    """Phase 12 asks for a daily artifact; a ~5h handover cadence produces ~5 a day."""
+    import json as _json
+
+    clock = FakeClock(T0)
+    make_worker(tmp_path, clock, "run-1", lifetime=30.0).run()
+    report = _json.loads((tmp_path / "archive" / "EVIDENCE_HEALTH.json").read_text())
+    assert "markets" in report and "stint_data" in report

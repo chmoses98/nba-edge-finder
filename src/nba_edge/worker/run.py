@@ -400,5 +400,14 @@ class Worker:
                 ),
             )
         (self.archive_root / "STATUS_worker.json").write_text(res.to_json())
+        # The Phase 12 dashboard, refreshed on every handover (~5x/day, comfortably "daily").
+        # Retirement is the right moment: the worker has just finished a full shift, so the counts
+        # describe a completed period rather than a half-finished one.
+        try:
+            from nba_edge.ops.evidence_health import run_evidence_health
+
+            run_evidence_health(self.archive_root, self.archive_root / "EVIDENCE_HEALTH.json")
+        except Exception as e:  # noqa: BLE001 - a dashboard must never cost us a handover
+            print(f"worker: could not write the evidence dashboard ({e})")
         self._push(f"worker: {self.worker_id} retired after {len(res.cycles)} cycles")
         print(f"worker: {res.exit_reason}")
