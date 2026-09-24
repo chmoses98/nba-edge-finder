@@ -95,11 +95,18 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_RUN_ID: ${{ github.run_id }}
+          # Inputs come through the ENVIRONMENT, never interpolated into the script body.
+          # `${{ inputs.x }}` inside a `run:` block is substituted before bash ever sees it, so a
+          # dispatch carrying a quote or a `;` would execute as script rather than be read as a
+          # value. These two happen to be a hex nonce and a number, but anyone who can dispatch
+          # this workflow chooses them, and the safe form costs nothing.
+          SUCCESSOR_TOKEN: ${{ inputs.successor_token }}
+          LIFETIME_MINUTES: ${{ inputs.lifetime_minutes }}
         run: |
           set -uo pipefail
           args=(worker --data data --out data/archive --workflow capture_worker.yml)
-          [ -n "${{ inputs.successor_token }}" ] && args+=(--successor-token "${{ inputs.successor_token }}")
-          [ -n "${{ inputs.lifetime_minutes }}" ] && args+=(--lifetime-minutes "${{ inputs.lifetime_minutes }}")
+          [ -n "${SUCCESSOR_TOKEN:-}" ] && args+=(--successor-token "$SUCCESSOR_TOKEN")
+          [ -n "${LIFETIME_MINUTES:-}" ] && args+=(--lifetime-minutes "$LIFETIME_MINUTES")
           nba "${args[@]}"
 
       - name: Preserve the archive if the final push failed
