@@ -296,3 +296,23 @@ def test_retirement_writes_the_evidence_dashboard(tmp_path):
     make_worker(tmp_path, clock, "run-1", lifetime=30.0).run()
     report = _json.loads((tmp_path / "archive" / "EVIDENCE_HEALTH.json").read_text())
     assert "markets" in report and "stint_data" in report
+
+
+def test_the_worker_pushes_to_the_branch_the_environment_names(tmp_path, monkeypatch):
+    """The workflow declares `env: ARCHIVE_BRANCH`; a bare constant made that decorative.
+
+    This is not hypothetical: a rehearsal aimed at a throwaway branch wrote to the real archive
+    because the worker ignored the variable the workflow set.
+    """
+    from nba_edge.worker import run as R
+
+    monkeypatch.setenv("ARCHIVE_BRANCH", "data-archive-scratch")
+    clock = FakeClock(T0)
+    w = make_worker(tmp_path, clock, "run-1", lifetime=30.0)
+    w.run()
+    push_calls = [c for c in w._calls if c and c[0] == "bash"]
+    assert push_calls, "the worker must have attempted a push"
+    assert all("data-archive-scratch" in c for c in push_calls), push_calls[0]
+
+    monkeypatch.delenv("ARCHIVE_BRANCH")
+    assert R.archive_branch() == R.DEFAULT_ARCHIVE_BRANCH

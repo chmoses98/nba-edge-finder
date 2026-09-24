@@ -33,6 +33,7 @@ check -- see ``worker/lease.py``.
 from __future__ import annotations
 
 import json
+import os
 import secrets
 import subprocess
 import time
@@ -50,7 +51,16 @@ from nba_edge.worker.plan import (
     tip_times,
 )
 
-ARCHIVE_BRANCH = "data-archive"
+# The branch the worker pushes to. Read from the environment, with the production branch as the
+# default, because the workflow declares `env: ARCHIVE_BRANCH` and a reader reasonably assumes that
+# is what takes effect. It was previously a bare constant, so the env var was decorative and the
+# worker silently pushed to `data-archive` whatever the workflow said -- which is exactly how a
+# rehearsal intended for a throwaway branch ended up writing to the real archive.
+DEFAULT_ARCHIVE_BRANCH = "data-archive"
+
+
+def archive_branch() -> str:
+    return os.environ.get("ARCHIVE_BRANCH") or DEFAULT_ARCHIVE_BRANCH
 
 
 @dataclass
@@ -202,7 +212,9 @@ class Worker:
         if not script.exists():
             print(f"worker: push script missing at {script}")
             return False
-        rc, out = self.run_cmd(["bash", str(script), str(self.archive_root), ARCHIVE_BRANCH, message], 300)
+        rc, out = self.run_cmd(
+            ["bash", str(script), str(self.archive_root), archive_branch(), message], 300
+        )
         if rc != 0:
             print(f"worker: archive push failed rc={rc}: {out[-600:]}")
         return rc == 0

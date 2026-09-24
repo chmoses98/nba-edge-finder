@@ -35,8 +35,15 @@ any of them would destroy `probe.yml` or `history.yml`.
 | `claude/source-probe` | rig replacing `history.yml` | the granular-source audit (now shipped properly as `source_probe.yml`) |
 | `claude/worker-live-test` | the real worker under `history.yml` | rehearsing the worker on a runner before merge |
 
-Also delete the branch **`data-archive-worker-test`**, a throwaway archive the rehearsal pushed to
-so the real `data-archive` was never touched.
+The rehearsal was *aimed* at a throwaway archive branch and **did not hit it**. `ARCHIVE_BRANCH`
+was a bare module constant in `worker/run.py`, so the workflow's `env: ARCHIVE_BRANCH` was
+decorative and the worker pushed to the real `data-archive` regardless. Three commits landed there
+(`LEASE_capture.json`, `STATUS_worker.json`, `EVIDENCE_HEALTH.json`).
+
+**Assessed, not assumed:** three files *added*, zero modified, zero deleted, snapshot count
+unchanged at 114. The immutable evidence is intact and those three files are exactly what a
+production worker writes, so they were left in place rather than rewritten out of an append-only
+archive. The bug is fixed and carries a regression test.
 
 Everything worth keeping from these has been ported into PR #7.
 
