@@ -1,0 +1,111 @@
+name: capture-worker
+# The long-lived capture worker. One run owns the cadence for ~5 hours and hands over to a
+# successor it dispatches itself; cron is demoted to a bootstrap of last resort.
+#
+# Why, in one number: over six days this repository's `*/10` conductor cron produced 34 runs
+# against 864 expected -- 3.9% delivery, with observed gaps of 2h18m and 3h09m between consecutive
+# "ten-minute" wakes. The dominant failure is omission, not lateness, so tightening the cron
+# expression cannot fix it. Cadence has to come from inside a process we control.
+#
+# The shape below is dictated by experiments run against this repository (chainlab, see
+# docs/research/CAPTURE_ARCHITECTURE.md for the full record):
+#   E0  workflow_dispatch resolves the workflow by a file on the DEFAULT branch (404 otherwise),
+#       though `ref` chooses which branch's content runs. => this file must live on main.
+#   E1  a run CAN dispatch its own successor with GITHUB_TOKEN + `actions: write`, and the
+#       successor really runs; handover measured at ~7s. GitHub's recursion suppression, which
+#       blocks push-triggered loops, explicitly exempts workflow_dispatch.
+#   E2  one concurrency group holds at most ONE in-progress run and at most ONE pending run;
+#       queueing a third cancels the previously pending one. Three queued runs collapsed to one
+#       and two writers never coexisted.
+on:
+  workflow_dispatch:
+    inputs:
+      successor_token:
+        description: "Nonce proving this run is the successor its predecessor dispatched"
+        default: ""
+      lifetime_minutes:
+        description: "Override the planned lifetime (blank = the measured default, 300)"
+        default: ""
+  schedule:
+    # Bootstrap ONLY. This is not where cadence comes from -- at the measured ~4% delivery rate a
+    # `*/5` cron is worth roughly one wake every two hours, which is useless as a cadence and
+    # perfectly adequate as a way to restart a chain that has somehow died completely.
+    # While a worker is alive these runs simply queue and are superseded (E2), which costs nothing.
+    - cron: "*/5 * * * *"
+
+permissions:
+  contents: write
+  # Required to dispatch the successor. Without it the API answers 403 and the chain cannot renew.
+  actions: write
+
+concurrency:
+  # Deliberately the SAME group as conductor.yml. ARCHIVE_BRANCH is a constant, so the conductor
+  # and the worker write the same branch; putting them in different groups would let them race for
+  # it. One group means one writer, enforced by the platform rather than by convention.
+  #
+  # The consequence is that a live worker supersedes scheduled conductor runs -- which is why the
+  # worker runs the conductor's due jobs itself (see nba_edge/worker/run.py::_run_due_jobs).
+  # Without that, simulate/settle/evaluate/discover would stop for as long as a worker was alive.
+  group: conductor-archive
+  cancel-in-progress: false
+
+env:
+  ARCHIVE_BRANCH: data-archive
+
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    # A BACKSTOP, never the rollover mechanism (the brief is explicit about this). The worker
+    # retires itself at 300 min; this sits 30 min above that and 30 min below the documented 6h
+    # platform cap. Measured worst-case retirement cost is under a minute (E1: dispatch 1s,
+    # handover ~7s), so 30 minutes of backstop is ~30x the cost of the thing it is insuring.
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      # Measured at 17-21s. A long-lived worker pays this ONCE per ~5 hours instead of once per
+      # wake; under the old design the same install ran 144x/day to deliver ~30 captures.
+      - run: pip install -e .
+
+      - name: Check out the archive branch into a worktree
+        run: |
+          set -uo pipefail
+          git config user.name "nba-edge-bot"
+          git config user.email "nba-edge-bot@users.noreply.github.com"
+          # --depth=1: the archive grows all season and a full fetch is the slowest step here.
+          if git fetch origin "$ARCHIVE_BRANCH" --depth=1 2>/dev/null; then
+            git worktree add data/archive "origin/$ARCHIVE_BRANCH"
+            (cd data/archive && git checkout -B "$ARCHIVE_BRANCH")
+          else
+            mkdir -p data/archive && cd data/archive && git init -q \
+              && git checkout -q --orphan "$ARCHIVE_BRANCH" \
+              && git config user.name "nba-edge-bot" \
+              && git config user.email "nba-edge-bot@users.noreply.github.com" \
+              && git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+              && echo "# NBA Edge Finder immutable archive" > README.md \
+              && git add README.md && git commit -qm "init archive"
+          fi
+
+      - name: Run the worker
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          set -uo pipefail
+          args=(worker --data data --out data/archive --workflow capture_worker.yml)
+          [ -n "${{ inputs.successor_token }}" ] && args+=(--successor-token "${{ inputs.successor_token }}")
+          [ -n "${{ inputs.lifetime_minutes }}" ] && args+=(--lifetime-minutes "${{ inputs.lifetime_minutes }}")
+          nba "${args[@]}"
+
+      - name: Preserve the archive if the final push failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: worker-archive-${{ github.run_id }}
+          path: data/archive
+          retention-days: 14

@@ -27,7 +27,12 @@ from nba_edge.timeutil import iso, parse_iso
 
 # Announced NBA calendars. Add each new season here as the league publishes it.
 SEASON_CALENDAR = {
-    "2026-27": {"preseason_start": "2026-10-03", "regular_start": "2026-10-20", "regular_end": "2027-04-11", "playoffs_end": "2027-06-30"},
+    "2026-27": {
+        "preseason_start": "2026-10-03",
+        "regular_start": "2026-10-20",
+        "regular_end": "2027-04-11",
+        "playoffs_end": "2027-06-30",
+    },
 }
 SEASON_2026_27 = SEASON_CALENDAR["2026-27"]  # back-compat alias
 
@@ -67,7 +72,16 @@ def _latest_schedule(ledger: Ledger) -> list[dict[str, Any]]:
     return rows
 
 
-def decide(now: datetime, schedule_rows: list[dict[str, Any]], capture_age_min: float | None, last_sim_age_min: float | None, last_settle_age_min: float | None, last_eval_age_min: float | None, last_context_age_min: float | None = None, last_discover_age_min: float | None = None) -> dict[str, Any]:
+def decide(
+    now: datetime,
+    schedule_rows: list[dict[str, Any]],
+    capture_age_min: float | None,
+    last_sim_age_min: float | None,
+    last_settle_age_min: float | None,
+    last_eval_age_min: float | None,
+    last_context_age_min: float | None = None,
+    last_discover_age_min: float | None = None,
+) -> dict[str, Any]:
     in_season, season_label, calendar_known = season_window(now.date().isoformat())
     tips = []
     for g in schedule_rows:
@@ -91,16 +105,29 @@ def decide(now: datetime, schedule_rows: list[dict[str, Any]], capture_age_min: 
     # context has a fast cadence near tip-off and a slow floor that always applies.
     context_stale_min = 6 * 60 if in_season else 24 * 60
     context = (
-        (in_season and next_tip_h is not None and next_tip_h <= 30 and active_window and (last_context_age_min is None or last_context_age_min > 55))
+        (
+            in_season
+            and next_tip_h is not None
+            and next_tip_h <= 30
+            and active_window
+            and (last_context_age_min is None or last_context_age_min > 55)
+        )
         or last_context_age_min is None
         or last_context_age_min > context_stale_min
     )
     if not schedule_rows:
         context = True  # bootstrap: we need a schedule snapshot before anything else can be decided
 
-    simulate = in_season and next_tip_h is not None and next_tip_h <= 26 and (last_sim_age_min is None or last_sim_age_min > 55)
+    simulate = (
+        in_season
+        and next_tip_h is not None
+        and next_tip_h <= 26
+        and (last_sim_age_min is None or last_sim_age_min > 55)
+    )
     settle = bool(recent_final) and (last_settle_age_min is None or last_settle_age_min > 90)
-    evaluate = settle or (in_season and hour == 10 and (last_eval_age_min is None or last_eval_age_min > 23 * 60))
+    evaluate = settle or (
+        in_season and hour == 10 and (last_eval_age_min is None or last_eval_age_min > 23 * 60)
+    )
 
     # Discovery is age-based, not "hour==15 and minute<10". GitHub routinely delays scheduled runs
     # past a ten-minute window, and every such delay silently skipped a day of discovery -- which is
@@ -108,10 +135,21 @@ def decide(now: datetime, schedule_rows: list[dict[str, Any]], capture_age_min: 
     discover = last_discover_age_min is None or last_discover_age_min > 23 * 60
     return {
         "discover": bool(discover),
-        "now_utc": iso(now), "in_season": in_season, "season": season_label, "calendar_known": calendar_known,
-        "next_tip_hours": None if next_tip_h is None else round(next_tip_h, 2), "n_upcoming": len(upcoming),
-        "n_recent_final": len(recent_final), "capture": bool(capture), "context": bool(context), "simulate": bool(simulate), "settle": bool(settle), "evaluate": bool(evaluate),
-        "capture_age_min": capture_age_min, "context_age_min": last_context_age_min, "discover_age_min": last_discover_age_min,
+        "now_utc": iso(now),
+        "in_season": in_season,
+        "season": season_label,
+        "calendar_known": calendar_known,
+        "next_tip_hours": None if next_tip_h is None else round(next_tip_h, 2),
+        "n_upcoming": len(upcoming),
+        "n_recent_final": len(recent_final),
+        "capture": bool(capture),
+        "context": bool(context),
+        "simulate": bool(simulate),
+        "settle": bool(settle),
+        "evaluate": bool(evaluate),
+        "capture_age_min": capture_age_min,
+        "context_age_min": last_context_age_min,
+        "discover_age_min": last_discover_age_min,
     }
 
 
@@ -134,12 +172,21 @@ def _discover_age(data_root: Path) -> float | None:
     return min(known) if known else None
 
 
-def run_conductor(data_root: Path, github_output: str | None = None) -> int:
+def decide_now(data_root: Path) -> dict[str, Any]:
+    """The full decision, assembled from the STATUS breadcrumbs on the archive.
+
+    Extracted from ``run_conductor`` so the long-lived capture worker can reuse exactly this logic
+    instead of reimplementing it. That matters more than it looks: the worker holds the archive's
+    concurrency group for hours at a time, so every scheduled conductor run queues behind it and is
+    cancelled. If the worker did not decide and run simulate/settle/evaluate/discover itself, those
+    jobs would simply stop happening for as long as a worker was alive.
+    """
     archive = data_root / "archive"
     ledger = Ledger(archive)
     rows = _latest_schedule(ledger) if archive.exists() else []
-    d = decide(
-        datetime.now(tz=UTC), rows,
+    return decide(
+        datetime.now(tz=UTC),
+        rows,
         status_age_minutes(archive / "STATUS_capture.json", "last_capture_utc"),
         status_age_minutes(archive / "STATUS_simulate.json", "simulated_at_utc"),
         status_age_minutes(archive / "STATUS_settle.json", "settled_at_utc"),
@@ -147,10 +194,23 @@ def run_conductor(data_root: Path, github_output: str | None = None) -> int:
         status_age_minutes(archive / "STATUS_context.json", "refreshed_at_utc"),
         _discover_age(data_root),
     )
+
+
+def run_conductor(data_root: Path, github_output: str | None = None) -> int:
+    d = decide_now(data_root)
     print(json.dumps(d, indent=1))
     if github_output:
         with open(github_output, "a") as f:
-            for k in ("capture", "context", "simulate", "settle", "evaluate", "discover", "in_season", "calendar_known"):
+            for k in (
+                "capture",
+                "context",
+                "simulate",
+                "settle",
+                "evaluate",
+                "discover",
+                "in_season",
+                "calendar_known",
+            ):
                 f.write(f"{k}={'true' if d[k] else 'false'}\n")
     return 0
 
