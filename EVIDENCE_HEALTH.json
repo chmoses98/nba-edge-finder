@@ -1,0 +1,84 @@
+{
+  "context": {
+    "confirmed_starters": {
+      "reason": "projected and CONFIRMED starters are not yet distinguished in the context snapshot",
+      "state": "absent"
+    },
+    "injuries": {
+      "first_day": "dt=2026-09-24",
+      "last_day": "dt=2026-09-24",
+      "n_days": 1,
+      "n_snapshots": 1,
+      "state": "ok"
+    },
+    "lineups": {
+      "reason": "no lineup/stint source is ingested yet (Phase 7 audit)",
+      "state": "absent"
+    },
+    "rosters": {
+      "first_day": "dt=2026-09-24",
+      "last_day": "dt=2026-09-24",
+      "n_days": 1,
+      "n_snapshots": 1,
+      "state": "ok"
+    },
+    "schedule": {
+      "first_day": "dt=2026-09-24",
+      "last_day": "dt=2026-09-24",
+      "n_days": 1,
+      "n_snapshots": 1,
+      "state": "ok"
+    },
+    "state": "ok"
+  },
+  "evidence": {
+    "reason": "evaluate has not run against this archive",
+    "state": "absent"
+  },
+  "generated_at_utc": "2026-09-24T04:44:02.260583+00:00",
+  "markets": {
+    "reason": "capture has never written STATUS_capture.json",
+    "state": "absent"
+  },
+  "settlement": {
+    "reason": "settle has not run against this archive",
+    "state": "absent"
+  },
+  "simulation": {
+    "reason": "simulate has not run against this archive",
+    "state": "absent"
+  },
+  "stint_data": {
+    "n_games_available": 0,
+    "n_quarantined_games": 0,
+    "n_valid_lineup_possessions": 0,
+    "reason": "no canonical stint dataset exists yet. Phase 8 is gated on the Phase 7 source audit finding a source that is reachable from a GitHub runner; see SOURCE_AUDIT.md.",
+    "state": "absent"
+  },
+  "worker": {
+    "cycles": [
+      {
+        "cadence_s": 900.0,
+        "capture_ok": false,
+        "captured": false,
+        "duration_s": 122.518589,
+        "hours_to_next_tip": null,
+        "jobs_run": [
+          "context",
+          "discover"
+        ],
+        "push_ok": true,
+        "reason": "no game within the active window",
+        "started_at": "2026-09-24T04:41:59Z"
+      }
+    ],
+    "exit_reason": "planned retirement before next cadence tick",
+    "fail_closed": false,
+    "generation": 1,
+    "n_capture_failed": 0,
+    "n_captured": 0,
+    "n_cycles": 1,
+    "successor_dispatched": false,
+    "worker_id": "35956712873"
+  }
+}
