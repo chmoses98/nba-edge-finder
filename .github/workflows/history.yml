@@ -26,5 +26,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      # The probe now imports the project's own HTTP client on purpose: probing with a different
+      # client measures the probe rather than the source (the first run proved that the hard way).
+      - run: pip install -e .
       - name: Probe granular data sources from a GitHub-hosted runner
         run: python scripts/probe_granular_sources.py
