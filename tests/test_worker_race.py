@@ -110,7 +110,6 @@ def test_a_second_worker_fails_closed_and_writes_nothing(tmp_path):
 
 def test_the_designated_successor_recovers_a_chain_whose_parent_crashed(tmp_path):
     """The parent dies mid-life, so its lease still looks alive. The successor must still start."""
-    clock = FakeClock(T0)
     archive = tmp_path / "archive"
     archive.mkdir(parents=True, exist_ok=True)
     crashed = L.heartbeat(
@@ -134,7 +133,6 @@ def test_the_designated_successor_recovers_a_chain_whose_parent_crashed(tmp_path
 
 def test_without_the_nonce_the_same_successor_would_have_failed_closed(tmp_path):
     """The control for the test above: this is what the token is buying us."""
-    clock = FakeClock(T0)
     archive = tmp_path / "archive"
     archive.mkdir(parents=True, exist_ok=True)
     L.write_lease(

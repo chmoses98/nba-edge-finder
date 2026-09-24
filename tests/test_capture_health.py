@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from nba_edge.ops import capture_health as H
 
-TIP = datetime(2026, 10, 3, 23, 0, tzinfo=timezone.utc)
+TIP = datetime(2026, 10, 3, 23, 0, tzinfo=UTC)
 
 
 def test_snapshot_times_are_read_from_filenames(tmp_path):
@@ -17,8 +17,8 @@ def test_snapshot_times_are_read_from_filenames(tmp_path):
     (d / "not-a-snapshot.txt").write_text("x")
     got = H.snapshot_times(tmp_path)
     assert got == [
-        datetime(2026, 10, 3, 22, 30, tzinfo=timezone.utc),
-        datetime(2026, 10, 3, 22, 45, tzinfo=timezone.utc),
+        datetime(2026, 10, 3, 22, 30, tzinfo=UTC),
+        datetime(2026, 10, 3, 22, 45, tzinfo=UTC),
     ]
 
 
