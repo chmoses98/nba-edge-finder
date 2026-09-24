@@ -18,6 +18,13 @@ ARCHIVE_BRANCH="${2:?archive branch required}"
 MESSAGE="${3:-archive: $(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 
 cd "$ARCHIVE_DIR" || exit 2
+# Check this first. Without it, `git commit` in a non-repo prints its entire usage text to stderr
+# and the caller's log fills with what looks like a parser error rather than the one fact that
+# matters -- that the archive worktree was never set up.
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  echo "archive-push: $ARCHIVE_DIR is not a git repository (was the archive worktree created?)" >&2
+  exit 2
+fi
 grep -qs 'manifest.jsonl merge=union' .gitattributes || echo 'manifest.jsonl merge=union' >> .gitattributes
 git add -A
 if git diff --cached --quiet; then
