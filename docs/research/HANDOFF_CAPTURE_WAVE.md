@@ -81,6 +81,28 @@ parent's dispatch to the successor's job starting.
 dispatchable (404), while the same token dispatches one present on `main` (204). **PR #7 must be
 merged before the chain can renew itself at all.**
 
+### E1. The worker was rehearsed on a real runner before merge
+
+The unit tests inject every side effect, so nothing in them touches the wiring between workflow,
+CLI and shell script. The real `capture_worker.yml` was therefore run on a GitHub runner against a
+throwaway archive branch. Two findings:
+
+- **It caught a bug nothing else could have.** `ARCHIVE_BRANCH` was a bare module constant, so the
+  workflow's `env: ARCHIVE_BRANCH` was decorative and the first rehearsal wrote to the real
+  `data-archive` instead of the scratch branch. Assessed rather than assumed: three files added,
+  zero modified, zero deleted, snapshot count unchanged at 114. Fixed, with a regression test that
+  asserts the exact branch name reaches the push command.
+- **After the fix, the full path works end to end.** The second rehearsal built an archive branch
+  from nothing and produced real data: orphan branch initialised, lease acquired, `nba context`
+  writing live ESPN injuries/rosters/schedule snapshots, `nba discover` writing the catalog, the
+  ledger manifest, the evidence dashboard, and a clean planned retirement — 34s of fixed overhead,
+  matching the measured budget.
+
+That second run is also the proof that **the worker really is a superset of the conductor**:
+`_run_due_jobs` dispatched `context` and `discover` because they were genuinely due on a fresh
+archive. (The first rehearsal ran against the real archive, where neither was due — which is why
+its `jobs_run` was empty.)
+
 ### F. Duplicate-worker and race tests
 
 **E2** (live): within one concurrency group GitHub keeps at most **one in-progress** and at most
