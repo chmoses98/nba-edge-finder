@@ -1,15 +1,27 @@
 name: conductor
-# Schedule-aware orchestrator. Wakes every 10 minutes (only on the default branch -- GitHub ignores
-# schedules elsewhere), decides in ~0.1s whether anything is worth doing, and dispatches the
-# expensive job only when the NBA calendar says so. Archive data lives on the `data-archive` branch
+# Schedule-aware orchestrator, now MANUAL ONLY -- capture-worker.yml owns the cadence (see the note
+# on `on:` below for why this one no longer runs on a schedule). It still decides in ~0.1s whether
+# anything is worth doing and dispatches the expensive job only when the NBA calendar says so, so
+# it remains the recovery path when the worker chain is deliberately stopped. The worker reuses
+# this workflow's decision logic rather than reimplementing it (conductor.decide_now).
+# Archive data lives on the `data-archive` branch
 # so code branches never accumulate snapshots.
 #
 # The decide job deliberately does NOT `pip install -e .`: the conductor's import chain is
 # stdlib-only (see nba_edge/archive/status.py), so it runs straight off PYTHONPATH. The install was
 # ~23s and ~690MB per wake, 144x/day, to read five timestamps.
+#
+# THE SCHEDULE IS DELIBERATELY GONE. capture-worker now owns the cadence, and the two workflows
+# share the `conductor-archive` concurrency group on purpose (one group, one writer). But that
+# group holds only ONE pending run, so a scheduled conductor wake would compete with a queued
+# SUCCESSOR and could win the slot -- capturing once, exiting after ~4 minutes, and leaving no
+# worker alive until the next cron fired. At the measured ~3.9% cron delivery rate that is a
+# multi-hour hole, created by the very safety net meant to prevent one.
+#
+# The worker runs everything this workflow decided (see worker/run.py::_run_due_jobs, which reuses
+# decide_now() rather than reimplementing it), so nothing is lost. This stays dispatchable for
+# manual use and as the recovery path if the chain is ever deliberately stopped.
 on:
-  schedule:
-    - cron: "*/10 * * * *"
   workflow_dispatch:
     inputs:
       force:

@@ -56,5 +56,15 @@ distinct outputs by design.
 - Expected volume: ~5 MB/day compressed in season; migrate to Parquet/object storage when it exceeds ~1 GB.
 
 ## Scheduling
-`conductor.yml` runs every 10 minutes on the default branch (GitHub ignores schedules elsewhere), decides in
-seconds, and only then checks out the archive and runs jobs. Off-season: a single daily futures snapshot.
+`capture_worker.yml` owns the cadence. One run lives ~5 hours, captures on a tiered schedule (15 min far
+from tip, tightening to 5 min inside T-30m), and dispatches its own successor before retiring; a `*/5`
+cron exists only to bootstrap a chain that has died completely.
+
+This replaced a `*/10` schedule on `conductor.yml` that delivered **34 of ~864** expected wakes over six
+days (~3.9%), with observed gaps of 2h18m and 3h09m. A run that happens is prompt (median queue delay
+14s), so the failure was omission rather than lateness and no cron expression could fix it.
+
+`conductor.yml` is now manual-only: it shares the archive's concurrency group, so a scheduled wake could
+outbid a queued successor and leave no worker alive. The worker runs its jobs instead, reusing
+`conductor.decide_now()`. Off-season: a single daily futures snapshot, as before.
+See `docs/research/CAPTURE_ARCHITECTURE.md` for the experiments behind this.
