@@ -1,74 +1,30 @@
 name: history-pull
-# Manual: pull historical NBA box scores (ESPN site API) into Parquet from a network-capable runner and commit
-# the compact dataset back to the branch it ran on. Resumable: re-runs only fetch games not already in
-# data/history/espn/done_events_<season>.json, so a timed-out run can simply be re-triggered.
+# TEMPORARILY REPLACED ON THIS DISPOSABLE BRANCH with the granular-source probe.
+# workflow_dispatch resolves the workflow by a file on the DEFAULT branch (proved: E0), so a probe
+# that only exists on a feature branch cannot be dispatched under its own name. It runs under a
+# name main already publishes, with `ref` pointing here, and main is never touched.
 on:
   workflow_dispatch:
     inputs:
       seasons:
-        description: "Comma list of seasons (YYYY-YY)"
-        default: "2023-24,2024-25,2025-26"
+        default: "unused"
       what:
-        description: "Comma list of datasets (espn | team_logs | player_logs)"
-        default: "espn"
-  push:
-    paths:
-      - ".trigger/history"
-
-env:
-  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-  SEASONS: ${{ inputs.seasons || '2023-24,2024-25,2025-26' }}
-  WHAT: ${{ inputs.what || 'espn' }}
-
+        default: "unused"
 permissions:
-  contents: write
-
+  contents: read
 concurrency:
-  group: history-${{ github.ref }}
+  # Deliberately NOT the chainlab group: this must be able to run while a chainlab experiment holds
+  # that one, and queueing here would cancel a pending chainlab run (E2).
+  group: source-probe
   cancel-in-progress: false
-
 jobs:
-  history:
+  probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
-      - name: Install
-        run: pip install -e ".[dev]"
-      - name: Pull history
-        env:
-          NBA_EDGE_LOG_LEVEL: INFO
-        run: nba history --out data/history --seasons "$SEASONS" --what "$WHAT"
-      - name: Show manifest
-        if: always()
-        run: cat data/history/espn/MANIFEST.json || true
-      - name: Commit history dataset
-        if: always()
-        run: |
-          git config user.name "nba-edge-bot"
-          git config user.email "nba-edge-bot@users.noreply.github.com"
-          git add -f data/history/espn/*.parquet data/history/espn/MANIFEST.json data/history/espn/done_events_*.json 2>/dev/null || true
-          if git diff --cached --quiet; then echo "nothing to commit"; else
-            git commit -m "history: ESPN box-score dataset ($SEASONS) (run ${{ github.run_id }})"
-            # Never rewrite the default branch unattended. Merging PR #1 pushed the committed
-            # .trigger/* files to main, matched this workflow's `paths:` filter, and fired this
-            # pull -- which then committed data straight to main with no review. The trigger files
-            # are gone now, but a data pull should refuse this on its own rather than rely on that.
-            if [ "${GITHUB_REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
-              echo "::warning title=Refusing to push to the default branch::Ran on ${GITHUB_REF_NAME}. The data is in this run's workspace/artifact; re-run this workflow on a branch to commit it."
-            else
-              git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"  # binary data files: the run's version wins
-              git push origin HEAD:"${GITHUB_REF_NAME}"
-            fi
-          fi
-      - name: Preserve the dataset as an artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: history-dataset-${{ github.run_id }}
-          path: data/history/espn
-          retention-days: 14
+      - name: Probe granular data sources from a GitHub-hosted runner
+        run: python scripts/probe_granular_sources.py
