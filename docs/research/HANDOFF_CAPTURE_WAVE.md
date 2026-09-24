@@ -23,9 +23,22 @@ Nothing was pushed to `main`. All work is on branches behind pull requests.
 
 Merge **#6 first**: #7's dashboard recomputes the frozen digest.
 
-Two disposable experiment branches also exist — `claude/chainlab-probe` and `claude/source-probe`.
-They carry throwaway rigs that temporarily overwrite `probe.yml` / `history.yml` and **must not be
-merged**; delete them once the findings here are accepted.
+### B1. Scratch artifacts to delete — do NOT merge any of these
+
+Three experiment branches carry throwaway rigs that **overwrite existing workflow files** in order
+to be dispatchable at all (per E0, only a filename present on `main` can be dispatched). Merging
+any of them would destroy `probe.yml` or `history.yml`.
+
+| branch | what it holds | why it existed |
+|---|---|---|
+| `claude/chainlab-probe` | rig replacing `probe.yml` | E1/E2/E3 chain and concurrency experiments |
+| `claude/source-probe` | rig replacing `history.yml` | the granular-source audit (now shipped properly as `source_probe.yml`) |
+| `claude/worker-live-test` | the real worker under `history.yml` | rehearsing the worker on a runner before merge |
+
+Also delete the branch **`data-archive-worker-test`**, a throwaway archive the rehearsal pushed to
+so the real `data-archive` was never touched.
+
+Everything worth keeping from these has been ported into PR #7.
 
 ### C. Frozen baseline
 
