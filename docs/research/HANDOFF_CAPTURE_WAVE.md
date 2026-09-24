@@ -98,12 +98,18 @@ fails for reasons other than a bug. Full ranking in `CAPTURE_ARCHITECTURE.md` §
 
 ### J. Data-source audit
 
-See `SOURCE_AUDIT_GRANULAR.md`. Headline: **`stats.nba.com/stats/gamerotation` — the ideal stint
-source, giving exact stint start/end per player with no reconstruction — times out from GitHub
-runners.** `cdn.nba.com` returns 403. `pbpstats`' lineup endpoint works (200, 180 KB, 2.6s).
-`hoopR-data` has the right shape (NBA-Stats PBP in a GitHub repo, unrate-limited and reproducible)
-but stops at **2022-23** and stores no lineups — it derives them by scraping the host that is
-blocked.
+See `SOURCE_AUDIT_GRANULAR.md`. Probed twice from a GitHub runner, the second time with a
+**180-second** budget so *slow* could be distinguished from *blocked*.
+
+- **`stats.nba.com/stats/gamerotation` is blocked, not slow.** It held the connection for a full
+  180.2s and returned nothing. This is the ideal stint source — exact stint start/end per player,
+  no reconstruction needed — and it is unavailable from Azure egress. `cdn.nba.com` returns 403.
+- **`pbpstats` is reachable but intermittent.** The *same* lineup endpoint returned 200 in 2.6s on
+  one run and timed out on the next; `get-games` did the reverse (200, 284 KB, 5.2s); and
+  `get-possessions` returned **502 after 91s**. Reachable is not the same as reliable.
+- **`hoopR-data`** has the right shape — NBA-Stats play-by-play in a GitHub repo, unrate-limited,
+  versioned, reproducible — but stops at **2022-23** and stores no lineups, deriving them by
+  scraping the host that is blocked.
 
 The first run of this probe was **wrong**, and the method note in that doc explains why: it spoofed
 a browser UA and reported blocks for everything including a known-good control. Negative
@@ -111,10 +117,13 @@ reachability results without a passing control are worthless.
 
 ### K. Stint coverage
 
-**Zero. No stint dataset was built**, deliberately. Three conditions must hold and at most one does:
-period-start lineups (not just substitutions), current-season latency, and verified identity
-mapping. Building on top of an unvalidated source would have produced exactly the silently-wrong
-dataset the brief warns against.
+**Zero. No stint dataset was built**, deliberately. Three conditions must hold and none does
+cleanly: period-start lineups (not just substitutions — reconstruction from substitutions alone
+silently drops any player who appears in no event), current-season latency, and verified identity
+mapping. The one live candidate, pbpstats, proved **intermittent across two runs an hour apart**,
+which is exactly the case the brief names: *"do not assume a source is suitable merely because it
+exists."* Building on it unvalidated would have produced the silently-wrong dataset the brief warns
+against.
 
 ### L. Data-quality results
 
@@ -150,8 +159,11 @@ standing result is preserved as found: **the market beats the model in all eight
    ~1 GB recommendation. Re-measure the in-season change rate before fixing the format.
 3. **Run the preseason acceptance test** from 2026-10-03 and report the verdict without
    rationalising it. If it fails, escalate per §I rather than explaining it away.
-4. **Settle whether pbpstats' bulk endpoints are slow or blocked**, then validate one game
-   end-to-end before any stint ingestion.
+4. **Characterise pbpstats' intermittency** — sample one endpoint on a fixed game across a day,
+   record success rate and error mix, and write a retry policy against the measurement. If bounded
+   retries cannot get near 1.0, say so rather than ingesting anyway. Then validate one game
+   end-to-end. Any ingestion is a **backfill** job: an intermittent source must never be able to
+   stall market capture.
 5. **Distinguish confirmed from projected starters**, and stamp simulation output with the baseline
    id so every prediction is attributable to the parameters that produced it.
 
