@@ -114,9 +114,29 @@ substitution rather than a break.
 
 ### E3 — how long can a run stay pending?
 
-*In flight at the time of writing (70-minute holder, successor queued behind it).* The result
-determines only how much the design leans on early dispatch; it cannot invalidate it, because
-retirement re-dispatches unconditionally (§4).
+A holder occupied the group for 70 minutes with a successor queued behind it at t+75s.
+
+| | |
+|---|---|
+| holder ran | 04:01:14 → 05:11:31 (70.3 min) |
+| successor queued | 04:02:27 |
+| successor job started | 05:11:35 |
+| **time waiting in the concurrency queue** | **69.1 min** |
+| **handover, holder-finish → successor-start** | **4 s** |
+| successor conclusion | success |
+
+**Finding.** A queued run survives at least ~69 minutes in a concurrency group without being
+cancelled or expiring, and starts within seconds of the group clearing. Early dispatch is
+therefore sound as crash insurance: a worker that dies at any point leaves a successor that starts
+almost immediately.
+
+*A measurement trap worth recording.* The **job**-level API reports this successor as pending for
+only 0.1 minutes, because the job object is not created until the run is dequeued. Only the
+**run**-level `created_at` shows the real 69-minute wait. Reading the job timestamps would have
+produced a confident and completely wrong conclusion.
+
+This does not remove the need for the retirement re-dispatch (§4): E2 showed a pending run can
+still be *superseded* by a later queued run, which is a different failure from expiring.
 
 ## 4. The design
 

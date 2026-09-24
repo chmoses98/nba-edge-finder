@@ -112,6 +112,12 @@ construction — but an early-queued successor *can* be superseded, which is why
 dispatches the same workflow (so the pending slot always holds a worker) and why retirement
 re-dispatches unconditionally.
 
+**E3** (live): a run queued behind a 70-minute holder waited **69.1 minutes** in the concurrency
+group without being cancelled or expiring, then started **4 seconds** after the group cleared and
+succeeded. Early dispatch is therefore sound crash insurance. (Note: the *job*-level API reports
+that wait as 0.1 min, because the job is not created until the run is dequeued — only the
+*run*-level timestamp shows it. Reading the job timings would have given the opposite answer.)
+
 `tests/test_worker_race.py` drives whole simulated lifetimes: a second worker fails closed and
 writes nothing; a crashed parent's chain heals via the successor nonce **and its control**, showing
 what the nonce buys; no capture happens off-slate; at most two dispatches per lifetime; a failing
