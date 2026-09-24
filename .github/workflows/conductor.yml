@@ -1,7 +1,10 @@
 name: conductor
-# Schedule-aware orchestrator. Wakes every 10 minutes (only on the default branch -- GitHub ignores
-# schedules elsewhere), decides in ~0.1s whether anything is worth doing, and dispatches the
-# expensive job only when the NBA calendar says so. Archive data lives on the `data-archive` branch
+# Schedule-aware orchestrator, now MANUAL ONLY -- capture-worker.yml owns the cadence (see the note
+# on `on:` below for why this one no longer runs on a schedule). It still decides in ~0.1s whether
+# anything is worth doing and dispatches the expensive job only when the NBA calendar says so, so
+# it remains the recovery path when the worker chain is deliberately stopped. The worker reuses
+# this workflow's decision logic rather than reimplementing it (conductor.decide_now).
+# Archive data lives on the `data-archive` branch
 # so code branches never accumulate snapshots.
 #
 # The decide job deliberately does NOT `pip install -e .`: the conductor's import chain is
