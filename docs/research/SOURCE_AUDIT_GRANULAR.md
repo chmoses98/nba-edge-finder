@@ -22,6 +22,8 @@ The results below come from a rewritten probe that uses the project's own `httpx
 own `PLAIN_HEADERS_OK` / `NBA_HEADERS`, run on a GitHub-hosted runner, with a known-good control
 that passes. Any future probe must keep a passing control or its negative results mean nothing.
 
+It is re-runnable: `scripts/probe_granular_sources.py`, dispatched by the `source-probe` workflow.
+
 ## 2. Reachability from a GitHub-hosted runner
 
 Two runs, the second giving the previously-timing-out endpoints a **180-second** budget so that
@@ -96,11 +98,12 @@ A canonical stint dataset needs all three, and today we have at most one:
 
 **Do not build the stint dataset yet.** Do this first, in order:
 
-1. **Characterise pbpstats' intermittency before depending on it.** Sample one endpoint on a fixed
-   game repeatedly over a day and record the success rate, the latency distribution and the error
-   mix (timeout vs 502). Write the retry/backoff policy against *that*, not against a guess. If the
-   success rate cannot be driven near 1.0 with bounded retries, the source is not suitable and the
-   honest answer is to say so.
+1. **Characterise pbpstats' intermittency before depending on it.** The tooling ships with this
+   wave — dispatch the `source-probe` workflow with `samples: 12, interval: 3600` and read the
+   `PROBE_RELIABILITY` block, which reports success rate, median/max latency and the error mix per
+   endpoint. Write the retry/backoff policy against *that*, not against a guess. If the success
+   rate cannot be driven near 1.0 with bounded retries, the source is not suitable and the honest
+   answer is to say so.
 2. **Then validate one game end-to-end** against a known box score: five players per side at every
    instant, lineup minutes reconciling to game minutes, scores reconciling, overtime handled.
 3. **Only then** define the canonical schema and ingest — with bad games **quarantined explicitly**
