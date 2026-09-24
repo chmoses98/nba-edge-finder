@@ -1,0 +1,157 @@
+{
+  "context": {
+    "confirmed_starters": {
+      "reason": "projected and CONFIRMED starters are not yet distinguished in the context snapshot",
+      "state": "absent"
+    },
+    "injuries": {
+      "first_day": "dt=2026-09-18",
+      "last_day": "dt=2026-09-24",
+      "n_days": 7,
+      "n_snapshots": 34,
+      "state": "ok"
+    },
+    "lineups": {
+      "reason": "no lineup/stint source is ingested yet (Phase 7 audit)",
+      "state": "absent"
+    },
+    "rosters": {
+      "first_day": "dt=2026-09-18",
+      "last_day": "dt=2026-09-24",
+      "n_days": 7,
+      "n_snapshots": 34,
+      "state": "ok"
+    },
+    "schedule": {
+      "first_day": "dt=2026-09-18",
+      "last_day": "dt=2026-09-24",
+      "n_days": 7,
+      "n_snapshots": 34,
+      "state": "ok"
+    },
+    "state": "ok"
+  },
+  "evidence": {
+    "reason": "evaluate has not run against this archive",
+    "state": "absent"
+  },
+  "generated_at_utc": "2026-09-24T04:37:52.923372+00:00",
+  "markets": {
+    "age_minutes": 2137.2490114,
+    "alarms": [
+      "order books truncated: 3463 live markets but max_orderbooks=300"
+    ],
+    "by_support": {
+      "MODELABLE": 6,
+      "RESEARCH": 1484,
+      "UNMODELABLE": 1973
+    },
+    "cadence": {
+      "acceptance": {
+        "at_least_95pct_intervals_within_12min": false,
+        "measured_max_gap_minutes": null,
+        "measured_pct_within_12min": null,
+        "no_gap_over_30min": false,
+        "verdict": "FAIL"
+      },
+      "delivery_pct": null,
+      "final_pregame_age_minutes": {
+        "median": null
+      },
+      "gap_minutes": {
+        "max": null,
+        "median": null,
+        "p90": null,
+        "p99": null
+      },
+      "horizon_coverage": {
+        "T-10m": {
+          "coverage_pct": null,
+          "fresh_coverage_pct": null,
+          "games_with_any_prior_snapshot": 0,
+          "games_with_snapshot_within_12min": 0
+        },
+        "T-1440m": {
+          "coverage_pct": null,
+          "fresh_coverage_pct": null,
+          "games_with_any_prior_snapshot": 0,
+          "games_with_snapshot_within_12min": 0
+        },
+        "T-30m": {
+          "coverage_pct": null,
+          "fresh_coverage_pct": null,
+          "games_with_any_prior_snapshot": 0,
+          "games_with_snapshot_within_12min": 0
+        },
+        "T-360m": {
+          "coverage_pct": null,
+          "fresh_coverage_pct": null,
+          "games_with_any_prior_snapshot": 0,
+          "games_with_snapshot_within_12min": 0
+        },
+        "T-90m": {
+          "coverage_pct": null,
+          "fresh_coverage_pct": null,
+          "games_with_any_prior_snapshot": 0,
+          "games_with_snapshot_within_12min": 0
+        }
+      },
+      "n_delivered": 0,
+      "n_expected_intervals": 0,
+      "n_games": 0,
+      "n_post_tip_snapshots": 0,
+      "pct_within_12min": null,
+      "pct_within_15min": null,
+      "pct_within_20min": null,
+      "snapshot_age_minutes": {
+        "max": null,
+        "median": null,
+        "p90": null,
+        "p99": null
+      }
+    },
+    "last_capture_utc": "2026-09-22T17:00:38Z",
+    "n_discovered": 3463,
+    "n_series": 256,
+    "n_unresolved_alarms": 1,
+    "state": "ok"
+  },
+  "settlement": {
+    "reason": "settle has not run against this archive",
+    "state": "absent"
+  },
+  "simulation": {
+    "reason": "simulate has not run against this archive",
+    "state": "absent"
+  },
+  "stint_data": {
+    "n_games_available": 0,
+    "n_quarantined_games": 0,
+    "n_valid_lineup_possessions": 0,
+    "reason": "no canonical stint dataset exists yet. Phase 8 is gated on the Phase 7 source audit finding a source that is reachable from a GitHub runner; see SOURCE_AUDIT.md.",
+    "state": "absent"
+  },
+  "worker": {
+    "cycles": [
+      {
+        "cadence_s": 900.0,
+        "capture_ok": false,
+        "captured": false,
+        "duration_s": 1.18773,
+        "hours_to_next_tip": 234.3689636961111,
+        "jobs_run": [],
+        "push_ok": true,
+        "reason": "no game within the active window",
+        "started_at": "2026-09-24T04:37:51Z"
+      }
+    ],
+    "exit_reason": "planned retirement before next cadence tick",
+    "fail_closed": false,
+    "generation": 1,
+    "n_capture_failed": 0,
+    "n_captured": 0,
+    "n_cycles": 1,
+    "successor_dispatched": false,
+    "worker_id": "35956423112"
+  }
+}
