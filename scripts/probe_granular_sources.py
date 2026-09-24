@@ -31,6 +31,13 @@ from nba_edge.data.http import NBA_HEADERS, PLAIN_HEADERS_OK
 UA = PLAIN_HEADERS_OK["User-Agent"]
 GAME = "0022500001"  # first regular-season game of 2025-26
 
+# Endpoints that timed out at 40s get a much longer budget on the retry. The distinction matters:
+# a source that is SLOW is usable from a batch job, a source that is BLOCKED is not, and a 40s
+# timeout cannot tell them apart. pbpstats returned 200 in 2.6s for one endpoint while three others
+# timed out, which is the signature of slow generation rather than an IP block.
+SLOW_BUDGET_S = 180.0
+SLOW = ("pbpstats get-games", "pbpstats possessions", "stats.nba gamerotation")
+
 SOURCES = [
     (
         "cdn.nba playbyplay",
@@ -96,7 +103,8 @@ SOURCES = [
 def probe(name: str, url: str, headers: dict) -> dict:
     t0 = time.time()
     try:
-        with httpx.Client(timeout=40.0, follow_redirects=True, headers=headers) as c:
+        budget = SLOW_BUDGET_S if name in SLOW else 40.0
+        with httpx.Client(timeout=budget, follow_redirects=True, headers=headers) as c:
             r = c.get(url)
             body = r.content
             dt = time.time() - t0
