@@ -24,13 +24,7 @@ on:
         default: "unused"
       what:
         default: "unused"
-  # schedule disabled for the rehearsal
-  schedule_disabled:
-    # Bootstrap ONLY. This is not where cadence comes from -- at the measured ~4% delivery rate a
-    # `*/5` cron is worth roughly one wake every two hours, which is useless as a cadence and
-    # perfectly adequate as a way to restart a chain that has somehow died completely.
-    # While a worker is alive these runs simply queue and are superseded (E2), which costs nothing.
-    - cron: "0 5 31 2 *"
+  # No schedule at all for the rehearsal: this must never start itself.
 
 permissions:
   contents: write
