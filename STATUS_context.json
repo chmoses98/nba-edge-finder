@@ -1,0 +1,31 @@
+{
+ "refreshed_at_utc": "2026-09-24T04:41:59Z",
+ "schedule": {
+  "rows": 3,
+  "path": "context/schedule/dt=2026-09-24/context_schedule_20260924T044159Z_35956712873.jsonl.gz",
+  "days_ahead": 10
+ },
+ "injuries_official": {
+  "source": "nba_official_pdf",
+  "missing": true,
+  "slots_tried": 8
+ },
+ "injuries_espn": {
+  "source": "espn_injuries",
+  "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries",
+  "fetched_at_utc": "2026-09-24T04:42:01Z",
+  "n": 73
+ },
+ "injuries": {
+  "rows": 73,
+  "path": "context/injuries/dt=2026-09-24/context_injuries_20260924T044159Z_35956712873.jsonl.gz"
+ },
+ "rosters": {
+  "rows": 563,
+  "path": "context/rosters/dt=2026-09-24/context_rosters_20260924T044159Z_35956712873.jsonl.gz",
+  "source": "espn_rosters",
+  "n_teams": 30,
+  "n_players": 563,
+  "errors": []
+ }
+}
