@@ -23,14 +23,8 @@ def cmd_discover(args: argparse.Namespace) -> int:
     client = KalshiClient(cfg)
     raw_dir = Path(args.raw_dir) if args.raw_dir else None
     statuses = tuple(args.statuses.split(",")) if args.statuses else ("unopened", "open", "closed", "settled")
-    summary = discover(
-        client,
-        onto,
-        raw_dir=raw_dir,
-        statuses=statuses,
-        max_pages_per_status=args.max_pages,
-        include_series=args.include.split(",") if args.include else None,
-    )
+    summary = discover(client, onto, raw_dir=raw_dir, statuses=statuses, max_pages_per_status=args.max_pages,
+                       include_series=args.include.split(",") if args.include else None)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / "discovery_summary.json").write_text(summary.to_json())
@@ -42,13 +36,8 @@ def cmd_discover(args: argparse.Namespace) -> int:
 def cmd_capture(args: argparse.Namespace) -> int:
     from nba_edge.archive.capture import run_capture
 
-    return run_capture(
-        out_root=Path(args.out),
-        statuses=args.statuses.split(","),
-        with_orderbook=args.orderbook,
-        max_orderbooks=args.max_orderbooks,
-        series_filter=args.series.split(",") if args.series else None,
-    )
+    return run_capture(out_root=Path(args.out), statuses=args.statuses.split(","), with_orderbook=args.orderbook,
+                       max_orderbooks=args.max_orderbooks, series_filter=args.series.split(",") if args.series else None)
 
 
 def cmd_worker(args: argparse.Namespace) -> int:
@@ -68,16 +57,12 @@ def cmd_worker(args: argparse.Namespace) -> int:
 
     dispatch = None
     if repo and token and not args.no_successor:
-
         def dispatch(nonce: str) -> bool:
             return dispatch_successor_via_api(repo, ref, token, args.workflow, nonce)
 
     w = Worker(
-        data_root=Path(args.data),
-        archive_root=Path(args.out),
-        worker_id=str(worker_id),
-        successor_token=args.successor_token or None,
-        dispatch_fn=dispatch,
+        data_root=Path(args.data), archive_root=Path(args.out), worker_id=str(worker_id),
+        successor_token=args.successor_token or None, dispatch_fn=dispatch,
         lifetime_minutes=args.lifetime_minutes,
     )
     result = w.run()
@@ -95,7 +80,7 @@ def cmd_capture_health(args: argparse.Namespace) -> int:
 
     report = run_capture_health(Path(args.archive), Path(args.out) if args.out else None, days=args.days)
     print(json.dumps(report["summary"], indent=2, sort_keys=True))
-    # Exit non-zero only when asked to gate on it, so the report can be produced routinely without
+    # Exit non-zero only when asked to gate, so the report can be produced routinely without
     # painting an unattended workflow red every day of the off-season.
     if args.gate and report["summary"]["acceptance"]["verdict"] != "PASS":
         print("capture-health: ACCEPTANCE FAILED")
@@ -123,9 +108,7 @@ def cmd_context(args: argparse.Namespace) -> int:
 def cmd_simulate(args: argparse.Namespace) -> int:
     from nba_edge.workflows.simulate import run_simulate
 
-    return run_simulate(
-        out_root=Path(args.out), data_root=Path(args.data), date=args.date, n_sims=args.sims, seed=args.seed
-    )
+    return run_simulate(out_root=Path(args.out), data_root=Path(args.data), date=args.date, n_sims=args.sims, seed=args.seed)
 
 
 def cmd_settle(args: argparse.Namespace) -> int:
@@ -149,23 +132,16 @@ def cmd_conductor(args: argparse.Namespace) -> int:
 def cmd_history(args: argparse.Namespace) -> int:
     from nba_edge.data.history import run_history_pull
 
-    return run_history_pull(
-        out_root=Path(args.out), seasons=args.seasons.split(","), what=args.what.split(",")
-    )
+    return run_history_pull(out_root=Path(args.out), seasons=args.seasons.split(","), what=args.what.split(","))
 
 
 def cmd_kalshi_history(args: argparse.Namespace) -> int:
     from nba_edge.kalshi.history import run_kalshi_history
 
     return run_kalshi_history(
-        out_root=Path(args.out),
-        series=[s for s in args.series.split(",") if s],
-        min_close=args.min_close,
-        max_close=args.max_close,
-        with_candles=args.candles,
-        candle_interval=args.candle_interval,
-        max_markets_for_candles=args.max_candle_markets,
-        sample_games=args.sample_games or None,
+        out_root=Path(args.out), series=[s for s in args.series.split(",") if s], min_close=args.min_close,
+        max_close=args.max_close, with_candles=args.candles, candle_interval=args.candle_interval,
+        max_markets_for_candles=args.max_candle_markets, sample_games=args.sample_games or None,
     )
 
 
@@ -177,9 +153,7 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("--out", default="data/catalog")
     d.add_argument("--raw-dir", default=None, help="Directory for raw compressed market dumps")
     d.add_argument("--statuses", default=None, help="Comma list of unopened,open,closed,settled")
-    d.add_argument(
-        "--max-pages", type=int, default=60, help="Max pages (1000 markets each) per series/status"
-    )
+    d.add_argument("--max-pages", type=int, default=60, help="Max pages (1000 markets each) per series/status")
     d.add_argument("--include", default=None, help="Comma list of series tickers to force-include")
     d.set_defaults(func=cmd_discover)
 
@@ -194,17 +168,10 @@ def build_parser() -> argparse.ArgumentParser:
     w = sub.add_parser("worker", help="Long-lived capture worker that owns its own cadence and hands over")
     w.add_argument("--data", default="data")
     w.add_argument("--out", default="data/archive")
-    w.add_argument(
-        "--lifetime-minutes",
-        type=float,
-        default=None,
-        help="Override the planned lifetime (default: worker.plan.PLANNED_LIFETIME_MINUTES)",
-    )
-    w.add_argument(
-        "--successor-token",
-        default=None,
-        help="Nonce proving we are the successor our predecessor dispatched",
-    )
+    w.add_argument("--lifetime-minutes", type=float, default=None,
+                   help="Override the planned lifetime (default: worker.plan.PLANNED_LIFETIME_MINUTES)")
+    w.add_argument("--successor-token", default=None,
+                   help="Nonce proving we are the successor our predecessor dispatched")
     w.add_argument("--workflow", default="capture_worker.yml", help="Workflow file to dispatch as successor")
     w.add_argument("--no-successor", action="store_true", help="Run one lifetime and stop the chain")
     w.set_defaults(func=cmd_worker)
@@ -255,9 +222,7 @@ def build_parser() -> argparse.ArgumentParser:
     h.add_argument("--what", default="team_logs,player_logs")
     h.set_defaults(func=cmd_history)
 
-    kh = sub.add_parser(
-        "kalshi-history", help="Pull settled Kalshi NBA markets (+ candlesticks) from the historical API"
-    )
+    kh = sub.add_parser("kalshi-history", help="Pull settled Kalshi NBA markets (+ candlesticks) from the historical API")
     kh.add_argument("--out", default="data/history")
     kh.add_argument(
         "--series",
@@ -268,16 +233,12 @@ def build_parser() -> argparse.ArgumentParser:
     kh.add_argument("--max-close", default="2026-07-01", help="Latest close date (YYYY-MM-DD or ISO-8601)")
     kh.add_argument("--candles", action="store_true", help="Also pull candlesticks for the top markets")
     kh.add_argument("--candle-interval", type=int, default=60, help="Candle period in minutes: 1, 60 or 1440")
+    kh.add_argument("--max-candle-markets", type=int, default=3000, help="Hard cap on candle fetches this run")
     kh.add_argument(
-        "--max-candle-markets", type=int, default=3000, help="Hard cap on candle fetches this run"
-    )
-    kh.add_argument(
-        "--sample-games",
-        type=int,
-        default=0,
+        "--sample-games", type=int, default=0,
         help="Pull candles for EVERY market of N games spread across the window (0 = global priority budget). "
-        "Use this for cross-family market-vs-model research: it guarantees contemporaneous prices for "
-        "spreads/totals/props on the same games.",
+             "Use this for cross-family market-vs-model research: it guarantees contemporaneous prices for "
+             "spreads/totals/props on the same games.",
     )
     kh.set_defaults(func=cmd_kalshi_history)
     return p
