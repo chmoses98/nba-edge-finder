@@ -258,3 +258,88 @@ def test_a_fresh_checkpoint_after_corruption_restores_reconstructability(tmp_pat
 
 def test_the_default_checkpoint_interval_is_a_bounded_chain():
     assert 1 < DEFAULT_CHECKPOINT_EVERY <= 48, "an unbounded chain makes reconstruction cost grow forever"
+
+
+# -- the compatibility layer: delta encoding must be invisible downstream -----------------------
+
+
+def test_iter_market_rows_matches_iter_rows_on_a_checkpoint_only_archive(tmp_path):
+    """Drop-in equivalence: historical data must read back byte-identically."""
+    lg = led(tmp_path)
+    for i in range(3):
+        lg.append_rows("kalshi/markets", board(n=4), observed_at=T0 + timedelta(days=i), meta={})
+    from nba_edge.archive.reconstruct import iter_market_rows
+
+    assert list(iter_market_rows(lg)) == list(lg.iter_rows("kalshi/markets"))
+
+
+def test_every_tick_is_visible_including_delta_encoded_ones(tmp_path):
+    """settle and evaluate scan market observations; a hidden tick is a lost observation."""
+    from nba_edge.archive.reconstruct import iter_board_ticks
+
+    lg = led(tmp_path)
+    write_board(lg, board(n=4), observed_at=T0)
+    for i in (1, 2, 3):
+        write_board(lg, board(n=4, tweak=lambda r, i=i: r[0].update(yes_bid_dollars=f"0.6{i}")),
+                    observed_at=T0 + timedelta(minutes=10 * i), checkpoint_every=99)
+    ticks = list(iter_board_ticks(lg))
+    assert len(ticks) == 4, "one checkpoint + three deltas = four observable ticks"
+    assert [t[0].minute for t in ticks] == [0, 10, 20, 30]
+
+
+def test_a_result_first_appearing_in_a_delta_tick_is_still_found(tmp_path):
+    """The settlement case. Missing this would delay or lose a settlement outright."""
+    from nba_edge.archive.reconstruct import iter_market_rows
+
+    lg = led(tmp_path)
+    write_board(lg, board(n=3), observed_at=T0)
+    write_board(lg, board(n=3, tweak=lambda r: r[1].update(result="yes", status="settled")),
+                observed_at=T0 + timedelta(minutes=10), checkpoint_every=99)
+    results = {r["ticker"]: r.get("result") for r in iter_market_rows(lg) if r.get("result")}
+    assert results == {"T1": "yes"}
+
+
+def test_latest_board_is_the_newest_tick_not_the_newest_checkpoint(tmp_path):
+    """simulate gates pricing on market age; the newest checkpoint can be hours stale."""
+    from nba_edge.archive.reconstruct import latest_board
+
+    lg = led(tmp_path)
+    write_board(lg, board(n=3), observed_at=T0)
+    for i in (1, 2):
+        write_board(lg, board(n=3, tweak=lambda r, i=i: r[0].update(yes_bid_dollars=f"0.8{i}")),
+                    observed_at=T0 + timedelta(minutes=10 * i), checkpoint_every=99)
+    r = latest_board(lg)
+    assert r is not None
+    assert r.observed_at_utc.startswith("2026-10-03T18:20"), r.observed_at_utc
+    assert next(x for x in r.rows if x["ticker"] == "T0")["yes_bid_dollars"] == "0.82"
+    assert "deltas#" in r.provenance(), "provenance must name the chain, not just the checkpoint"
+
+
+def test_provenance_of_a_plain_snapshot_is_still_just_its_path(tmp_path):
+    from nba_edge.archive.reconstruct import latest_board
+
+    lg = led(tmp_path)
+    write_board(lg, board(n=3), observed_at=T0)
+    r = latest_board(lg)
+    assert r is not None and r.provenance() == r.checkpoint_path
+
+
+def test_iter_board_ticks_fails_closed_rather_than_yielding_half_a_chain(tmp_path):
+    """A reader must never act on the good half of a chain whose tail is corrupt."""
+    from nba_edge.archive.reconstruct import iter_board_ticks
+
+    lg = led(tmp_path)
+    write_board(lg, board(n=3), observed_at=T0)
+    for i in (1, 2):
+        write_board(lg, board(n=3, tweak=lambda r, i=i: r[0].update(status=f"s{i}")),
+                    observed_at=T0 + timedelta(minutes=10 * i), checkpoint_every=99)
+    _ck, deltas = chain_tip(lg)
+    (tmp_path / deltas[1].path).unlink()
+    with pytest.raises(DeltaChainError):
+        list(iter_board_ticks(lg))
+
+
+def test_latest_board_on_an_empty_archive_is_none(tmp_path):
+    from nba_edge.archive.reconstruct import latest_board
+
+    assert latest_board(led(tmp_path)) is None

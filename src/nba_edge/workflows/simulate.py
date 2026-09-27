@@ -26,7 +26,8 @@ import numpy as np
 import pandas as pd
 
 from nba_edge import MODEL_VERSION
-from nba_edge.archive.ledger import Ledger, entry_observed_at
+from nba_edge.archive.ledger import Ledger
+from nba_edge.archive.reconstruct import entry_observed_at, latest_board
 from nba_edge.execution.economics import EconomicsConfig, compute_economics, market_implied_probability
 from nba_edge.execution.expression import PricedContract, group_by_thesis, select_portfolio
 from nba_edge.features.build import FEATURE_VERSION, BuildConfig, build_game_params, rest_days_for
@@ -207,9 +208,16 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
     inj_rows = _read_kind(archive, "context/injuries")
     inj_age_min = (now - entry_observed_at(inj_entry)).total_seconds() / 60 if inj_entry else None
     inj_map, inj_prov = injuries_by_team(inj_rows, names)
-    mkt_entry = archive.latest("kalshi/markets")
-    markets = _read_kind(archive, "kalshi/markets")
-    mkt_age_min = (now - entry_observed_at(mkt_entry)).total_seconds() / 60 if mkt_entry else None
+    # latest_board, not archive.latest(): once deltas exist the newest checkpoint can be hours old,
+    # and STALE_MARKET_MIN gating on that age would either refuse to price or price on stale quotes.
+    mkt_board = latest_board(archive)
+    markets = mkt_board.rows if mkt_board else []
+    mkt_provenance = mkt_board.provenance() if mkt_board else None
+    mkt_age_min = (
+        (now - parse_iso(mkt_board.observed_at_utc)).total_seconds() / 60
+        if mkt_board and mkt_board.observed_at_utc
+        else None
+    )
     seed = seed if seed is not None else int(hashlib.sha256(f"{target}{MODEL_VERSION}".encode()).hexdigest()[:8], 16)
 
     slate_games, slate_contracts, pred_rows, contract_rows, packet_games = [], [], [], [], []
@@ -312,7 +320,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
                 p_data_only=p_data, p_market=p_mkt, p_hybrid=p_h, p_production=p_h, p_data_only_se=pr.se if pr.supported else None,
                 market_observed_at_utc=mkt_obs, market_yes_bid=m.get("yes_bid"), market_yes_ask=m.get("yes_ask"),
                 market_no_bid=m.get("no_bid"), market_no_ask=m.get("no_ask"), gate=gate, gate_reasons=[str(x) for x in greasons][:8], authority=Authority.RESEARCH, support=c.support,
-                pregame=is_pregame, thesis_group=None, input_snapshot_ids={"markets": mkt_entry.path if mkt_entry else "", "injuries": inj_entry.path if inj_entry else "", "hybrid_market_weight": str(HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))},
+                pregame=is_pregame, thesis_group=None, input_snapshot_ids={"markets": mkt_provenance or "", "injuries": inj_entry.path if inj_entry else "", "hybrid_market_weight": str(HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))},
             )
             pred_rows.append(pred.model_dump(mode="json"))
             contract_rows.append(c.model_dump(mode="json"))
@@ -350,7 +358,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
     slate = {
         "generated_at_utc": iso(now), "date_et": target, "model_version": MODEL_VERSION, "sim_version": SIM_VERSION, "feature_version": FEATURE_VERSION,
         "hybrid_market_weight_prior": HYBRID_WEIGHT_BY_SCOPE, "authority_note": "All families are RESEARCH: no betting authority. Numbers are for prospective evaluation.",
-        "market_snapshot": mkt_entry.path if mkt_entry else None, "market_snapshot_age_min": mkt_age_min, "injury_snapshot": inj_entry.path if inj_entry else None, "injury_snapshot_age_min": inj_age_min, "injury_provenance": inj_prov,
+        "market_snapshot": mkt_provenance, "market_snapshot_age_min": mkt_age_min, "injury_snapshot": inj_entry.path if inj_entry else None, "injury_snapshot_age_min": inj_age_min, "injury_provenance": inj_prov,
         "coverage": dict(coverage), "games": slate_games, "contracts": slate_contracts, "theses": theses, "portfolio": [p.ticker for p in portfolio],
     }
     if pred_rows:

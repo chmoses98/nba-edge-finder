@@ -29,6 +29,7 @@ from typing import Any
 import numpy as np
 
 from nba_edge.archive.ledger import Ledger
+from nba_edge.archive.reconstruct import iter_market_rows
 from nba_edge.evaluation.authority import AuthorityLedger, EvaluationRow
 from nba_edge.evaluation.clv import closing_snapshot, clv_prob
 from nba_edge.evaluation.metrics import (
@@ -102,7 +103,10 @@ def tip_times(ledger: Ledger) -> dict[str, datetime]:
 def observations_by_ticker(ledger: Ledger, tickers: set[str]) -> dict[str, list[dict[str, Any]]]:
     """Slim market observations for the tickers of interest, in observation order."""
     out: dict[str, list[dict[str, Any]]] = {}
-    for row in ledger.iter_rows("kalshi/markets"):
+    # Every TICK. The benchmark is "the raw executable price at the final valid pre-tip snapshot";
+    # if delta-encoded ticks were invisible here, that instant would silently move earlier and the
+    # frozen benchmark methodology would change without anyone editing it.
+    for row in iter_market_rows(ledger):
         tk = row.get("ticker")
         if tk not in tickers or not row.get("_observed_at_utc"):
             continue

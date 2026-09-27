@@ -13,6 +13,7 @@ names. Mixing chains would produce a board that never existed.
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -23,14 +24,17 @@ from nba_edge.archive.delta import (
     DELTA_KIND,
     Delta,
     DeltaChainError,
+    apply_delta_in_place,
     board_sha256,
     build_delta,
     canonical_board,
+    dedupe_and_order,
     read_rows,
     restamp,
     verify_chain,
 )
 from nba_edge.archive.ledger import Ledger, ManifestEntry, entry_observed_at
+from nba_edge.timeutil import iso, parse_iso
 
 
 def _load_delta(root: Path, entry: ManifestEntry) -> Delta:
@@ -64,6 +68,17 @@ class Reconstruction:
     n_deltas_applied: int
     board_sha256: str
     n_markets: int
+
+    def provenance(self) -> str:
+        """A single string identifying exactly which bytes produced this board.
+
+        For a full snapshot it is the file path, as it always was. For a reconstruction it names the
+        checkpoint, how many deltas were applied and the resulting board hash, so a prediction's
+        recorded input can still be traced to exact evidence rather than to "some deltas".
+        """
+        if self.source == "snapshot":
+            return self.checkpoint_path
+        return f"{self.checkpoint_path}+{self.n_deltas_applied}deltas#{self.board_sha256[:12]}"
 
     def summary(self) -> dict[str, Any]:
         return {
@@ -329,3 +344,94 @@ def write_board(
 
 def iso_day(when: datetime) -> str:
     return when.strftime("%Y-%m-%d")
+
+
+def iter_board_ticks(
+    ledger: Ledger,
+    *,
+    checkpoint_kind: str = CHECKPOINT_KIND,
+    delta_kind: str = DELTA_KIND,
+) -> Iterator[tuple[datetime, str, dict[str, dict[str, Any]], list[dict[str, Any]] | None]]:
+    """Every captured tick, in chronological order, as ``(observed_at, run_id, board, raw_rows)``.
+
+    This is the compatibility layer that keeps delta encoding invisible to everything downstream,
+    and it is not optional. ``settle`` scans market observations for settlement ``result`` fields,
+    and ``evaluate`` builds the market benchmark time series from them -- "the raw executable price
+    at the final valid pre-tip snapshot". If those readers saw only checkpoints they would silently
+    lose 23 of every 24 ticks, so the "final pre-tip snapshot" would become a different, earlier
+    instant and the FROZEN benchmark methodology would change without anyone editing it. That is
+    precisely the "depend on current truth instead of historical truth" failure the design forbids.
+
+    Walks each chain once, applying deltas incrementally, so the total cost is one pass over the
+    archive rather than a fresh reconstruction per tick. ``raw_rows`` is the file's own rows for a
+    checkpoint tick and None for a delta tick, so callers can prefer the bytes actually on disk when
+    they have them.
+    """
+    checkpoints = sorted(_entries(ledger, checkpoint_kind), key=entry_observed_at)
+    by_base: dict[str, list[ManifestEntry]] = {}
+    for e in _entries(ledger, delta_kind):
+        by_base.setdefault(str((e.meta or {}).get("base_path", "?")), []).append(e)
+
+    for ck in checkpoints:
+        ck_rows = read_rows(ledger.root / ck.path)
+        board = canonical_board(ck_rows)
+        yield entry_observed_at(ck), ck.run_id, board, ck_rows
+
+        entries = sorted(by_base.get(ck.path, []), key=lambda e: int((e.meta or {}).get("seq", 0)))
+        if not entries:
+            continue
+        deltas = [_load_delta(ledger.root, e) for e in entries]
+        # Verify the whole chain before yielding any of it: a reader must never act on the first
+        # half of a chain whose second half is corrupt.
+        verify_chain(board, deltas)
+        running = {t: dict(r) for t, r in board.items()}
+        for d in dedupe_and_order(deltas):
+            apply_delta_in_place(running, d)
+            yield parse_iso(d.captured_at_utc), d.run_id, running, None
+
+
+def iter_market_rows(
+    ledger: Ledger,
+    *,
+    checkpoint_kind: str = CHECKPOINT_KIND,
+    delta_kind: str = DELTA_KIND,
+) -> Iterator[dict[str, Any]]:
+    """Every market row of every tick, as ``Ledger.iter_rows`` used to yield them.
+
+    A drop-in replacement for ``ledger.iter_rows("kalshi/markets")``: on an archive with no deltas
+    it yields exactly the same rows in the same order, so nothing changes for historical data.
+    """
+    for at, run_id, board, raw in iter_board_ticks(
+        ledger, checkpoint_kind=checkpoint_kind, delta_kind=delta_kind
+    ):
+        if raw is not None:
+            yield from raw
+        else:
+            yield from restamp(board, iso(at), run_id)
+
+
+def latest_board(
+    ledger: Ledger,
+    *,
+    checkpoint_kind: str = CHECKPOINT_KIND,
+    delta_kind: str = DELTA_KIND,
+) -> Reconstruction | None:
+    """The most recent captured board, whichever encoding it arrived in.
+
+    ``Ledger.latest(CHECKPOINT_KIND)`` is no longer the newest board once deltas exist -- it is the
+    newest *checkpoint*, which can be hours old. Callers that gate on market freshness (simulate
+    refuses to price on a board older than STALE_MARKET_MIN) would otherwise see a stale age and
+    either refuse to price or price on stale quotes.
+    """
+    checkpoints = _entries(ledger, checkpoint_kind)
+    if not checkpoints:
+        return None
+    newest_ck = max(checkpoints, key=entry_observed_at)
+    deltas = [
+        e
+        for e in _entries(ledger, delta_kind)
+        if entry_observed_at(e) > entry_observed_at(newest_ck)
+        and str((e.meta or {}).get("base_path", "")) == newest_ck.path
+    ]
+    at = max([entry_observed_at(newest_ck)] + [entry_observed_at(e) for e in deltas])
+    return reconstruct_at(ledger.root, at, checkpoint_kind=checkpoint_kind, delta_kind=delta_kind)
