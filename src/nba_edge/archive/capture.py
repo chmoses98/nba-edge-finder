@@ -11,7 +11,9 @@ import json
 from pathlib import Path
 from typing import Any
 
+from nba_edge.archive.delta import ORDERBOOK_CHECKPOINT_KIND, ORDERBOOK_DELTA_KIND
 from nba_edge.archive.ledger import Ledger
+from nba_edge.archive.reconstruct import DEFAULT_CHECKPOINT_EVERY, write_board
 from nba_edge.archive.status import status_age_minutes
 from nba_edge.config import settings
 from nba_edge.kalshi.client import KalshiClient, KalshiError
@@ -106,7 +108,8 @@ def snapshot_orderbooks(client: KalshiClient, markets: list[dict[str, Any]], max
     return out
 
 
-def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_orderbooks: int = 400, series_filter: list[str] | None = None) -> int:
+def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_orderbooks: int = 400, series_filter: list[str] | None = None,
+                delta_encode: bool = True, checkpoint_every: int = DEFAULT_CHECKPOINT_EVERY) -> int:
     cfg = settings()
     onto = Ontology.load()
     client = KalshiClient(cfg)
@@ -115,15 +118,37 @@ def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_o
     series = series_filter or nba_series_tickers(client, cfg.catalog_dir)
     log.info(kv(event="capture_start", series=len(series), statuses=",".join(statuses)))
     markets = snapshot_markets(client, series, statuses, onto)
-    entry = ledger.append_rows("kalshi/markets", markets, observed_at=t0, meta={"series": series, "statuses": statuses, "requests": client.request_count})
-    log.info(kv(event="capture_markets_written", path=entry.path, rows=entry.rows))
+    market_meta = {"series": series, "statuses": statuses, "requests": client.request_count}
+    # Delta encoding writes a full CHECKPOINT periodically and only the changed markets/fields in
+    # between. Measured on real boards: a delta is ~1.8% of a full snapshot four minutes later.
+    # Checkpoints reuse the existing `kalshi/markets` kind, so every board already on the archive is
+    # a valid base and nothing is migrated or rewritten. `--full-snapshots` disables it entirely and
+    # restores the old behaviour exactly.
+    if delta_encode:
+        written = write_board(ledger, markets, observed_at=t0, checkpoint_every=checkpoint_every, meta=market_meta)
+        n_markets = written["n_markets"]
+        log.info(kv(event="capture_markets_written", path=written["path"], encoding=written["encoding"], bytes=written["bytes"]))
+    else:
+        entry = ledger.append_rows("kalshi/markets", markets, observed_at=t0, meta={**market_meta, "encoding": "checkpoint"})
+        written = {"encoding": "checkpoint", "path": entry.path, "bytes": (out_root / entry.path).stat().st_size, "n_markets": entry.rows}
+        n_markets = entry.rows
+        log.info(kv(event="capture_markets_written", path=entry.path, rows=entry.rows))
+    books_written = None
     if with_orderbook:
         books = snapshot_orderbooks(client, markets, max_orderbooks)
-        e2 = ledger.append_rows("kalshi/orderbooks", books, observed_at=t0, meta={"n": len(books)})
-        log.info(kv(event="capture_books_written", path=e2.path, rows=e2.rows))
+        if delta_encode:
+            books_written = write_board(
+                ledger, books, observed_at=t0, checkpoint_every=checkpoint_every, meta={"n": len(books)},
+                checkpoint_kind=ORDERBOOK_CHECKPOINT_KIND, delta_kind=ORDERBOOK_DELTA_KIND,
+            )
+        else:
+            e2 = ledger.append_rows(ORDERBOOK_CHECKPOINT_KIND, books, observed_at=t0, meta={"n": len(books)})
+            books_written = {"encoding": "checkpoint", "path": e2.path, "bytes": (out_root / e2.path).stat().st_size, "n_markets": e2.rows}
+        log.info(kv(event="capture_books_written", path=books_written["path"], encoding=books_written["encoding"]))
     # tiny status file (overwritten on purpose: it's a pointer, not an observation)
     by_support = _count(markets, "_support")
-    status = {"last_capture_utc": iso(t0), "n_markets": entry.rows, "n_series": len(series), "requests": client.request_count, "run_id": ledger.run_id,
+    status = {"last_capture_utc": iso(t0), "n_markets": n_markets, "n_series": len(series), "requests": client.request_count, "run_id": ledger.run_id,
+              "markets_written": written, "orderbooks_written": books_written,
               "by_status": _count(markets, "status"), "by_support": by_support, "by_family": _count(markets, "_family")}
     status["alarms"] = capture_alarms(markets, by_support, client, onto)
     status["notes"] = capture_notes(markets, max_orderbooks if with_orderbook else None)

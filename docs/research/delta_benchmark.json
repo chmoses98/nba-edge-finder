@@ -1,0 +1,211 @@
+{
+  "n_real_boards": 11,
+  "full_snapshot_bytes": {
+    "mean": 272976,
+    "median": 282872,
+    "min": 236589,
+    "max": 287072,
+    "markets_mean": 3301,
+    "bytes_per_market": 82.7
+  },
+  "steps": [
+    {
+      "from": "2026-09-18T07:36:03+00:00",
+      "to": "2026-09-18T07:40:07+00:00",
+      "gap_minutes": 4.1,
+      "n_markets": 2818,
+      "n_changed": 479,
+      "changed_pct": 16.998,
+      "delta_bytes": 4293,
+      "full_bytes": 236664,
+      "ratio": 0.01814,
+      "intraday": true,
+      "schema_evolution_suspected": false
+    },
+    {
+      "from": "2026-09-18T07:40:07+00:00",
+      "to": "2026-09-18T07:48:02+00:00",
+      "gap_minutes": 7.9,
+      "n_markets": 2818,
+      "n_changed": 2818,
+      "changed_pct": 100.0,
+      "delta_bytes": 24354,
+      "full_bytes": 250618,
+      "ratio": 0.09718,
+      "intraday": true,
+      "schema_evolution_suspected": true
+    },
+    {
+      "from": "2026-09-18T07:48:02+00:00",
+      "to": "2026-09-19T16:42:27+00:00",
+      "gap_minutes": 1974.4,
+      "n_markets": 3463,
+      "n_changed": 2444,
+      "changed_pct": 70.575,
+      "delta_bytes": 59915,
+      "full_bytes": 280563,
+      "ratio": 0.21355,
+      "intraday": false,
+      "schema_evolution_suspected": false
+    },
+    {
+      "from": "2026-09-19T16:42:27+00:00",
+      "to": "2026-09-21T16:35:34+00:00",
+      "gap_minutes": 2873.1,
+      "n_markets": 3463,
+      "n_changed": 2037,
+      "changed_pct": 58.822,
+      "delta_bytes": 31994,
+      "full_bytes": 280398,
+      "ratio": 0.1141,
+      "intraday": false,
+      "schema_evolution_suspected": false
+    },
+    {
+      "from": "2026-09-21T16:35:34+00:00",
+      "to": "2026-09-22T17:00:38+00:00",
+      "gap_minutes": 1465.1,
+      "n_markets": 3463,
+      "n_changed": 1628,
+      "changed_pct": 47.011,
+      "delta_bytes": 30290,
+      "full_bytes": 282872,
+      "ratio": 0.10708,
+      "intraday": false,
+      "schema_evolution_suspected": false
+    },
+    {
+      "from": "2026-09-22T17:00:38+00:00",
+      "to": "2026-09-27T21:23:36+00:00",
+      "gap_minutes": 7463.0,
+      "n_markets": 3494,
+      "n_changed": 2397,
+      "changed_pct": 68.603,
+      "delta_bytes": 48344,
+      "full_bytes": 286993,
+      "ratio": 0.16845,
+      "intraday": false,
+      "schema_evolution_suspected": false
+    },
+    {
+      "from": "2026-09-27T21:23:36+00:00",
+      "to": "2026-09-27T21:29:30+00:00",
+      "gap_minutes": 5.9,
+      "n_markets": 3494,
+      "n_changed": 35,
+      "changed_pct": 1.002,
+      "delta_bytes": 1337,
+      "full_bytes": 287006,
+      "ratio": 0.00466,
+      "intraday": true,
+      "schema_evolution_suspected": false
+    },
+    {
+      "from": "2026-09-27T21:29:30+00:00",
+      "to": "2026-09-27T21:35:01+00:00",
+      "gap_minutes": 5.5,
+      "n_markets": 3494,
+      "n_changed": 54,
+      "changed_pct": 1.546,
+      "delta_bytes": 1630,
+      "full_bytes": 287072,
+      "ratio": 0.00568,
+      "intraday": true,
+      "schema_evolution_suspected": false
+    },
+    {
+      "from": "2026-09-27T21:35:01+00:00",
+      "to": "2026-09-27T21:40:38+00:00",
+      "gap_minutes": 5.6,
+      "n_markets": 3494,
+      "n_changed": 84,
+      "changed_pct": 2.404,
+      "delta_bytes": 1394,
+      "full_bytes": 287025,
+      "ratio": 0.00486,
+      "intraday": true,
+      "schema_evolution_suspected": false
+    },
+    {
+      "from": "2026-09-27T21:40:38+00:00",
+      "to": "2026-09-27T21:46:05+00:00",
+      "gap_minutes": 5.5,
+      "n_markets": 3494,
+      "n_changed": 44,
+      "changed_pct": 1.259,
+      "delta_bytes": 1548,
+      "full_bytes": 286940,
+      "ratio": 0.00539,
+      "intraday": true,
+      "schema_evolution_suspected": false
+    }
+  ],
+  "intraday": {
+    "n_steps": 5,
+    "changed_pct_mean": 4.642,
+    "changed_pct_median": 1.546,
+    "delta_bytes_mean": 2040,
+    "delta_bytes_median": 1548,
+    "ratio_mean": 0.00775
+  },
+  "projection": {
+    "ticks_per_day": 98,
+    "season_days": 180,
+    "checkpoint_every": 24,
+    "before_gb": 4.485,
+    "after_gb": 0.219,
+    "reduction_pct": 95.12,
+    "factor": 20.5
+  },
+  "reconstruction": {
+    "real_chain_ticks": 5,
+    "real_chain_seconds_mean": 0.2847,
+    "deep": {
+      "typical_tick": {
+        "n_deltas": 24,
+        "mean_markets_touched_per_delta": 35,
+        "seconds_median": 0.4752,
+        "seconds_max": 0.5174
+      },
+      "worst_observed_churn": {
+        "n_deltas": 24,
+        "mean_markets_touched_per_delta": 2966,
+        "seconds_median": 2.2123,
+        "seconds_max": 2.3988
+      }
+    }
+  },
+  "integrity": {
+    "ticks_verified": 5,
+    "hash_matches": 5,
+    "field_for_field_matches": 5,
+    "failures": []
+  },
+  "failure_recovery": [
+    {
+      "case": "healthy chain",
+      "verify_ok": 1,
+      "verify_broken": 0
+    },
+    {
+      "case": "corrupted delta",
+      "result": "failed closed",
+      "error": "delta seq 1 changes ticker '__INJECTED__', which is not on the board -- the chain is missing an earlier delta "
+    },
+    {
+      "case": "deleted delta",
+      "result": "failed closed",
+      "error": "delta kalshi/markets_delta/dt=2026-09-27/kalshi_markets_delta_20260927T212930Z_36351869386.json.gz is recorded"
+    },
+    {
+      "case": "next capture after corruption",
+      "encoding": "checkpoint",
+      "reason": "existing chain is unusable (DeltaChainError: delta kalshi/markets_delta/dt=2026-09-27/kalshi_markets_delta_20260927T212930Z_36351869386.json.gz is recorded in the manifest but missing from disk: the chain is incomplete); starting a new one"
+    },
+    {
+      "case": "recovered",
+      "source": "snapshot",
+      "n_markets": 3494
+    }
+  ]
+}

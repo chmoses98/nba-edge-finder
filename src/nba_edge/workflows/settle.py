@@ -33,6 +33,7 @@ from pathlib import Path
 from typing import Any
 
 from nba_edge.archive.ledger import Ledger
+from nba_edge.archive.reconstruct import iter_market_rows
 from nba_edge.kalshi.ticker import parse_ticker
 from nba_edge.log import get_logger, kv
 from nba_edge.schemas.core import GameStatus
@@ -146,7 +147,9 @@ def kalshi_results(ledger: Ledger) -> tuple[dict[str, str], dict[str, str]]:
     """``(result_by_ticker, family_by_ticker)`` from the newest kalshi/markets observation carrying a non-empty
     ``result``. Family comes from the same observation (``_family`` stamped by capture)."""
     newest: dict[str, tuple[datetime, str, str]] = {}
-    for row in ledger.iter_rows("kalshi/markets"):
+    # Every TICK, not just checkpoints: a `result` can first appear in a delta-encoded tick, and
+    # missing it would delay or lose a settlement.
+    for row in iter_market_rows(ledger):
         tk, res = row.get("ticker"), row.get("result")
         if not tk or not res:
             continue
