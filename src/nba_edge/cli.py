@@ -35,9 +35,68 @@ def cmd_discover(args: argparse.Namespace) -> int:
 
 def cmd_capture(args: argparse.Namespace) -> int:
     from nba_edge.archive.capture import run_capture
+    from nba_edge.archive.reconstruct import DEFAULT_CHECKPOINT_EVERY
 
     return run_capture(out_root=Path(args.out), statuses=args.statuses.split(","), with_orderbook=args.orderbook,
-                       max_orderbooks=args.max_orderbooks, series_filter=args.series.split(",") if args.series else None)
+                       max_orderbooks=args.max_orderbooks, series_filter=args.series.split(",") if args.series else None,
+                       delta_encode=not args.full_snapshots,
+                       checkpoint_every=args.checkpoint_every or DEFAULT_CHECKPOINT_EVERY)
+
+
+def cmd_reconstruct(args: argparse.Namespace) -> int:
+    """Rebuild the market board as it stood at any past instant, from checkpoint + deltas.
+
+    Fails closed: an incomplete, reordered or corrupt chain raises rather than returning a board
+    that cannot be proved. A silently-wrong historical price is worse than no price.
+    """
+    import gzip
+    import json
+
+    from nba_edge.archive.delta import board_sha256, canonical_board, read_rows
+    from nba_edge.archive.reconstruct import reconstruct_at
+    from nba_edge.timeutil import parse_iso
+
+    r = reconstruct_at(Path(args.archive), parse_iso(args.at))
+    print(json.dumps(r.summary(), indent=2))
+
+    if args.compare:
+        # Field-for-field against a real full snapshot, not merely hash-for-hash: the hash proves
+        # the boards agree, the row comparison proves the reconstruction is usable in its place.
+        truth = read_rows(Path(args.compare))
+        h1 = board_sha256(canonical_board(r.rows))
+        h2 = board_sha256(canonical_board(truth))
+        same_hash = h1 == h2
+        by_ticker = lambda x: str(x.get("ticker"))  # noqa: E731
+        exact = sorted(r.rows, key=by_ticker) == sorted(truth, key=by_ticker)
+        print(json.dumps({"compare": str(args.compare), "canonical_hash_match": same_hash,
+                          "field_for_field_match": exact, "reconstructed_sha256": h1,
+                          "snapshot_sha256": h2}, indent=2))
+        if not (same_hash and exact):
+            print("reconstruct: MISMATCH against the full snapshot")
+            return 1
+
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with gzip.open(out, "wt", encoding="utf-8") as f:
+            for row in r.rows:
+                f.write(json.dumps(row, separators=(",", ":"), default=str) + "\n")
+        print(f"wrote {len(r.rows)} rows to {out}")
+    return 0
+
+
+def cmd_delta_verify(args: argparse.Namespace) -> int:
+    """Walk every delta chain on the archive and report which reconstruct and which do not."""
+    import json
+
+    from nba_edge.archive.reconstruct import verify_archive
+
+    report = verify_archive(Path(args.archive))
+    print(json.dumps(report, indent=2))
+    if report["n_broken"]:
+        print(f"delta-verify: {report['n_broken']} chain(s) FAILED")
+        return 1
+    return 0
 
 
 def cmd_worker(args: argparse.Namespace) -> int:
@@ -163,6 +222,10 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--orderbook", action="store_true")
     c.add_argument("--max-orderbooks", type=int, default=400)
     c.add_argument("--series", default=None)
+    c.add_argument("--full-snapshots", action="store_true",
+                   help="Disable delta encoding and write a full board every tick (the old behaviour)")
+    c.add_argument("--checkpoint-every", type=int, default=None,
+                   help="Deltas per checkpoint before a fresh full board is written")
     c.set_defaults(func=cmd_capture)
 
     w = sub.add_parser("worker", help="Long-lived capture worker that owns its own cadence and hands over")
@@ -187,6 +250,18 @@ def build_parser() -> argparse.ArgumentParser:
     eh.add_argument("--archive", default="data/archive")
     eh.add_argument("--out", default=None)
     eh.set_defaults(func=cmd_evidence_health)
+
+    rc = sub.add_parser("reconstruct", help="Rebuild the board at a past instant from checkpoint + deltas")
+    rc.add_argument("--archive", default="data/archive")
+    rc.add_argument("--at", required=True, help="ISO-8601 instant; returns the latest tick at or before it")
+    rc.add_argument("--out", default=None, help="Write the reconstructed board here as gzip JSONL")
+    rc.add_argument("--compare", default=None,
+                    help="Verify field-for-field and hash-for-hash against this full snapshot")
+    rc.set_defaults(func=cmd_reconstruct)
+
+    dv = sub.add_parser("delta-verify", help="Verify every delta chain on the archive")
+    dv.add_argument("--archive", default="data/archive")
+    dv.set_defaults(func=cmd_delta_verify)
 
     x = sub.add_parser("context", help="Refresh schedule/rosters/injuries snapshot (point-in-time)")
     x.add_argument("--out", default="data/archive")
