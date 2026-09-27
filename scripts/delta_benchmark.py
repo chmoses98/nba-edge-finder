@@ -89,14 +89,20 @@ def main() -> int:
             "delta_bytes": raw, "full_bytes": sz1, "ratio": round(raw / sz1, 5),
             "intraday": gap_min <= 60,
         })
+    # A step where >95% of markets changed is almost certainly a capture-code change adding or
+    # renaming a field, not market activity. Flagged so it is never mistaken for a tick.
+    for st_ in steps:
+        st_["schema_evolution_suspected"] = st_["changed_pct"] > 95.0
     print("\n=== 2-3. change rate and delta size between consecutive real boards ===")
     print(f"  {'gap':>8}  {'changed':>8}  {'pct':>7}  {'delta B':>9}  {'full B':>9}  {'ratio':>8}")
     for s in steps:
         tag = "" if s["intraday"] else "   (days apart -- upper bound, not a tick)"
+        if s["schema_evolution_suspected"]:
+            tag += "   <-- schema change, not market activity"
         print(f"  {s['gap_minutes']:>6.1f}m  {s['n_changed']:>8}  {s['changed_pct']:>6.2f}%  "
               f"{s['delta_bytes']:>9,}  {s['full_bytes']:>9,}  {s['ratio']:>8.4f}{tag}")
 
-    intraday = [s for s in steps if s["intraday"]]
+    intraday = [s for s in steps if s["intraday"] and not s["schema_evolution_suspected"]]
     report["steps"] = steps
     if intraday:
         report["intraday"] = {
@@ -107,7 +113,7 @@ def main() -> int:
             "delta_bytes_median": round(st.median([s["delta_bytes"] for s in intraday])),
             "ratio_mean": round(st.mean([s["ratio"] for s in intraday]), 5),
         }
-        print(f"\n  intraday steps (<=60 min apart): n={len(intraday)}, "
+        print(f"\n  steady-state ticks (<=60 min apart, schema changes excluded): n={len(intraday)}, "
               f"changed {report['intraday']['changed_pct_mean']:.2f}% mean, "
               f"delta {report['intraday']['delta_bytes_mean']:,} B mean, "
               f"{report['intraday']['ratio_mean']:.4f} of a full snapshot")
@@ -183,13 +189,19 @@ def main() -> int:
         # TOUCHES -- every touched market is re-digested -- so cycling boards that include the
         # 100%-change transition measures a pathological case rather than a tick.
         ordered_boards = [rows for _t, rows in sorted(raw_by_ts.items())]
+        # Pick the pair explicitly rather than by "whichever day has most boards", which silently
+        # made the worst case quieter than the typical case in an earlier run of this script.
+        worst_step = max(steps, key=lambda x: x["changed_pct"])
+        worst_pair = []
+        for name, t, _b, _sz in boards:
+            if t.isoformat() in (worst_step["from"], worst_step["to"]):
+                worst_pair.append(read_rows(next(p for p in (a.archive / "kalshi" / "markets").rglob(name))))
         scenarios = {
-            # The two boards 4 minutes apart: ~17% of markets change per tick, the steady-state rate.
             "typical_tick": [ordered_boards[0], ordered_boards[1]],
-            # Includes the step where a capture-code change added a field to every market, so every
-            # delta rewrites the whole board. An upper bound.
-            "worst_case_full_churn": ordered_boards,
+            "worst_observed_churn": worst_pair or ordered_boards,
         }
+        print(f"  worst observed churn: {worst_step['changed_pct']:.1f}% of markets "
+              f"({'schema change' if worst_step['schema_evolution_suspected'] else 'market activity'})")
         deep_report = {}
         for label, cycle in scenarios.items():
             sub = Path(td) / f"deep_{label}"
@@ -219,7 +231,7 @@ def main() -> int:
             "real_chain_seconds_mean": round(st.mean(timings), 4),
             "deep": deep_report,
         }
-        print(f"  real 3-tick chain, genuine instants   : {st.mean(timings) * 1000:>6.0f} ms mean")
+        print(f"  real {len(raw_by_ts)}-tick chain, genuine instants   : {st.mean(timings) * 1000:>6.0f} ms mean")
 
     report["integrity"] = integrity
     print(f"\n=== 6. integrity: {integrity['hash_matches']}/{integrity['ticks_verified']} hash, "
