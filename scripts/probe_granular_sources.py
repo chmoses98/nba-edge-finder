@@ -36,7 +36,19 @@ GAME = "0022500001"  # first regular-season game of 2025-26
 # timeout cannot tell them apart. pbpstats returned 200 in 2.6s for one endpoint while three others
 # timed out, which is the signature of slow generation rather than an IP block.
 SLOW_BUDGET_S = 180.0
-SLOW = ("pbpstats get-games", "pbpstats possessions", "stats.nba gamerotation")
+SLOW = (
+    "pbpstats get-games",
+    "pbpstats possessions",
+    "stats.nba gamerotation",
+    # The matchup endpoints joined this list after run 36438057935 timed them out at 40s. Forty
+    # seconds separates blocked from fast but not from very slow, and "blocked" is the claim the
+    # matchup audit rests on -- so they get the same 180s budget that made gamerotation's verdict
+    # unambiguous.
+    "stats.nba boxscorematchupsv3",
+    "stats.nba leagueseasonmatchups",
+    "stats.nba playerdashptshotdefend",
+    "stats.nba synergyplaytypes",
+)
 
 SOURCES = [
     (
@@ -78,6 +90,40 @@ SOURCES = [
     (
         "pbpstats game-lineups",
         f"https://api.pbpstats.com/get-game-stats?GameId={GAME}&Type=Lineup",
+        PLAIN_HEADERS_OK,
+    ),
+    # --- MATCHUP_AWARE_V2 candidates (defender attribution, shot profile, scheme proxy) ---------
+    #
+    # Added for the matchup research arm. The Phase 7 probe established that stats.nba.com is
+    # blocked from Azure egress, but that is a claim about three endpoints; the matchup arm depends
+    # on different ones, and "the host was blocked for a different path" is inference, not
+    # measurement. These are measured on their own.
+    (
+        "stats.nba boxscorematchupsv3",
+        f"https://stats.nba.com/stats/boxscorematchupsv3?GameID={GAME}&StartPeriod=1&EndPeriod=4&StartRange=0&EndRange=0&RangeType=0",
+        NBA_HEADERS,
+    ),
+    (
+        "stats.nba leagueseasonmatchups",
+        "https://stats.nba.com/stats/leagueseasonmatchups?LeagueID=00&PerMode=Totals&Season=2025-26&SeasonType=Regular+Season",
+        NBA_HEADERS,
+    ),
+    (
+        "stats.nba playerdashptshotdefend",
+        "https://stats.nba.com/stats/playerdashptshotdefend?LeagueID=00&PerMode=PerGame&PlayerID=201939&Season=2025-26&SeasonType=Regular+Season&TeamID=0",
+        NBA_HEADERS,
+    ),
+    (
+        "stats.nba synergyplaytypes",
+        "https://stats.nba.com/stats/synergyplaytypes?LeagueID=00&PerMode=PerGame&PlayType=Isolation&PlayerOrTeam=T&SeasonType=Regular+Season&SeasonYear=2025-26&TypeGrouping=defensive",
+        NBA_HEADERS,
+    ),
+    # ESPN is the one host known to answer from this egress. Its game summary carries play-by-play
+    # with shot coordinates, which is a shot-PROFILE source (zones) and emphatically not a defender
+    # source -- worth measuring precisely so the audit can say which of the two it supplies.
+    (
+        "espn game summary (shot coords)",
+        "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401705718",
         PLAIN_HEADERS_OK,
     ),
     # CONTROL. This is the exact endpoint `nba context` fetches several times a day from this
@@ -146,6 +192,49 @@ def probe(name: str, url: str, headers: dict) -> dict:
                         "bytes": len(body),
                         "seconds": round(dt, 2),
                         "shape": f"unparsed: {e}",
+                    }
+            if name.startswith("espn game summary"):
+                # A targeted shape probe, because the generic one truncates to six keys -- which
+                # made an earlier run look like it proved `plays` was ABSENT when it had only
+                # failed to print it. The question this source exists to answer is narrow: does it
+                # carry play-by-play, and do the plays carry shot coordinates?
+                try:
+                    d = json.loads(body)
+                    plays = d.get("plays")
+                    if not isinstance(plays, list):
+                        detail = f"no plays array (top-level keys: {','.join(list(d))})"
+                    else:
+                        # Counting the PRESENCE of a "coordinate" key is not the same as counting a
+                        # usable one. Run 36440945795 reported 434/434 plays "with_coordinate" and
+                        # the sampled value was {'x': -214748340, 'y': -214748365} -- ESPN's
+                        # int32-derived sentinel for "not recorded". A key-presence count would
+                        # have read as full coverage while carrying no locations at all.
+                        def usable(pl):
+                            c = pl.get("coordinate") if isinstance(pl, dict) else None
+                            if not isinstance(c, dict):
+                                return False
+                            x, y = c.get("x"), c.get("y")
+                            return all(
+                                isinstance(v, (int, float)) and abs(v) < 100_000 for v in (x, y)
+                            )
+
+                        have_key = [pl for pl in plays if isinstance(pl, dict) and "coordinate" in pl]
+                        real = [pl for pl in plays if usable(pl)]
+                        sample = real[0]["coordinate"] if real else (
+                            have_key[0].get("coordinate") if have_key else None
+                        )
+                        detail = (
+                            f"plays={len(plays)} coord_key={len(have_key)} "
+                            f"usable_coord={len(real)} sample={sample}"
+                        )
+                    return {
+                        "name": name, "status": r.status_code, "bytes": len(body),
+                        "seconds": round(dt, 2), "shape": detail,
+                    }
+                except (json.JSONDecodeError, TypeError, AttributeError) as e:
+                    return {
+                        "name": name, "status": r.status_code, "bytes": len(body),
+                        "seconds": round(dt, 2), "shape": f"unparsed: {e}",
                     }
             if body[:1] in (b"{", b"["):
                 try:

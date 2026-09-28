@@ -332,8 +332,11 @@ def test_the_worker_runs_the_same_commands_the_conductor_does():
 
     yaml_text = Path(".github/workflows/conductor.yml").read_text()
     conductor = {}
-    for m in re.finditer(r"\bnba (capture|context|simulate|settle|evaluate|discover)\b([^\n]*)", yaml_text):
-        conductor[m.group(1)] = f"nba {m.group(1)}{m.group(2)}".strip()
+    jobs = "capture|context|simulate|settle|evaluate|discover|matchup-shadow"
+    for m in re.finditer(rf"\bnba ({jobs})\b([^\n]*)", yaml_text):
+        # The worker keys jobs by the conductor's decision key (underscores); the CLI subcommand is
+        # hyphenated. Normalise so the two are comparable rather than exempting one of them.
+        conductor[m.group(1).replace("-", "_")] = f"nba {m.group(1)}{m.group(2)}".strip()
 
     rendered = {
         name: " ".join(p.replace("ARCHIVE", "data/archive").replace("DATA", "data") for p in tmpl)
@@ -345,6 +348,7 @@ def test_the_worker_runs_the_same_commands_the_conductor_does():
     rendered["capture"] = " ".join(
         p.replace("ARCHIVE", "data/archive") for p in Worker.CAPTURE_CMD
     )
+    rendered = {k: v.replace("nba matchup_shadow", "nba matchup-shadow") for k, v in rendered.items()}
 
     assert set(conductor) == set(rendered), (
         f"conductor.yml has {sorted(conductor)}, worker has {sorted(rendered)}"
