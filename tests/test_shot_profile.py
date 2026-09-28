@@ -414,3 +414,143 @@ def test_no_module_here_converts_a_profile_into_a_model_effect():
     banned = [n for n in dir(F)
               if any(k in n.lower() for k in ("multiplier", "adjust", "boost", "edge", "effect_size"))]
     assert banned == [], f"shot-profile features must not expose effect machinery: {banned}"
+
+
+# == 8. PACKET / UI ============================================================================
+
+
+def test_an_absent_profile_says_why_rather_than_rendering_blank():
+    from nba_edge.shotprofile.packet import shot_profile_block
+
+    b = shot_profile_block(None)
+    assert b["available"] is False and b["reason"]
+    assert b["effect_status"] == "NEUTRAL/UNLEARNED"
+
+
+def test_the_packet_never_offers_a_projected_effect():
+    from nba_edge.shotprofile.packet import shot_profile_block
+
+    b = shot_profile_block(_context())
+    assert b["available"] is True
+    assert b["projected_effect"] is None
+    assert "No effect has been learned" in b["projected_effect_reason"]
+    assert b["effect_status"] == "NEUTRAL/UNLEARNED"
+
+
+def test_the_packet_states_that_the_opponent_profile_is_not_defender_evidence():
+    from nba_edge.shotprofile.packet import shot_profile_block
+
+    b = shot_profile_block(_context())
+    assert b["defender_attribution_available"] is False
+    assert "NOT defender attribution" in b["opponent_profile_is"]
+
+
+def test_factual_notes_describe_the_past_and_suppress_noise():
+    from nba_edge.shotprofile.packet import NOTABLE_DELTA, describe_deltas
+
+    c = _context()
+    for line in describe_deltas(c):
+        assert "Takes" in line and "opponent allows" in line
+        assert "projected" not in line.lower() and "+" not in line
+    # a difference below the noise floor earns no sentence
+    flat = ShotProfileMatchupContext(
+        player_id=-1, game_id="g", observed_at_utc=T0, opponent_team_id=2,
+        player=_context().player, opponent_allowed=_context().player)
+    assert describe_deltas(flat) == [], f"identical profiles have nothing to report (floor {NOTABLE_DELTA})"
+
+
+def test_the_packet_carries_sample_size_and_confidence():
+    from nba_edge.shotprofile.packet import shot_profile_block
+
+    b = shot_profile_block(_context())
+    assert b["sample_size"]["player_attempts"] > 0
+    assert 0.0 <= b["confidence"] < 1.0
+    assert b["provenance"]["geometry"].endswith("ESPN_SHOT_COORDINATES.md")
+
+
+# == 9. RESEARCH FRAMEWORK =====================================================================
+
+
+def _obs(n, *, family="points", better_profile=False, start=None):
+    import random
+
+    from nba_edge.research.shot_profile_study import ShotProfileObservation
+
+    rng = random.Random(4)
+    start = start or T0
+    out = []
+    for i in range(n):
+        actual = rng.gauss(25, 6)
+        v1 = actual + rng.gauss(0, 3)
+        prof = actual + rng.gauss(0, 1.5 if better_profile else 3)
+        out.append(ShotProfileObservation(
+            game_id=f"g{i}", player_id=-1, family=family, tip_utc=start + timedelta(days=i),
+            actual=actual, v1_mean=v1, v1_plus_profile_mean=prof, market_mean=v1, hybrid_mean=v1,
+            line=24.5, outcome_over=int(actual > 24.5),
+            v1_p_over=0.5, v1_plus_profile_p_over=0.5, market_p_over=0.5, hybrid_p_over=0.5,
+            profile_effective_n=float(i)))
+    return out
+
+
+def test_a_study_that_cannot_be_run_reports_absence_not_a_negative_result():
+    """The stop condition, in code: no fold means no test, which is not evidence of no effect."""
+    from nba_edge.research.shot_profile_study import run_study
+
+    r = run_study(_obs(20), min_train_games=200)
+    assert r["verdict"] == "INSUFFICIENT_DATA"
+    assert "absence of a test" in r["reason"]
+    assert r["folds"] == []
+
+
+def test_a_real_improvement_is_detected_and_a_null_one_is_not():
+    from nba_edge.research.shot_profile_study import compare
+
+    better = compare(_obs(600, better_profile=True))["mean"]["profile_vs_v1"]
+    null = compare(_obs(600, better_profile=False))["mean"]["profile_vs_v1"]
+    assert better["delta_mae"] < 0, "a genuinely better forecast must show a negative delta"
+    assert null["delta_mae"] > better["delta_mae"], "and a null one must not look as good"
+
+
+def test_every_comparison_is_reported_including_the_unflattering_ones():
+    from nba_edge.research.shot_profile_study import compare
+
+    m = compare(_obs(300))["mean"]
+    assert set(m) >= {"profile_vs_v1", "profile_vs_market", "profile_vs_hybrid", "v1_vs_market"}
+
+
+def test_a_thin_comparison_is_marked_insufficient():
+    from nba_edge.research.shot_profile_study import MIN_PAIRED_ROWS, compare
+
+    thin = compare(_obs(40))["mean"]["profile_vs_v1"]
+    assert thin["sufficient"] is False and thin["n_paired"] < MIN_PAIRED_ROWS
+    thick = compare(_obs(MIN_PAIRED_ROWS + 10))["mean"]["profile_vs_v1"]
+    assert thick["sufficient"] is True
+
+
+def test_results_split_by_how_well_observed_the_profile_was():
+    """An edge that does not strengthen with evidence is measuring something else."""
+    from nba_edge.research.shot_profile_study import by_evidence_depth
+
+    d = by_evidence_depth(_obs(400, better_profile=True))
+    assert set(d) == {"effective_n>=0", "effective_n>=50", "effective_n>=200"}
+    assert d["effective_n>=0"]["n_rows"] > d["effective_n>=200"]["n_rows"]
+
+
+def test_a_study_never_activates_an_effect():
+    from nba_edge.research.shot_profile_study import run_study
+
+    r = run_study(_obs(900, better_profile=True), n_folds=3, min_train_games=200)
+    assert r["effects_activated"] is False
+    assert r["authority"] == "RESEARCH"
+    assert r["verdict"] in ("PROFILE_ADDS_VALUE_BEYOND_MARKET", "NO_VALIDATED_EDGE")
+
+
+def test_fold_evaluation_windows_do_not_overlap():
+    from nba_edge.research.shot_profile_study import run_study
+
+    r = run_study(_obs(900), n_folds=4, min_train_games=200)
+    folds = r["folds"]
+    assert len(folds) == 4
+    for a, b in zip(folds, folds[1:], strict=False):
+        assert a["eval_end"] <= b["eval_start"]
+        assert a["train_end"] <= a["eval_start"]
