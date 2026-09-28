@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC
 
 from nba_edge.ops import evidence_health as EH
 
@@ -104,3 +105,46 @@ def test_a_drifted_parameter_would_report_as_not_intact(tmp_path, monkeypatch):
 
     monkeypatch.setattr(manifest, "BASELINE_DIGEST", "0" * 64)
     assert EH.build_report(tmp_path)["baseline"]["frozen_parameters_intact"] is False
+
+
+def test_every_section_carries_a_state_field(tmp_path):
+    """The module promises `state` on every section; the worker section used to omit it."""
+    import json as _json
+
+    (tmp_path / "STATUS_worker.json").write_text(_json.dumps({"worker_id": "w1", "n_cycles": 3}))
+    report = EH.build_report(tmp_path)
+    for name, section in report.items():
+        if name == "generated_at_utc" or not isinstance(section, dict):
+            continue
+        assert "state" in section, f"{name} has no state field"
+    assert report["worker"]["state"] == "ok"
+    assert report["worker"]["worker_id"] == "w1"
+
+
+def test_delta_chain_integrity_is_on_the_daily_board(tmp_path):
+    """Delta chains are now authoritative storage, so a broken one must surface daily."""
+    from datetime import datetime, timedelta
+
+    from nba_edge.archive.ledger import Ledger
+    from nba_edge.archive.reconstruct import chain_tip, write_board
+
+    t0 = datetime(2026, 10, 3, 18, 0, tzinfo=UTC)
+    lg = Ledger(tmp_path, run_id="r1")
+    rows = [{"ticker": f"T{i}", "yes_bid_dollars": "0.50"} for i in range(4)]
+    write_board(lg, rows, observed_at=t0)
+    changed = [dict(r) for r in rows]
+    changed[0]["yes_bid_dollars"] = "0.60"
+    write_board(lg, changed, observed_at=t0 + timedelta(minutes=10))
+
+    assert EH.build_report(tmp_path)["delta_chains"]["state"] == "ok"
+
+    _ck, deltas = chain_tip(lg)
+    (tmp_path / deltas[0].path).unlink()
+    broken = EH.build_report(tmp_path)["delta_chains"]
+    assert broken["state"] == "broken"
+    assert broken["n_broken"] == 1
+
+
+def test_an_archive_with_no_deltas_reports_empty_not_broken(tmp_path):
+    c = EH.build_report(tmp_path)["delta_chains"]
+    assert c["state"] == "empty" and "reason" in c
