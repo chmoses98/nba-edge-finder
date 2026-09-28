@@ -134,11 +134,19 @@ def _discover_age(data_root: Path) -> float | None:
     return min(known) if known else None
 
 
-def run_conductor(data_root: Path, github_output: str | None = None) -> int:
+def decide_now(data_root: Path) -> dict[str, Any]:
+    """The full decision, assembled from the STATUS breadcrumbs on the archive.
+
+    Extracted from ``run_conductor`` so the long-lived capture worker can reuse exactly this logic
+    instead of reimplementing it. That matters more than it looks: the worker holds the archive's
+    concurrency group for hours, so every scheduled conductor run queues behind it and is
+    cancelled. If the worker did not decide and run simulate/settle/evaluate/discover itself, those
+    jobs would simply stop happening for as long as a worker was alive.
+    """
     archive = data_root / "archive"
     ledger = Ledger(archive)
     rows = _latest_schedule(ledger) if archive.exists() else []
-    d = decide(
+    return decide(
         datetime.now(tz=UTC), rows,
         status_age_minutes(archive / "STATUS_capture.json", "last_capture_utc"),
         status_age_minutes(archive / "STATUS_simulate.json", "simulated_at_utc"),
@@ -147,6 +155,10 @@ def run_conductor(data_root: Path, github_output: str | None = None) -> int:
         status_age_minutes(archive / "STATUS_context.json", "refreshed_at_utc"),
         _discover_age(data_root),
     )
+
+
+def run_conductor(data_root: Path, github_output: str | None = None) -> int:
+    d = decide_now(data_root)
     print(json.dumps(d, indent=1))
     if github_output:
         with open(github_output, "a") as f:

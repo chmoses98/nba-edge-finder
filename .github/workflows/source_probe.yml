@@ -1,0 +1,47 @@
+name: source-probe
+# Re-runnable audit of the lineup/stint data sources, from a GitHub-hosted runner.
+#
+# This exists because "GitHub Actions accessibility" is one of the criteria a source has to meet,
+# and it cannot be answered anywhere else: stats.nba.com treats cloud egress differently from
+# residential egress, and the build environment this was written in blocks every candidate host.
+#
+# Run it with --samples > 1 to answer the question the audit left open: pbpstats is REACHABLE but
+# proved INTERMITTENT across two rounds an hour apart, and a source cannot back an archive of
+# record until its failure modes are characterised rather than guessed at.
+on:
+  workflow_dispatch:
+    inputs:
+      samples:
+        description: "Rounds to run (>1 measures reliability, not just reachability)"
+        default: "1"
+      interval:
+        description: "Seconds between rounds"
+        default: "300"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Its own group: this must never queue behind, or supersede, the capture worker.
+  group: source-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      # The probe imports the project's own HTTP client deliberately. Probing with a different
+      # client measures the probe rather than the source -- an earlier version spoofed a browser
+      # User-Agent and reported blocks for every host including a known-good control.
+      - run: pip install -e .
+      - name: Probe granular data sources
+        env:
+          SAMPLES: ${{ inputs.samples }}
+          INTERVAL: ${{ inputs.interval }}
+        run: python scripts/probe_granular_sources.py --samples "${SAMPLES:-1}" --interval "${INTERVAL:-300}"
