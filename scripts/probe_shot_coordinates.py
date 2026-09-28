@@ -192,34 +192,60 @@ def main() -> int:
 
 
     # == the decisive test =====================================================================
-    # The three-point line is a known physical constant, so it can be used to CHECK a candidate
-    # origin rather than assume one. If the hoop really sits at (25, 5.25) in feet with y measured
-    # from the baseline, then essentially every 3PT attempt must compute to a distance beyond the
-    # arc and essentially every 2PT attempt inside it. A wrong origin fails this immediately.
+    # The three-point line is a known physical constant, so it CHECKS a candidate origin rather
+    # than being assumed alongside one. A correct origin puts essentially every 3PT attempt beyond
+    # the arc and every 2PT attempt inside it; a wrong one cannot do both at once.
     #
     # Corner threes sit at 22 ft and above-the-break at 23.75 ft, so the test is applied per zone.
-    print("\n== arc test: does a candidate hoop origin reproduce the known 3-point line? ==")
+    # Coordinates are integer-valued, so a foot of slack is allowed at the line itself.
+    #
+    # The winner is chosen by the DATA, not named in advance. An earlier version of this script
+    # hardcoded "(25, 5.25)" into the follow-up heading -- the physically intuitive guess, since an
+    # NBA hoop sits 5.25 ft in from the baseline -- and it scored 53%. Printing it as the best fit
+    # would have been a label asserting something the numbers directly contradicted.
     import math
-    for hx, hy in ((25.0, 5.25), (25.0, 0.0), (0.0, 25.0), (25.0, 4.75)):
+
+    def score(hx: float, hy: float) -> tuple[int, int, int, int]:
         ok3 = bad3 = ok2 = bad2 = 0
         for sv, x, y in acc["arc"]:
             d = math.hypot(x - hx, y - hy)
-            corner = abs(x - hx) >= 22.0
-            line = 22.0 if corner else 23.75
+            line = 22.0 if abs(x - hx) >= 22.0 else 23.75
             if sv == 3:
-                # integer-rounded coordinates, so allow a foot of slack at the line
                 ok3, bad3 = (ok3 + 1, bad3) if d >= line - 1.0 else (ok3, bad3 + 1)
             else:
                 ok2, bad2 = (ok2 + 1, bad2) if d <= line + 1.0 else (ok2, bad2 + 1)
-        n3, n2 = ok3 + bad3, ok2 + bad2
-        print(f"  hoop at ({hx},{hy}): 3PT beyond arc {ok3}/{n3} ({100*ok3/max(1,n3):.1f}%)   "
-              f"2PT inside arc {ok2}/{n2} ({100*ok2/max(1,n2):.1f}%)")
+        return ok3, bad3, ok2, bad2
 
-    print("\n== distance distribution under the best-fitting origin (25, 5.25) ==")
+    print("\n== arc test: which hoop origin reproduces the known 3-point line? ==")
+    results = []
+    for hy in (-2.0, -1.0, 0.0, 1.0, 2.0, 4.75, 5.25, 6.0):
+        for hx in (25.0,):
+            ok3, bad3, ok2, bad2 = score(hx, hy)
+            n3, n2 = ok3 + bad3, ok2 + bad2
+            frac = (ok3 / max(1, n3)) * (ok2 / max(1, n2))
+            results.append((frac, hx, hy, ok3, n3, ok2, n2))
+    # a transposed-axis control: if x and y were swapped this would win instead
+    ok3, bad3, ok2, bad2 = score(0.0, 25.0)
+    results.append(((ok3 / max(1, ok3 + bad3)) * (ok2 / max(1, ok2 + bad2)), 0.0, 25.0,
+                    ok3, ok3 + bad3, ok2, ok2 + bad2))
+
+    for frac, hx, hy, ok3, n3, ok2, n2 in sorted(results, reverse=True):
+        tag = "  <-- best" if (frac, hx, hy) == max(results)[:3] else ""
+        print(f"  hoop ({hx:5.2f},{hy:5.2f}): 3PT beyond arc {ok3:4d}/{n3} ({100*ok3/max(1,n3):5.1f}%)   "
+              f"2PT inside arc {ok2:4d}/{n2} ({100*ok2/max(1,n2):5.1f}%)   joint={frac:.4f}{tag}")
+
+    best = max(results)
+    bx, by = best[1], best[2]
+    print(f"\n== distance distribution under the BEST-SCORING origin ({bx}, {by}) ==")
     for sv in (2, 3):
-        ds = [math.hypot(x - 25.0, y - 5.25) for v, x, y in acc["arc"] if v == sv]
+        ds = [math.hypot(x - bx, y - by) for v, x, y in acc["arc"] if v == sv]
         if ds:
             print(describe(ds, f"{sv}PT distance (ft)"))
+    two = [math.hypot(x - bx, y - by) for v, x, y in acc["arc"] if v == 2]
+    three = [math.hypot(x - bx, y - by) for v, x, y in acc["arc"] if v == 3]
+    if two and three:
+        print(f"  separation: max 2PT = {max(two):.1f} ft, min 3PT = {min(three):.1f} ft "
+              f"-> {'CLEAN (no overlap)' if max(two) < min(three) else 'OVERLAPPING'}")
 
     print("\n== free throws ==")
     print(f"  free-throw events: {acc['ft_total']}, with a usable coordinate: {acc['ft_with_usable_coord']}")
