@@ -204,9 +204,29 @@ def probe(name: str, url: str, headers: dict) -> dict:
                     if not isinstance(plays, list):
                         detail = f"no plays array (top-level keys: {','.join(list(d))})"
                     else:
-                        shots = [pl for pl in plays if isinstance(pl, dict) and "coordinate" in pl]
-                        sample = shots[0].get("coordinate") if shots else None
-                        detail = f"plays={len(plays)} with_coordinate={len(shots)} sample={sample}"
+                        # Counting the PRESENCE of a "coordinate" key is not the same as counting a
+                        # usable one. Run 36440945795 reported 434/434 plays "with_coordinate" and
+                        # the sampled value was {'x': -214748340, 'y': -214748365} -- ESPN's
+                        # int32-derived sentinel for "not recorded". A key-presence count would
+                        # have read as full coverage while carrying no locations at all.
+                        def usable(pl):
+                            c = pl.get("coordinate") if isinstance(pl, dict) else None
+                            if not isinstance(c, dict):
+                                return False
+                            x, y = c.get("x"), c.get("y")
+                            return all(
+                                isinstance(v, (int, float)) and abs(v) < 100_000 for v in (x, y)
+                            )
+
+                        have_key = [pl for pl in plays if isinstance(pl, dict) and "coordinate" in pl]
+                        real = [pl for pl in plays if usable(pl)]
+                        sample = real[0]["coordinate"] if real else (
+                            have_key[0].get("coordinate") if have_key else None
+                        )
+                        detail = (
+                            f"plays={len(plays)} coord_key={len(have_key)} "
+                            f"usable_coord={len(real)} sample={sample}"
+                        )
                     return {
                         "name": name, "status": r.status_code, "bytes": len(body),
                         "seconds": round(dt, 2), "shape": detail,

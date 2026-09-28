@@ -97,12 +97,22 @@ four the matchup arm actually needs. The defender-attribution source V2 is desig
 `boxscorematchupsv3`, does not answer from this egress. That is the finding, and it is why the arm
 ships neutral.
 
-One caveat stated rather than buried: the four new paths were given a **40-second** budget, while
-`gamerotation` got 180 seconds and still returned nothing. Forty seconds distinguishes *blocked*
-from *fast* but not from *very slow*. They have since been added to the probe's `SLOW` set so the
-next run answers that at 180 s too. The conclusion is not expected to move — the same host held a
-connection open for a full three minutes twice in this run — but it is not yet measured at that
-budget, and this document does not report an expectation as a finding.
+The first run gave those four paths only a **40-second** budget, which distinguishes *blocked* from
+*fast* but not from *very slow*. They were moved to the probe's `SLOW` set and re-measured.
+
+**Run 36440945795** settles it. At a 180-second budget every one of them held the connection open
+for the full three minutes and returned nothing:
+
+| endpoint | budget | result |
+|---|---|---|
+| `boxscorematchupsv3` | 180 s | ReadTimeout at **180.09 s** |
+| `leagueseasonmatchups` | 180 s | ReadTimeout at **180.22 s** |
+| `playerdashptshotdefend` | 180 s | ReadTimeout at **180.14 s** |
+| `synergyplaytypes` | 180 s | ReadTimeout at **180.23 s** |
+| `gamerotation` (control for the budget) | 180 s | ReadTimeout at **180.13 s** |
+
+The ESPN control passed in the same run (200, 781,257 B, 0.11 s). **Blocked, not slow** — measured,
+not inferred, at the budget that can tell the two apart.
 
 ### 2.2b Two corrections this run forced
 
@@ -119,27 +129,34 @@ block or an outage. The probe asks for `GameId=0022500001`. Recording it as "the
 would blame the source for the probe's own request; it is listed here as **unresolved, our side
 suspected**.
 
-### 2.3 The ESPN angle is real, and narrower than I claimed
+### 2.3 ESPN carries play-by-play — and the coordinates are a sentinel
 
-ESPN is the one host that answers from this egress, and its game summary is comfortably reachable —
-200 in both rounds, ~383 KB, 0.25–0.30 s.
+Reachable and fast: 200 in every round, ~358–383 KB, 0.19–0.30 s.
 
-**What it carries is still unmeasured.** The run reported top-level keys `boxscore`, `format`,
-`gameInfo`, `leaders`, `seasonseries`, `injuries` — and that list is **truncated to six** by the
-probe's generic shape reporter, so it is not evidence that a `plays` array is absent. It is evidence
-that the probe could not answer the question.
+The targeted shape check answers the question the truncated key list could not. Event 401705718:
 
-An earlier draft of this document asserted the summary "carries play-by-play with shot coordinates".
-That was written from memory, and nothing measured supports or refutes it. The probe now has a
-targeted shape check for this endpoint that reports the `plays` count and how many entries carry a
-`coordinate`, so the next run answers it directly. Until then: **reachable, contents unconfirmed.**
+```
+plays=434  with_coordinate=434  sample={'x': -214748340, 'y': -214748365}
+```
 
-The asymmetry that motivated looking is still worth naming, and is now conditional: **if** a
-reachable source yields shot locations, V2 could learn *how a player shoots* long before it can
-learn *who made him shoot that way*. That is why the shot-profile layer is built to stand alone and
-`MatchupAdjustment` carries `rim_rate_delta` / `pullup_rate_delta` / `catch_shoot_rate_delta` as
-first-class fields even though V1 has nowhere to apply them —
-`transform.UNAPPLICABLE_FIELDS` reports them rather than dropping them silently.
+So the summary **does** carry play-by-play, and every play carries a `coordinate` key. My earlier
+"no `plays` key" reading was wrong, as suspected — the generic reporter had simply truncated.
+
+**But 434 of 434 is a count of the key, not of a location.** `-214748365` is ESPN's int32-derived
+sentinel for *not recorded* (−2³¹/10). A coverage figure built on key presence would have read as
+100% while carrying no usable coordinates at all — the same mistake in a new costume, and the third
+time this one endpoint has invited a conclusion the data does not support.
+
+The probe now counts **usable** coordinates (finite, within court-plausible bounds) separately from
+the key, and reports both. Until that has run: **play-by-play confirmed, shot locations
+unconfirmed.**
+
+The asymmetry that motivated looking stays conditional. *If* usable locations turn out to be
+available, V2 could learn *how a player shoots* long before it can learn *who made him shoot that
+way*. That is why the shot-profile layer stands alone and `MatchupAdjustment` carries
+`rim_rate_delta` / `pullup_rate_delta` / `catch_shoot_rate_delta` as first-class fields even though
+V1 has nowhere to apply them — `transform.UNAPPLICABLE_FIELDS` reports them rather than dropping
+them silently.
 
 ### 2.4 hoopR's release index came back empty
 
