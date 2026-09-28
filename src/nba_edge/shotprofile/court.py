@@ -44,15 +44,29 @@ HOOP_Y = 0.0
 # The three-point line, as the rulebook defines it rather than as the data suggests.
 CORNER_THREE_DISTANCE_FT = 22.0
 ABOVE_BREAK_THREE_DISTANCE_FT = 23.75
-# A corner three is one taken from where the arc is cut off by the sideline.
 CORNER_X_HALF_WIDTH = 22.0
+# Where the arc meets the sideline, and the corner stops being a corner:
+# sqrt(23.75^2 - 22^2) = 8.94 ft from the basket. Above that the line curves and the shot is
+# above-the-break even at the same x.
+#
+# The first version tested only |x - 25| >= 22 and put 12.8% of attempts in the corners against a
+# league rate near 8% -- it was catching wing threes taken near the sideline. Measured on 26,767
+# located attempts; see SHOT_PROFILE.md.
+CORNER_MAX_Y_FT = 8.94
+
+# The paint is a RECTANGLE, not a radius. The lane is 16 ft wide and runs 19 ft from the baseline,
+# which is 19 - 5.25 = 13.75 ft from the basket in these coordinates.
+#
+# The first version used a 14-ft radius and put 21.6% of attempts in the non-rim paint against a
+# league rate near 12%, while starving midrange at 7.4% against 13%: a radius sweeps in the
+# baseline and elbow jumpers that sit outside the lane but close to the basket.
+PAINT_HALF_WIDTH_FT = 8.0
+PAINT_DEPTH_FT = 13.75
 
 # Zone boundaries, in feet from the basket.
 RIM_MAX_FT = 4.0        # restricted-area scale
-PAINT_MAX_FT = 14.0     # non-rim paint / short midrange
-# beyond PAINT_MAX_FT and inside the arc is midrange
 
-# Court-plausible bounds, from the measured ranges (x 0..50, y -4..71) with headroom. A coordinate
+# Court-plausible bounds, from the measured ranges (x 0..50, y -5..71) with headroom. A coordinate
 # outside these is data corruption, not a shot.
 X_BOUNDS = (-2.0, 52.0)
 Y_BOUNDS = (-10.0, 94.0)
@@ -86,13 +100,22 @@ def distance_ft(x: float, y: float) -> float:
     return math.hypot(x - HOOP_X, y - HOOP_Y)
 
 
-def is_corner(x: float) -> bool:
-    """Whether an attempt sits in the corner, where the arc is cut off by the sideline."""
-    return abs(x - HOOP_X) >= CORNER_X_HALF_WIDTH
+def is_corner(x: float, y: float) -> bool:
+    """Whether an attempt sits in a true corner: wide enough AND below where the arc begins.
+
+    Both conditions matter. Width alone classifies wing threes taken near the sideline as corners,
+    which measured 12.8% of attempts against a league corner rate near 8%.
+    """
+    return abs(x - HOOP_X) >= CORNER_X_HALF_WIDTH and y <= CORNER_MAX_Y_FT
 
 
-def three_point_distance(x: float) -> float:
-    return CORNER_THREE_DISTANCE_FT if is_corner(x) else ABOVE_BREAK_THREE_DISTANCE_FT
+def three_point_distance(x: float, y: float) -> float:
+    return CORNER_THREE_DISTANCE_FT if is_corner(x, y) else ABOVE_BREAK_THREE_DISTANCE_FT
+
+
+def in_paint(x: float, y: float) -> bool:
+    """Inside the lane: a rectangle, which is what the painted area actually is."""
+    return abs(x - HOOP_X) <= PAINT_HALF_WIDTH_FT and y <= PAINT_DEPTH_FT
 
 
 def classify(
@@ -111,22 +134,21 @@ def classify(
     assert x is not None and y is not None  # narrowed by in_bounds
 
     d = distance_ft(x, y)
-    corner = is_corner(x)
+    corner = is_corner(x, y)
+
+    def two_point_zone() -> ShotZone:
+        if d <= RIM_MAX_FT:
+            return ShotZone.RIM
+        if in_paint(x, y):
+            return ShotZone.PAINT_NON_RIM
+        return ShotZone.MIDRANGE
 
     if points_value == 3:
         return ShotZone.CORNER_THREE if corner else ShotZone.ABOVE_BREAK_THREE
     if points_value == 2:
-        if d <= RIM_MAX_FT:
-            return ShotZone.RIM
-        if d <= PAINT_MAX_FT:
-            return ShotZone.PAINT_NON_RIM
-        return ShotZone.MIDRANGE
+        return two_point_zone()
 
     # No recorded value: fall back to geometry alone.
-    if d >= three_point_distance(x):
+    if d >= three_point_distance(x, y):
         return ShotZone.CORNER_THREE if corner else ShotZone.ABOVE_BREAK_THREE
-    if d <= RIM_MAX_FT:
-        return ShotZone.RIM
-    if d <= PAINT_MAX_FT:
-        return ShotZone.PAINT_NON_RIM
-    return ShotZone.MIDRANGE
+    return two_point_zone()

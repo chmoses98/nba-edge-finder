@@ -140,14 +140,17 @@ def test_the_hoop_origin_is_the_measured_one_not_the_intuitive_one():
 def test_distance_and_corner_detection():
     assert distance_ft(25.0, 0.0) == 0.0
     assert distance_ft(25.0, 10.0) == pytest.approx(10.0)
-    assert is_corner(2.0) and is_corner(48.0)
-    assert not is_corner(25.0) and not is_corner(10.0)
+    # A corner needs BOTH width and a low y: a wing three taken near the sideline is not a corner.
+    assert is_corner(2.0, 1.0) and is_corner(48.0, 1.0)
+    assert not is_corner(25.0, 1.0) and not is_corner(10.0, 1.0)
+    assert not is_corner(2.0, 20.0), "wide but above where the arc begins -> above the break"
 
 
 def test_zone_classification_is_deterministic_and_covers_the_court():
     cases = [
         ((25.0, 1.0), 2, ShotZone.RIM),
         ((25.0, 8.0), 2, ShotZone.PAINT_NON_RIM),
+        ((14.0, 8.0), 2, ShotZone.MIDRANGE),   # outside the lane, close to the basket
         ((25.0, 18.0), 2, ShotZone.MIDRANGE),
         ((2.0, 1.0), 3, ShotZone.CORNER_THREE),
         ((25.0, 26.0), 3, ShotZone.ABOVE_BREAK_THREE),
