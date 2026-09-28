@@ -1,9 +1,25 @@
 {
- "last_capture_utc": "2026-09-27T21:46:05Z",
+ "last_capture_utc": "2026-09-28T02:59:11Z",
  "n_markets": 3494,
  "n_series": 256,
- "requests": 829,
- "run_id": "36352879071",
+ "requests": 830,
+ "run_id": "36371861043",
+ "markets_written": {
+  "encoding": "checkpoint",
+  "reason": "UTC day rolled over; keeping day partitions self-contained",
+  "path": "kalshi/markets/dt=2026-09-28/kalshi_markets_20260928T025911Z_36371861043.jsonl.gz",
+  "bytes": 287224,
+  "n_markets": 3494,
+  "board_sha256": "83d0172d46a00e557e76c056641b9fcf0366b8af3444d2df737f743b20400aa1"
+ },
+ "orderbooks_written": {
+  "encoding": "checkpoint",
+  "reason": "UTC day rolled over; keeping day partitions self-contained",
+  "path": "kalshi/orderbooks/dt=2026-09-28/kalshi_orderbooks_20260928T025911Z_36371861043.jsonl.gz",
+  "bytes": 15649,
+  "n_markets": 300,
+  "board_sha256": "5277e4f26e87c7ecf878f04ea9f5c9ffff41c9c9c707341c2f6c9c5e60492d06"
+ },
  "by_status": {
   "active": 3494
  },
