@@ -280,8 +280,18 @@ class Worker:
     def _one_cycle(self, now: datetime) -> CycleRecord:
         tips = tip_times(self.schedule_fn())
         cyc = plan_cycle(now, tips)
+        decision = self.decide_fn() or {}
+        # The UNION of both gates, because the worker replaced the conductor's schedule and has to
+        # be a genuine superset of it.
+        #
+        # `plan_cycle` only opens inside the 8h active window, but `decide()` also captured within
+        # 36h of a tip AND on a daily off-season slot. Taking only the worker's gate silently ended
+        # off-season market capture the moment the conductor's cron was removed -- no futures
+        # snapshots at all between seasons, which is exactly the sort of quiet evidence loss that is
+        # invisible until someone goes looking for data that was never collected.
+        should_capture = bool(cyc.should_capture or decision.get("capture"))
         captured = capture_ok = push_ok = False
-        if cyc.should_capture:
+        if should_capture:
             captured = True
             rc, out = self.run_cmd(
                 [p.replace("ARCHIVE", str(self.archive_root)) for p in self.CAPTURE_CMD],
@@ -299,7 +309,7 @@ class Worker:
         # do, the worker must therefore do itself -- otherwise simulate/settle/evaluate/discover
         # silently stop for as long as a worker is alive. Each is age-gated by decide(), so this is
         # the same cadence they had before, not extra work.
-        jobs_run = self._run_due_jobs()
+        jobs_run = self._run_due_jobs(decision)
 
         cur = lease_mod.read_lease(self.archive_root)
         if cur is not None:
@@ -328,7 +338,7 @@ class Worker:
             duration_s=(self.now() - now).total_seconds(),
             cadence_s=cyc.cadence_seconds,
             hours_to_next_tip=cyc.hours_to_next_tip,
-            reason=cyc.reason,
+            reason=cyc.reason if cyc.should_capture or not should_capture else "conductor gate: off-window capture due",
         )
 
     # The capture command, as a constant rather than inline, so a test can compare it against
@@ -360,8 +370,8 @@ class Worker:
         ),
     )
 
-    def _run_due_jobs(self) -> list[str]:
-        decision = self.decide_fn() or {}
+    def _run_due_jobs(self, decision: dict | None = None) -> list[str]:
+        decision = decision if decision is not None else (self.decide_fn() or {})
         done = []
         for name, template, budget in self.SLOW_JOBS:
             if not decision.get(name):

@@ -351,3 +351,29 @@ def test_the_worker_runs_the_same_commands_the_conductor_does():
     )
     for job, expected in sorted(conductor.items()):
         assert rendered[job] == expected, f"{job}: worker runs {rendered[job]!r}, conductor runs {expected!r}"
+
+
+def test_the_worker_captures_off_window_when_the_conductor_would_have(tmp_path):
+    """The worker replaced the conductor's schedule, so it must be a superset of it for CAPTURE too.
+
+    `plan_cycle` only opens inside the 8h active window, but `decide()` also captured within 36h of
+    a tip and on a daily off-season slot. Honouring only the worker's gate silently ended off-season
+    market capture the instant the conductor's cron was removed -- no futures snapshots between
+    seasons, an evidence loss invisible until someone looks for data that was never collected.
+    """
+    clock = FakeClock(T0)
+    w = make_worker(tmp_path, clock, "run-1", schedule=[], lifetime=30.0)
+    w.decide_fn = lambda: {"capture": True}  # the off-season daily slot
+    res = w.run()
+    assert any(c.captured for c in res.cycles), "conductor said capture; the worker must capture"
+    assert ["nba", "capture"] in [c[:2] for c in w._calls]
+
+
+def test_the_worker_still_does_not_capture_when_neither_gate_opens(tmp_path):
+    """The control: the union must not degrade into "always capture"."""
+    clock = FakeClock(T0)
+    w = make_worker(tmp_path, clock, "run-1", schedule=[], lifetime=30.0)
+    w.decide_fn = lambda: {"capture": False, "context": False}
+    res = w.run()
+    assert not any(c.captured for c in res.cycles)
+    assert ["nba", "capture"] not in [c[:2] for c in w._calls]
