@@ -1,0 +1,77 @@
+name: shot-events-pull
+# Manual: ingest ESPN play-by-play SHOT EVENTS into Parquet from a network-capable runner and commit
+# the dataset back to the branch it ran on.
+#
+# It has to run here: site.api.espn.com is denied by the development container's egress policy
+# (403 on CONNECT) and answers in ~0.2s from Actions.
+#
+# Resumable by design. A full season is ~1,230 summaries, so a run can time out; re-triggering picks
+# up from data/history/espn/shot_done_events_<season>.json and fetches only what is missing.
+on:
+  workflow_dispatch:
+    inputs:
+      seasons:
+        description: "Comma list of seasons (YYYY-YY)"
+        default: "2024-25"
+      max_games:
+        description: "Cap on NEW games per run (0 = no cap)"
+        default: "0"
+
+env:
+  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+  SEASONS: ${{ inputs.seasons || '2024-25' }}
+  MAX_GAMES: ${{ inputs.max_games || '0' }}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: shot-events-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Pull shot events
+        env:
+          NBA_EDGE_LOG_LEVEL: INFO
+        run: nba shot-events --out data/history --seasons "$SEASONS" --max-games "$MAX_GAMES"
+      - name: Show manifest
+        if: always()
+        run: cat data/history/espn/SHOT_EVENTS_MANIFEST.json || true
+      - name: Commit shot-event dataset
+        if: always()
+        run: |
+          git config user.name "nba-edge-bot"
+          git config user.email "nba-edge-bot@users.noreply.github.com"
+          git add -f data/history/espn/shot_events_*.parquet \
+                     data/history/espn/shot_done_events_*.json \
+                     data/history/espn/SHOT_EVENTS_MANIFEST.json 2>/dev/null || true
+          if git diff --cached --quiet; then echo "nothing to commit"; else
+            git commit -m "shot events: ESPN play-by-play dataset ($SEASONS) (run ${{ github.run_id }})"
+            # Never rewrite the default branch unattended -- the same rule the box-score pull
+            # learned the hard way, when merging PR #1 fired a pull that committed straight to main.
+            if [ "${GITHUB_REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
+              echo "::warning title=Refusing to push to the default branch::Ran on ${GITHUB_REF_NAME}. The data is in this run's artifact; re-run on a branch to commit it."
+            else
+              git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"
+              git push origin HEAD:"${GITHUB_REF_NAME}"
+            fi
+          fi
+      - name: Preserve the dataset as an artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shot-events
+          path: |
+            data/history/espn/shot_events_*.parquet
+            data/history/espn/SHOT_EVENTS_MANIFEST.json
+          if-no-files-found: ignore

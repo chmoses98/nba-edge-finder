@@ -164,6 +164,20 @@ def cmd_context(args: argparse.Namespace) -> int:
     return run_context_refresh(out_root=Path(args.out), season=args.season)
 
 
+def cmd_shot_events(args: argparse.Namespace) -> int:
+    """RESEARCH: ingest ESPN play-by-play shot events into a point-in-time dataset.
+
+    Descriptive only. It records where attempts were taken and whether they went in; it carries no
+    defender, because no reachable source supplies one.
+    """
+    from nba_edge.shotprofile.ingest import run_shot_event_pull
+
+    return run_shot_event_pull(
+        Path(args.out), [s.strip() for s in args.seasons.split(",")],
+        max_games=args.max_games or None,
+    )
+
+
 def cmd_matchup_shadow(args: argparse.Namespace) -> int:
     """Record what was knowable about each upcoming game's matchups, when it was knowable.
 
@@ -278,6 +292,15 @@ def build_parser() -> argparse.ArgumentParser:
     x.add_argument("--out", default="data/archive")
     x.add_argument("--season", default=None)
     x.set_defaults(func=cmd_context)
+
+    se = sub.add_parser(
+        "shot-events",
+        help="RESEARCH: ingest ESPN shot events (locations + outcomes; never defenders)",
+    )
+    se.add_argument("--out", default="data/history")
+    se.add_argument("--seasons", default="2024-25")
+    se.add_argument("--max-games", type=int, default=0, help="cap NEW games per run; 0 = no cap")
+    se.set_defaults(func=cmd_shot_events)
 
     ms = sub.add_parser(
         "matchup-shadow",
