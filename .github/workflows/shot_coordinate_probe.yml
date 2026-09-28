@@ -1,0 +1,42 @@
+name: shot-coordinate-probe
+# Empirically establish what ESPN play-by-play coordinates mean, from a runner.
+#
+# It has to run here rather than in the development container: `site.api.espn.com` is denied by that
+# container's egress policy (403 on CONNECT) and answers fine from Actions -- the same split the
+# granular source audit documented for stats.nba.com in the other direction.
+#
+# Read-only. It fetches summaries and prints statistics; it writes nothing to the archive.
+on:
+  workflow_dispatch:
+    inputs:
+      season:
+        description: "Season whose cached event ids to sample (e.g. 2024-25)"
+        default: "2024-25"
+      games:
+        description: "How many games to sample, spread across the season"
+        default: "12"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Its own group: this must never queue behind, or supersede, the capture worker.
+  group: shot-coordinate-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Probe ESPN shot coordinates
+        env:
+          SEASON: ${{ inputs.season }}
+          GAMES: ${{ inputs.games }}
+        run: python scripts/probe_shot_coordinates.py --season "${SEASON:-2024-25}" --games "${GAMES:-12}"
