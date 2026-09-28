@@ -36,7 +36,19 @@ GAME = "0022500001"  # first regular-season game of 2025-26
 # timeout cannot tell them apart. pbpstats returned 200 in 2.6s for one endpoint while three others
 # timed out, which is the signature of slow generation rather than an IP block.
 SLOW_BUDGET_S = 180.0
-SLOW = ("pbpstats get-games", "pbpstats possessions", "stats.nba gamerotation")
+SLOW = (
+    "pbpstats get-games",
+    "pbpstats possessions",
+    "stats.nba gamerotation",
+    # The matchup endpoints joined this list after run 36438057935 timed them out at 40s. Forty
+    # seconds separates blocked from fast but not from very slow, and "blocked" is the claim the
+    # matchup audit rests on -- so they get the same 180s budget that made gamerotation's verdict
+    # unambiguous.
+    "stats.nba boxscorematchupsv3",
+    "stats.nba leagueseasonmatchups",
+    "stats.nba playerdashptshotdefend",
+    "stats.nba synergyplaytypes",
+)
 
 SOURCES = [
     (
@@ -180,6 +192,29 @@ def probe(name: str, url: str, headers: dict) -> dict:
                         "bytes": len(body),
                         "seconds": round(dt, 2),
                         "shape": f"unparsed: {e}",
+                    }
+            if name.startswith("espn game summary"):
+                # A targeted shape probe, because the generic one truncates to six keys -- which
+                # made an earlier run look like it proved `plays` was ABSENT when it had only
+                # failed to print it. The question this source exists to answer is narrow: does it
+                # carry play-by-play, and do the plays carry shot coordinates?
+                try:
+                    d = json.loads(body)
+                    plays = d.get("plays")
+                    if not isinstance(plays, list):
+                        detail = f"no plays array (top-level keys: {','.join(list(d))})"
+                    else:
+                        shots = [pl for pl in plays if isinstance(pl, dict) and "coordinate" in pl]
+                        sample = shots[0].get("coordinate") if shots else None
+                        detail = f"plays={len(plays)} with_coordinate={len(shots)} sample={sample}"
+                    return {
+                        "name": name, "status": r.status_code, "bytes": len(body),
+                        "seconds": round(dt, 2), "shape": detail,
+                    }
+                except (json.JSONDecodeError, TypeError, AttributeError) as e:
+                    return {
+                        "name": name, "status": r.status_code, "bytes": len(body),
+                        "seconds": round(dt, 2), "shape": f"unparsed: {e}",
                     }
             if body[:1] in (b"{", b"["):
                 try:
