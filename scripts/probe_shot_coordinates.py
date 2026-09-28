@@ -123,6 +123,7 @@ def analyse(payload: dict[str, Any], acc: dict[str, Any]) -> None:
         sv = p.get("scoreValue")
         if isinstance(sv, int) and sv in (2, 3) and shooting:
             acc["by_value"][sv].append((x, y))
+            acc["arc"].append((sv, x, y))
 
 
 def describe(vals: list[float], name: str) -> str:
@@ -156,7 +157,7 @@ def main() -> int:
         "type_counts": Counter(), "shooting_types": Counter(), "sentinel_types": Counter(),
         "sentinel_values": Counter(), "no_coord_key_types": Counter(),
         "usable_nonshooting_types": Counter(),
-        "by_side_half": defaultdict(list), "by_value": defaultdict(list),
+        "by_side_half": defaultdict(list), "by_value": defaultdict(list), "arc": [],
     }
 
     with httpx.Client(timeout=40, follow_redirects=True, headers=PLAIN_HEADERS_OK) as client:
@@ -188,6 +189,37 @@ def main() -> int:
             ys = [p[1] for p in pts]
             print(f"  {v}PT: n={len(pts)} mean_x={statistics.mean(xs):.1f} mean_y={statistics.mean(ys):.1f} "
                   f"x_range=({min(xs):.0f},{max(xs):.0f}) y_range=({min(ys):.0f},{max(ys):.0f})")
+
+
+    # == the decisive test =====================================================================
+    # The three-point line is a known physical constant, so it can be used to CHECK a candidate
+    # origin rather than assume one. If the hoop really sits at (25, 5.25) in feet with y measured
+    # from the baseline, then essentially every 3PT attempt must compute to a distance beyond the
+    # arc and essentially every 2PT attempt inside it. A wrong origin fails this immediately.
+    #
+    # Corner threes sit at 22 ft and above-the-break at 23.75 ft, so the test is applied per zone.
+    print("\n== arc test: does a candidate hoop origin reproduce the known 3-point line? ==")
+    import math
+    for hx, hy in ((25.0, 5.25), (25.0, 0.0), (0.0, 25.0), (25.0, 4.75)):
+        ok3 = bad3 = ok2 = bad2 = 0
+        for sv, x, y in acc["arc"]:
+            d = math.hypot(x - hx, y - hy)
+            corner = abs(x - hx) >= 22.0
+            line = 22.0 if corner else 23.75
+            if sv == 3:
+                # integer-rounded coordinates, so allow a foot of slack at the line
+                ok3, bad3 = (ok3 + 1, bad3) if d >= line - 1.0 else (ok3, bad3 + 1)
+            else:
+                ok2, bad2 = (ok2 + 1, bad2) if d <= line + 1.0 else (ok2, bad2 + 1)
+        n3, n2 = ok3 + bad3, ok2 + bad2
+        print(f"  hoop at ({hx},{hy}): 3PT beyond arc {ok3}/{n3} ({100*ok3/max(1,n3):.1f}%)   "
+              f"2PT inside arc {ok2}/{n2} ({100*ok2/max(1,n2):.1f}%)")
+
+    print("\n== distance distribution under the best-fitting origin (25, 5.25) ==")
+    for sv in (2, 3):
+        ds = [math.hypot(x - 25.0, y - 5.25) for v, x, y in acc["arc"] if v == sv]
+        if ds:
+            print(describe(ds, f"{sv}PT distance (ft)"))
 
     print("\n== free throws ==")
     print(f"  free-throw events: {acc['ft_total']}, with a usable coordinate: {acc['ft_with_usable_coord']}")
