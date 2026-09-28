@@ -65,6 +65,20 @@ def build_report(archive_root: Path, data_root: Path | None = None) -> dict:
 
     cadence = run_capture_health(archive, days=30)["summary"]
 
+    # Delta chains are now the authoritative storage for market boards, so their integrity belongs
+    # on the daily board. verify_archive reports rather than raises, precisely so one broken chain
+    # is surfaced next to the healthy ones instead of aborting the whole report.
+    try:
+        from nba_edge.archive.reconstruct import verify_archive
+
+        chains = verify_archive(archive)
+        chains["state"] = "ok" if chains["n_broken"] == 0 else "broken"
+        if not chains["n_chains"]:
+            chains["state"] = "empty"
+            chains["reason"] = "no delta chains yet; every board so far is a full checkpoint"
+    except Exception as e:  # noqa: BLE001 - a dashboard must never fail on a bad archive
+        chains = {"state": "absent", "reason": f"chain verification unavailable: {e}"}
+
     markets = _section(
         cap,
         "capture has never written STATUS_capture.json",
@@ -171,7 +185,15 @@ def build_report(archive_root: Path, data_root: Path | None = None) -> dict:
         "settlement": settlement,
         "evidence": evidence,
         "stint_data": stint,
-        "worker": wrk or {"state": "absent", "reason": "no worker has retired against this archive yet"},
+        "delta_chains": chains,
+        # Wrapped so it carries `state` like every other section. Returning the raw STATUS payload
+        # left this section as the only one without one, which breaks the contract the module's
+        # docstring makes and the one a reader scans for.
+        "worker": (
+            {"state": "ok", **wrk}
+            if wrk
+            else {"state": "absent", "reason": "no worker has retired against this archive yet"}
+        ),
     }
 
 
