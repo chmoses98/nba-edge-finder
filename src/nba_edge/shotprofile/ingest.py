@@ -16,6 +16,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from nba_edge.config import settings
 from nba_edge.data.history import (
     fetch_json,
     iter_season_dates,
@@ -25,11 +26,12 @@ from nba_edge.data.history import (
     summary_url,
     write_parquet,
 )
-from nba_edge.logging import kv, log
-from nba_edge.settings import settings
+from nba_edge.log import get_logger, kv
 from nba_edge.shotprofile.court import classify
 from nba_edge.shotprofile.events import parse_summary
 from nba_edge.timeutil import iso, utcnow
+
+log = get_logger(__name__)
 
 SUMMARY_TTL_S = 90 * 24 * 3600.0  # a finished game's play-by-play never changes
 

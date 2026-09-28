@@ -81,12 +81,67 @@ One test failure was my own setup rather than the code: 2,000 attempts more than
 before the cutoff stayed near the prior, which is the recency weighting working correctly. Volume
 alone does not overcome a prior; *recent* volume does. The test now says so.
 
+## 4b. Validated against 150 real games
+
+`nba shot-events --seasons 2024-25 --max-games 150` (run 36467977361): **33,943 events, 26,767
+located field-goal attempts, 0 errors.**
+
+**What the data confirms.** 178.4 FGA per game against a real NBA rate near 176. A 3PA share of
+**43.0% against a league rate near 42%**. And FG% by zone lands where basketball says it should:
+
+| zone | measured FG% |
+|---|---|
+| rim | 66.2% |
+| paint (non-rim) | 42.5% |
+| midrange | 39.3% |
+| corner three | 36.6% |
+| above the break | 33.9% |
+
+Monotone from the rim outwards, with the corner three above the break-three, which is the ordering
+every public shot chart shows. The 2PT/3PT boundary — the one the arc test actually measured — is
+sound.
+
+**What the data corrected.** The first zone definitions were checked against public league rates and
+two were visibly wrong. Both fixes are geometric, not curve-fitting:
+
+| zone | first | corrected | league |
+|---|---|---|---|
+| rim | 27.9% | 27.9% | ~32% |
+| paint (non-rim) | 21.6% | **19.5%** | ~12% |
+| midrange | 7.4% | **9.5%** | ~13% |
+| corner three | 12.8% | **10.5%** | ~8% |
+| above the break | 30.2% | **32.6%** | ~34% |
+| **total absolute deviation** | **0.278** | **0.190** | |
+
+- **The corner needs a ceiling, not just a width.** Testing only `|x−25| ≥ 22` counted wing threes
+  taken near the sideline. The arc meets the sideline at `sqrt(23.75² − 22²) = 8.94 ft` from the
+  basket; above that the line curves and the shot is above-the-break at the same x.
+- **The paint is a rectangle, not a radius.** A 14-ft radius sweeps in baseline and elbow jumpers
+  that sit outside the lane but close to the basket — which is why non-rim paint was inflated while
+  midrange starved. The lane is 16 ft wide and 19 ft deep from the baseline, so 8 ft either side of
+  centre and 13.75 ft from the basket.
+
+**Where it is still off, and why I stopped.** Rim remains ~4 points low and non-rim paint ~7 high.
+That is the residual the documented origin band predicts: a 4-foot rim radius is the boundary most
+sensitive to a ±1.5 ft uncertainty in `y`.
+
+I did not tune further. The league rates above are quoted from memory, not measured, and different
+sources define "rim" and "paint" differently — NBA.com's restricted area is not the same cut as
+"within 4 feet". Adjusting constants until they match an unverified target would be fitting, and it
+would destroy the property that makes the 2PT/3PT split trustworthy: that it was checked against a
+physical constant rather than against an aggregate.
+
+**So: the three-point boundaries are measured; the rim/paint split is approximate and documented as
+such.** A study that leans on rim-vs-paint should say so.
+
 ## 5. Stop condition (mission Phase 14)
 
 > Do not continue into a learned matchup model unless there is already enough historical shot-event
 > coverage to perform a proper walk-forward study.
 
-**There is not, yet — and this is the absence of a test, not a negative result.** The distinction is
+**There is not, yet — and this is the absence of a test, not a negative result.** Measured on the
+150 games ingested so far: **98 distinct game dates against a 200-game fold floor**, and **0 players
+with 200+ located attempts** (80 clear 100, 219 clear 50; median 36, max 196). The distinction is
 enforced in code: `run_study` returns `verdict: INSUFFICIENT_DATA` with the reason *"This is not
 evidence against shot-profile features; it is the absence of a test"* rather than a null finding
 that a later reader could mistake for one.

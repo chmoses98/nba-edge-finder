@@ -140,14 +140,17 @@ def test_the_hoop_origin_is_the_measured_one_not_the_intuitive_one():
 def test_distance_and_corner_detection():
     assert distance_ft(25.0, 0.0) == 0.0
     assert distance_ft(25.0, 10.0) == pytest.approx(10.0)
-    assert is_corner(2.0) and is_corner(48.0)
-    assert not is_corner(25.0) and not is_corner(10.0)
+    # A corner needs BOTH width and a low y: a wing three taken near the sideline is not a corner.
+    assert is_corner(2.0, 1.0) and is_corner(48.0, 1.0)
+    assert not is_corner(25.0, 1.0) and not is_corner(10.0, 1.0)
+    assert not is_corner(2.0, 20.0), "wide but above where the arc begins -> above the break"
 
 
 def test_zone_classification_is_deterministic_and_covers_the_court():
     cases = [
         ((25.0, 1.0), 2, ShotZone.RIM),
         ((25.0, 8.0), 2, ShotZone.PAINT_NON_RIM),
+        ((14.0, 8.0), 2, ShotZone.MIDRANGE),   # outside the lane, close to the basket
         ((25.0, 18.0), 2, ShotZone.MIDRANGE),
         ((2.0, 1.0), 3, ShotZone.CORNER_THREE),
         ((25.0, 26.0), 3, ShotZone.ABOVE_BREAK_THREE),
@@ -554,3 +557,116 @@ def test_fold_evaluation_windows_do_not_overlap():
     for a, b in zip(folds, folds[1:], strict=False):
         assert a["eval_end"] <= b["eval_start"]
         assert a["train_end"] <= a["eval_start"]
+
+
+# == 10. INGESTION, OFFLINE ====================================================================
+
+
+def test_every_shotprofile_module_imports():
+    """A module only imported lazily inside a CLI handler is a module nothing type-checks.
+
+    `ingest.py` shipped with `from nba_edge.logging import ...` -- a package that does not exist --
+    and the whole suite stayed green because no test imported it. The workflow run was what failed.
+    """
+    import importlib
+
+    for m in ("events", "court", "features", "packet", "ingest"):
+        importlib.import_module(f"nba_edge.shotprofile.{m}")
+    importlib.import_module("nba_edge.research.shot_profile_study")
+
+
+def test_the_cli_exposes_shot_events():
+    from nba_edge.cli import build_parser
+
+    args = build_parser().parse_args(["shot-events", "--seasons", "2024-25", "--max-games", "3"])
+    assert args.seasons == "2024-25" and args.max_games == 3
+    assert callable(args.func)
+
+
+def _summary_payload():
+    return {
+        "header": {"competitions": [{"competitors": [
+            {"id": "1", "homeAway": "home"}, {"id": "2", "homeAway": "away"}]}]},
+        "plays": [
+            play(id="1", coordinate={"x": 25, "y": 1}, scoreValue=2, scoringPlay=True,
+                 text="Player makes 2-foot layup"),
+            play(id="2", coordinate={"x": 2, "y": 1}, scoreValue=3, scoringPlay=False,
+                 text="Player misses 23-foot three point shot"),
+            play(id="3", shootingPlay=False, type={"text": "Defensive Rebound"},
+                 text="Defensive Rebound", coordinate={"x": 25, "y": 3}),
+            play(id="4", shootingPlay=False, type={"text": "Free Throw - 1 of 2"},
+                 text="Player makes free throw 1 of 2", coordinate=SENTINEL, scoreValue=1),
+        ],
+    }
+
+
+def test_ingestion_writes_attempts_with_zones_and_skips_non_shots(tmp_path, monkeypatch):
+    from datetime import date
+
+    import nba_edge.shotprofile.ingest as I
+
+    board = {"x": 1}
+    monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
+    monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+
+    def fake_fetch(url, ttl, cache_root=None):
+        return (board if "scoreboard" in url else _summary_payload()), False
+
+    monkeypatch.setattr(I, "fetch_json", fake_fetch)
+
+    assert I.run_shot_event_pull(tmp_path, ["2024-25"]) == 0
+    df = I.load_shot_events(tmp_path, ["2024-25"])
+    assert len(df) == 3, "two field goals and one free throw; the rebound is not an attempt"
+
+    fga = df[~df["is_free_throw"]]
+    assert set(fga["zone"]) == {"rim", "corner_three"}
+    ft = df[df["is_free_throw"]].iloc[0]
+    assert bool(ft["coordinate_valid"]) is False and ft["zone"] == "unknown"
+    assert all(df["event_time_utc"] == "2025-01-15T23:00:00Z"), "attributed to the game's tip"
+
+
+def test_a_second_run_reingests_nothing(tmp_path, monkeypatch):
+    """The done-set is what makes a ~1,230-summary season survive a timeout."""
+    from datetime import date
+
+    import nba_edge.shotprofile.ingest as I
+
+    monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
+    monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+    calls = {"n": 0}
+
+    def fake_fetch(url, ttl, cache_root=None):
+        if "summary" in url:
+            calls["n"] += 1
+        return ({} if "scoreboard" in url else _summary_payload()), False
+
+    monkeypatch.setattr(I, "fetch_json", fake_fetch)
+
+    I.run_shot_event_pull(tmp_path, ["2024-25"])
+    first = calls["n"]
+    I.run_shot_event_pull(tmp_path, ["2024-25"])
+    assert calls["n"] == first, "an already-ingested game must not be fetched again"
+    assert len(I.load_shot_events(tmp_path, ["2024-25"])) == 3, "and must not be duplicated"
+
+
+def test_one_unavailable_game_does_not_end_the_pull(tmp_path, monkeypatch):
+    from datetime import date
+
+    import nba_edge.shotprofile.ingest as I
+
+    monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
+    monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
+        {"game_id": "espn:400", "event_id": "400", "start_time_utc": "2025-01-15T20:00:00Z"},
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+
+    def fake_fetch(url, ttl, cache_root=None):
+        if "event=400" in url:
+            raise RuntimeError("upstream exploded")
+        return ({} if "scoreboard" in url else _summary_payload()), False
+
+    monkeypatch.setattr(I, "fetch_json", fake_fetch)
+
+    assert I.run_shot_event_pull(tmp_path, ["2024-25"]) == 0
+    assert len(I.load_shot_events(tmp_path, ["2024-25"])) == 3, "the healthy game still landed"
