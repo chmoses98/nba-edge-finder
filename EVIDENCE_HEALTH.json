@@ -1,4 +1,11 @@
 {
+  "baseline": {
+    "baseline_id": "NBA_BASELINE_2026_PRESEASON_V1",
+    "frozen_parameters_intact": true,
+    "live_digest": "5a4cbda0b973d1e4d6289557b99372e4735ebe3146fa76e8f0b6ca833193be78",
+    "recorded_digest": "5a4cbda0b973d1e4d6289557b99372e4735ebe3146fa76e8f0b6ca833193be78",
+    "state": "ok"
+  },
   "context": {
     "confirmed_starters": {
       "reason": "projected and CONFIRMED starters are not yet distinguished in the context snapshot",
@@ -6,9 +13,9 @@
     },
     "injuries": {
       "first_day": "dt=2026-09-18",
-      "last_day": "dt=2026-09-24",
-      "n_days": 7,
-      "n_snapshots": 34,
+      "last_day": "dt=2026-09-27",
+      "n_days": 10,
+      "n_snapshots": 37,
       "state": "ok"
     },
     "lineups": {
@@ -17,16 +24,16 @@
     },
     "rosters": {
       "first_day": "dt=2026-09-18",
-      "last_day": "dt=2026-09-24",
-      "n_days": 7,
-      "n_snapshots": 34,
+      "last_day": "dt=2026-09-27",
+      "n_days": 10,
+      "n_snapshots": 37,
       "state": "ok"
     },
     "schedule": {
       "first_day": "dt=2026-09-18",
-      "last_day": "dt=2026-09-24",
-      "n_days": 7,
-      "n_snapshots": 34,
+      "last_day": "dt=2026-09-27",
+      "n_days": 10,
+      "n_snapshots": 37,
       "state": "ok"
     },
     "state": "ok"
@@ -35,16 +42,14 @@
     "reason": "evaluate has not run against this archive",
     "state": "absent"
   },
-  "generated_at_utc": "2026-09-24T04:37:52.923372+00:00",
+  "generated_at_utc": "2026-09-28T03:08:29.891539+00:00",
   "markets": {
-    "age_minutes": 2137.2490114,
-    "alarms": [
-      "order books truncated: 3463 live markets but max_orderbooks=300"
-    ],
+    "age_minutes": 5.114963599999999,
+    "alarms": [],
     "by_support": {
       "MODELABLE": 6,
       "RESEARCH": 1484,
-      "UNMODELABLE": 1973
+      "UNMODELABLE": 2004
     },
     "cadence": {
       "acceptance": {
@@ -110,10 +115,10 @@
         "p99": null
       }
     },
-    "last_capture_utc": "2026-09-22T17:00:38Z",
-    "n_discovered": 3463,
+    "last_capture_utc": "2026-09-28T03:03:23Z",
+    "n_discovered": 3494,
     "n_series": 256,
-    "n_unresolved_alarms": 1,
+    "n_unresolved_alarms": 0,
     "state": "ok"
   },
   "settlement": {
@@ -137,21 +142,21 @@
         "cadence_s": 900.0,
         "capture_ok": false,
         "captured": false,
-        "duration_s": 1.18773,
-        "hours_to_next_tip": 234.3689636961111,
+        "duration_s": 1.207015,
+        "hours_to_next_tip": 139.85870014833333,
         "jobs_run": [],
         "push_ok": true,
         "reason": "no game within the active window",
-        "started_at": "2026-09-24T04:37:51Z"
+        "started_at": "2026-09-28T03:08:28Z"
       }
     ],
     "exit_reason": "planned retirement before next cadence tick",
     "fail_closed": false,
-    "generation": 1,
+    "generation": 2,
     "n_capture_failed": 0,
     "n_captured": 0,
     "n_cycles": 1,
-    "successor_dispatched": false,
-    "worker_id": "35956423112"
+    "successor_dispatched": true,
+    "worker_id": "36372489665"
   }
 }
