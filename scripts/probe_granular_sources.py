@@ -80,6 +80,40 @@ SOURCES = [
         f"https://api.pbpstats.com/get-game-stats?GameId={GAME}&Type=Lineup",
         PLAIN_HEADERS_OK,
     ),
+    # --- MATCHUP_AWARE_V2 candidates (defender attribution, shot profile, scheme proxy) ---------
+    #
+    # Added for the matchup research arm. The Phase 7 probe established that stats.nba.com is
+    # blocked from Azure egress, but that is a claim about three endpoints; the matchup arm depends
+    # on different ones, and "the host was blocked for a different path" is inference, not
+    # measurement. These are measured on their own.
+    (
+        "stats.nba boxscorematchupsv3",
+        f"https://stats.nba.com/stats/boxscorematchupsv3?GameID={GAME}&StartPeriod=1&EndPeriod=4&StartRange=0&EndRange=0&RangeType=0",
+        NBA_HEADERS,
+    ),
+    (
+        "stats.nba leagueseasonmatchups",
+        "https://stats.nba.com/stats/leagueseasonmatchups?LeagueID=00&PerMode=Totals&Season=2025-26&SeasonType=Regular+Season",
+        NBA_HEADERS,
+    ),
+    (
+        "stats.nba playerdashptshotdefend",
+        "https://stats.nba.com/stats/playerdashptshotdefend?LeagueID=00&PerMode=PerGame&PlayerID=201939&Season=2025-26&SeasonType=Regular+Season&TeamID=0",
+        NBA_HEADERS,
+    ),
+    (
+        "stats.nba synergyplaytypes",
+        "https://stats.nba.com/stats/synergyplaytypes?LeagueID=00&PerMode=PerGame&PlayType=Isolation&PlayerOrTeam=T&SeasonType=Regular+Season&SeasonYear=2025-26&TypeGrouping=defensive",
+        NBA_HEADERS,
+    ),
+    # ESPN is the one host known to answer from this egress. Its game summary carries play-by-play
+    # with shot coordinates, which is a shot-PROFILE source (zones) and emphatically not a defender
+    # source -- worth measuring precisely so the audit can say which of the two it supplies.
+    (
+        "espn game summary (shot coords)",
+        "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401705718",
+        PLAIN_HEADERS_OK,
+    ),
     # CONTROL. This is the exact endpoint `nba context` fetches several times a day from this
     # same workflow environment, so it is known-good. If the control fails, the probe is broken --
     # not the internet. That is how the first run of this script was caught reporting false blocks.

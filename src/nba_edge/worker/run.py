@@ -351,6 +351,10 @@ class Worker:
     # settle before evaluate (evaluation scores what settlement just resolved).
     SLOW_JOBS = (
         ("context", ["nba", "context", "--out", "ARCHIVE"], 600.0),
+        # RESEARCH (MATCHUP_AWARE_V2): straight after context, because it records the roster and
+        # schedule state context just refreshed. It writes an append-only ledger kind and changes no
+        # prediction, price, or authority.
+        ("matchup_shadow", ["nba", "matchup-shadow", "--out", "ARCHIVE"], 300.0),
         ("simulate", ["nba", "simulate", "--data", "DATA", "--out", "ARCHIVE"], 2400.0),
         ("settle", ["nba", "settle", "--data", "DATA", "--out", "ARCHIVE"], 1200.0),
         ("evaluate", ["nba", "evaluate", "--data", "DATA", "--out", "ARCHIVE/eval"], 900.0),

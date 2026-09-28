@@ -164,6 +164,17 @@ def cmd_context(args: argparse.Namespace) -> int:
     return run_context_refresh(out_root=Path(args.out), season=args.season)
 
 
+def cmd_matchup_shadow(args: argparse.Namespace) -> int:
+    """Record what was knowable about each upcoming game's matchups, when it was knowable.
+
+    Writes an append-only research ledger kind and nothing else. No prediction, price, or authority
+    reads it; MATCHUP_AWARE_V2 is RESEARCH and its effects are neutral.
+    """
+    from nba_edge.matchup.shadow import run_matchup_shadow
+
+    return run_matchup_shadow(Path(args.out), horizon_hours=args.horizon_hours)
+
+
 def cmd_simulate(args: argparse.Namespace) -> int:
     from nba_edge.workflows.simulate import run_simulate
 
@@ -267,6 +278,14 @@ def build_parser() -> argparse.ArgumentParser:
     x.add_argument("--out", default="data/archive")
     x.add_argument("--season", default=None)
     x.set_defaults(func=cmd_context)
+
+    ms = sub.add_parser(
+        "matchup-shadow",
+        help="RESEARCH: record point-in-time matchup context for upcoming games (no predictions)",
+    )
+    ms.add_argument("--out", default="data/archive")
+    ms.add_argument("--horizon-hours", type=float, default=36.0)
+    ms.set_defaults(func=cmd_matchup_shadow)
 
     s = sub.add_parser("simulate", help="Simulate not-started games and price supported contracts")
     s.add_argument("--out", default="out/slate")

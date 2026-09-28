@@ -106,8 +106,15 @@ def decide(now: datetime, schedule_rows: list[dict[str, Any]], capture_age_min: 
     # past a ten-minute window, and every such delay silently skipped a day of discovery -- which is
     # exactly how a new Kalshi series would go unnoticed. An age check cannot be skipped, only late.
     discover = last_discover_age_min is None or last_discover_age_min > 23 * 60
+
+    # RESEARCH only (MATCHUP_AWARE_V2). It reads the schedule/roster snapshot that `context` writes
+    # and records what was knowable about each upcoming game's matchups at this instant, so it is
+    # gated on exactly the same condition -- there is nothing new to record until context refreshes.
+    # Off-season it is a cheap no-op: no game falls inside the horizon, so nothing is written.
+    matchup_shadow = bool(context)
     return {
         "discover": bool(discover),
+        "matchup_shadow": matchup_shadow,
         "now_utc": iso(now), "in_season": in_season, "season": season_label, "calendar_known": calendar_known,
         "next_tip_hours": None if next_tip_h is None else round(next_tip_h, 2), "n_upcoming": len(upcoming),
         "n_recent_final": len(recent_final), "capture": bool(capture), "context": bool(context), "simulate": bool(simulate), "settle": bool(settle), "evaluate": bool(evaluate),

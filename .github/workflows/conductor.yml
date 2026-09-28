@@ -56,6 +56,7 @@ jobs:
       settle: ${{ steps.d.outputs.settle }}
       evaluate: ${{ steps.d.outputs.evaluate }}
       discover: ${{ steps.d.outputs.discover }}
+      matchup_shadow: ${{ steps.d.outputs.matchup_shadow }}
       calendar_known: ${{ steps.d.outputs.calendar_known }}
     steps:
       - uses: actions/checkout@v4
@@ -79,7 +80,7 @@ jobs:
           if [[ -z "$FORCE" && "$EVENT_NAME" == "push" && -f .trigger/conductor ]]; then
             FORCE="$(grep -oE '[a-z,]+' .trigger/conductor | head -1)"
           fi
-          for j in capture context simulate settle evaluate discover; do
+          for j in capture context simulate settle evaluate discover matchup_shadow; do
             if [[ ",$FORCE," == *",$j,"* ]]; then echo "$j=true" >> "$GITHUB_OUTPUT"; fi
           done
       - name: Alarm if the season calendar is exhausted
@@ -92,7 +93,8 @@ jobs:
     if: >-
       needs.decide.outputs.capture == 'true' || needs.decide.outputs.context == 'true' ||
       needs.decide.outputs.simulate == 'true' || needs.decide.outputs.settle == 'true' ||
-      needs.decide.outputs.evaluate == 'true' || needs.decide.outputs.discover == 'true'
+      needs.decide.outputs.evaluate == 'true' || needs.decide.outputs.discover == 'true' ||
+      needs.decide.outputs.matchup_shadow == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     permissions:
@@ -124,6 +126,10 @@ jobs:
         if: needs.decide.outputs.context == 'true'
         continue-on-error: true
         run: nba context --out data/archive
+      - name: Matchup shadow capture (RESEARCH; no predictions)
+        if: needs.decide.outputs.matchup_shadow == 'true'
+        continue-on-error: true
+        run: nba matchup-shadow --out data/archive
       - name: Market capture
         if: needs.decide.outputs.capture == 'true'
         continue-on-error: true
