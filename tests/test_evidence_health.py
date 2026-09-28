@@ -80,3 +80,27 @@ def test_run_writes_the_artifact(tmp_path):
     out = tmp_path / "nested" / "EVIDENCE_HEALTH.json"
     EH.run_evidence_health(tmp_path, out)
     assert json.loads(out.read_text())["markets"]["state"] == "absent"
+
+
+def test_the_baseline_reports_even_when_evaluate_has_never_run(tmp_path):
+    """The freeze holds or does not hold regardless of evaluation coverage.
+
+    This was nested under the `evidence` section, whose fields are dropped when evaluate has not
+    run -- so `frozen_parameters_intact` was invisible for the whole off-season, which is precisely
+    when a silent parameter drift would go unnoticed longest.
+    """
+    report = EH.build_report(tmp_path)
+    assert report["evidence"]["state"] == "absent", "evaluate genuinely has not run here"
+    b = report["baseline"]
+    assert b["state"] == "ok", b
+    assert b["baseline_id"] == "NBA_BASELINE_2026_PRESEASON_V1"
+    assert b["frozen_parameters_intact"] is True
+    assert b["recorded_digest"] == b["live_digest"]
+
+
+def test_a_drifted_parameter_would_report_as_not_intact(tmp_path, monkeypatch):
+    """The signal has to be able to say NO, or reporting it proves nothing."""
+    from nba_edge.baseline import manifest
+
+    monkeypatch.setattr(manifest, "BASELINE_DIGEST", "0" * 64)
+    assert EH.build_report(tmp_path)["baseline"]["frozen_parameters_intact"] is False

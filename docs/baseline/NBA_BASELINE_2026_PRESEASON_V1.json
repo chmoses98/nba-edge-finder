@@ -1,0 +1,89 @@
+{
+ "baseline_id": "NBA_BASELINE_2026_PRESEASON_V1",
+ "digest": "5a4cbda0b973d1e4d6289557b99372e4735ebe3146fa76e8f0b6ca833193be78",
+ "parameters": {
+  "feature_builder": {
+   "include_preseason": false,
+   "max_roster": 15,
+   "min_player_games": 1,
+   "player_half_life": 5.0,
+   "player_prior_minutes": 60.0,
+   "rate_half_life": 20.0,
+   "rating_scale": 1.9,
+   "recent_team_games": 10,
+   "role_window": 5,
+   "rotation_half_life": 6.0,
+   "rotation_window": 20,
+   "team_half_life": 25.0,
+   "team_prior_games": 4.0
+  },
+  "league_constants": {
+   "ast_per_fgm": 0.62,
+   "b2b_ppp_penalty": 0.02,
+   "blk_per_opp_2pa": 0.08,
+   "blowout_margin": 18,
+   "blowout_starter_cut": 0.12,
+   "endgame_compression": 0.03,
+   "fg2_pct": 0.545,
+   "fg3_pct": 0.36,
+   "ft_pct": 0.785,
+   "fta_per_fga": 0.245,
+   "game_env_shock_sd": 0.06,
+   "home_ppp_edge": 0.015,
+   "oreb_pct": 0.265,
+   "ot_minutes": 25.0,
+   "ot_rate_target": 0.048,
+   "pace": 97.4,
+   "pace_sd": 3.5,
+   "player_shooting_shock_sd": 0.06,
+   "ppp": 1.17,
+   "quarter_dirichlet_conc": 60.0,
+   "quarter_shares": [
+    0.253,
+    0.247,
+    0.255,
+    0.245
+   ],
+   "regulation_minutes": 240.0,
+   "stl_share_of_opp_tov": 0.55,
+   "team_fga_resid_sd": 2.5,
+   "team_shooting_shock_sd": 0.04,
+   "three_share": 0.42,
+   "tov_per_poss": 0.135
+  },
+  "player_defaults": {
+   "impact_ppp": 0.0,
+   "min_cap": 42.0,
+   "minutes_dispersion": 1.0,
+   "usage_elasticity": 1.0
+  },
+  "pricing": {
+   "hybrid_market_weight": 0.7,
+   "hybrid_weight_by_scope": {
+    "game": 0.9,
+    "other": 0.9,
+    "player": 0.7,
+    "season": 0.95
+   },
+   "stale_market_minutes": 45.0
+  },
+  "rotation_model": {
+   "rotation_min_minutes": 10.0,
+   "rotation_size_pmf": {
+    "10": 0.252,
+    "11": 0.046,
+    "12": 0.012,
+    "7": 0.028,
+    "8": 0.219,
+    "9": 0.439
+   }
+  }
+ },
+ "versions": {
+  "features": "features-0.1.0",
+  "model": "nba-sim-0.1.0",
+  "season_simulation": "season-sim-0.1.0",
+  "settlement_engine": "settle-1.0",
+  "simulation": "nba-sim-0.1.0"
+ }
+}

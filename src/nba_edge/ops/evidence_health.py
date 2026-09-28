@@ -146,7 +146,6 @@ def build_report(archive_root: Path, data_root: Path | None = None) -> dict:
         n_pregame=(evl or {}).get("n_pregame"),
         families=(evl or {}).get("families"),
         n_families=len((evl or {}).get("families") or []),
-        baseline=baseline,
     )
 
     stint = {
@@ -162,6 +161,10 @@ def build_report(archive_root: Path, data_root: Path | None = None) -> dict:
 
     return {
         "generated_at_utc": now.isoformat(),
+        # Top level, deliberately. Nesting this under `evidence` hid it whenever evaluate had not
+        # run -- i.e. for the entire off-season, which is exactly when a silent parameter drift
+        # would go unnoticed longest.
+        "baseline": baseline,
         "markets": markets,
         "context": context,
         "simulation": simulation,
