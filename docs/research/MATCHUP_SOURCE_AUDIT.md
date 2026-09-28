@@ -111,8 +111,9 @@ for the full three minutes and returned nothing:
 | `synergyplaytypes` | 180 s | ReadTimeout at **180.23 s** |
 | `gamerotation` (control for the budget) | 180 s | ReadTimeout at **180.13 s** |
 
-The ESPN control passed in the same run (200, 781,257 B, 0.11 s). **Blocked, not slow** — measured,
-not inferred, at the budget that can tell the two apart.
+The ESPN control passed in the same run (200, 781,257 B, 0.11 s), and **run 36443664372 reproduced
+every one of these a third time** (180.15 / 180.20 / 180.24 / 180.23 s, control 200 in 0.20 s).
+**Blocked, not slow** — measured, not inferred, at the budget that can tell the two apart.
 
 ### 2.2b Two corrections this run forced
 
@@ -129,34 +130,35 @@ block or an outage. The probe asks for `GameId=0022500001`. Recording it as "the
 would blame the source for the probe's own request; it is listed here as **unresolved, our side
 suspected**.
 
-### 2.3 ESPN carries play-by-play — and the coordinates are a sentinel
+### 2.3 ESPN carries play-by-play with usable shot coordinates
 
-Reachable and fast: 200 in every round, ~358–383 KB, 0.19–0.30 s.
+Reachable and fast in every round: 200, ~356–383 KB, 0.19–0.30 s.
 
-The targeted shape check answers the question the truncated key list could not. Event 401705718:
+Getting a trustworthy answer out of this one endpoint took three passes, and each pass overturned
+the previous reading — worth recording, because the failure mode was the same each time: a summary
+statistic that looked like an answer.
 
-```
-plays=434  with_coordinate=434  sample={'x': -214748340, 'y': -214748365}
-```
+| pass | what it reported | what it actually meant |
+|---|---|---|
+| 1 | `keys=boxscore,format,gameInfo,leaders,seasonseries,injuries` | the reporter truncates to six keys — **not** evidence `plays` was absent |
+| 2 | `plays=434 with_coordinate=434` | counts the *key*; the sample was `{'x': -214748340, …}`, ESPN's int32 sentinel for *not recorded* |
+| 3 | `plays=434 coord_key=434 **usable_coord=327** sample={'x': 26, 'y': 26}` | real court locations |
 
-So the summary **does** carry play-by-play, and every play carries a `coordinate` key. My earlier
-"no `plays` key" reading was wrong, as suspected — the generic reporter had simply truncated.
+**Run 36443664372 settles it: 327 of 434 play events carry a finite, court-plausible coordinate.**
+The remaining 107 hold the sentinel, which is what you would expect from events that have no
+location — free throws, substitutions, timeouts, period breaks.
 
-**But 434 of 434 is a count of the key, not of a location.** `-214748365` is ESPN's int32-derived
-sentinel for *not recorded* (−2³¹/10). A coverage figure built on key presence would have read as
-100% while carrying no usable coordinates at all — the same mistake in a new costume, and the third
-time this one endpoint has invited a conclusion the data does not support.
+Stated precisely, because the difference matters: that is **327 of all play events**, not a
+shot-level coverage rate. A per-shot figure needs the plays filtered to shot attempts first, and
+this audit does not have one. What is established is narrower and still useful: **a reachable source
+supplies real shot locations.**
 
-The probe now counts **usable** coordinates (finite, within court-plausible bounds) separately from
-the key, and reports both. Until that has run: **play-by-play confirmed, shot locations
-unconfirmed.**
-
-The asymmetry that motivated looking stays conditional. *If* usable locations turn out to be
-available, V2 could learn *how a player shoots* long before it can learn *who made him shoot that
-way*. That is why the shot-profile layer stands alone and `MatchupAdjustment` carries
-`rim_rate_delta` / `pullup_rate_delta` / `catch_shoot_rate_delta` as first-class fields even though
-V1 has nowhere to apply them — `transform.UNAPPLICABLE_FIELDS` reports them rather than dropping
-them silently.
+So the asymmetry is no longer conditional. **V2 can learn *how* a player shoots — from ESPN, today —
+long before it can learn *who made him shoot that way*, which needs a host that does not answer at
+all.** That is exactly why the shot-profile layer is built to stand alone, and why
+`MatchupAdjustment` carries `rim_rate_delta` / `pullup_rate_delta` / `catch_shoot_rate_delta` as
+first-class fields even though V1 has nowhere to apply them —
+`transform.UNAPPLICABLE_FIELDS` reports them rather than dropping them silently.
 
 ### 2.4 hoopR's release index came back empty
 
@@ -187,8 +189,11 @@ lineups and possessions — which supports an **opponent-on-floor** exposure mod
 assignment but honest, and already expressible: `SWITCH_OTHER` and `POSITION` buckets carry the
 unidentified mass instead of rounding it into a name.
 
-**3. ESPN shot coordinates for the offensive half.** Reachable today, and the cheapest real progress
-available. It populates shot profile and nothing else, and should be labelled as such.
+**3. ESPN shot coordinates for the offensive half.** Reachable today and **confirmed to carry real
+locations** (§2.3) — the cheapest real progress available, and the only item on this list that needs
+no new access. It populates shot profile and nothing else, and should be labelled as such: a zone
+model built from it describes the shooter, not the defender, and must not be presented as a matchup
+effect.
 
 **4. A confirmed-starters source.** `GameMatchupContext.expected_*_starters` is deliberately empty
 today: a projected five written into that field would be indistinguishable from a confirmed one six
