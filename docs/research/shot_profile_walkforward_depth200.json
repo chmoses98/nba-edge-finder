@@ -1,0 +1,675 @@
+{
+ "study": "shot-profile-walkforward/1",
+ "features": [
+  "d_rim",
+  "d_three_rate"
+ ],
+ "feature_policy": "pre-specified, two matchup DIFFERENCES; no search over feature sets",
+ "authority": "RESEARCH",
+ "effects_activated": false,
+ "min_prior_attempts": 200.0,
+ "n_market_rows": 16091,
+ "n_feature_rows": 85846,
+ "n_joined": 8112,
+ "join_rate_of_market_rows": 0.5041,
+ "families": {
+  "player_assists": {
+   "n": 1707,
+   "n_players": 86,
+   "n_games": 138,
+   "base_rate": 0.44698301113063854,
+   "vs_v1": {
+    "n": 1707,
+    "n_folds_used": 2,
+    "n_oos": 1017,
+    "base_logloss": 0.5094369829945213,
+    "profile_logloss": 0.5086048068077309,
+    "logloss_delta": -0.000832176186790462,
+    "brier_delta": -0.00040446602496248263,
+    "ece_base": 0.049415863450691835,
+    "ece_profile": 0.037221274937469434,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     -0.38139,
+     -1.75705
+    ],
+    "coef_d_three_per_fold": [
+     -1.85909,
+     -2.75513
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 3,
+      "n_train": 690,
+      "n_test": 461,
+      "base_logloss": 0.5487565582443598,
+      "profile_logloss": 0.5412283284602318,
+      "base_brier": 0.18301415858802586,
+      "profile_brier": 0.17936530921908542,
+      "base_ece": 0.04605169983500323,
+      "profile_ece": 0.036532749533073804
+     },
+     {
+      "fold": 4,
+      "n_train": 1151,
+      "n_test": 556,
+      "base_logloss": 0.47011740774468286,
+      "profile_logloss": 0.47598128515522986,
+      "base_brier": 0.15433736155472813,
+      "profile_brier": 0.1571772788737436,
+      "base_ece": 0.05278002706638045,
+      "profile_ece": 0.03790980034186506
+     }
+    ]
+   },
+   "vs_market": {
+    "n": 1707,
+    "n_folds_used": 2,
+    "n_oos": 1017,
+    "base_logloss": 0.4567747384590549,
+    "profile_logloss": 0.45598478430727973,
+    "logloss_delta": -0.0007899541517751296,
+    "brier_delta": -0.0006840328582125854,
+    "ece_base": 0.04406779647184214,
+    "ece_profile": 0.03061532393198855,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     -0.16924,
+     -1.18614
+    ],
+    "coef_d_three_per_fold": [
+     -1.59262,
+     -2.40403
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 3,
+      "n_train": 690,
+      "n_test": 461,
+      "base_logloss": 0.49172551275813664,
+      "profile_logloss": 0.48558006633034007,
+      "base_brier": 0.16396437815107215,
+      "profile_brier": 0.16100127666909161,
+      "base_ece": 0.0297229414569852,
+      "profile_ece": 0.03799654905786452
+     },
+     {
+      "fold": 4,
+      "n_train": 1151,
+      "n_test": 556,
+      "base_logloss": 0.42182396415997314,
+      "profile_logloss": 0.42638950228421946,
+      "base_brier": 0.13649114184658162,
+      "profile_brier": 0.13808617761213698,
+      "base_ece": 0.05841265148669908,
+      "profile_ece": 0.023234098806112578
+     }
+    ]
+   },
+   "vs_hybrid_fitted": {
+    "n": 1707,
+    "n_folds_used": 2,
+    "n_oos": 1017,
+    "base_logloss": 0.46017058051590043,
+    "profile_logloss": 0.45971638201320153,
+    "logloss_delta": -0.00045419850269892703,
+    "brier_delta": -0.000544821588018149,
+    "ece_base": 0.051060906068971366,
+    "ece_profile": 0.030289258322086683,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     -0.20336,
+     -1.26722
+    ],
+    "coef_d_three_per_fold": [
+     -1.66606,
+     -2.46098
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 3,
+      "n_train": 690,
+      "n_test": 461,
+      "base_logloss": 0.4984671672390688,
+      "profile_logloss": 0.4925807917503608,
+      "base_brier": 0.16700540006122347,
+      "profile_brier": 0.1641149782506428,
+      "base_ece": 0.047011593140507874,
+      "profile_ece": 0.034554456556931804
+     },
+     {
+      "fold": 4,
+      "n_train": 1151,
+      "n_test": 556,
+      "base_logloss": 0.42187399379273205,
+      "profile_logloss": 0.4268519722760422,
+      "base_brier": 0.13657548638189984,
+      "profile_brier": 0.1383762650164442,
+      "base_ece": 0.05511021899743486,
+      "profile_ece": 0.026024060087241563
+     }
+    ]
+   },
+   "hybrid_note": "p_hybrid is null for all 16,091 cached rows, so the hybrid baseline is refitted here walk-forward as logit(y) ~ market + V1 on each training slice"
+  },
+  "player_points": {
+   "n": 2585,
+   "n_players": 150,
+   "n_games": 147,
+   "base_rate": 0.3941972920696325,
+   "vs_v1": {
+    "n": 2585,
+    "n_folds_used": 3,
+    "n_oos": 1919,
+    "base_logloss": 0.5517174464817827,
+    "profile_logloss": 0.5473834180452483,
+    "logloss_delta": -0.004334028436534372,
+    "brier_delta": -0.001817197669937487,
+    "ece_base": 0.0597207354646723,
+    "ece_profile": 0.05771606430456011,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 2,
+    "coef_d_rim_per_fold": [
+     -0.62143,
+     -0.61276,
+     -2.23325
+    ],
+    "coef_d_three_per_fold": [
+     -0.24745,
+     -0.97721,
+     -2.60031
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 2,
+      "n_train": 666,
+      "n_test": 372,
+      "base_logloss": 0.5719054424287249,
+      "profile_logloss": 0.5727647457688604,
+      "base_brier": 0.19253894471022429,
+      "profile_brier": 0.1927323458336662,
+      "base_ece": 0.056373756453213936,
+      "profile_ece": 0.06291722822127434
+     },
+     {
+      "fold": 3,
+      "n_train": 1038,
+      "n_test": 735,
+      "base_logloss": 0.5257271408584608,
+      "profile_logloss": 0.5162779345790186,
+      "base_brier": 0.17475752957411567,
+      "profile_brier": 0.17093031307457446,
+      "base_ece": 0.0658643376444599,
+      "profile_ece": 0.05596902214413735
+     },
+     {
+      "fold": 4,
+      "n_train": 1773,
+      "n_test": 812,
+      "base_logloss": 0.5575197561581624,
+      "profile_logloss": 0.553107573787866,
+      "base_brier": 0.18736132868791372,
+      "profile_brier": 0.18554355105420056,
+      "base_ece": 0.05692411229634305,
+      "profile_ece": 0.05426194254826863
+     }
+    ]
+   },
+   "vs_market": {
+    "n": 2585,
+    "n_folds_used": 3,
+    "n_oos": 1919,
+    "base_logloss": 0.5018877553543514,
+    "profile_logloss": 0.501893208742036,
+    "logloss_delta": 5.453387684743276e-06,
+    "brier_delta": -0.00024312047041517385,
+    "ece_base": 0.047744950090050885,
+    "ece_profile": 0.044590231756469305,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     -0.72607,
+     -0.26119,
+     -1.14268
+    ],
+    "coef_d_three_per_fold": [
+     -0.18526,
+     -0.84035,
+     -1.74832
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 2,
+      "n_train": 666,
+      "n_test": 372,
+      "base_logloss": 0.5633614819985494,
+      "profile_logloss": 0.5672407871932698,
+      "base_brier": 0.18660391508280094,
+      "profile_brier": 0.18767720639277852,
+      "base_ece": 0.06087518959599583,
+      "profile_ece": 0.07079178528835971
+     },
+     {
+      "fold": 3,
+      "n_train": 1038,
+      "n_test": 735,
+      "base_logloss": 0.4568189927421389,
+      "profile_logloss": 0.45252324618250955,
+      "base_brier": 0.14773724182910222,
+      "profile_brier": 0.14623514461315845,
+      "base_ece": 0.04512659980496633,
+      "profile_ece": 0.04089269862217233
+     },
+     {
+      "fold": 4,
+      "n_train": 1773,
+      "n_test": 812,
+      "base_logloss": 0.48548279132236555,
+      "profile_logloss": 0.48591559285032876,
+      "base_brier": 0.16087037526377748,
+      "profile_brier": 0.16056981975849816,
+      "base_ece": 0.03723306086919048,
+      "profile_ece": 0.02208621135887588
+     }
+    ]
+   },
+   "vs_hybrid_fitted": {
+    "n": 2585,
+    "n_folds_used": 3,
+    "n_oos": 1919,
+    "base_logloss": 0.5025348740172927,
+    "profile_logloss": 0.5023903049159806,
+    "logloss_delta": -0.00014456910131207165,
+    "brier_delta": -0.0002946170141992314,
+    "ece_base": 0.05338225675845892,
+    "ece_profile": 0.04571972220792928,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     -0.71362,
+     -0.28478,
+     -1.14296
+    ],
+    "coef_d_three_per_fold": [
+     -0.18375,
+     -0.85386,
+     -1.74857
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 2,
+      "n_train": 666,
+      "n_test": 372,
+      "base_logloss": 0.5626664343591411,
+      "profile_logloss": 0.5664619837904109,
+      "base_brier": 0.18636012138728963,
+      "profile_brier": 0.18740687286369606,
+      "base_ece": 0.06464705351885393,
+      "profile_ece": 0.07373249702485232
+     },
+     {
+      "fold": 3,
+      "n_train": 1038,
+      "n_test": 735,
+      "base_logloss": 0.4594975514453842,
+      "profile_logloss": 0.45479284794218267,
+      "base_brier": 0.14880209321010207,
+      "profile_brier": 0.14713405170126978,
+      "base_ece": 0.05592861871868248,
+      "profile_ece": 0.040601627670564924
+     },
+     {
+      "fold": 4,
+      "n_train": 1773,
+      "n_test": 812,
+      "base_logloss": 0.4854406362473528,
+      "profile_logloss": 0.4859160830153483,
+      "base_brier": 0.1608327505754533,
+      "profile_brier": 0.16057018956528146,
+      "base_ece": 0.03957109803784035,
+      "profile_ece": 0.022825041928370603
+     }
+    ]
+   },
+   "hybrid_note": "p_hybrid is null for all 16,091 cached rows, so the hybrid baseline is refitted here walk-forward as logit(y) ~ market + V1 on each training slice"
+  },
+  "player_rebounds": {
+   "n": 2327,
+   "n_players": 112,
+   "n_games": 138,
+   "base_rate": 0.4568113450795015,
+   "vs_v1": {
+    "n": 2327,
+    "n_folds_used": 3,
+    "n_oos": 1745,
+    "base_logloss": 0.5696872655856047,
+    "profile_logloss": 0.5717968286839289,
+    "logloss_delta": 0.0021095630983242555,
+    "brier_delta": 0.0009163161152891305,
+    "ece_base": 0.047562994001886405,
+    "ece_profile": 0.05496197751659119,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     0.10312,
+     0.81957,
+     0.63647
+    ],
+    "coef_d_three_per_fold": [
+     -0.77324,
+     -0.22887,
+     0.05603
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 2,
+      "n_train": 582,
+      "n_test": 401,
+      "base_logloss": 0.5925260081565071,
+      "profile_logloss": 0.5905216769323285,
+      "base_brier": 0.2023033737410398,
+      "profile_brier": 0.20172164667246126,
+      "base_ece": 0.0693266390588283,
+      "profile_ece": 0.07179002511141463
+     },
+     {
+      "fold": 3,
+      "n_train": 983,
+      "n_test": 625,
+      "base_logloss": 0.5358959943734847,
+      "profile_logloss": 0.5384728028225801,
+      "base_brier": 0.17905549173402904,
+      "profile_brier": 0.18014542916222276,
+      "base_ece": 0.030037903511864746,
+      "profile_ece": 0.04479693151906738
+     },
+     {
+      "fold": 4,
+      "n_train": 1608,
+      "n_test": 719,
+      "base_logloss": 0.5806397942268221,
+      "profile_logloss": 0.586396006296878,
+      "base_brier": 0.19639396805849288,
+      "profile_brier": 0.1986347060447451,
+      "base_ece": 0.04332443943496617,
+      "profile_ece": 0.048298975919291554
+     }
+    ]
+   },
+   "vs_market": {
+    "n": 2327,
+    "n_folds_used": 3,
+    "n_oos": 1745,
+    "base_logloss": 0.5267589752662243,
+    "profile_logloss": 0.5283317619038539,
+    "logloss_delta": 0.0015727866376295714,
+    "brier_delta": 0.0006250191443635441,
+    "ece_base": 0.04144684102743886,
+    "ece_profile": 0.04625639549994151,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     -0.8411,
+     0.36076,
+     0.34547
+    ],
+    "coef_d_three_per_fold": [
+     -0.57279,
+     -0.00069,
+     0.47863
+    ],
+    "coef_sign_stable": false,
+    "per_fold": [
+     {
+      "fold": 2,
+      "n_train": 582,
+      "n_test": 401,
+      "base_logloss": 0.5533695548563344,
+      "profile_logloss": 0.5577947712739898,
+      "base_brier": 0.18738449153633627,
+      "profile_brier": 0.18902734615262295,
+      "base_ece": 0.06445407335384928,
+      "profile_ece": 0.07360098429114302
+     },
+     {
+      "fold": 3,
+      "n_train": 983,
+      "n_test": 625,
+      "base_logloss": 0.49777742918428014,
+      "profile_logloss": 0.4990559898572934,
+      "base_brier": 0.16531578807642017,
+      "profile_brier": 0.16589830626883367,
+      "base_ece": 0.02857623024793796,
+      "profile_ece": 0.031891217677723044
+     },
+     {
+      "fold": 4,
+      "n_train": 1608,
+      "n_test": 719,
+      "base_logloss": 0.5291299417580583,
+      "profile_logloss": 0.5281445245802784,
+      "base_brier": 0.175911681996511,
+      "profile_brier": 0.17556136662090144,
+      "base_ece": 0.03131021948052935,
+      "profile_ece": 0.03327698453095847
+     }
+    ]
+   },
+   "vs_hybrid_fitted": {
+    "n": 2327,
+    "n_folds_used": 3,
+    "n_oos": 1745,
+    "base_logloss": 0.5279763585939664,
+    "profile_logloss": 0.5290591815753677,
+    "logloss_delta": 0.0010828229814011658,
+    "brier_delta": 0.00043162785922284025,
+    "ece_base": 0.04403811976993783,
+    "ece_profile": 0.04532493525042446,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     -0.64792,
+     0.40248,
+     0.34011
+    ],
+    "coef_d_three_per_fold": [
+     -0.61544,
+     -0.01224,
+     0.48391
+    ],
+    "coef_sign_stable": false,
+    "per_fold": [
+     {
+      "fold": 2,
+      "n_train": 582,
+      "n_test": 401,
+      "base_logloss": 0.5567603882079344,
+      "profile_logloss": 0.5595722513721313,
+      "base_brier": 0.18846025875356082,
+      "profile_brier": 0.1894871955421746,
+      "base_ece": 0.06946595823174159,
+      "profile_ece": 0.0739045593957092
+     },
+     {
+      "fold": 3,
+      "n_train": 983,
+      "n_test": 625,
+      "base_logloss": 0.4981296900354811,
+      "profile_logloss": 0.4997541126830007,
+      "base_brier": 0.16538632008326115,
+      "profile_brier": 0.16608959104936977,
+      "base_ece": 0.031357707863488106,
+      "profile_ece": 0.030190270085601614
+     },
+     {
+      "fold": 4,
+      "n_train": 1608,
+      "n_test": 719,
+      "base_logloss": 0.529038997538484,
+      "profile_logloss": 0.527851180670971,
+      "base_brier": 0.175870809520801,
+      "profile_brier": 0.17543548534374712,
+      "base_ece": 0.03129069321458381,
+      "profile_ece": 0.03187997626996258
+     }
+    ]
+   },
+   "hybrid_note": "p_hybrid is null for all 16,091 cached rows, so the hybrid baseline is refitted here walk-forward as logit(y) ~ market + V1 on each training slice"
+  },
+  "player_threes": {
+   "n": 1493,
+   "n_players": 68,
+   "n_games": 134,
+   "base_rate": 0.39182853315472205,
+   "vs_v1": {
+    "n": 1493,
+    "n_folds_used": 2,
+    "n_oos": 896,
+    "base_logloss": 0.5085988428243307,
+    "profile_logloss": 0.509173185905216,
+    "logloss_delta": 0.0005743430808852201,
+    "brier_delta": 0.000504800720727977,
+    "ece_base": 0.04904085316725265,
+    "ece_profile": 0.05882520657040989,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 1,
+    "coef_d_rim_per_fold": [
+     -1.09883,
+     -1.95218
+    ],
+    "coef_d_three_per_fold": [
+     -0.76254,
+     -0.28258
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 3,
+      "n_train": 597,
+      "n_test": 389,
+      "base_logloss": 0.5168868124167247,
+      "profile_logloss": 0.5158930570211958,
+      "base_brier": 0.17232208815294853,
+      "profile_brier": 0.17228540231724856,
+      "base_ece": 0.0310929232388963,
+      "profile_ece": 0.04792172721007438
+     },
+     {
+      "fold": 4,
+      "n_train": 986,
+      "n_test": 507,
+      "base_logloss": 0.5003108732319367,
+      "profile_logloss": 0.502453314789236,
+      "base_brier": 0.16521046065888628,
+      "profile_brier": 0.1662567479360422,
+      "base_ece": 0.066988783095609,
+      "profile_ece": 0.06972868593074541
+     }
+    ]
+   },
+   "vs_market": {
+    "n": 1493,
+    "n_folds_used": 2,
+    "n_oos": 896,
+    "base_logloss": 0.4840256202312608,
+    "profile_logloss": 0.4852625841822501,
+    "logloss_delta": 0.0012369639509893227,
+    "brier_delta": 0.0005554880925336264,
+    "ece_base": 0.07014373756409406,
+    "ece_profile": 0.05370601204966778,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 0,
+    "coef_d_rim_per_fold": [
+     -0.94471,
+     -1.83448
+    ],
+    "coef_d_three_per_fold": [
+     -0.83633,
+     -0.24333
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 3,
+      "n_train": 597,
+      "n_test": 389,
+      "base_logloss": 0.4973814214372414,
+      "profile_logloss": 0.49752616848321485,
+      "base_brier": 0.16488207870963847,
+      "profile_brier": 0.16502800936387604,
+      "base_ece": 0.07124908768944807,
+      "profile_ece": 0.05232183744248034
+     },
+     {
+      "fold": 4,
+      "n_train": 986,
+      "n_test": 507,
+      "base_logloss": 0.47066981902528016,
+      "profile_logloss": 0.47299899988128535,
+      "base_brier": 0.1533347592933634,
+      "profile_brier": 0.1542998048241931,
+      "base_ece": 0.06903838743874004,
+      "profile_ece": 0.05509018665685522
+     }
+    ]
+   },
+   "vs_hybrid_fitted": {
+    "n": 1493,
+    "n_folds_used": 2,
+    "n_oos": 896,
+    "base_logloss": 0.48451277014220506,
+    "profile_logloss": 0.48580459968184075,
+    "logloss_delta": 0.001291829539635747,
+    "brier_delta": 0.0005935374246299335,
+    "ece_base": 0.05605830453843486,
+    "ece_profile": 0.050847877535514306,
+    "profile_better_in_all_folds": false,
+    "folds_profile_better": 0,
+    "coef_d_rim_per_fold": [
+     -0.94751,
+     -1.84064
+    ],
+    "coef_d_three_per_fold": [
+     -0.8764,
+     -0.30642
+    ],
+    "coef_sign_stable": true,
+    "per_fold": [
+     {
+      "fold": 3,
+      "n_train": 597,
+      "n_test": 389,
+      "base_logloss": 0.4966655679284299,
+      "profile_logloss": 0.49686131494938235,
+      "base_brier": 0.16490965327847093,
+      "profile_brier": 0.1651232760415046,
+      "base_ece": 0.04541849884237219,
+      "profile_ece": 0.04405299786922721
+     },
+     {
+      "fold": 4,
+      "n_train": 986,
+      "n_test": 507,
+      "base_logloss": 0.47235997235598015,
+      "profile_logloss": 0.4747478844142992,
+      "base_brier": 0.1539614920783447,
+      "profile_brier": 0.1549349441645709,
+      "base_ece": 0.06669811023449754,
+      "profile_ece": 0.057642757201801405
+     }
+    ]
+   },
+   "hybrid_note": "p_hybrid is null for all 16,091 cached rows, so the hybrid baseline is refitted here walk-forward as logit(y) ~ market + V1 on each training slice"
+  }
+ }
+}
