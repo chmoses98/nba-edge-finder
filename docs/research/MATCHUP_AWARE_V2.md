@@ -15,15 +15,46 @@ currently carries a value of exactly 1.0.
 ## 1. The shape of it
 
 ```
-                    (RESEARCH, neutral today)
-  GameMatchupContext ──► resolve_adjustments ──► {player_id: MatchupAdjustment}
-   (point-in-time)          (effects.py)                    │
-                                                            ▼
-        V1 GameParams ──────────────────────────► apply_matchup ──► GameParams
-     (FROZEN BASELINE)                             (transform.py)        │
-                                                                        ▼
-                                                            simulate()  ── unchanged
-                                                          (sim/engine.py)
+  PROSPECTIVE CAPTURE                    POINT-IN-TIME GUARD
+  ───────────────────                    ───────────────────
+  nba matchup-shadow  ─┐                 leakage.latest_knowable
+  (worker SLOW_JOB,    │                 filters on observed_at BEFORE
+   conductor step)     │                 maximising -- the other order
+                       ▼                 leaks a confirmed lineup backward
+              matchup/context ledger ──────────────┐
+              (append-only, provenance)            │
+                       │                           ▼
+                       │                  GameMatchupContext
+                       │                  (starters, rotation, exposures,
+                       │                   scheme, lineup_confidence)
+                       │                           │
+                       ▼                           ▼
+              events.diff_contexts        assignment.estimate_exposure
+              → LINEUP_CONFIRMED          → PLAYER shares (≥200 poss)
+                STARTER_CHANGE            → POSITION refs (never a name)
+                LATE_SCRATCH              → UNKNOWN: 1.0
+                ASSIGNMENT_SHIFT                   │
+                       │                           ▼
+                       │                  effects.resolve_adjustments
+                       │                  (estimator Protocol; neutral today)
+                       │                           │
+                       │                           ▼
+                       │                   MatchupAdjustment
+                       │                   multipliers 1.0 / deltas 0.0
+                       │                           │
+   V1 GameParams ──────┼───────────────────────────▼
+   (FROZEN BASELINE)   │              transform.apply_matchup
+                       │              neutral ⇒ returns the SAME object
+                       │                           │
+                       │                           ▼
+                       │                  sim.engine.simulate  ← unchanged, not forked
+                       │                           │
+                       ▼                           ▼
+              research.matchup_walkforward   packet.matchup_packet
+              folds snapped to games         effect_status NEUTRAL/UNLEARNED
+              residual vs V1 + MARKET        projected_effect None
+              + hybrid, stratified by
+              event window
 ```
 
 Two properties do the load-bearing work.
