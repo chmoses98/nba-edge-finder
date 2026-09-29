@@ -1,0 +1,233 @@
+{
+ "study": "shot-profile-walkforward/1",
+ "comparison": "identical study, identical features, identical folds; the ONLY change is the population",
+ "authority": "RESEARCH",
+ "effects_activated": false,
+ "population_before": {
+  "name": "all stored events",
+  "shot_events": 927349,
+  "feature_rows": 85846
+ },
+ "population_after": {
+  "name": "regular + play-in + playoffs",
+  "shot_events": 881935,
+  "feature_rows": 80404,
+  "dropped": {
+   "preseason": 45414
+  }
+ },
+ "evaluation_set_unchanged": {
+  "n_joined_before": 8112,
+  "n_joined_after": 8112,
+  "why": "the Kalshi prop panel spans 2025-11-19..2026-06-14, entirely inside the regular season and postseason, so no preseason game was ever an EVALUATED row. Removing preseason changed the point-in-time accumulators that feed the features, not the rows the study scores."
+ },
+ "feature_movement_on_evaluated_rows": {
+  "d_rim": {
+   "mean_abs_delta": 0.001827,
+   "max_abs_delta": 0.011268,
+   "rows_unchanged": 0,
+   "rows": 8112
+  },
+  "d_three_rate": {
+   "mean_abs_delta": 0.002191,
+   "max_abs_delta": 0.011733,
+   "rows_unchanged": 0,
+   "rows": 8112
+  }
+ },
+ "families": {
+  "player_assists": {
+   "n": 1707,
+   "n_unchanged": true,
+   "bases": {
+    "vs_v1": {
+     "folds": 2,
+     "n_oos": 1017,
+     "logloss_delta_before": -0.000832,
+     "logloss_delta_after": -0.001054,
+     "change": -0.000222,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": true,
+     "helps_out_of_sample_after": true,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    },
+    "vs_market": {
+     "folds": 2,
+     "n_oos": 1017,
+     "logloss_delta_before": -0.00079,
+     "logloss_delta_after": -0.00089,
+     "change": -0.0001,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": true,
+     "helps_out_of_sample_after": true,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    },
+    "vs_hybrid_fitted": {
+     "folds": 2,
+     "n_oos": 1017,
+     "logloss_delta_before": -0.000454,
+     "logloss_delta_after": -0.000589,
+     "change": -0.000135,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": true,
+     "helps_out_of_sample_after": true,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    }
+   }
+  },
+  "player_points": {
+   "n": 2585,
+   "n_unchanged": true,
+   "bases": {
+    "vs_v1": {
+     "folds": 3,
+     "n_oos": 1919,
+     "logloss_delta_before": -0.004334,
+     "logloss_delta_after": -0.004437,
+     "change": -0.000103,
+     "folds_profile_better_before": 2,
+     "folds_profile_better_after": 2,
+     "helps_out_of_sample_before": true,
+     "helps_out_of_sample_after": true,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    },
+    "vs_market": {
+     "folds": 3,
+     "n_oos": 1919,
+     "logloss_delta_before": 5e-06,
+     "logloss_delta_after": -6.6e-05,
+     "change": -7.2e-05,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": false,
+     "helps_out_of_sample_after": true,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    },
+    "vs_hybrid_fitted": {
+     "folds": 3,
+     "n_oos": 1919,
+     "logloss_delta_before": -0.000145,
+     "logloss_delta_after": -0.000219,
+     "change": -7.5e-05,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": true,
+     "helps_out_of_sample_after": true,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    }
+   }
+  },
+  "player_rebounds": {
+   "n": 2327,
+   "n_unchanged": true,
+   "bases": {
+    "vs_v1": {
+     "folds": 3,
+     "n_oos": 1745,
+     "logloss_delta_before": 0.00211,
+     "logloss_delta_after": 0.002031,
+     "change": -7.8e-05,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": false,
+     "helps_out_of_sample_after": false,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    },
+    "vs_market": {
+     "folds": 3,
+     "n_oos": 1745,
+     "logloss_delta_before": 0.001573,
+     "logloss_delta_after": 0.001542,
+     "change": -3.1e-05,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": false,
+     "helps_out_of_sample_after": false,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    },
+    "vs_hybrid_fitted": {
+     "folds": 3,
+     "n_oos": 1745,
+     "logloss_delta_before": 0.001083,
+     "logloss_delta_after": 0.001029,
+     "change": -5.4e-05,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": false,
+     "helps_out_of_sample_after": false,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    }
+   }
+  },
+  "player_threes": {
+   "n": 1493,
+   "n_unchanged": true,
+   "bases": {
+    "vs_v1": {
+     "folds": 2,
+     "n_oos": 896,
+     "logloss_delta_before": 0.000574,
+     "logloss_delta_after": 0.000655,
+     "change": 8.1e-05,
+     "folds_profile_better_before": 1,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": false,
+     "helps_out_of_sample_after": false,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    },
+    "vs_market": {
+     "folds": 2,
+     "n_oos": 896,
+     "logloss_delta_before": 0.001237,
+     "logloss_delta_after": 0.001282,
+     "change": 4.5e-05,
+     "folds_profile_better_before": 0,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": false,
+     "helps_out_of_sample_after": false,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    },
+    "vs_hybrid_fitted": {
+     "folds": 2,
+     "n_oos": 896,
+     "logloss_delta_before": 0.001292,
+     "logloss_delta_after": 0.001339,
+     "change": 4.7e-05,
+     "folds_profile_better_before": 0,
+     "folds_profile_better_after": 1,
+     "helps_out_of_sample_before": false,
+     "helps_out_of_sample_after": false,
+     "profile_better_in_all_folds_before": false,
+     "profile_better_in_all_folds_after": false
+    }
+   }
+  }
+ },
+ "sign_flips": [
+  {
+   "family": "player_points",
+   "base": "vs_market",
+   "before": false,
+   "after": true
+  }
+ ],
+ "verdict": "NO_CHANGE_IN_CONCLUSION",
+ "decision_rule": "the study's own pre-specified criterion: the +profile model must beat the base model in EVERY out-of-sample fold. It is applied here unchanged -- no threshold was added, moved, or relaxed for this comparison.",
+ "criterion_changes": [],
+ "verdict_detail": "Under the study's pre-specified criterion nothing moved: no family passed before and none passes after, against any of the three baselines. One raw SIGN flip exists and is reported in sign_flips -- player_points vs_market went from +5.45e-06 to -6.65e-05 log-loss. That is a change of 7e-05 nats on 1,919 out-of-sample rows, in 1 of 3 folds, and is not distinguishable from zero in either direction. Calling it a changed conclusion would be reading a result into the fifth decimal place.",
+ "what_the_contamination_actually_did": "Preseason never entered the EVALUATED rows, because the Kalshi prop panel begins 2025-11-19. It entered the point-in-time accumulators, so every one of the 8,112 evaluated rows carried a slightly different feature value: mean |delta| 0.0018 on d_rim and 0.0022 on d_three_rate, max 0.012. Real, measurable, and far too small to move a result at this sample size. The fix was still necessary -- the contamination was invisible rather than harmless, and on a panel that did span preseason it would not have been small."
+}

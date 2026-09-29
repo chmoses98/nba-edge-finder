@@ -114,3 +114,93 @@ def test_scheduled_workflow_cannot_be_starved_by_a_ref_keyed_concurrency_group()
     d = yaml.safe_load(wf.read_text())
     group = d["concurrency"]["group"]
     assert "github.ref" not in group, f"conductor concurrency group must not be ref-keyed, got {group!r}"
+
+
+# -----------------------------------------------------------------------------------------------
+# research streams must not be able to take down market capture
+# -----------------------------------------------------------------------------------------------
+def _conductor_text() -> str:
+    from pathlib import Path
+
+    return (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "conductor.yml").read_text()
+
+
+def test_a_research_stream_failing_cannot_kill_market_capture():
+    """Matchup shadow runs BEFORE market capture in the job, so without continue-on-error a bad
+    research pull would take the night's market snapshots with it. Market capture is the one stream
+    that cannot be re-collected later: a price at T-30m exists for thirty minutes and never again."""
+    import yaml
+
+    wf = yaml.safe_load(_conductor_text())
+    steps = wf["jobs"]["run"]["steps"]
+    names = [s.get("name", "") for s in steps]
+
+    shadow = next(i for i, n in enumerate(names) if "Matchup shadow" in n)
+    capture = next(i for i, n in enumerate(names) if "Market capture" in n)
+    assert shadow < capture, "the ordering this test is about"
+    assert steps[shadow].get("continue-on-error") is True, (
+        "matchup shadow is RESEARCH; it must never be able to abort the job before market capture"
+    )
+    assert steps[capture].get("continue-on-error") is True
+
+
+def test_every_collection_stream_is_isolated_but_the_alarm_step_is_not():
+    """Two opposite requirements, and the difference is the point.
+
+    A COLLECTION step must never abort the job: one stream's bad night is not a reason to lose the
+    others. A REPORTING step must be able to, or a silent coverage failure ends as a green run --
+    which is exactly how ~4.6% delivery went unnoticed for a wave. Reporting steps are the ones
+    gated on always(); they run after the push and turn the run red when the DATA is wrong.
+    """
+    import yaml
+
+    wf = yaml.safe_load(_conductor_text())
+    collection, reporting = [], []
+    for step in wf["jobs"]["run"]["steps"]:
+        cond = str(step.get("if", ""))
+        if "needs.decide.outputs" not in cond:
+            continue
+        (reporting if cond.strip().startswith("always()") else collection).append(step)
+
+    assert collection and reporting, "both kinds must exist for this test to mean anything"
+    for step in collection:
+        assert step.get("continue-on-error") is True, f"{step.get('name')} can abort the job"
+    for step in reporting:
+        assert step.get("continue-on-error") is not True, (
+            f"{step.get('name')} is an alarm; swallowing its exit code makes a bad run look green"
+        )
+
+
+def test_shot_profile_ingestion_is_not_in_the_conductor_at_all():
+    """The strongest isolation available: the shot-event pull is its own workflow, so it cannot
+    consume the conductor's runtime or fail its job under any circumstance."""
+    assert "shot-events" not in _conductor_text()
+    from pathlib import Path
+
+    assert (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "shot_events.yml").exists()
+
+
+def test_settlement_is_gated_separately_from_capture():
+    import yaml
+
+    wf = yaml.safe_load(_conductor_text())
+    steps = {s.get("name", ""): s for s in wf["jobs"]["run"]["steps"]}
+    settle = next(v for k, v in steps.items() if k.startswith("Settle"))
+    capture = next(v for k, v in steps.items() if "Market capture" in k)
+    assert "settle" in str(settle["if"]) and "capture" in str(capture["if"])
+    assert str(settle["if"]) != str(capture["if"]), "settlement must not ride on the capture decision"
+
+
+def test_the_preseason_to_regular_season_transition_stays_in_season():
+    """The 2026-27 rollover. in_season must not blink off between the preseason finale and opening
+    night -- a dormant day there is a day of market history that cannot be recovered."""
+    from nba_edge.workflows.conductor import SEASON_CALENDAR, season_window
+
+    cal = SEASON_CALENDAR["2026-27"]
+    for day in (cal["preseason_start"], "2026-10-15", "2026-10-19", cal["regular_start"], "2026-12-25"):
+        in_season, label, known = season_window(day)
+        assert in_season and known and label == "2026-27", f"{day} should be live"
+
+    # The day before preseason opens is correctly dormant, and correctly NOT on the fallback rule.
+    in_season, label, known = season_window("2026-10-02")
+    assert in_season is False and known is True and label is None

@@ -27,6 +27,7 @@ from nba_edge.data.history import (
     write_parquet,
 )
 from nba_edge.log import get_logger, kv
+from nba_edge.schemas.core import SeasonType
 from nba_edge.shotprofile.court import classify
 from nba_edge.shotprofile.events import parse_summary
 from nba_edge.timeutil import iso, utcnow
@@ -40,8 +41,16 @@ COLUMNS = [
     "clock_seconds_remaining", "shooter_player_id", "shooter_name", "team_id",
     "opponent_team_id", "is_home", "x", "y", "coordinate_valid", "zone", "distance_ft",
     "shot_made", "points_value", "is_free_throw", "is_shooting_play", "event_type",
+    "season_type", "espn_season_type", "season_type_source",
     "source", "source_observed_at_utc", "ingest_version", "schema_version",
 ]
+
+# Where a row's season_type came from. Both values mean "ESPN's own season.type field"; they differ only in
+# which ESPN payload carried it, which is worth keeping because it says whether the label was attached at pull
+# time or joined on afterwards. Neither is a date inference, and no date-inference source is defined on purpose:
+# if an authoritative code is missing the row gets SeasonType.OTHER, never a guess from the calendar.
+SEASON_TYPE_SOURCE_SCOREBOARD = "espn-scoreboard"   # attached during the pull, from the game's own scoreboard entry
+SEASON_TYPE_SOURCE_BACKFILL = "espn-player-games"   # joined in by migration, from the ESPN box-score dataset
 
 
 def _paths(out_root: Path, season: str) -> dict[str, Path]:
@@ -54,7 +63,7 @@ def _paths(out_root: Path, season: str) -> dict[str, Path]:
     }
 
 
-def _row(ev: Any, tip_utc: datetime | None) -> dict[str, Any]:
+def _row(ev: Any, tip_utc: datetime | None, game: dict[str, Any] | None = None) -> dict[str, Any]:
     from nba_edge.shotprofile.court import ShotZone, distance_ft
 
     zone = ShotZone.UNKNOWN
@@ -67,6 +76,11 @@ def _row(ev: Any, tip_utc: datetime | None) -> dict[str, Any]:
     # present, and a shot's exact second does not matter for a point-in-time cutoff that operates
     # at game granularity -- but attributing a shot to the WRONG GAME would matter, so the tip is
     # used rather than a guess, and None is carried through when the tip is unknown.
+    # season_type is copied verbatim from the scoreboard entry that produced this game. ``scoreboard_events``
+    # has already mapped ESPN's numeric season.type through ESPN_SEASON_TYPES, so an unrecognised code arrives
+    # here as SeasonType.OTHER with its raw value intact rather than as a silent guess.
+    game = game or {}
+    stype = str(game.get("season_type") or SeasonType.OTHER.value)
     return {
         "game_id": ev.game_id,
         "event_id": ev.event_id,
@@ -90,6 +104,9 @@ def _row(ev: Any, tip_utc: datetime | None) -> dict[str, Any]:
         "is_free_throw": ev.is_free_throw,
         "is_shooting_play": ev.is_shooting_play,
         "event_type": ev.event_type,
+        "season_type": stype,
+        "espn_season_type": game.get("espn_season_type"),
+        "season_type_source": SEASON_TYPE_SOURCE_SCOREBOARD,
         "source": ev.source,
         "source_observed_at_utc": iso(ev.source_observed_at_utc) if ev.source_observed_at_utc else None,
         "ingest_version": ev.ingest_version,
@@ -173,7 +190,7 @@ def run_shot_event_pull(
                     tip = None
 
                 evs = parse_summary(payload, game_id=gid, observed_at_utc=now)
-                rows.extend(_row(e, tip) for e in evs)
+                rows.extend(_row(e, tip, game) for e in evs)
                 n_new_rows += len(evs)
                 done.add(gid)
                 n_new_games += 1
@@ -202,8 +219,21 @@ def run_shot_event_pull(
     return 0
 
 
-def load_shot_events(out_root: Path, seasons: list[str]):
-    """Every ingested shot event across the given seasons, as a DataFrame."""
+def load_shot_events(
+    out_root: Path,
+    seasons: list[str],
+    *,
+    season_types: tuple[str, ...] | None = None,
+    include_preseason: bool = False,
+    all_season_types: bool = False,
+    report: dict[str, Any] | None = None,
+):
+    """Ingested shot events across the given seasons, restricted to the research population by default.
+
+    The default drops preseason, All-Star and unlabelled games. ``include_preseason=True`` is the narrow
+    opt-in; ``all_season_types=True`` is the raw read, for auditing and migration rather than for studies.
+    Pass a dict as ``report`` to receive the filter's accounting of what was dropped.
+    """
     import pandas as pd
 
     frames = []
@@ -213,4 +243,18 @@ def load_shot_events(out_root: Path, seasons: list[str]):
             frames.append(pd.read_parquet(p))
     if not frames:
         return pd.DataFrame(columns=COLUMNS)
-    return pd.concat(frames, ignore_index=True)
+    df = pd.concat(frames, ignore_index=True)
+    if all_season_types:
+        if report is not None:
+            report.update({"requested": "ALL", "rows_in": int(len(df)), "rows_kept": int(len(df)),
+                           "rows_dropped": 0, "dropped_by_season_type": {}, "include_preseason": True})
+        return df
+
+    from nba_edge.shotprofile.population import research_population
+
+    kept, rep = research_population(df, season_types=season_types, include_preseason=include_preseason)
+    log.info(kv(event="shot_events_population", rows_in=rep["rows_in"], rows_kept=rep["rows_kept"],
+                dropped=rep["rows_dropped"]))
+    if report is not None:
+        report.update(rep)
+    return kept

@@ -102,6 +102,108 @@ def test_the_verdict_cannot_pass_on_an_empty_archive():
     assert s["acceptance"]["at_least_95pct_intervals_within_12min"] is False
 
 
-def test_summarise_of_no_games_is_not_a_pass():
+def test_no_games_at_all_reads_as_no_data_rather_than_pass_or_fail():
+    """Nothing was observed, so neither answer is honest.
+
+    PASS would be the mistake that matters most: an absent snapshot reported as a covered horizon. FAIL is
+    the quieter version of it -- an alarm that is red for four months every offseason is one people learn to
+    scroll past, and it is red again on the night it means something. Note the contrast with the test above:
+    a game that EXISTS and has no snapshots is a real failure, because intervals were expected."""
     s = H.summarise([])
-    assert s["acceptance"]["verdict"] == "FAIL"
+    assert s["acceptance"]["verdict"] == "NO_DATA"
+    assert s["acceptance"]["n_expected_intervals"] == 0
+    assert s["acceptance"]["verdict_reason"]
+    # NO_DATA must still not look like success to anything reading the individual criteria.
+    assert s["acceptance"]["at_least_95pct_intervals_within_12min"] is False
+    assert s["acceptance"]["no_gap_over_30min"] is False
+
+
+def test_every_named_horizon_is_reported_and_an_absent_snapshot_is_never_counted():
+    """The brief names T-90/T-60/T-30/T-10. A horizon that is collected but never reported is a horizon
+    nobody can show was collected -- and a horizon with no snapshot must never count as covered."""
+    for minutes in (90, 60, 30, 10):
+        assert minutes in H.HORIZONS_MINUTES
+
+    g = H.assess_game("g1", TIP, [])
+    s = H.summarise([g])
+    for minutes in H.HORIZONS_MINUTES:
+        key = f"T-{minutes}m"
+        assert g.horizons[key]["covered_by"] is None
+        assert g.horizons[key]["age_minutes"] is None
+        assert s["horizon_coverage"][key]["games_with_any_prior_snapshot"] == 0
+        assert s["horizon_coverage"][key]["coverage_pct"] == 0.0
+
+
+# -----------------------------------------------------------------------------------------------
+# horizon classification and missing reasons
+# -----------------------------------------------------------------------------------------------
+WINDOW_OPEN = TIP - timedelta(hours=8)
+
+
+def _classify(covered_by, *, first=None, last=None, target=TIP - timedelta(minutes=30), tol=12.0):
+    return H.classify_horizon(
+        target, covered_by, window_open=WINDOW_OPEN,
+        archive_first=first, archive_last=last, tolerance_minutes=tol,
+    )
+
+
+def test_a_fresh_in_window_snapshot_covers_the_horizon():
+    target = TIP - timedelta(minutes=30)
+    got = _classify(target - timedelta(minutes=4), first=WINDOW_OPEN, last=TIP)
+    assert got["state"] == "COVERED"
+    assert got["reason"] is None
+    assert got["age_minutes"] == 4.0
+
+
+def test_an_absent_snapshot_is_never_covered_whatever_the_archive_looks_like():
+    """The one rule this function exists to enforce: no snapshot is never a satisfied horizon."""
+    for first, last in [(None, None), (WINDOW_OPEN, TIP), (TIP - timedelta(days=9), TIP)]:
+        got = _classify(None, first=first, last=last)
+        assert got["state"] == "MISSING"
+        assert got["covered_by"] is None
+        assert got["age_minutes"] is None
+        assert got["reason"], "a missing horizon must always carry a reason"
+
+
+def test_a_stale_snapshot_is_reported_as_stale_not_as_covered():
+    """Forty minutes old does not 'cover' T-30m just because it is the nearest one on record."""
+    target = TIP - timedelta(minutes=30)
+    got = _classify(target - timedelta(minutes=40), first=WINDOW_OPEN, last=TIP)
+    assert got["state"] == "STALE"
+    assert got["reason"] == H.STALE_BEYOND_TOLERANCE
+    assert got["age_minutes"] == 40.0
+
+
+def test_a_snapshot_from_before_the_window_does_not_cover_the_horizon():
+    """A board captured for yesterday's slate says nothing about this game's pregame market."""
+    got = _classify(WINDOW_OPEN - timedelta(hours=3), first=TIP - timedelta(days=9), last=TIP)
+    assert got["state"] == "MISSING"
+    assert got["reason"] == H.MISSING_WINDOW_NEVER_OPENED
+
+
+def test_each_missing_reason_is_reachable_and_distinct():
+    empty = _classify(None, first=None, last=None)
+    assert empty["reason"] == H.MISSING_NO_ARCHIVE
+
+    # The archive starts after this horizon had already passed.
+    late = _classify(None, first=TIP - timedelta(minutes=5), last=TIP)
+    assert late["reason"] == H.MISSING_CAPTURE_NOT_STARTED
+
+    # The archive spans the horizon, so capture was alive; nothing landed in this game's window.
+    gap = _classify(None, first=TIP - timedelta(days=9), last=TIP)
+    assert gap["reason"] == H.MISSING_WINDOW_NEVER_OPENED
+
+    assert len({empty["reason"], late["reason"], gap["reason"]}) == 3
+
+
+def test_the_aggregate_accounts_for_every_game_at_every_horizon():
+    """covered + stale + missing must equal n_games, or the report is hiding something."""
+    covered = H.assess_game("covered", TIP, H.expected_ticks(TIP))
+    nothing = H.assess_game("nothing", TIP, [])
+    s = H.summarise([covered, nothing])
+
+    for minutes in H.HORIZONS_MINUTES:
+        c = s["horizon_coverage"][f"T-{minutes}m"]
+        assert c["n_covered"] + c["n_stale"] + c["n_missing"] == c["n_games"] == 2
+        assert sum(c["missing_reasons"].values()) == c["n_stale"] + c["n_missing"]
+        assert c["n_missing"] >= 1, "the game with no snapshots must never be counted as covered"

@@ -27,8 +27,11 @@ from pydantic import field_validator, model_validator
 
 from nba_edge.schemas.core import Strict
 
-SHOT_EVENT_SCHEMA_VERSION = "shotevent/1"
-INGEST_VERSION = "espn-pbp/1"
+# v2 adds the season-type triplet (season_type / espn_season_type / season_type_source) to every row.
+# The schema version describes the row SHAPE; the ingest version describes the code path that produced it,
+# so a backfilled row keeps its original ingest version and only its schema version moves forward.
+SHOT_EVENT_SCHEMA_VERSION = "shotevent/2"
+INGEST_VERSION = "espn-pbp/2"
 
 # ESPN encodes "no location recorded" as an int32-derived sentinel (-2147483648/10 and neighbours),
 # not as null. Anything beyond court-plausible bounds is missing data, never a position.

@@ -1,0 +1,211 @@
+{
+ "generated_at_utc": "2026-09-29T12:19:04.974571Z",
+ "authority": "RESEARCH",
+ "et_date": "2026-09-29",
+ "season_calendar": {
+  "known": true,
+  "in_season": false,
+  "season_label": null,
+  "calendar": {
+   "2026-27": {
+    "preseason_start": "2026-10-03",
+    "regular_start": "2026-10-20",
+    "regular_end": "2027-04-11",
+    "playoffs_end": "2027-06-30"
+   }
+  }
+ },
+ "archive_rows_by_kind": {
+  "context/schedule": 64,
+  "context/injuries": 2834,
+  "context/rosters": 21335,
+  "kalshi/markets": 39807,
+  "kalshi/orderbooks": 3300,
+  "kalshi/markets_delta": 1,
+  "kalshi/orderbooks_delta": 1
+ },
+ "streams": {
+  "market_board": {
+   "state": "READY",
+   "wired": true,
+   "scheduled": true,
+   "rows_observed": 39807,
+   "detail": "last capture 2026-09-28T03:03:23Z; 3494 markets over 256 series"
+  },
+  "orderbooks": {
+   "state": "READY",
+   "wired": true,
+   "scheduled": true,
+   "rows_observed": 3300,
+   "detail": "captured alongside the board, capped per run"
+  },
+  "context_schedule": {
+   "state": "READY",
+   "wired": true,
+   "scheduled": true,
+   "rows_observed": 64,
+   "detail": "state=ok n_snapshots=38 days=dt=2026-09-18..dt=2026-09-28"
+  },
+  "context_rosters": {
+   "state": "READY",
+   "wired": true,
+   "scheduled": true,
+   "rows_observed": 21335,
+   "detail": "state=ok n_snapshots=38 days=dt=2026-09-18..dt=2026-09-28"
+  },
+  "context_injuries": {
+   "state": "READY",
+   "wired": true,
+   "scheduled": true,
+   "rows_observed": 2834,
+   "detail": "state=ok n_snapshots=38 days=dt=2026-09-18..dt=2026-09-28"
+  },
+  "confirmed_starters": {
+   "state": "NOT_READY",
+   "wired": false,
+   "scheduled": false,
+   "rows_observed": 0,
+   "detail": "projected and CONFIRMED starters are not yet distinguished in the context snapshot; shadow.build_context leaves expected_*_starters empty by design rather than writing a projection into a field that would later read as confirmed",
+   "blocker": "No pregame confirmed-starter source is ingested. LINEUP_CONFIRMED and STARTER_CHANGE therefore cannot fire at all, and lineup_confidence stays UNKNOWN. This needs a source, not a code change -- the box-score starter flag is post-game and would be leakage."
+  },
+  "matchup_context": {
+   "state": "ARMED",
+   "wired": true,
+   "scheduled": true,
+   "rows_observed": 0,
+   "detail": "nba matchup-shadow runs in conductor.yml, gated on the same condition as context; writes nothing while no game is inside the 36h horizon",
+   "blocker": "no snapshot has ever been written, so the offseason no-op and a silent failure are indistinguishable. Two snapshots per game are needed before any event can be diffed."
+  }
+ },
+ "horizons": {
+  "T-90m": {
+   "reported_by_capture_health": true,
+   "cadence_seconds_at_this_horizon": 420.0,
+   "worst_case_snapshot_age_minutes": 7.0,
+   "reachable_by_policy": true,
+   "observed_coverage": 0
+  },
+  "T-60m": {
+   "reported_by_capture_health": true,
+   "cadence_seconds_at_this_horizon": 420.0,
+   "worst_case_snapshot_age_minutes": 7.0,
+   "reachable_by_policy": true,
+   "observed_coverage": 0
+  },
+  "T-30m": {
+   "reported_by_capture_health": true,
+   "cadence_seconds_at_this_horizon": 300.0,
+   "worst_case_snapshot_age_minutes": 5.0,
+   "reachable_by_policy": true,
+   "observed_coverage": 0
+  },
+  "T-10m": {
+   "reported_by_capture_health": true,
+   "cadence_seconds_at_this_horizon": 300.0,
+   "worst_case_snapshot_age_minutes": 5.0,
+   "reachable_by_policy": true,
+   "observed_coverage": 0
+  },
+  "final_pregame": {
+   "reported_by_capture_health": true,
+   "rule": "last snapshot STRICTLY before tip; a post-tip snapshot can never satisfy it",
+   "cadence_seconds_at_this_horizon": 300.0,
+   "worst_case_snapshot_age_minutes": 5.0,
+   "reachable_by_policy": true,
+   "observed_coverage": 0
+  }
+ },
+ "blockers": [
+  {
+   "stream": "confirmed_starters",
+   "blocker": "No pregame confirmed-starter source is ingested. LINEUP_CONFIRMED and STARTER_CHANGE therefore cannot fire at all, and lineup_confidence stays UNKNOWN. This needs a source, not a code change -- the box-score starter flag is post-game and would be leakage."
+  },
+  {
+   "stream": "matchup_context",
+   "blocker": "no snapshot has ever been written, so the offseason no-op and a silent failure are indistinguishable. Two snapshots per game are needed before any event can be diffed."
+  }
+ ],
+ "capture_window_opens_hours_before_tip": 8.0,
+ "cadence_tiers_seconds": {
+  "beyond_T-6h": 900.0,
+  "T-6h..T-90m": 600.0,
+  "T-90m..T-30m": 420.0,
+  "inside_T-30m": 300.0
+ },
+ "information_events": {
+  "kinds": [
+   "lineup_confirmed",
+   "starter_change",
+   "late_scratch",
+   "rotation_addition",
+   "assignment_shift"
+  ],
+  "snapshots_required_per_game_to_diff": 2,
+  "snapshots_present": 0,
+  "state": "ARMED",
+  "note": "stratify() needs at least two matchup/context snapshots for a game before it can emit a single event. With zero snapshots every stratum, no_event included, is empty."
+ },
+ "worker": {
+  "state": "ok",
+  "generation_in_health": 7,
+  "generation_in_lease": 8,
+  "successor_dispatched": true,
+  "fail_closed": false,
+  "n_cycles": 20,
+  "n_capture_failed": 0,
+  "exit_reason": "planned retirement before next cadence tick",
+  "lease_heartbeat_at": "2026-09-29T04:14:44Z",
+  "lease_planned_exit_at": "2026-09-29T07:59:42Z",
+  "self_renewing": true
+ },
+ "archive": {
+  "delta_chains": {
+   "chains": [
+    {
+     "checkpoint": "kalshi/markets/dt=2026-09-28/kalshi_markets_20260928T025911Z_36371861043.jsonl.gz",
+     "final_board_sha256": "3c48d185d0504504c5db8cb35e65124865441be0a1f57190e66502a14381517c",
+     "n_deltas": 1,
+     "n_markets": 3494,
+     "ok": true,
+     "tip_captured_at_utc": "2026-09-28T03:03:23Z"
+    }
+   ],
+   "n_broken": 0,
+   "n_chains": 1,
+   "n_ok": 1,
+   "state": "ok"
+  },
+  "context_refreshed_at": "2026-09-28T07:09:09Z",
+  "schedule_days_ahead": 10
+ },
+ "baseline_freeze": {
+  "baseline_id": "NBA_BASELINE_2026_PRESEASON_V1",
+  "state": "ok",
+  "frozen_parameters_intact": true,
+  "live_digest": "5a4cbda0b973d1e4d6289557b99372e4735ebe3146fa76e8f0b6ca833193be78",
+  "matches_expected_digest": true
+ },
+ "readiness_by_purpose": {
+  "market_relative_research": {
+   "state": "READY",
+   "streams": [
+    "market_board",
+    "orderbooks",
+    "context_schedule"
+   ],
+   "note": "the horizons future market-relative studies need. Every stream has captured real rows; no game has been inside the capture window yet this season, so no horizon has an observed snapshot. That is NOT a covered horizon and is not reported as one."
+  },
+  "information_event_stratification": {
+   "state": "NOT_READY",
+   "streams": [
+    "matchup_context",
+    "confirmed_starters",
+    "context_rosters",
+    "context_injuries"
+   ],
+   "note": "blocked on an absent pregame confirmed-starter source, not on schedule or code."
+  }
+ },
+ "overall": "NOT_READY",
+ "overall_note": "NOT_READY is driven entirely by the absent confirmed-starter source. The market-relative collection this wave was asked about is ARMED: wired, scheduled, proven on real rows, and waiting for the first tip of 2026-27."
+}

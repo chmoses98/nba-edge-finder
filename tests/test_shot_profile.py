@@ -570,7 +570,7 @@ def test_every_shotprofile_module_imports():
     """
     import importlib
 
-    for m in ("events", "court", "features", "packet", "ingest"):
+    for m in ("events", "court", "features", "packet", "ingest", "migrate", "population"):
         importlib.import_module(f"nba_edge.shotprofile.{m}")
     importlib.import_module("nba_edge.research.shot_profile_study")
 
@@ -608,7 +608,8 @@ def test_ingestion_writes_attempts_with_zones_and_skips_non_shots(tmp_path, monk
     board = {"x": 1}
     monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
     monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
-        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z",
+         "season_type": "regular", "espn_season_type": 2}])
 
     def fake_fetch(url, ttl, cache_root=None):
         return (board if "scoreboard" in url else _summary_payload()), False
@@ -634,7 +635,8 @@ def test_a_second_run_reingests_nothing(tmp_path, monkeypatch):
 
     monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
     monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
-        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z",
+         "season_type": "regular", "espn_season_type": 2}])
     calls = {"n": 0}
 
     def fake_fetch(url, ttl, cache_root=None):
@@ -658,8 +660,10 @@ def test_one_unavailable_game_does_not_end_the_pull(tmp_path, monkeypatch):
 
     monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
     monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
-        {"game_id": "espn:400", "event_id": "400", "start_time_utc": "2025-01-15T20:00:00Z"},
-        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+        {"game_id": "espn:400", "event_id": "400", "start_time_utc": "2025-01-15T20:00:00Z",
+         "season_type": "regular", "espn_season_type": 2},
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z",
+         "season_type": "regular", "espn_season_type": 2}])
 
     def fake_fetch(url, ttl, cache_root=None):
         if "event=400" in url:
@@ -713,7 +717,8 @@ def test_an_unreadable_manifest_is_regenerated_rather_than_fatal(tmp_path, monke
 
     monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
     monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
-        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z",
+         "season_type": "regular", "espn_season_type": 2}])
     monkeypatch.setattr(I, "fetch_json",
                         lambda url, ttl, cache_root=None: (({} if "scoreboard" in url
                                                             else _summary_payload()), False))

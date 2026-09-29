@@ -148,12 +148,11 @@ Nothing here justifies promotion, and nothing here was promoted.
 
 ## 7. Known limitations
 
-- **Preseason games are included.** October counts of 116–140 per season exceed a regular-season
-  October, and 1,383 ≈ 1,230 regular + ~85 playoff + ~6 play-in + ~60 preseason. `season_type` is
-  returned by `scoreboard_events` but **not persisted** on the shot event, so the dataset cannot be
-  filtered by it today. Preseason affects only *prior evidence* here — the evaluated window is
-  regular season and playoffs — but it is noise in that evidence, and persisting `season_type` is
-  the single most valuable next change to this schema.
+- ~~**Preseason games are included.**~~ **Fixed.** `season_type` is now persisted (schema
+  `shotevent/2`) and preseason is excluded from the research population by default. See
+  `SEASON_TYPE.md` for the migration, and section 9 below for the controlled re-run. The estimate
+  above was close: the real figure was 45,414 preseason shot events across the three seasons, 4.9%
+  of the corpus.
 - **One market season.** Every conclusion rests on 2025-11-19 → 2026-06-14. A second season of
   market history would roughly double the fold count, which is what the thin 2–3 folds per family
   most need.
@@ -167,10 +166,105 @@ Nothing here justifies promotion, and nothing here was promoted.
 
 Do **not** activate anything. Specifically:
 
-1. **Persist `season_type`** on shot events and re-run the study excluding preseason from prior
-   evidence. Cheap, and it removes the largest known contaminant.
+1. ~~**Persist `season_type`**~~ — **done**, and the study re-run below. It removed the largest known
+   contaminant and did not change any conclusion.
 2. **Accumulate a second season of prop market history** prospectively. The constraint on this study
    was never shot data after the backfill — it was market coverage.
 3. If a future study shows value beyond the market, the next step is **prospective shadow
    validation**, not activation: run the feature live, record what it would have said, and score it
    forward. Nothing should touch production probabilities, hybrid weights or authority before that.
+
+
+---
+
+## 9. Controlled re-run on the clean population
+
+Run after the `season_type` migration (`SEASON_TYPE.md`). **Exactly one thing changed: the population.**
+Feature definitions, zone geometry, half-life, prior strength, sample floors, fold construction, prediction
+logic, thresholds and model parameters are all untouched, and the feature-build path was first shown to
+reproduce the original feature table **value-for-value** (85,846 rows, every column identical) when run over
+the unfiltered corpus, so the two runs differ in the population and nothing else.
+
+Artifacts: `shot_profile_walkforward_clean.json`, `shot_profile_population_comparison.json`.
+
+### The evaluated set did not change at all
+
+| | before | after |
+|---|---:|---:|
+| shot events in corpus | 927,349 | 881,935 |
+| feature rows | 85,846 | 80,404 |
+| **rows the study scores** | **8,112** | **8,112** |
+
+The Kalshi prop panel spans 2025-11-19 → 2026-06-14, which is entirely regular season and postseason. **No
+preseason game was ever an evaluated row.** The contamination lived in the point-in-time accumulators that
+feed the features, not in the rows being scored.
+
+### What it did do
+
+Every one of the 8,112 evaluated rows carries a different feature value now — none was unchanged:
+
+| feature | mean abs change | max abs change | rows unchanged |
+|---|---:|---:|---:|
+| `d_rim` | 0.00183 | 0.01127 | 0 / 8,112 |
+| `d_three_rate` | 0.00219 | 0.01173 | 0 / 8,112 |
+
+Real and measurable, and far too small to move a result at this sample size.
+
+### Out-of-sample log-loss delta (negative = profile helps)
+
+| family | base | folds | before | after |
+|---|---|---:|---:|---:|
+| `player_assists` | vs V1 | 2 | −8.32e-04 | −1.05e-03 |
+| `player_assists` | vs market | 2 | −7.90e-04 | −8.90e-04 |
+| `player_assists` | vs hybrid | 2 | −4.54e-04 | −5.89e-04 |
+| `player_points` | vs V1 | 3 | −4.33e-03 | −4.44e-03 |
+| `player_points` | vs market | 3 | +5.45e-06 | −6.65e-05 |
+| `player_points` | vs hybrid | 3 | −1.45e-04 | −2.19e-04 |
+| `player_rebounds` | vs V1 | 3 | +2.11e-03 | +2.03e-03 |
+| `player_rebounds` | vs market | 3 | +1.57e-03 | +1.54e-03 |
+| `player_rebounds` | vs hybrid | 3 | +1.08e-03 | +1.03e-03 |
+| `player_threes` | vs V1 | 2 | +5.74e-04 | +6.55e-04 |
+| `player_threes` | vs market | 2 | +1.24e-03 | +1.28e-03 |
+| `player_threes` | vs hybrid | 2 | +1.29e-03 | +1.34e-03 |
+
+### Verdict: `NO_CHANGE_IN_CONCLUSION`
+
+Judged by the study's **own pre-specified criterion** — the +profile model must beat the base model in *every*
+out-of-sample fold — nothing moved. No family passed before; none passes after; against any of the three
+baselines. No threshold was added, moved or relaxed to reach that statement.
+
+One raw sign flip exists and is recorded: `player_points` vs market went from +5.45e-06 to −6.65e-05. That is
+a change of 7e-05 nats across 1,919 out-of-sample rows, better in 1 of 3 folds. It is not distinguishable from
+zero in either direction, and treating it as a result would be reading a conclusion out of the fifth decimal
+place.
+
+**The fix was still necessary.** The contamination was *invisible*, not harmless. On this panel it happened to
+be small because the market history does not span preseason; on a panel that did, it would not have been, and
+nothing in the schema would have revealed it.
+
+## 10. Event-window stratification: `INSUFFICIENT_DATA`
+
+The brief asks for residual value stratified by the lineup-event windows built in PR #16
+(`matchup/events.py`: `LINEUP_CONFIRMED`, `STARTER_CHANGE`, `LATE_SCRATCH`, `ROTATION_ADDITION`,
+`ASSIGNMENT_SHIFT`, plus `no_event`). Those windows are used **unchanged** — nothing was rebuilt, no window
+was redefined, and no threshold was relaxed.
+
+The stratification cannot run, and this is measured rather than assumed. The archive branch
+(`origin/data-archive`) holds 140 manifest entries across these kinds:
+
+| kind | rows |
+|---|---:|
+| `kalshi/markets` | 39,807 |
+| `context/rosters` | 21,335 |
+| `kalshi/orderbooks` | 3,300 |
+| `context/injuries` | 2,834 |
+| `context/schedule` | 64 |
+| **`matchup/context`** | **0** |
+
+`stratify()` needs at least two `matchup/context` snapshots per game to diff into events. There are zero
+snapshots of any kind. Every stratum, including `no_event`, is therefore empty.
+
+**`INSUFFICIENT_DATA`.** Not "no effect", not "no evidence of an effect" — no observations. `matchup-shadow`
+is wired into `conductor.yml` and gated on the same condition as `context`, so the first snapshots will be
+written when 2026-27 games enter the 36-hour horizon. Until a game's context has been captured at least twice,
+there is nothing to diff and nothing to stratify.
