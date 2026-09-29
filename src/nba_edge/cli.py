@@ -178,6 +178,19 @@ def cmd_shot_events(args: argparse.Namespace) -> int:
     )
 
 
+def cmd_shot_events_migrate(args: argparse.Namespace) -> int:
+    """RESEARCH: backfill the season-type triplet onto shot-event files written before shotevent/2.
+
+    Additive only. The label is joined from the ESPN box-score dataset's own ``season_type``, never inferred
+    from a game's date, and the migration refuses to write if any pre-existing column's digest moves.
+    """
+    from nba_edge.shotprofile.migrate import run_migration
+
+    return run_migration(
+        Path(args.out), [s.strip() for s in args.seasons.split(",")], write=not args.dry_run,
+    )
+
+
 def cmd_matchup_shadow(args: argparse.Namespace) -> int:
     """Record what was knowable about each upcoming game's matchups, when it was knowable.
 
@@ -301,6 +314,15 @@ def build_parser() -> argparse.ArgumentParser:
     se.add_argument("--seasons", default="2024-25")
     se.add_argument("--max-games", type=int, default=0, help="cap NEW games per run; 0 = no cap")
     se.set_defaults(func=cmd_shot_events)
+
+    sem = sub.add_parser(
+        "shot-events-migrate",
+        help="RESEARCH: backfill season_type onto existing shot-event files (additive, verified)",
+    )
+    sem.add_argument("--out", default="data/history")
+    sem.add_argument("--seasons", default="2023-24,2024-25,2025-26")
+    sem.add_argument("--dry-run", action="store_true", help="report only; write nothing")
+    sem.set_defaults(func=cmd_shot_events_migrate)
 
     ms = sub.add_parser(
         "matchup-shadow",
