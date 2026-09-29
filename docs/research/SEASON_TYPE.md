@@ -100,6 +100,23 @@ come from ESPN; the dates come from the schedule; if they disagreed, the blocks 
 Representative games check out against the real calendar: opening night 2023-10-24 / 2024-10-22 / 2025-10-21,
 and the last playoff game 2024-06-17 / 2025-06-22 / 2026-06-13.
 
+### Events and located FGA by season type
+
+Totals reconcile exactly with the pre-migration figures — **4,160 games, 927,349 events, 740,390 located
+FGA** — which is an independent confirmation that nothing was added, lost or duplicated.
+
+| season type | games | shot events | located FGA |
+|---|---:|---:|---:|
+| preseason | 198 | 45,414 | 35,431 |
+| regular | 3,693 | 823,693 | 659,037 |
+| play-in | 18 | 3,948 | 3,181 |
+| playoffs | 251 | 54,294 | 42,741 |
+| **all** | **4,160** | **927,349** | **740,390** |
+
+**Unknown classification count: 0.** No game in any of the three seasons landed on `other`, and no row is
+unlabelled. Play-in *is* separately represented by ESPN (code 5), so no limitation needs documenting there —
+it is a real category with 18 games, not a guess.
+
 ## Default research population
 
 `load_shot_events` now returns **regular + play-in + playoffs** by default. Play-in is counted as postseason:
