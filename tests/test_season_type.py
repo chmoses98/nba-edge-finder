@@ -276,3 +276,41 @@ def test_load_shot_events_filters_by_default_and_can_be_asked_not_to(tmp_path):
     assert rep["dropped_by_season_type"] == {"preseason": 2}
     assert len(load_shot_events(tmp_path, ["2024-25"], include_preseason=True)) == 4
     assert len(load_shot_events(tmp_path, ["2024-25"], all_season_types=True)) == 4
+
+
+# ---------------------------------------------------------------------------------------------------------
+# prospective readiness reporting
+# ---------------------------------------------------------------------------------------------------------
+def test_a_stream_that_has_never_written_a_row_is_never_ready():
+    """ARMED exists because an offseason no-op and a silent failure look identical from outside.
+
+    The whole point of the readiness audit is that it refuses to call an unproven stream working. If a
+    zero-row stream could read READY, the audit would certify the system every summer and say nothing
+    different on the night it actually mattered.
+    """
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location(
+        "prospective_readiness", Path(__file__).resolve().parents[1] / "scripts" / "prospective_readiness.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    rep: dict = {"streams": {}, "blockers": []}
+
+    def stream(name, *, wired, scheduled, rows, detail, blocker=None):
+        state = "NOT_READY" if not (wired and scheduled) else ("READY" if rows > 0 else "ARMED")
+        rep["streams"][name] = {"state": state, "rows_observed": rows}
+
+    stream("wired_but_silent", wired=True, scheduled=True, rows=0, detail="")
+    stream("wired_and_writing", wired=True, scheduled=True, rows=1, detail="")
+    stream("missing", wired=False, scheduled=True, rows=99, detail="")
+
+    assert rep["streams"]["wired_but_silent"]["state"] == "ARMED"
+    assert rep["streams"]["wired_and_writing"]["state"] == "READY"
+    # Rows alone never buy READY: an unwired stream stays NOT_READY however many rows are lying around.
+    assert rep["streams"]["missing"]["state"] == "NOT_READY"
+    assert mod.BASELINE_DIGEST == (
+        "5a4cbda0b973d1e4d6289557b99372e4735ebe3146fa76e8f0b6ca833193be78"
+    ), "the audit must compare against the frozen baseline digest, not whatever is live"

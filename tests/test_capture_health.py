@@ -102,6 +102,33 @@ def test_the_verdict_cannot_pass_on_an_empty_archive():
     assert s["acceptance"]["at_least_95pct_intervals_within_12min"] is False
 
 
-def test_summarise_of_no_games_is_not_a_pass():
+def test_no_games_at_all_reads_as_no_data_rather_than_pass_or_fail():
+    """Nothing was observed, so neither answer is honest.
+
+    PASS would be the mistake that matters most: an absent snapshot reported as a covered horizon. FAIL is
+    the quieter version of it -- an alarm that is red for four months every offseason is one people learn to
+    scroll past, and it is red again on the night it means something. Note the contrast with the test above:
+    a game that EXISTS and has no snapshots is a real failure, because intervals were expected."""
     s = H.summarise([])
-    assert s["acceptance"]["verdict"] == "FAIL"
+    assert s["acceptance"]["verdict"] == "NO_DATA"
+    assert s["acceptance"]["n_expected_intervals"] == 0
+    assert s["acceptance"]["verdict_reason"]
+    # NO_DATA must still not look like success to anything reading the individual criteria.
+    assert s["acceptance"]["at_least_95pct_intervals_within_12min"] is False
+    assert s["acceptance"]["no_gap_over_30min"] is False
+
+
+def test_every_named_horizon_is_reported_and_an_absent_snapshot_is_never_counted():
+    """The brief names T-90/T-60/T-30/T-10. A horizon that is collected but never reported is a horizon
+    nobody can show was collected -- and a horizon with no snapshot must never count as covered."""
+    for minutes in (90, 60, 30, 10):
+        assert minutes in H.HORIZONS_MINUTES
+
+    g = H.assess_game("g1", TIP, [])
+    s = H.summarise([g])
+    for minutes in H.HORIZONS_MINUTES:
+        key = f"T-{minutes}m"
+        assert g.horizons[key]["covered_by"] is None
+        assert g.horizons[key]["age_minutes"] is None
+        assert s["horizon_coverage"][key]["games_with_any_prior_snapshot"] == 0
+        assert s["horizon_coverage"][key]["coverage_pct"] == 0.0

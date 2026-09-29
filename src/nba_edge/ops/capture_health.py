@@ -36,7 +36,9 @@ SNAP_RE = re.compile(r"_(\d{8}T\d{6}Z)_(\d+)\.jsonl(?:\.gz)?$")
 # The horizons the brief asks for by name. "nearest feasible pre-tip" is handled separately by
 # ``final_pregame``, because the last valid snapshot before tip is a different question from
 # whether any particular horizon was covered.
-HORIZONS_MINUTES = (24 * 60, 6 * 60, 90, 30, 10)
+# T-60m sits inside the 7-minute tier, so the cadence already produces a snapshot near it; it is listed here
+# because a horizon that is collected but never reported is a horizon nobody can show was collected.
+HORIZONS_MINUTES = (24 * 60, 6 * 60, 90, 60, 30, 10)
 
 
 def _parse_stamp(text: str) -> datetime:
@@ -228,14 +230,29 @@ def summarise(games: list[GameHealth]) -> dict:
     # in prose: each criterion is a boolean next to the number that decided it.
     pct12 = summary["pct_within_12min"]
     maxgap = summary["gap_minutes"]["max"]
+    # NO_DATA is a third verdict on purpose. With no games in the window -- every offseason day, and any
+    # archive that has not captured yet -- there is nothing to measure, and both of the other answers are
+    # wrong. PASS would be the failure the brief names outright: reporting an absent snapshot as a covered
+    # horizon. FAIL is the quieter version of the same mistake, because an alarm that is red for four months
+    # every summer is an alarm people learn to scroll past, and it is red again on the night it matters.
+    measured = n > 0
     summary["acceptance"] = {
         "at_least_95pct_intervals_within_12min": (pct12 is not None and pct12 >= 95.0),
         "no_gap_over_30min": (maxgap is not None and maxgap <= 30.0),
         "measured_pct_within_12min": pct12,
         "measured_max_gap_minutes": maxgap,
-        "verdict": "PASS"
-        if (pct12 is not None and pct12 >= 95.0 and maxgap is not None and maxgap <= 30.0)
-        else "FAIL",
+        "n_expected_intervals": n,
+        "verdict": "NO_DATA"
+        if not measured
+        else (
+            "PASS"
+            if (pct12 is not None and pct12 >= 95.0 and maxgap is not None and maxgap <= 30.0)
+            else "FAIL"
+        ),
+        "verdict_reason": None if measured else (
+            "no game fell inside the capture window, so no interval was expected and none was measured. "
+            "This is not a pass and not a failure: nothing was observed."
+        ),
     }
     return summary
 

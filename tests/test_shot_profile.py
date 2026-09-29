@@ -570,7 +570,7 @@ def test_every_shotprofile_module_imports():
     """
     import importlib
 
-    for m in ("events", "court", "features", "packet", "ingest"):
+    for m in ("events", "court", "features", "packet", "ingest", "migrate", "population"):
         importlib.import_module(f"nba_edge.shotprofile.{m}")
     importlib.import_module("nba_edge.research.shot_profile_study")
 
