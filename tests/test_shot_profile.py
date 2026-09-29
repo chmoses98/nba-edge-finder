@@ -670,3 +670,55 @@ def test_one_unavailable_game_does_not_end_the_pull(tmp_path, monkeypatch):
 
     assert I.run_shot_event_pull(tmp_path, ["2024-25"]) == 0
     assert len(I.load_shot_events(tmp_path, ["2024-25"])) == 3, "the healthy game still landed"
+
+
+def test_the_manifest_accumulates_across_single_season_runs(tmp_path, monkeypatch):
+    """A long backfill runs one season at a time, so a manifest that rebuilds itself forgets.
+
+    The first real backfill did exactly that: after ingesting 2023-24 the manifest described only
+    2023-24, while shot_events_2024-25.parquet sat next to it with 308,339 rows and no record.
+    """
+    from datetime import date
+
+    import nba_edge.shotprofile.ingest as I
+
+    seen = {"season": None}
+    monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
+    monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
+        {"game_id": f"espn:{seen['season']}", "event_id": "401",
+         "start_time_utc": "2025-01-15T23:00:00Z"}])
+    monkeypatch.setattr(I, "fetch_json",
+                        lambda url, ttl, cache_root=None: (({} if "scoreboard" in url
+                                                            else _summary_payload()), False))
+    import json as _json
+
+    for season in ("2023-24", "2024-25"):
+        seen["season"] = season
+        I.run_shot_event_pull(tmp_path, [season])
+
+    man = _json.loads((tmp_path / "espn" / "SHOT_EVENTS_MANIFEST.json").read_text())
+    assert set(man["seasons"]) == {"2023-24", "2024-25"}, (
+        f"the earlier season must survive a later run; got {sorted(man['seasons'])}")
+    assert man["seasons"]["2023-24"]["shot_events"] > 0
+
+
+def test_an_unreadable_manifest_is_regenerated_rather_than_fatal(tmp_path, monkeypatch):
+    from datetime import date
+
+    import nba_edge.shotprofile.ingest as I
+
+    d = tmp_path / "espn"
+    d.mkdir(parents=True)
+    (d / "SHOT_EVENTS_MANIFEST.json").write_text("{ not json")
+
+    monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
+    monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+    monkeypatch.setattr(I, "fetch_json",
+                        lambda url, ttl, cache_root=None: (({} if "scoreboard" in url
+                                                            else _summary_payload()), False))
+    assert I.run_shot_event_pull(tmp_path, ["2024-25"]) == 0
+    import json as _json
+
+    man = _json.loads((d / "SHOT_EVENTS_MANIFEST.json").read_text())
+    assert "2024-25" in man["seasons"]
