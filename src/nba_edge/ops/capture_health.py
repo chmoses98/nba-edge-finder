@@ -78,6 +78,56 @@ def _nearest_at_or_before(when: datetime, snaps: list[datetime]) -> datetime | N
     return prior[-1] if prior else None
 
 
+# Why a horizon has no usable snapshot. Every value is decidable from timestamps alone -- the archive's span,
+# the game's capture window, and the snapshots themselves -- so the report never has to guess at a cause, and
+# a horizon whose cause cannot be established stays UNEXPLAINED rather than being assigned a plausible one.
+#
+# Causes that need payload rather than timing (market not listed yet, quote not executable, model or context
+# stale) are NOT invented here. They are reported by the readiness audit against the streams that carry them;
+# asserting them from capture times would be a guess wearing a reason's clothing.
+MISSING_NO_ARCHIVE = "no market snapshot exists on the archive at all"
+MISSING_CAPTURE_NOT_STARTED = "capture had not started when this horizon passed"
+MISSING_WINDOW_NEVER_OPENED = "no snapshot was taken inside this game's capture window"
+MISSING_UNEXPLAINED = "no snapshot at or before this horizon, and the timestamps do not say why"
+STALE_BEYOND_TOLERANCE = "nearest snapshot is older than the freshness tolerance"
+
+
+def classify_horizon(
+    target: datetime,
+    covered_by: datetime | None,
+    *,
+    window_open: datetime,
+    archive_first: datetime | None,
+    archive_last: datetime | None,
+    tolerance_minutes: float = 12.0,
+) -> dict:
+    """Grade one horizon: COVERED, STALE or MISSING, with the reason when it is not covered.
+
+    COVERED requires an actual snapshot at or before the target, taken inside the game's capture window, and
+    no older than the tolerance. Nothing else can reach COVERED -- an absent snapshot must never read as a
+    satisfied horizon, which is the single rule this function exists to enforce.
+    """
+    age = None if covered_by is None else round((target - covered_by).total_seconds() / 60, 2)
+    if covered_by is not None and covered_by >= window_open:
+        if age is not None and age <= tolerance_minutes:
+            return {"state": "COVERED", "reason": None, "age_minutes": age,
+                    "covered_by": covered_by.isoformat()}
+        return {"state": "STALE", "reason": STALE_BEYOND_TOLERANCE, "age_minutes": age,
+                "covered_by": covered_by.isoformat()}
+
+    if archive_first is None:
+        reason = MISSING_NO_ARCHIVE
+    elif target < archive_first:
+        reason = MISSING_CAPTURE_NOT_STARTED
+    elif archive_last is not None and archive_first <= target:
+        # The archive spans this horizon, so capture was alive around it; what is absent is any snapshot
+        # inside this particular game's window. A prior snapshot from before the window does not count.
+        reason = MISSING_WINDOW_NEVER_OPENED
+    else:
+        reason = MISSING_UNEXPLAINED
+    return {"state": "MISSING", "reason": reason, "age_minutes": None, "covered_by": None}
+
+
 @dataclass
 class IntervalResult:
     expected_at: str
@@ -152,14 +202,17 @@ def assess_game(
         if cover:
             previous = cover
 
+    window_open = tip - timedelta(hours=WINDOW_OPEN_HOURS_BEFORE_TIP)
+    archive_first = snaps[0] if snaps else None
+    archive_last = snaps[-1] if snaps else None
     for minutes in HORIZONS_MINUTES:
         target = tip - timedelta(minutes=minutes)
         cover = _nearest_at_or_before(target, pregame)
-        gh.horizons[f"T-{minutes}m"] = {
-            "target_utc": target.isoformat(),
-            "covered_by": cover.isoformat() if cover else None,
-            "age_minutes": None if cover is None else round((target - cover).total_seconds() / 60, 2),
-        }
+        graded = classify_horizon(
+            target, cover, window_open=window_open, archive_first=archive_first,
+            archive_last=archive_last, tolerance_minutes=tolerance_minutes,
+        )
+        gh.horizons[f"T-{minutes}m"] = {"target_utc": target.isoformat(), **graded}
 
     if pregame:
         gh.final_pregame_utc = pregame[-1].isoformat()
@@ -182,13 +235,27 @@ def summarise(games: list[GameHealth]) -> dict:
     horizon_cov = {}
     for minutes in HORIZONS_MINUTES:
         key = f"T-{minutes}m"
+        states = [g.horizons.get(key, {}).get("state") for g in games]
         have = [g for g in games if g.horizons.get(key, {}).get("covered_by")]
         fresh = [g for g in have if (g.horizons[key]["age_minutes"] or 0) <= 12.0]
+        # Every game that did not reach COVERED is accounted for by name. A horizon whose games do not add
+        # up -- covered + stale + missing != n_games -- is a reporting bug, and the totals are printed so
+        # that is visible rather than inferred.
+        reasons: dict[str, int] = {}
+        for g in games:
+            h = g.horizons.get(key, {})
+            if h.get("state") != "COVERED" and h.get("reason"):
+                reasons[h["reason"]] = reasons.get(h["reason"], 0) + 1
         horizon_cov[key] = {
             "games_with_any_prior_snapshot": len(have),
             "games_with_snapshot_within_12min": len(fresh),
             "coverage_pct": round(100.0 * len(have) / len(games), 2) if games else None,
             "fresh_coverage_pct": round(100.0 * len(fresh) / len(games), 2) if games else None,
+            "n_covered": sum(1 for st in states if st == "COVERED"),
+            "n_stale": sum(1 for st in states if st == "STALE"),
+            "n_missing": sum(1 for st in states if st == "MISSING"),
+            "n_games": len(games),
+            "missing_reasons": reasons,
         }
 
     summary = {

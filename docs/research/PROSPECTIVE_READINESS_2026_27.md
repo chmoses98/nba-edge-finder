@@ -162,3 +162,68 @@ Neither blocks market-relative collection, which is `READY`.
 T-10m column. Adding them would add rows to `market_table.parquet` and change `n_market_rows` in every study
 already derived from it, including the hybrid-weight work this wave is explicitly forbidden to disturb. It is
 recorded here as a deliberate non-change, for a wave that can re-run the downstream studies alongside it.
+
+## Horizon completeness reporting
+
+Each horizon is now graded `COVERED` / `STALE` / `MISSING` rather than carrying a bare timestamp, and
+everything that is not `COVERED` carries a reason.
+
+`COVERED` requires all three of: a real snapshot at or before the target, taken **inside that game's capture
+window**, and no older than the 12-minute tolerance. Nothing else can reach it. In particular a snapshot from
+before the window — yesterday's slate — does not cover tonight's T-30m, and a snapshot forty minutes stale does
+not cover T-30m merely by being the nearest one on record; that is `STALE`, reported with its age.
+
+Missing reasons are limited to what timestamps can actually establish:
+
+| reason | when |
+|---|---|
+| `no market snapshot exists on the archive at all` | archive empty |
+| `capture had not started when this horizon passed` | target precedes the first snapshot |
+| `no snapshot was taken inside this game's capture window` | archive spans the horizon, nothing landed in-window |
+| `no snapshot at or before this horizon, and the timestamps do not say why` | unexplained — never guessed |
+
+Causes that need payload rather than timing — *market not listed yet*, *quote not executable*, *model stale*,
+*context stale* — are deliberately **not** inferred here. Asserting them from capture times would be a guess
+wearing a reason's clothing. They are reported by the readiness audit against the streams that carry them, and
+a horizon whose cause cannot be established stays `UNEXPLAINED` rather than being assigned a plausible one.
+
+The aggregate now prints `n_covered + n_stale + n_missing` against `n_games` per horizon, so a horizon whose
+games do not add up is visible as a reporting bug instead of being silently absorbed.
+
+Four mutations were introduced against these rules and all four were caught: a stale snapshot counting as
+covered, a pre-window snapshot counting as covered, missing horizons carrying no reason, and every missing
+cause collapsing to a single reason.
+
+## Worker and archive safety (verified)
+
+| property | status | how |
+|---|---|---|
+| one writer | ok | lease with generation counter; successor token handover, verified 7 → 8 live |
+| no worker thrash | ok | 20 cycles, 0 capture failures, planned retirement before the next cadence tick |
+| append-only evidence | ok | `append_rows` refuses to overwrite an existing partition path |
+| valid delta chains | ok | 1/1 reconstruct, 0 broken |
+| no historical rewrite | ok | `manifest.jsonl` is `merge=union`; concurrent writers only append |
+| failures visible | ok | the coverage-alarm step is **not** `continue-on-error` and exits 1 on alarms |
+| matchup failures can't kill market capture | ok | now pinned by test |
+| shot-profile failures can't kill market capture | ok | its pull is a separate workflow entirely |
+| settlement separate | ok | gated on its own decide output, not on the capture decision |
+| preseason → regular transition | ok | now pinned by test |
+
+Three of these are newly pinned by tests rather than only inspected:
+
+- **Matchup shadow cannot abort market capture.** It runs *before* market capture in the same job, so without
+  `continue-on-error` a bad research pull would take the night's market snapshots with it. Market capture is
+  the one stream that cannot be re-collected later: a price at T-30m exists for thirty minutes and never
+  again.
+- **Collection and reporting steps have opposite requirements.** Every collection step must be isolated; the
+  alarm step must *not* be, or a silent coverage failure ends as a green run — which is how ~4.6% delivery
+  went unnoticed for a whole wave. The test asserts both directions.
+- **The 2026-27 rollover stays in season.** `in_season` does not blink off between the preseason finale
+  (2026-10-18) and opening night (2026-10-20); a dormant day there is market history that cannot be
+  recovered. 2026-10-02, the day before preseason opens, is correctly dormant *and* correctly not on the
+  October–June fallback.
+
+One risk this wave introduced was checked directly and is clear: the new default research population could
+have starved a live consumer during 2026-27 preseason. `load_shot_events` has **no live consumer** — only
+`scripts/build_shot_profile_features.py` and tests — and nothing under `sim/`, `pricing/` or `workflows/`
+imports `shotprofile` at all. The filter cannot reach production behaviour.
