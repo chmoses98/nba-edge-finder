@@ -99,6 +99,11 @@ class Observation:
     actual: float
     v1_mean: float | None = None
     v2_mean: float | None = None
+    # Standard deviations, so a point forecast can be scored as a DISTRIBUTION. A model that moves
+    # the mean toward the outcome while widening the spread has not necessarily improved, and MAE
+    # cannot tell the difference -- CRPS and interval coverage can.
+    v1_sd: float | None = None
+    v2_sd: float | None = None
     # Threshold-level probabilities, for log loss / Brier against a market line.
     line: float | None = None
     v1_p_over: float | None = None
@@ -156,6 +161,28 @@ def _crps_normal(mu: float, sigma: float, y: float) -> float:
     return sigma * (z * (2 * cdf - 1) + 2 * pdf - 1 / math.sqrt(math.pi))
 
 
+def _interval_coverage(
+    rows: Sequence[tuple[float, float, float]], z: float = 1.2815625
+) -> dict[str, Any] | None:
+    """Share of outcomes inside a central interval, against the share the model promised.
+
+    Default z gives a nominal 80% interval. A model whose 80% interval covers 60% of outcomes is
+    overconfident in a way no mean-error metric reports: this repository has already been bitten by
+    exactly that, when a nominal 80% minutes interval covered 39% of the high-minute players props
+    are actually listed on.
+    """
+    inside = [lo <= y <= hi for lo, hi, y in
+              ((m - z * s, m + z * s, y) for m, s, y in rows if s is not None and s > 0)]
+    if not inside:
+        return None
+    return {
+        "nominal": 0.8,
+        "empirical": round(sum(inside) / len(inside), 4),
+        "n": len(inside),
+        "miscoverage": round(sum(inside) / len(inside) - 0.8, 4),
+    }
+
+
 def evaluate_family(observations: Sequence[Observation]) -> dict[str, Any]:
     """Metrics for one prop family, V1 vs V2, plus the market where present."""
     n = len(observations)
@@ -182,6 +209,22 @@ def evaluate_family(observations: Sequence[Observation]) -> dict[str, Any]:
     cal = [(o.v2_p_over, o.outcome_over) for o in observations
            if o.v2_p_over is not None and o.outcome_over is not None]
     res["calibration_v2"] = _calibration(cal)
+
+    # Distributional scoring. `_crps_normal` existed as dead code for a whole wave -- defined,
+    # never called, with no sd on the Observation to feed it. A metric nothing computes is not a
+    # metric, so it is wired here and reports None when the spread is genuinely unavailable.
+    for label, mean_attr, sd_attr in (("v1", "v1_mean", "v1_sd"), ("v2", "v2_mean", "v2_sd")):
+        rows = [(getattr(o, mean_attr), getattr(o, sd_attr), o.actual) for o in observations
+                if getattr(o, mean_attr) is not None and getattr(o, sd_attr) is not None]
+        if rows:
+            res[f"crps_{label}"] = round(
+                sum(_crps_normal(m, s, y) for m, s, y in rows) / len(rows), 6)
+            res[f"coverage_{label}"] = _interval_coverage(rows)
+        else:
+            res[f"crps_{label}"] = None
+            res[f"coverage_{label}"] = None
+    if res.get("crps_v1") is not None and res.get("crps_v2") is not None:
+        res["crps_delta_v2_minus_v1"] = round(res["crps_v2"] - res["crps_v1"], 6)
     return res
 
 
@@ -221,6 +264,33 @@ def residual_value_test(observations: Sequence[Observation]) -> dict[str, Any]:
             "the MARKET and the HYBRID baseline, not merely V1."
         ),
     }
+
+
+def residual_value_by_event_window(
+    observations: Sequence[Observation], events: Sequence[Any]
+) -> dict[str, Any]:
+    """The residual test, run separately inside each lineup-event window.
+
+    Section 12's point: lineup confirmation, late scratches and starter changes are the moments when
+    a matchup-aware model and the market can legitimately disagree, because the news has landed but
+    the price may not have absorbed it. Those observations are a few percent of a season, so a real
+    effect concentrated there vanishes in a pooled average.
+
+    The ``no_event`` stratum is reported beside the rest deliberately. An effect present only in the
+    event windows is a candidate; one present everywhere equally is more likely a property of the
+    model than of the news, and the split is what tells them apart.
+    """
+    from nba_edge.matchup.events import stratify
+
+    strata = stratify(observations, events)
+    out: dict[str, Any] = {"n_total": len(observations), "strata": {}}
+    for name, rows in strata.items():
+        out["strata"][name] = {
+            "n": len(rows),
+            **({"residual": residual_value_test(rows)} if rows else
+               {"reason": "no observations in this window"}),
+        }
+    return out
 
 
 def run_walk_forward(

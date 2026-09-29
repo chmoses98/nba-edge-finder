@@ -172,6 +172,45 @@ current-season work (it stops at 2022-23 and stores no lineups), so nothing in V
 it — but a source quietly going from "has data" to "returns an empty list" is exactly the kind of
 change that is only ever noticed by a probe that keeps running.
 
+## 2.5 Per-source matrix: the dimensions that decide automated ingestion
+
+Reachability is necessary and not sufficient. A source can answer every request and still be
+unusable as a source of record — because its identifiers cannot be joined, because its terms forbid
+it, or because it is a page whose layout is its API. These are the columns the brief asks for, one
+row per source, assessed against the categories **A** player defensive assignments · **B**
+play-by-play · **C** substitutions · **D** five-man lineups · **E** shot locations/types ·
+**F** play types · **G** scheme proxies · **H** physical measurements.
+
+| source | covers | reachable here | historical | current latency | rate limits | identity quality | reproducible | licensing | auto-ingest? |
+|---|---|---|---|---|---|---|---|---|---|
+| **ESPN site API** | B, C (partial), E | **yes**, ~0.2 s | 2023-24 → now, verified 4,160 games | same-day after final | none observed at ~1 req/game; this project has pulled 4,160 without a block | **strong** — stable numeric athlete/team ids, already the project's provisional-id convention | **yes** — finished games are immutable, cached 90 d | undocumented public endpoint; no published terms for programmatic use | **YES — in use** |
+| **stats.nba.com** | A, B, C, D, E, F, G, H | **no** — ReadTimeout at 180 s, 7 paths, 3 runs | would be complete | n/a | n/a (never answered) | best-in-class (official ids) | n/a | official but cloud egress is blocked in practice | **no — unreachable** |
+| **cdn.nba.com** | B, E | **no** — HTTP 403, every path, every run | n/a | n/a | n/a | official ids | n/a | as above | **no — blocked** |
+| **pbpstats** | B, C, D, F | **yes**, 200 in 1.2–2.8 s | deep | unmeasured | **uncharacterised** — 200 twice on the lineup endpoint after an earlier run saw a timeout; two rounds is not a measurement in either direction | own ids; mapping to NBA ids unverified here | unverified | small independent service; **courtesy matters more than limits** — a backfill would be a meaningful load on one operator | **not yet** — characterise failure modes and agree acceptable load first |
+| **hoopR-data** | B, E | **yes** (GitHub), but index returns `[]` | was 1996-97 → 2022-23 | **stale by ~3 seasons** | GitHub limits, generous | NBA Stats ids | **yes** — git-versioned | open-source dataset | **no** — regressed to an empty index, and never carried lineups |
+| **Basketball Reference** | B (partial), G, H | **not probed** | deep | next-day | — | strong, stable slugs | — | **terms prohibit automated scraping**; bulk access is via a paid data partner | **no — excluded on licensing, not on capability** |
+
+Two entries deserve a sentence rather than a cell.
+
+**Basketball Reference is excluded by its terms, not by its usefulness.** It is the obvious source
+for physical measurements (H) and several scheme proxies (G), and it is reachable in the ordinary
+sense. Its terms of use prohibit automated collection, so this project does not probe it and does
+not build an adapter for it. That is a decision about what this project is willing to do, and it
+should not be quietly revisited by a future contributor who notices the data would be convenient.
+
+**pbpstats is a small independent service.** The limit that matters there is not a documented
+rate cap but the cost of a stranger's backfill landing on one operator's infrastructure. The audit's
+standing position — a source cannot back an archive of record until its failure modes are
+characterised — happens to coincide with the polite answer here.
+
+### What this means for the arm
+
+**Category A — defensive assignments — has no reachable source at all.** Every candidate is either
+blocked (`stats.nba.com`), excluded (Basketball Reference), or does not carry it (ESPN, hoopR). That
+is why `DEFENDER_ATTRIBUTION_AVAILABLE` is `False` and why the assignment model's honest output is
+`UNKNOWN`. Categories B, C and E are served by ESPN today and are what the shot-profile arm actually
+runs on. D, F, G and H await either a change in reachability or a licensed source.
+
 ## 3. What a functioning ingestion would require
 
 Ranked by what it would cost to make real, not by how much anyone would like it.
