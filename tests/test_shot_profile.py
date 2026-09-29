@@ -670,3 +670,158 @@ def test_one_unavailable_game_does_not_end_the_pull(tmp_path, monkeypatch):
 
     assert I.run_shot_event_pull(tmp_path, ["2024-25"]) == 0
     assert len(I.load_shot_events(tmp_path, ["2024-25"])) == 3, "the healthy game still landed"
+
+
+def test_the_manifest_accumulates_across_single_season_runs(tmp_path, monkeypatch):
+    """A long backfill runs one season at a time, so a manifest that rebuilds itself forgets.
+
+    The first real backfill did exactly that: after ingesting 2023-24 the manifest described only
+    2023-24, while shot_events_2024-25.parquet sat next to it with 308,339 rows and no record.
+    """
+    from datetime import date
+
+    import nba_edge.shotprofile.ingest as I
+
+    seen = {"season": None}
+    monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
+    monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
+        {"game_id": f"espn:{seen['season']}", "event_id": "401",
+         "start_time_utc": "2025-01-15T23:00:00Z"}])
+    monkeypatch.setattr(I, "fetch_json",
+                        lambda url, ttl, cache_root=None: (({} if "scoreboard" in url
+                                                            else _summary_payload()), False))
+    import json as _json
+
+    for season in ("2023-24", "2024-25"):
+        seen["season"] = season
+        I.run_shot_event_pull(tmp_path, [season])
+
+    man = _json.loads((tmp_path / "espn" / "SHOT_EVENTS_MANIFEST.json").read_text())
+    assert set(man["seasons"]) == {"2023-24", "2024-25"}, (
+        f"the earlier season must survive a later run; got {sorted(man['seasons'])}")
+    assert man["seasons"]["2023-24"]["shot_events"] > 0
+
+
+def test_an_unreadable_manifest_is_regenerated_rather_than_fatal(tmp_path, monkeypatch):
+    from datetime import date
+
+    import nba_edge.shotprofile.ingest as I
+
+    d = tmp_path / "espn"
+    d.mkdir(parents=True)
+    (d / "SHOT_EVENTS_MANIFEST.json").write_text("{ not json")
+
+    monkeypatch.setattr(I, "iter_season_dates", lambda season: [date(2025, 1, 15)])
+    monkeypatch.setattr(I, "scoreboard_events", lambda payload: [
+        {"game_id": "espn:401", "event_id": "401", "start_time_utc": "2025-01-15T23:00:00Z"}])
+    monkeypatch.setattr(I, "fetch_json",
+                        lambda url, ttl, cache_root=None: (({} if "scoreboard" in url
+                                                            else _summary_payload()), False))
+    assert I.run_shot_event_pull(tmp_path, ["2024-25"]) == 0
+    import json as _json
+
+    man = _json.loads((d / "SHOT_EVENTS_MANIFEST.json").read_text())
+    assert "2024-25" in man["seasons"]
+
+
+# == 11. POINT-IN-TIME FEATURE BUILDER =========================================================
+
+
+def _shot_frame(rows):
+    import pandas as pd
+
+    return pd.DataFrame([
+        {"game_id": g, "event_time_utc": t, "shooter_player_id": p, "team_id": tm,
+         "opponent_team_id": op, "zone": z, "shot_made": made, "is_free_throw": False,
+         "is_shooting_play": True, "coordinate_valid": True}
+        for g, t, p, tm, op, z, made in rows
+    ])
+
+
+def test_pit_features_never_include_the_game_they_describe():
+    """The whole leakage guarantee: a game's features are read before its shots are folded in."""
+    from nba_edge.research.shot_profile_features_pit import build_pit_features
+
+    shots = _shot_frame([
+        ("g1", "2025-01-01T00:00:00Z", -1, 10, 20, "rim", True),
+        ("g1", "2025-01-01T00:00:00Z", -1, 10, 20, "rim", True),
+        ("g2", "2025-01-08T00:00:00Z", -1, 10, 20, "above_break_three", False),
+    ])
+    f = build_pit_features(shots).set_index("game_id")
+    assert f.loc["g1", "player_prior_attempts"] == 0.0, "the first game can have no prior evidence"
+    # g2 sees g1's two rim attempts, decayed over 7 days, and none of its own.
+    assert 0 < f.loc["g2", "player_prior_attempts"] < 2.0
+    assert f.loc["g2", "p_rim"] > f.loc["g2", "p_above_break_three"], (
+        "g2's profile must reflect g1's rim attempts, not g2's own three")
+
+
+def test_a_later_game_carries_strictly_more_evidence_than_an_earlier_one():
+    from nba_edge.research.shot_profile_features_pit import build_pit_features
+
+    rows = [(f"g{i}", f"2025-01-{i + 1:02d}T00:00:00Z", -1, 10, 20, "rim", True) for i in range(5)]
+    f = build_pit_features(_shot_frame(rows)).set_index("game_id")
+    prior = [f.loc[f"g{i}", "player_prior_attempts"] for i in range(5)]
+    assert prior == sorted(prior), f"evidence must accumulate monotonically, got {prior}"
+    assert prior[0] == 0.0
+
+
+def test_recency_decay_means_old_evidence_weighs_less_than_its_count():
+    from nba_edge.research.shot_profile_features_pit import build_pit_features
+
+    shots = _shot_frame([
+        ("g1", "2024-01-01T00:00:00Z", -1, 10, 20, "rim", True),
+        ("g2", "2024-01-01T00:00:00Z", -1, 10, 20, "rim", True),
+        ("g3", "2025-01-01T00:00:00Z", -1, 10, 20, "rim", True),
+    ])
+    f = build_pit_features(shots).set_index("game_id")
+    assert f.loc["g3", "player_prior_attempts"] < 2.0, (
+        "two attempts a year earlier must not weigh two full attempts")
+
+
+def test_the_opponent_profile_is_what_that_team_allowed_not_what_it_shot():
+    from nba_edge.research.shot_profile_features_pit import build_pit_features
+
+    shots = _shot_frame([
+        # team 20 faces a rim-heavy opponent in g1
+        ("g1", "2025-01-01T00:00:00Z", -1, 10, 20, "rim", True),
+        ("g1", "2025-01-01T00:00:00Z", -2, 10, 20, "rim", True),
+        # team 20's own players shoot threes, against team 10
+        ("g1", "2025-01-01T00:00:00Z", -9, 20, 10, "above_break_three", False),
+        ("g2", "2025-01-08T00:00:00Z", -1, 10, 20, "rim", True),
+    ])
+    f = build_pit_features(shots)
+    g2 = f[f.game_id == "g2"].iloc[0]
+    assert g2.o_rim > g2.o_above_break_three, (
+        "team 20 ALLOWED rim attempts; its own threes must not enter its allowed profile")
+
+
+def test_features_are_differences_between_the_two_profiles():
+    from nba_edge.research.shot_profile_features_pit import build_pit_features
+
+    shots = _shot_frame([
+        ("g1", "2025-01-01T00:00:00Z", -1, 10, 20, "rim", True),
+        ("g2", "2025-01-08T00:00:00Z", -1, 10, 20, "rim", True),
+    ])
+    f = build_pit_features(shots)
+    r = f[f.game_id == "g2"].iloc[0]
+    assert r.d_rim == pytest.approx(r.p_rim - r.o_rim)
+    assert r.d_three_rate == pytest.approx(r.p_three_rate - r.o_three_rate)
+
+
+def test_free_throws_and_unlocated_shots_do_not_enter_a_profile():
+    import pandas as pd
+
+    from nba_edge.research.shot_profile_features_pit import build_pit_features
+
+    base = _shot_frame([("g1", "2025-01-01T00:00:00Z", -1, 10, 20, "rim", True)])
+    ft = base.copy()
+    ft["is_free_throw"] = True
+    ft["game_id"] = "g0"
+    ft["event_time_utc"] = "2024-12-01T00:00:00Z"
+    unloc = base.copy()
+    unloc["coordinate_valid"] = False
+    unloc["game_id"] = "g0b"
+    unloc["event_time_utc"] = "2024-12-02T00:00:00Z"
+    f = build_pit_features(pd.concat([ft, unloc, base], ignore_index=True))
+    assert set(f.game_id) == {"g1"}, "only locatable field-goal attempts build a profile"
+    assert f.iloc[0].player_prior_attempts == 0.0

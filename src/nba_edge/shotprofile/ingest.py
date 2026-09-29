@@ -108,7 +108,19 @@ def run_shot_event_pull(
     out_root = Path(out_root)
     cache_root = settings().cache_root
     now = utcnow()
+    # The manifest ACCUMULATES across runs. Rebuilding it from scratch each time meant a
+    # single-season run silently erased every other season's record, so the manifest stopped
+    # describing the files on disk the moment the backfill was done one season at a time -- which
+    # is exactly how a long backfill has to be done.
+    man_path = _paths(out_root, "x")["manifest"]
     summary: dict[str, Any] = {"pulled_at": iso(now), "seasons": {}}
+    if man_path.exists():
+        try:
+            prior = json.loads(man_path.read_text())
+            if isinstance(prior.get("seasons"), dict):
+                summary["seasons"] = prior["seasons"]
+        except (OSError, ValueError, TypeError):
+            pass  # an unreadable manifest is regenerated, never allowed to abort the pull
 
     for season in [s.strip() for s in seasons if s.strip()]:
         p = _paths(out_root, season)
@@ -184,9 +196,8 @@ def run_shot_event_pull(
         }
         log.info(kv(event="shot_events_season_done", season=season, games=len(done), events=n))
 
-    man = _paths(out_root, "x")["manifest"]
-    man.parent.mkdir(parents=True, exist_ok=True)
-    man.write_text(json.dumps(summary, indent=1))
+    man_path.parent.mkdir(parents=True, exist_ok=True)
+    man_path.write_text(json.dumps(summary, indent=1))
     print(json.dumps(summary, indent=1))
     return 0
 
