@@ -1,32 +1,33 @@
 {
- "last_capture_utc": "2026-09-29T16:01:12Z",
- "n_markets": 3525,
- "n_series": 257,
- "requests": 828,
- "run_id": "36568564725",
+ "last_capture_utc": "2026-09-30T16:05:01Z",
+ "n_markets": 3543,
+ "n_series": 260,
+ "requests": 839,
+ "run_id": "36692892211",
  "markets_written": {
   "encoding": "checkpoint",
   "reason": "UTC day rolled over; keeping day partitions self-contained",
-  "path": "kalshi/markets/dt=2026-09-29/kalshi_markets_20260929T160112Z_36568564725.jsonl.gz",
-  "bytes": 291661,
-  "n_markets": 3525,
-  "board_sha256": "052176c8029429eaf1310206dced9f21e9caccd9953acebab7547bdbc1abf931"
+  "path": "kalshi/markets/dt=2026-09-30/kalshi_markets_20260930T160501Z_36692892211.jsonl.gz",
+  "bytes": 295268,
+  "n_markets": 3543,
+  "board_sha256": "5471961e2ffe34f748cfcbc5af96727e3de399ce9a5545ef4a78b2921e05e821"
  },
  "orderbooks_written": {
   "encoding": "checkpoint",
   "reason": "UTC day rolled over; keeping day partitions self-contained",
-  "path": "kalshi/orderbooks/dt=2026-09-29/kalshi_orderbooks_20260929T160112Z_36568564725.jsonl.gz",
-  "bytes": 16773,
+  "path": "kalshi/orderbooks/dt=2026-09-30/kalshi_orderbooks_20260930T160501Z_36692892211.jsonl.gz",
+  "bytes": 16792,
   "n_markets": 300,
-  "board_sha256": "ced1cf77f1d93eee1c38926d880027419684af3aec5f4ac70e26e58878f7feaf"
+  "board_sha256": "472eaceb04df351ff3e879a943d93364abb3adf9808737d59818cfbf2eceba40"
  },
  "by_status": {
-  "active": 3525
+  "active": 3543
  },
  "by_support": {
   "MODELABLE": 6,
   "RESEARCH": 1484,
-  "UNMODELABLE": 2035
+  "UNMODELABLE": 2035,
+  "UNRESOLVED": 18
  },
  "by_family": {
   "all_nba_selections": 371,
@@ -46,13 +47,18 @@
   "season_champion": 30,
   "season_record": 64,
   "season_specials": 27,
+  "season_unknown": 8,
   "season_wins": 312,
   "starting_lineup": 133,
-  "transactions": 1053
+  "transactions": 1053,
+  "unknown": 10
  },
- "alarms": [],
- "notes": [
-  "order books sampled by priority: 3525 live markets, cap 300"
+ "alarms": [
+  "18 market(s) classified UNRESOLVED across series ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER']: the ontology does not describe something on the board",
+  "series on the board with no ontology entry: ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER']"
  ],
- "alarm": false
+ "notes": [
+  "order books sampled by priority: 3543 live markets, cap 300"
+ ],
+ "alarm": true
 }
