@@ -1,30 +1,31 @@
 {
- "last_capture_utc": "2026-09-30T16:05:01Z",
- "n_markets": 3543,
+ "last_capture_utc": "2026-10-01T16:09:26Z",
+ "n_markets": 3572,
  "n_series": 260,
- "requests": 839,
- "run_id": "36692892211",
+ "requests": 841,
+ "run_id": "36859829891",
  "markets_written": {
   "encoding": "checkpoint",
   "reason": "UTC day rolled over; keeping day partitions self-contained",
-  "path": "kalshi/markets/dt=2026-09-30/kalshi_markets_20260930T160501Z_36692892211.jsonl.gz",
-  "bytes": 295268,
-  "n_markets": 3543,
-  "board_sha256": "5471961e2ffe34f748cfcbc5af96727e3de399ce9a5545ef4a78b2921e05e821"
+  "path": "kalshi/markets/dt=2026-10-01/kalshi_markets_20261001T160926Z_36859829891.jsonl.gz",
+  "bytes": 300092,
+  "n_markets": 3572,
+  "board_sha256": "1944d4b4600497d8d906c4880966c3e25df19d666190f21f4db5436b567b0d5b"
  },
  "orderbooks_written": {
   "encoding": "checkpoint",
   "reason": "UTC day rolled over; keeping day partitions self-contained",
-  "path": "kalshi/orderbooks/dt=2026-09-30/kalshi_orderbooks_20260930T160501Z_36692892211.jsonl.gz",
-  "bytes": 16792,
+  "path": "kalshi/orderbooks/dt=2026-10-01/kalshi_orderbooks_20261001T160926Z_36859829891.jsonl.gz",
+  "bytes": 16252,
   "n_markets": 300,
-  "board_sha256": "472eaceb04df351ff3e879a943d93364abb3adf9808737d59818cfbf2eceba40"
+  "board_sha256": "c7d6dc1ad5cc1743c530fb41ef5fa610f514e0ad2e33dada284b886b4b325d4e"
  },
  "by_status": {
-  "active": 3543
+  "active": 3572
  },
  "by_support": {
-  "MODELABLE": 6,
+  "BUILDABLE": 3,
+  "MODELABLE": 32,
   "RESEARCH": 1484,
   "UNMODELABLE": 2035,
   "UNRESOLVED": 18
@@ -38,9 +39,10 @@
   "division_winner": 30,
   "draft": 15,
   "franchise_business": 26,
-  "game_winner": 6,
+  "game_winner": 32,
   "nba_cup": 90,
   "non_basketball_or_offcourt": 29,
+  "period_winner": 3,
   "playoff_round_reach": 30,
   "playoff_seed": 675,
   "playoffs_qualify": 60,
@@ -58,7 +60,7 @@
   "series on the board with no ontology entry: ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER']"
  ],
  "notes": [
-  "order books sampled by priority: 3543 live markets, cap 300"
+  "order books sampled by priority: 3572 live markets, cap 300"
  ],
  "alarm": true
 }
