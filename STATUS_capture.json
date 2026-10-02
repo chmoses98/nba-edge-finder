@@ -1,34 +1,34 @@
 {
- "last_capture_utc": "2026-10-01T16:09:26Z",
- "n_markets": 3572,
- "n_series": 260,
- "requests": 841,
- "run_id": "36859829891",
+ "last_capture_utc": "2026-10-02T16:14:01Z",
+ "n_markets": 4093,
+ "n_series": 264,
+ "requests": 846,
+ "run_id": "37003972357",
  "markets_written": {
   "encoding": "checkpoint",
   "reason": "UTC day rolled over; keeping day partitions self-contained",
-  "path": "kalshi/markets/dt=2026-10-01/kalshi_markets_20261001T160926Z_36859829891.jsonl.gz",
-  "bytes": 300092,
-  "n_markets": 3572,
-  "board_sha256": "1944d4b4600497d8d906c4880966c3e25df19d666190f21f4db5436b567b0d5b"
+  "path": "kalshi/markets/dt=2026-10-02/kalshi_markets_20261002T161401Z_37003972357.jsonl.gz",
+  "bytes": 343702,
+  "n_markets": 4093,
+  "board_sha256": "d0eba86067c5b8cc48b216bea0909fe2cf161fa404b9525ef18ad4e4dc8575d5"
  },
  "orderbooks_written": {
   "encoding": "checkpoint",
   "reason": "UTC day rolled over; keeping day partitions self-contained",
-  "path": "kalshi/orderbooks/dt=2026-10-01/kalshi_orderbooks_20261001T160926Z_36859829891.jsonl.gz",
-  "bytes": 16252,
+  "path": "kalshi/orderbooks/dt=2026-10-02/kalshi_orderbooks_20261002T161401Z_37003972357.jsonl.gz",
+  "bytes": 18508,
   "n_markets": 300,
-  "board_sha256": "c7d6dc1ad5cc1743c530fb41ef5fa610f514e0ad2e33dada284b886b4b325d4e"
+  "board_sha256": "0f9c7ab6cb1f6d60a2f9dd153cc2161a0343f66b1bd502ebd12e35566297d6d8"
  },
  "by_status": {
-  "active": 3572
+  "active": 4093
  },
  "by_support": {
   "BUILDABLE": 3,
   "MODELABLE": 32,
   "RESEARCH": 1484,
   "UNMODELABLE": 2035,
-  "UNRESOLVED": 18
+  "UNRESOLVED": 539
  },
  "by_family": {
   "all_nba_selections": 371,
@@ -39,10 +39,12 @@
   "division_winner": 30,
   "draft": 15,
   "franchise_business": 26,
+  "game_unknown": 30,
   "game_winner": 32,
   "nba_cup": 90,
   "non_basketball_or_offcourt": 29,
   "period_winner": 3,
+  "player_unknown": 314,
   "playoff_round_reach": 30,
   "playoff_seed": 675,
   "playoffs_qualify": 60,
@@ -53,14 +55,14 @@
   "season_wins": 312,
   "starting_lineup": 133,
   "transactions": 1053,
-  "unknown": 10
+  "unknown": 187
  },
  "alarms": [
-  "18 market(s) classified UNRESOLVED across series ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER']: the ontology does not describe something on the board",
-  "series on the board with no ontology entry: ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER']"
+  "539 market(s) classified UNRESOLVED across series ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAH2HWINS', 'KXNBASTATLEADER', 'KXNBATOJOINCBA']: the ontology does not describe something on the board",
+  "series on the board with no ontology entry: ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAH2HWINS', 'KXNBASTATLEADER', 'KXNBATOJOINCBA']"
  ],
  "notes": [
-  "order books sampled by priority: 3572 live markets, cap 300"
+  "order books sampled by priority: 4093 live markets, cap 300"
  ],
  "alarm": true
 }
