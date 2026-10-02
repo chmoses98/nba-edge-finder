@@ -4,6 +4,7 @@ same code runs locally, in tests, and in GitHub Actions."""
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -220,6 +221,18 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     return run_evaluate(out_root=Path(args.out), data_root=Path(args.data))
 
 
+def cmd_app_export(args: argparse.Namespace) -> int:
+    from nba_edge.app_export import export
+    from nba_edge.timeutil import parse_iso
+
+    return export(
+        Path(args.out), Path(args.data_root),
+        accounting_dir=Path(args.accounting_dir) if args.accounting_dir else None,
+        now=parse_iso(args.now) if args.now else None,
+        commit_sha=args.commit_sha, workflow_run_id=args.workflow_run_id,
+    )
+
+
 def cmd_conductor(args: argparse.Namespace) -> int:
     from nba_edge.workflows.conductor import run_conductor
 
@@ -349,6 +362,15 @@ def build_parser() -> argparse.ArgumentParser:
     e.add_argument("--out", default="out/eval")
     e.add_argument("--data", default="data")
     e.set_defaults(func=cmd_evaluate)
+
+    ax = sub.add_parser("app-export", help="Publish the Edge Finder app export (edge_finder.app.v1) from the archive")
+    ax.add_argument("--out", default="data/archive/app/latest")
+    ax.add_argument("--data-root", default="data/archive")
+    ax.add_argument("--accounting-dir", default=None, help="optional checkout of the accounting-data branch")
+    ax.add_argument("--now", default=None, help="ISO-8601 UTC instant; default wall clock")
+    ax.add_argument("--commit-sha", default=os.environ.get("GITHUB_SHA") or None)
+    ax.add_argument("--workflow-run-id", default=os.environ.get("GITHUB_RUN_ID") or None)
+    ax.set_defaults(func=cmd_app_export)
 
     k = sub.add_parser("conductor", help="Decide which jobs are worth running now")
     k.add_argument("--data", default="data")
