@@ -375,6 +375,13 @@ class Worker:
         ("simulate", ["nba", "simulate", "--data", "DATA", "--out", "ARCHIVE"], 2400.0),
         ("settle", ["nba", "settle", "--data", "DATA", "--out", "ARCHIVE"], 1200.0),
         ("evaluate", ["nba", "evaluate", "--data", "DATA", "--out", "ARCHIVE/eval"], 900.0),
+        # The Edge Finder app export (edge_finder.app.v1): a pure read-only re-expression of the
+        # archive into ARCHIVE/app/latest, which archive_push.sh then carries to the data-archive
+        # branch with everything else. Always due (see ALWAYS_DUE): it has no decision key because
+        # it is cheap and its only job is to reflect whatever the cycle just wrote. It never fails
+        # the cycle -- the exporter itself writes health-only and exits 1 on any problem, and a
+        # non-zero rc here is logged like any other job.
+        ("app_export", ["nba", "app-export", "--data-root", "ARCHIVE", "--out", "ARCHIVE/app/latest"], 300.0),
         (
             "discover",
             [
@@ -391,6 +398,9 @@ class Worker:
         ),
     )
 
+    # Jobs that run every cycle regardless of the conductor's decision.
+    ALWAYS_DUE = frozenset({"app_export"})
+
     def _run_due_jobs(self, decision: dict | None = None) -> list[str]:
         return self._run_due_jobs_detailed(decision)[0]
 
@@ -400,7 +410,7 @@ class Worker:
         done: list[str] = []
         failed: list[str] = []
         for name, template, budget in self.SLOW_JOBS:
-            if not decision.get(name):
+            if not decision.get(name) and name not in self.ALWAYS_DUE:
                 continue
             cmd = [
                 part.replace("ARCHIVE", str(self.archive_root)).replace("DATA", str(self.data_root))

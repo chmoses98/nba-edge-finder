@@ -146,6 +146,15 @@ jobs:
         if: needs.decide.outputs.evaluate == 'true'
         continue-on-error: true
         run: nba evaluate --data data --out data/archive/eval
+      # Edge Finder app export (edge_finder.app.v1). Read-only over the archive; writes
+      # data/archive/app/latest, which the push step below carries to the data-archive branch
+      # (app/ is not a ledger kind, so Ledger.verify ignores it). continue-on-error because a
+      # broken export must never cost a captured snapshot its commit; the exporter writes
+      # health.json (export_failed=true) and exits 1, which the summary step surfaces.
+      - name: App export
+        id: app_export
+        continue-on-error: true
+        run: nba app-export --data-root data/archive --out data/archive/app/latest
       - name: Discover market families (daily)
         if: needs.decide.outputs.discover == 'true'
         continue-on-error: true
@@ -188,6 +197,11 @@ jobs:
             echo "::error title=Archive push failed::Could not push this run's snapshot to $ARCHIVE_BRANCH after 5 attempts. The data is preserved in this run's artifact."
             exit 1
           fi
+      - name: Surface an app-export failure (after the push, so the snapshot is never lost)
+        if: steps.app_export.outcome == 'failure'
+        run: |
+          echo "::error title=App export failed::the app export step exited non-zero; data/archive/app/latest/health.json carries export_failed=true and the last-known-good payload stands."
+          exit 1
       - name: Preserve the snapshot if the push failed
         if: failure()
         uses: actions/upload-artifact@v4

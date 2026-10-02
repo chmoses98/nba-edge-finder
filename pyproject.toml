@@ -41,6 +41,7 @@ nba_edge = ["**/*.yaml", "**/*.json", "**/*.csv"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["contract"]
 addopts = "-q"
 markers = ["slow: end-to-end tests that run a full simulation"]
 filterwarnings = ["ignore::DeprecationWarning"]

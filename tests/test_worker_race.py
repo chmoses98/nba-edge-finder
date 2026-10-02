@@ -275,7 +275,7 @@ def test_a_failing_slow_job_does_not_kill_the_worker(tmp_path):
     w.run_cmd = run_fn
     res = w.run()
     assert len(res.cycles) > 1
-    assert all(c.jobs_run == [] for c in res.cycles), "the failed job is not recorded as done"
+    assert all("simulate" not in c.jobs_run for c in res.cycles), "the failed job is not recorded as done"
 
 
 def test_a_retired_worker_releases_the_lease_for_its_successor(tmp_path):
@@ -332,7 +332,7 @@ def test_the_worker_runs_the_same_commands_the_conductor_does():
 
     yaml_text = Path(".github/workflows/conductor.yml").read_text()
     conductor = {}
-    jobs = "capture|context|simulate|settle|evaluate|discover|matchup-shadow"
+    jobs = "capture|context|simulate|settle|evaluate|discover|matchup-shadow|app-export"
     for m in re.finditer(rf"\bnba ({jobs})\b([^\n]*)", yaml_text):
         # The worker keys jobs by the conductor's decision key (underscores); the CLI subcommand is
         # hyphenated. Normalise so the two are comparable rather than exempting one of them.
