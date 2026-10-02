@@ -125,10 +125,36 @@ def cmd_worker(args: argparse.Namespace) -> int:
         lifetime_minutes=args.lifetime_minutes,
     )
     result = w.run()
-    # Exit 0 even when we stood down: a fail-closed worker did exactly the right thing, and a red
-    # build for correct behaviour is how real alarms get ignored.
     print(result.to_json())
+    publish_worker_health(result.as_dict(), os.environ)
+    # Exit 0 whatever the verdict: this step does the work and REPORTS. The workflow's single final
+    # enforcement step reads the `health_state` output and fails the run only for FAILED, so a
+    # fail-closed stand-down or a quiet off-season shift stays green and a broken one goes red once.
     return 0
+
+
+def publish_worker_health(result: dict, env) -> str:
+    """Surface the shift verdict: step summary, annotations, and step outputs. Returns the state.
+
+    Outputs: ``health_state`` (HEALTHY/DEGRADED/FAILED/NOT_APPLICABLE) and ``final_push``
+    (ok/failed/skipped). A missing GITHUB_* file simply means we are not on a runner.
+    """
+    from nba_edge.worker.health import annotations, classify_shift, render_summary
+
+    health = result.get("health") or classify_shift(result)
+    for line in annotations(health):
+        print(line)
+    fp = result.get("final_push_ok")
+    final_push = "skipped" if fp is None else ("ok" if fp else "failed")
+    summary_path = env.get("GITHUB_STEP_SUMMARY")
+    if summary_path:
+        with open(summary_path, "a") as f:
+            f.write(render_summary(health, result))
+    output_path = env.get("GITHUB_OUTPUT")
+    if output_path:
+        with open(output_path, "a") as f:
+            f.write(f"health_state={health['state']}\nfinal_push={final_push}\n")
+    return health["state"]
 
 
 def cmd_capture_health(args: argparse.Namespace) -> int:
