@@ -44,6 +44,7 @@ from pathlib import Path
 
 from nba_edge.timeutil import iso, utcnow
 from nba_edge.worker import lease as lease_mod
+from nba_edge.worker.health import classify_shift
 from nba_edge.worker.plan import (
     plan_cycle,
     planned_exit,
@@ -76,6 +77,10 @@ class CycleRecord:
     cadence_s: float
     hours_to_next_tip: float | None
     reason: str
+    # Jobs that were DUE and ATTEMPTED but failed. Previously a failed job simply vanished from the
+    # record (jobs_run lists successes only), so a settlement that failed on every tick of a shift
+    # left no trace distinguishable from one that was never due.
+    jobs_failed: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -86,6 +91,13 @@ class WorkerResult:
     cycles: list[CycleRecord] = field(default_factory=list)
     successor_dispatched: bool = False
     fail_closed: bool = False
+    successor_dispatch_attempts: int = 0
+    # The shift verdict (worker/health.py). None until the worker has finished.
+    health: dict | None = None
+    final_push_ok: bool | None = None
+
+    def as_dict(self) -> dict:
+        return json.loads(self.to_json())
 
     def to_json(self) -> str:
         return (
@@ -95,7 +107,10 @@ class WorkerResult:
                     "generation": self.generation,
                     "exit_reason": self.exit_reason,
                     "successor_dispatched": self.successor_dispatched,
+                    "successor_dispatch_attempts": self.successor_dispatch_attempts,
                     "fail_closed": self.fail_closed,
+                    "final_push_ok": self.final_push_ok,
+                    "health": self.health,
                     "n_cycles": len(self.cycles),
                     "n_captured": sum(1 for c in self.cycles if c.captured),
                     "n_capture_failed": sum(1 for c in self.cycles if c.captured and not c.capture_ok),
@@ -247,6 +262,7 @@ class Worker:
             # the correct behaviour is to stand down quietly rather than to race it.
             res.exit_reason = f"fail-closed: {why}"
             res.fail_closed = True
+            res.health = classify_shift(res.as_dict())
             print(f"worker: {res.exit_reason}")
             return res
         print(f"worker {self.worker_id} generation {gen} acquired lease ({why}); planned exit {iso(exit_at)}")
@@ -309,7 +325,7 @@ class Worker:
         # do, the worker must therefore do itself -- otherwise simulate/settle/evaluate/discover
         # silently stop for as long as a worker is alive. Each is age-gated by decide(), so this is
         # the same cadence they had before, not extra work.
-        jobs_run = self._run_due_jobs(decision)
+        jobs_run, jobs_failed = self._run_due_jobs_detailed(decision)
 
         cur = lease_mod.read_lease(self.archive_root)
         if cur is not None:
@@ -339,6 +355,7 @@ class Worker:
             cadence_s=cyc.cadence_seconds,
             hours_to_next_tip=cyc.hours_to_next_tip,
             reason=cyc.reason if cyc.should_capture or not should_capture else "conductor gate: off-window capture due",
+            jobs_failed=jobs_failed,
         )
 
     # The capture command, as a constant rather than inline, so a test can compare it against
@@ -375,8 +392,13 @@ class Worker:
     )
 
     def _run_due_jobs(self, decision: dict | None = None) -> list[str]:
+        return self._run_due_jobs_detailed(decision)[0]
+
+    def _run_due_jobs_detailed(self, decision: dict | None = None) -> tuple[list[str], list[str]]:
+        """Run every due job; return (succeeded, failed) names in run order."""
         decision = decision if decision is not None else (self.decide_fn() or {})
-        done = []
+        done: list[str] = []
+        failed: list[str] = []
         for name, template, budget in self.SLOW_JOBS:
             if not decision.get(name):
                 continue
@@ -388,9 +410,11 @@ class Worker:
             if rc == 0:
                 done.append(name)
             else:
-                # Same reasoning as a failed capture: one bad job must never end the worker.
+                # Same reasoning as a failed capture: one bad job must never end the worker. It is
+                # recorded, though, so the shift verdict can tell "failed every retry" from "not due".
+                failed.append(name)
                 print(f"worker: job {name} failed rc={rc}: {out[-400:]}")
-        return done
+        return done, failed
 
     def _dispatch_successor(self, res: WorkerResult, label: str) -> None:
         if self.dispatch_fn is None:
@@ -403,6 +427,7 @@ class Worker:
             print(f"worker: refusing successor -- {why}")
             return
         token = secrets.token_hex(16)
+        res.successor_dispatch_attempts += 1
         if not self.dispatch_fn(token):
             print(f"worker: successor dispatch NOT accepted ({label})")
             return
@@ -430,6 +455,13 @@ class Worker:
                     cur, self.now(), released_at=self.now(), note=f"retired: {res.exit_reason}"
                 ),
             )
+        # The verdict goes into STATUS_worker.json before the final push so the published status
+        # carries it. It is graded as if that push succeeds, which is true of every copy that is
+        # ever published; if the push fails, the verdict is re-graded and rewritten locally (the
+        # workflow preserves the worktree as an artifact in exactly that case).
+        capture_status = self._read_capture_status()
+        res.final_push_ok = True
+        res.health = classify_shift(res.as_dict(), final_push_ok=True, capture_status=capture_status)
         (self.archive_root / "STATUS_worker.json").write_text(res.to_json())
         # The Phase 12 dashboard, refreshed on every handover (~5x/day, comfortably "daily").
         # Retirement is the right moment: the worker has just finished a full shift, so the counts
@@ -440,5 +472,16 @@ class Worker:
             run_evidence_health(self.archive_root, self.archive_root / "EVIDENCE_HEALTH.json")
         except Exception as e:  # noqa: BLE001 - a dashboard must never cost us a handover
             print(f"worker: could not write the evidence dashboard ({e})")
-        self._push(f"worker: {self.worker_id} retired after {len(res.cycles)} cycles")
-        print(f"worker: {res.exit_reason}")
+        res.final_push_ok = self._push(f"worker: {self.worker_id} retired after {len(res.cycles)} cycles")
+        res.health = classify_shift(
+            res.as_dict(), final_push_ok=res.final_push_ok, capture_status=capture_status
+        )
+        if not res.final_push_ok:
+            (self.archive_root / "STATUS_worker.json").write_text(res.to_json())
+        print(f"worker: {res.exit_reason}; shift health {res.health['state']}")
+
+    def _read_capture_status(self) -> dict | None:
+        try:
+            return json.loads((self.archive_root / "STATUS_capture.json").read_text())
+        except (OSError, ValueError):
+            return None

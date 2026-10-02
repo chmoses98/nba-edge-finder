@@ -90,6 +90,7 @@ jobs:
           fi
 
       - name: Run the worker
+        id: worker
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -109,10 +110,35 @@ jobs:
           [ -n "${LIFETIME_MINUTES:-}" ] && args+=(--lifetime-minutes "$LIFETIME_MINUTES")
           nba "${args[@]}"
 
+      # The worker step itself exits 0 whatever the shift verdict (it reports; the last step
+      # enforces). So `failure()` alone would never fire for a rejected final push -- which is how
+      # this step used to be unreachable. Preserve when the worker crashed (no verdict at all) or
+      # reported that its retirement push failed; not merely because a capture stream was red.
       - name: Preserve the archive if the final push failed
-        if: failure()
+        if: always() && (steps.worker.outcome == 'failure' || steps.worker.outputs.final_push == 'failed')
         uses: actions/upload-artifact@v4
         with:
           name: worker-archive-${{ github.run_id }}
           path: data/archive
           retention-days: 14
+
+      # The ONE enforcement point. HEALTHY / NOT_APPLICABLE (off-season, no game in window, a
+      # fail-closed stand-down) and DEGRADED (recorded in STATUS_worker.json + warnings above) are
+      # green. Only FAILED -- a required stream still failing after its retry budget, an unpublished
+      # snapshot, or a chain that cannot renew -- turns the run red. A worker that finished without
+      # producing any verdict fails closed rather than passing silently.
+      - name: Enforce shift health
+        if: always() && steps.worker.outcome == 'success'
+        env:
+          HEALTH_STATE: ${{ steps.worker.outputs.health_state }}
+        run: |
+          set -uo pipefail
+          case "${HEALTH_STATE:-}" in
+            HEALTHY|NOT_APPLICABLE|DEGRADED) echo "shift health: ${HEALTH_STATE}" ;;
+            FAILED)
+              echo "::error title=capture-worker FAILED::see the shift summary and STATUS_worker.json health.failures"
+              exit 1 ;;
+            *)
+              echo "::error title=capture-worker produced no health verdict::health_state='${HEALTH_STATE:-}'"
+              exit 1 ;;
+          esac
