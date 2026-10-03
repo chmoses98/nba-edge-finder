@@ -386,9 +386,12 @@ class Worker:
         # research failure can never block or corrupt the v1 export. It reads the run id and clock from
         # the manifest app_export just wrote (the same publication), DATA's history/research files, and
         # the archive; it writes only ARCHIVE/app/latest/explorer/ (staged, swapped in index-last, the
-        # previous tree untouched on failure). Always due for the same reason app_export is.
+        # previous tree untouched on failure). Always due, but gated inside by research.refresh_due:
+        # every explorer file carries the run id, so a rebuild rewrites ~29 MB; the worker rebuilds only
+        # when the explorer is missing, the v1 events changed, or it is an hour old, and otherwise
+        # logs the reason and exits 0 without touching explorer/ (publish.publish never prunes it).
         ("research_export", ["nba", "research-export", "--data-root", "ARCHIVE", "--out", "ARCHIVE/app/latest",
-                             "--history-root", "DATA"], 300.0),
+                             "--history-root", "DATA", "--min-interval-minutes", "60"], 300.0),
         (
             "discover",
             [

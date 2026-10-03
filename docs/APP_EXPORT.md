@@ -121,7 +121,10 @@ stay unjoined until the schedule covers them); 314 player-linked markets; 0 mode
 Built by `src/nba_edge/research_export.py` (CLI `nba research-export --data-root data/archive --out data/archive/app/latest
 --history-root data`, or `python scripts/research_export.py ...`) **after** the v1 export, as its own command: the
 conductor step `research_export` (continue-on-error, surfaced by a later "fail the job" step after the push) and the
-worker job `research_export` (straight after `app_export`, always due). It takes `run_id` and `generated_at` from the v1
+worker job `research_export` (straight after `app_export`, always due but gated by `research.refresh_due` with
+`--min-interval-minutes 60`: it rebuilds only when the explorer is missing, the v1 event set changed, or the tree is an
+hour old, and otherwise logs the reason and exits 0 without touching `explorer/`; the conductor and the CLI default of 0
+always rebuild). It takes `run_id` and `generated_at` from the v1
 `manifest.json`, so both describe the same publication, and writes only `explorer/` through
 `research.publish_explorer` (staged, validated, graph- and capability-checked, swapped in index-last; on any failure the
 previous tree and every v1 file are untouched and the command exits 1). No network, no model fitting; the one model
@@ -158,8 +161,9 @@ with the reason rather than claimed.
 
 ### Sizes (real data: data-archive @ 2026-10-03T06:07Z, `research.tree_bytes`)
 teams 4.18 MB (max 147 KB), players 8.48 MB (max 56 KB), events 1.49 MB (max 134 KB), rankings 1.28 MB, series 8.91 MB
-(max 26 KB), market_history 4.42 MB (max 107 KB), index 251 KB, search 125 KB, metrics 96 KB, capabilities 21 KB:
-**29.3 MB per publication**, ~17 s. Every file carries the run id, so every cycle rewrites the whole tree.
+(max 26 KB), market_history 4.42 MB (max 107 KB), index 204 KB (compact, contract 1.1.1), search 125 KB, metrics 96 KB, capabilities 21 KB:
+**29.2 MB per publication**, ~17 s. Every file carries the run id, so a rebuild rewrites the whole tree; hence the
+worker's hourly gate. The MIA @ TOR GAME packet (73 markets, 12 entities) renders to 50,880 chars, inside the 60,000 budget.
 
 ### Deliberately not published
 Lineups/stints/on-off, confirmed starters, the official injury report (never captured), CLV, wagers, settlements and

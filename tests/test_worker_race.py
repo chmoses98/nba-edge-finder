@@ -349,6 +349,12 @@ def test_the_worker_runs_the_same_commands_the_conductor_does():
         p.replace("ARCHIVE", "data/archive") for p in Worker.CAPTURE_CMD
     )
     rendered = {k: v.replace("nba matchup_shadow", "nba matchup-shadow") for k, v in rendered.items()}
+    # The ONE deliberate difference: the worker gates the research explorer rebuild (research.refresh_due,
+    # hourly) because it republishes every few minutes; the conductor is the manual/recovery path and always
+    # rebuilds. Everything else about the command must still match.
+    gate = " --min-interval-minutes 60"
+    assert rendered["research_export"].endswith(gate)
+    rendered["research_export"] = rendered["research_export"][: -len(gate)]
 
     assert set(conductor) == set(rendered), (
         f"conductor.yml has {sorted(conductor)}, worker has {sorted(rendered)}"

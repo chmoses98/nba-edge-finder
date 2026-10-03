@@ -1781,7 +1781,21 @@ def export_explorer(app_root: Path, data_root: Path, *, history_root: Path | Non
 
 
 def run(out: Path, data_root: Path, *, history_root: Path | None = None, docs_root: Path | None = None, now: object = None,
-        commit_sha: str | None = None) -> int:
+        commit_sha: str | None = None, min_interval_seconds: float = 0) -> int:
+    """Build and publish; returns 0 on success (or when the refresh gate says not due), 1 on failure.
+
+    ``min_interval_seconds > 0`` gates the rebuild with ``research.refresh_due``: the explorer is rebuilt only
+    when missing, when the v1 events changed, or when it is at least that old (measured at ``now``, default the
+    v1 manifest's ``generated_at``). A skipped run touches nothing under ``explorer/``."""
+    if min_interval_seconds > 0:
+        manifest = _read_json(Path(out) / "manifest.json")
+        clock = now if now is not None else (manifest or {}).get("generated_at")
+        if clock is not None:
+            due, why = R.refresh_due(Path(out), now=clock, min_interval_seconds=min_interval_seconds)
+            if not due:
+                print(f"research_export: skipped ({why}); explorer left as published")
+                return 0
+            print(f"research_export: rebuilding ({why})")
     try:
         index = export_explorer(out, data_root, history_root=history_root, docs_root=docs_root, now=now, commit_sha=commit_sha)
     except Exception as exc:  # noqa: BLE001 - a research failure must never touch the v1 payload
@@ -1801,9 +1815,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--history-root", default=DEFAULT_HISTORY_ROOT, help="the repository's data/ (history, research, identity)")
     ap.add_argument("--now", default=None, help="ISO-8601 UTC instant; default: the v1 manifest's generated_at")
     ap.add_argument("--commit-sha", default=None)
+    ap.add_argument("--min-interval-minutes", type=float, default=0,
+                    help="rebuild only if the explorer is missing, the v1 events changed, or it is this old (0 = always)")
     a = ap.parse_args(argv)
     return run(Path(a.out), Path(a.data_root), history_root=Path(a.history_root), now=c_time.parse_ts(a.now) if a.now else None,
-               commit_sha=a.commit_sha)
+               commit_sha=a.commit_sha, min_interval_seconds=a.min_interval_minutes * 60)
 
 
 if __name__ == "__main__":

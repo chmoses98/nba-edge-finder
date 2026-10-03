@@ -252,6 +252,35 @@ def test_missing_v1_manifest_fails_without_writing(tmp_path):
     assert not (out / "explorer").exists()
 
 
+# ------------------------------------------------------------------------------------------ refresh gate
+def test_a_second_export_within_the_interval_is_skipped(published):
+    out, data, _tmp = published
+    before = R.digest_tree(out)
+    later = datetime(2026, 10, 2, 17, 50, tzinfo=UTC)  # 20 min after the published tree
+    assert RX.run(out, data, now=later, min_interval_seconds=3600) == 0
+    assert R.digest_tree(out) == before
+    due, why = R.refresh_due(out, now=later, min_interval_seconds=3600)
+    assert not due and "unchanged" in why
+
+
+def test_a_changed_v1_event_set_triggers_a_rebuild(published, tmp_path):
+    out, data, _tmp = published
+    other = tmp_path / "changed" / "latest"
+    shutil.copytree(out, other)
+    before = R.digest_tree(other)
+    events = json.loads((other / "events.json").read_text())
+    events["items"] = events["items"][:1]
+    (other / "events.json").write_text(json.dumps(events))
+    later = datetime(2026, 10, 2, 17, 40, tzinfo=UTC)
+    due, why = R.refresh_due(other, now=later, min_interval_seconds=3600)
+    assert due and "v1 events changed" in why
+    assert RX.run(other, data, now=later, min_interval_seconds=3600) == 0
+    assert R.digest_tree(other) != before
+    index = R.read_index(other)
+    assert [e["event_id"] for e in index["events"]] == [e["event_id"] for e in events["items"]]
+    assert index["generated_at"] == "2026-10-02T17:40:00Z"
+
+
 # ----------------------------------------------------------------------------------------------- wiring
 def test_cli_and_worker_and_workflow_wiring():
     p = subprocess.run([sys.executable, "-m", "nba_edge.cli", "research-export", "--help"], capture_output=True, text=True, cwd=REPO)
@@ -262,6 +291,7 @@ def test_cli_and_worker_and_workflow_wiring():
     assert names.index("research_export") == names.index("app_export") + 1
     job = dict((n, t) for n, t, _ in Worker.SLOW_JOBS)["research_export"]
     assert job[:2] == ["nba", "research-export"] and "research_export" in Worker.ALWAYS_DUE
+    assert job[-2:] == ["--min-interval-minutes", "60"]
     wf = (REPO / ".github" / "workflows" / "conductor.yml").read_text()
     assert wf.index("id: app_export") < wf.index("id: research_export") < wf.index("id: push")
     assert "steps.research_export.outcome == 'failure'" in wf
