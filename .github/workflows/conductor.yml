@@ -155,6 +155,24 @@ jobs:
         id: app_export
         continue-on-error: true
         run: nba app-export --data-root data/archive --out data/archive/app/latest
+      # Research explorer (contract 1.1.0 research graph): its own step, straight after the app
+      # export, so a research failure can never block the v1 payload. Same --data-root/--out; the
+      # run id and clock come from the manifest the app export just wrote. It writes only
+      # data/archive/app/latest/explorer/ (staged and swapped in index-last; the previous tree stays
+      # on any failure), which the push step below carries with app/latest.
+      - name: Research explorer export
+        id: research_export
+        continue-on-error: true
+        run: |
+          set +e
+          nba research-export --data-root data/archive --out data/archive/app/latest --history-root data
+          rc=$?
+          if [ "$rc" = 0 ]; then
+            echo "### Research explorer export: OK ($(du -sh data/archive/app/latest/explorer | cut -f1))" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### Research explorer export: FAILED (rc=$rc); the previous explorer tree stands" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$rc"
       - name: Discover market families (daily)
         if: needs.decide.outputs.discover == 'true'
         continue-on-error: true
@@ -201,6 +219,11 @@ jobs:
         if: steps.app_export.outcome == 'failure'
         run: |
           echo "::error title=App export failed::the app export step exited non-zero; data/archive/app/latest/health.json carries export_failed=true and the last-known-good payload stands."
+          exit 1
+      - name: Surface a research-export failure (after the push, so the snapshot is never lost)
+        if: steps.research_export.outcome == 'failure'
+        run: |
+          echo "::error title=Research export failed::the research explorer step exited non-zero; data/archive/app/latest/explorer keeps the last-known-good tree and the v1 payload is unaffected."
           exit 1
       - name: Preserve the snapshot if the push failed
         if: failure()
