@@ -1,28 +1,24 @@
 {
- "last_capture_utc": "2026-10-03T11:52:59Z",
+ "last_capture_utc": "2026-10-03T11:56:44Z",
  "n_markets": 4293,
  "n_series": 264,
- "requests": 838,
- "run_id": "37105295147",
+ "requests": 851,
+ "run_id": "37121224688",
  "markets_written": {
-  "encoding": "delta",
-  "seq": 24,
-  "path": "kalshi/markets_delta/dt=2026-10-03/kalshi_markets_delta_20261003T115259Z_37105295147.json.gz",
-  "bytes": 3727,
+  "encoding": "checkpoint",
+  "reason": "chain reached 24 deltas (limit 24)",
+  "path": "kalshi/markets/dt=2026-10-03/kalshi_markets_20261003T115644Z_37121224688.jsonl.gz",
+  "bytes": 357782,
   "n_markets": 4293,
-  "n_changed": 172,
-  "changed_pct": 4.007,
-  "board_sha256": "bb11756f40f1b04f65e39af20e9d1944aad18f4a41d0fc0ee4d8c94983b959c2"
+  "board_sha256": "dc91dd735af38ecafcdf5f66598747ba07d42c7a7e80bc3121090b07dc1ab532"
  },
  "orderbooks_written": {
-  "encoding": "delta",
-  "seq": 24,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-03/kalshi_orderbooks_delta_20261003T115259Z_37105295147.json.gz",
-  "bytes": 13706,
+  "encoding": "checkpoint",
+  "reason": "chain reached 24 deltas (limit 24)",
+  "path": "kalshi/orderbooks/dt=2026-10-03/kalshi_orderbooks_20261003T115644Z_37121224688.jsonl.gz",
+  "bytes": 21262,
   "n_markets": 300,
-  "n_changed": 176,
-  "changed_pct": 58.667,
-  "board_sha256": "ce3a29823344048e8f68c9b9f3bf2d05ff061dffc337854c1dc56a498b7547b5"
+  "board_sha256": "774c4377f910d705d3b059e90a986d9c5d213d52b5bcd1c76ed642dae3878636"
  },
  "by_status": {
   "active": 4293
