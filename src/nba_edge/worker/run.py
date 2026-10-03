@@ -382,6 +382,16 @@ class Worker:
         # the cycle -- the exporter itself writes health-only and exits 1 on any problem, and a
         # non-zero rc here is logged like any other job.
         ("app_export", ["nba", "app-export", "--data-root", "ARCHIVE", "--out", "ARCHIVE/app/latest"], 300.0),
+        # The research explorer (contract 1.1.0): immediately after app_export and as its own job, so a
+        # research failure can never block or corrupt the v1 export. It reads the run id and clock from
+        # the manifest app_export just wrote (the same publication), DATA's history/research files, and
+        # the archive; it writes only ARCHIVE/app/latest/explorer/ (staged, swapped in index-last, the
+        # previous tree untouched on failure). Always due, but gated inside by research.refresh_due:
+        # every explorer file carries the run id, so a rebuild rewrites ~29 MB; the worker rebuilds only
+        # when the explorer is missing, the v1 events changed, or it is an hour old, and otherwise
+        # logs the reason and exits 0 without touching explorer/ (publish.publish never prunes it).
+        ("research_export", ["nba", "research-export", "--data-root", "ARCHIVE", "--out", "ARCHIVE/app/latest",
+                             "--history-root", "DATA", "--min-interval-minutes", "60"], 300.0),
         (
             "discover",
             [
@@ -399,7 +409,7 @@ class Worker:
     )
 
     # Jobs that run every cycle regardless of the conductor's decision.
-    ALWAYS_DUE = frozenset({"app_export"})
+    ALWAYS_DUE = frozenset({"app_export", "research_export"})
 
     def _run_due_jobs(self, decision: dict | None = None) -> list[str]:
         return self._run_due_jobs_detailed(decision)[0]

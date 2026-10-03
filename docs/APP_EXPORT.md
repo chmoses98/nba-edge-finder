@@ -115,3 +115,58 @@ stay unjoined until the schedule covers them); 314 player-linked markets; 0 mode
   fresh; for a pre-season repository "UNKNOWN" would read more honestly. Worked around by the warning text.
 - `build.event` defaults `last_updated_at` to the wall clock; the adapter passes the schedule row's observation
   time explicitly so output is deterministic.
+
+## Research explorer (`app/latest/explorer/`, contract 1.1.0 research graph)
+
+Built by `src/nba_edge/research_export.py` (CLI `nba research-export --data-root data/archive --out data/archive/app/latest
+--history-root data`, or `python scripts/research_export.py ...`) **after** the v1 export, as its own command: the
+conductor step `research_export` (continue-on-error, surfaced by a later "fail the job" step after the push) and the
+worker job `research_export` (straight after `app_export`, always due but gated by `research.refresh_due` with
+`--min-interval-minutes 60`: it rebuilds only when the explorer is missing, the v1 event set changed, or the tree is an
+hour old, and otherwise logs the reason and exits 0 without touching `explorer/`; the conductor and the CLI default of 0
+always rebuild). It takes `run_id` and `generated_at` from the v1
+`manifest.json`, so both describe the same publication, and writes only `explorer/` through
+`research.publish_explorer` (staged, validated, graph- and capability-checked, swapped in index-last; on any failure the
+previous tree and every v1 file are untouched and the command exits 1). No network, no model fitting; the one model
+function called is the repo's own `features.build.opponent_adjusted_ratings` with the frozen `BuildConfig`, exactly as
+`build_game_params` applies it (its values equal the 2026-10-03 slate packet's `off_ppp`/`def_ppp` for TOR and MIA).
+Authority on what may be shown: `scratchpad/phase2/audit_nba.md` (audit 2026-10-03).
+
+### What it publishes
+| documents | source | content |
+|---|---|---|
+| `teams/<prt_>.json` (30) | `data/history/espn/team_games_*.parquet` | 12 box metrics (pts, opp_pts, margin, total, possessions, off/def/net rating per 100 stored possessions, win %, 1H points, TOV/100, FT rate) for SEASON (2025-26 regular season) and L10/L5/L3 (last non-preseason games), home/away splits, SOS, rankings context on every ranked number; `extensions.game_log` = every stored game of the last 3 seasons (season_type, q1-q4, OT, possessions, margin, total); `extensions.market_log` = moneyline mid at T-24h/T-6h/T-90m/T-30m/final + settled outcome; ESPN injuries |
+| (same profiles, RESEARCH) | `opponent_adjusted_ratings`; `shot_events_2025-26` | adj off/def/net per 100 (one cutoff, the day after the last stored game); shot-zone shares (ESPN team ids mapped through each game's home flag) |
+| (same profiles) | `data/research/market_table.parquet` | T-30m moneyline implied win prob, wins minus implied, spread/total/team-total YES minus implied, de-laddered to the line nearest 50c (the repo's own rule) |
+| `players/<prt_>.json` (175) | `player_games_*.parquet`, `data/identity/players.jsonl`, latest `context/rosters` | identity-registry players who played 2025-26 or appear in current markets (the same `nba_player_id` participants the v1 markets use): per-game box, shooting %, start rate, usage (min/FGA/FTA), windows and home/away splits, prop residuals per family, `extensions.game_log` (last 82 rows incl. DNP reason, plus_minus), `extensions.prop_log` |
+| `events/<evt_>.json` (one per v1 event) | v1 events/markets/model prices, slate packet, ESPN injuries | matchup rows (home vs away on the same metric), registry players of both rosters, every v1 market, v1 model prices as research-only projections, packet quantiles (game margin/total/team points/1H/1Q, player min/pts/reb/ast/3PM; RESEARCH, gated) and `extensions.raw_projection`, venue (arena, neutral site), notes: model-vs-market verdict, gate reasons, the §5.14 quote defect, no lineups, ESPN-only injuries |
+| `rankings/` (70) | as above | full universes: 30 teams per metric/window; players with >= 20 regular-season games (all players, profiled or not) for 8 per-game metrics |
+| `series/` (428) | as above | per-game team series (pts, opp_pts, margin, total, possessions, T-30m moneyline prob) and player points, last 82 games, rolling 10; per-run model probability (`p_data_only`, RESEARCH, x_axis RUN) for every contract with a prediction |
+| `market_history/` (170) | archive board ticks (`iter_board_ticks`: checkpoints + deltas); `candles_KXNBAGAME.jsonl.gz` | one per v1 event (first, every change and latest observation per ticker); hourly moneyline candles for each team's last 5 games of 2025-26 |
+| `capabilities.json`, `metrics.json` (46 metrics), `search_index.json`, `index.json` | | |
+
+### Capabilities (audit 2026-10-03)
+PARTIAL: team_profiles, player_profiles, event_research, team_metrics, player_metrics, team_game_logs, player_game_logs,
+historical_results, opponents, schedule_strength, recent_form_windows, usage, injuries, market_prices, market_price_history,
+advanced_stats, situational_splits, player_props, team_props, game_markets, play_by_play (shots only), rankings, time_series,
+comparisons, search -- real committed/captured data with the audit's limitations quoted (history pulled manually, last
+2026-09-19; registry covers 175 players; preseason-only archive; ESPN-only injuries).
+RESEARCH: opponent_adjustment, projection_distributions, raw_projections (gated `CANNOT_TRUST_INPUTS`; §5.14 quote defect,
+so the v1 export has 0 model prices), matchup_metrics (neutral by construction), calibration and historical_accuracy
+(`docs/research/market_vs_model.json`: the raw Kalshi price has lower log loss than DATA_ONLY in 8 of 8 families -- market
+beats model in all 8 families).
+UNAVAILABLE: lineups/confirmed starters, weather, venue effects (arena name only), CLV, wager history.
+A capability whose data is absent from a given archive (no injury snapshot, no slate packet, ...) is published UNAVAILABLE
+with the reason rather than claimed.
+
+### Sizes (real data: data-archive @ 2026-10-03T06:07Z, `research.tree_bytes`)
+teams 4.18 MB (max 147 KB), players 8.48 MB (max 56 KB), events 1.49 MB (max 134 KB), rankings 1.28 MB, series 8.91 MB
+(max 26 KB), market_history 4.42 MB (max 107 KB), index 204 KB (compact, contract 1.1.1), search 125 KB, metrics 96 KB, capabilities 21 KB:
+**29.2 MB per publication**, ~17 s. Every file carries the run id, so a rebuild rewrites the whole tree; hence the
+worker's hourly gate. The MIA @ TOR GAME packet (73 markets, 12 entities) renders to 50,880 chars, inside the 60,000 budget.
+
+### Deliberately not published
+Lineups/stints/on-off, confirmed starters, the official injury report (never captured), CLV, wagers, settlements and
+evaluations (never run), weather, venue effects, play-by-play beyond shooting plays, PRA markets (0 rows), positive NBA
+person ids, raw shot events, the full 653,308-row candle history (only each team's last 5 moneyline games), player series
+other than points, the season simulator (not wired to any ledger), and the §5.14 fix (out of scope).

@@ -259,6 +259,17 @@ def cmd_app_export(args: argparse.Namespace) -> int:
     )
 
 
+def cmd_research_export(args: argparse.Namespace) -> int:
+    from nba_edge.research_export import run
+    from nba_edge.timeutil import parse_iso
+
+    return run(
+        Path(args.out), Path(args.data_root), history_root=Path(args.history_root),
+        now=parse_iso(args.now) if args.now else None, commit_sha=args.commit_sha,
+        min_interval_seconds=args.min_interval_minutes * 60,
+    )
+
+
 def cmd_conductor(args: argparse.Namespace) -> int:
     from nba_edge.workflows.conductor import run_conductor
 
@@ -397,6 +408,17 @@ def build_parser() -> argparse.ArgumentParser:
     ax.add_argument("--commit-sha", default=os.environ.get("GITHUB_SHA") or None)
     ax.add_argument("--workflow-run-id", default=os.environ.get("GITHUB_RUN_ID") or None)
     ax.set_defaults(func=cmd_app_export)
+
+    rx = sub.add_parser("research-export",
+                        help="Publish the Edge Finder research explorer (contract 1.1.0) beside the v1 app export")
+    rx.add_argument("--out", default="data/archive/app/latest", help="app root already holding the v1 export")
+    rx.add_argument("--data-root", default="data/archive")
+    rx.add_argument("--history-root", default="data", help="the repository's data/ (history, research, identity)")
+    rx.add_argument("--now", default=None, help="ISO-8601 UTC instant; default: the v1 manifest's generated_at")
+    rx.add_argument("--commit-sha", default=os.environ.get("GITHUB_SHA") or None)
+    rx.add_argument("--min-interval-minutes", type=float, default=0,
+                    help="rebuild only if the explorer is missing, the v1 events changed, or it is this old (0 = always)")
+    rx.set_defaults(func=cmd_research_export)
 
     k = sub.add_parser("conductor", help="Decide which jobs are worth running now")
     k.add_argument("--data", default="data")
