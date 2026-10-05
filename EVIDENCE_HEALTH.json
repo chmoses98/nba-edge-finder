@@ -15,7 +15,7 @@
       "first_day": "dt=2026-09-18",
       "last_day": "dt=2026-10-05",
       "n_days": 18,
-      "n_snapshots": 79,
+      "n_snapshots": 81,
       "state": "ok"
     },
     "lineups": {
@@ -26,14 +26,14 @@
       "first_day": "dt=2026-09-18",
       "last_day": "dt=2026-10-05",
       "n_days": 18,
-      "n_snapshots": 79,
+      "n_snapshots": 81,
       "state": "ok"
     },
     "schedule": {
       "first_day": "dt=2026-09-18",
       "last_day": "dt=2026-10-05",
       "n_days": 18,
-      "n_snapshots": 79,
+      "n_snapshots": 81,
       "state": "ok"
     },
     "state": "ok"
@@ -130,32 +130,40 @@
       },
       {
         "checkpoint": "kalshi/markets/dt=2026-10-05/kalshi_markets_20261005T000401Z_37236830685.jsonl.gz",
-        "final_board_sha256": "2945a2ba6791c0552bd616036aa9a30f16dbbc0ea7b8d1903b23cb6cb709f7df",
-        "n_deltas": 9,
-        "n_markets": 4866,
+        "final_board_sha256": "d7d8bc4620f27d02ac5454ce06aed27b4356c7e49d90d628ce334c77c90e0cdf",
+        "n_deltas": 24,
+        "n_markets": 4850,
         "ok": true,
-        "tip_captured_at_utc": "2026-10-05T02:19:01Z"
+        "tip_captured_at_utc": "2026-10-05T05:53:07Z"
+      },
+      {
+        "checkpoint": "kalshi/markets/dt=2026-10-05/kalshi_markets_20261005T060807Z_37255129887.jsonl.gz",
+        "final_board_sha256": "65f9019605cf0a829108ad79326dcdb57c85d02a425f8a8860515979c1606cf6",
+        "n_deltas": 4,
+        "n_markets": 4961,
+        "ok": true,
+        "tip_captured_at_utc": "2026-10-05T07:08:07Z"
       }
     ],
     "n_broken": 0,
-    "n_chains": 12,
-    "n_ok": 12,
+    "n_chains": 13,
+    "n_ok": 13,
     "state": "ok"
   },
   "evidence": {
     "reason": "evaluate has not run against this archive",
     "state": "absent"
   },
-  "generated_at_utc": "2026-10-05T02:22:18.216524+00:00",
+  "generated_at_utc": "2026-10-05T07:11:19.154386+00:00",
   "markets": {
-    "age_minutes": 3.3782864166666666,
+    "age_minutes": 3.3251395500000003,
     "alarms": [
       "540 market(s) classified UNRESOLVED across series ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAH2HWINS', 'KXNBASTATLEADER', 'KXNBATOJOINCBA']: the ontology does not describe something on the board",
       "series on the board with no ontology entry: ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAH2HWINS', 'KXNBASTATLEADER', 'KXNBATOJOINCBA']"
     ],
     "by_support": {
-      "BUILDABLE": 395,
-      "MODELABLE": 412,
+      "BUILDABLE": 462,
+      "MODELABLE": 440,
       "RESEARCH": 1484,
       "UNMODELABLE": 2035,
       "UNRESOLVED": 540
@@ -262,8 +270,8 @@
         "p99": null
       }
     },
-    "last_capture_utc": "2026-10-05T02:19:01Z",
-    "n_discovered": 4866,
+    "last_capture_utc": "2026-10-05T07:08:07Z",
+    "n_discovered": 4961,
     "n_series": 264,
     "n_unresolved_alarms": 2,
     "state": "ok"
@@ -280,10 +288,14 @@
     "state": "ok"
   },
   "simulation": {
-    "coverage": null,
-    "n_games": 0,
+    "coverage": {
+      "BUILDABLE": 120,
+      "MODELABLE": 240,
+      "UNRESOLVED": 5
+    },
+    "n_games": 5,
     "refusals": null,
-    "simulated_at_utc": "2026-10-05T01:37:10Z",
+    "simulated_at_utc": "2026-10-05T06:41:17Z",
     "state": "ok"
   },
   "stint_data": {
@@ -296,321 +308,26 @@
   "worker": {
     "cycles": [
       {
-        "cadence_s": 420.0,
+        "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 194.72774,
-        "hours_to_next_tip": 1.3663640202777778,
+        "duration_s": 209.283857,
+        "hours_to_next_tip": 20.61462934916667,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
           "research_export"
         ],
         "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+1.37h",
-        "started_at": "2026-10-04T21:38:01Z"
-      },
-      {
-        "cadence_s": 420.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 191.569893,
-        "hours_to_next_tip": 1.249697318888889,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+1.25h",
-        "started_at": "2026-10-04T21:45:01Z"
-      },
-      {
-        "cadence_s": 420.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 189.494465,
-        "hours_to_next_tip": 1.1330306183333334,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+1.13h",
-        "started_at": "2026-10-04T21:52:01Z"
-      },
-      {
-        "cadence_s": 420.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 211.563086,
-        "hours_to_next_tip": 1.016363917222222,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+1.02h",
-        "started_at": "2026-10-04T21:59:01Z"
-      },
-      {
-        "cadence_s": 420.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 196.044788,
-        "hours_to_next_tip": 0.8996972002777778,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.90h",
-        "started_at": "2026-10-04T22:06:01Z"
-      },
-      {
-        "cadence_s": 420.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 203.350898,
-        "hours_to_next_tip": 0.7830305,
-        "jobs_failed": [],
-        "jobs_run": [
-          "context",
-          "matchup_shadow",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.78h",
-        "started_at": "2026-10-04T22:13:01Z"
-      },
-      {
-        "cadence_s": 420.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 196.179554,
-        "hours_to_next_tip": 0.6663637944444444,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.67h",
-        "started_at": "2026-10-04T22:20:01Z"
-      },
-      {
-        "cadence_s": 420.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 196.175666,
-        "hours_to_next_tip": 0.5496970833333333,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.55h",
-        "started_at": "2026-10-04T22:27:01Z"
-      },
-      {
-        "cadence_s": 300.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 201.522709,
-        "hours_to_next_tip": 0.4330303861111111,
-        "jobs_failed": [],
-        "jobs_run": [
-          "simulate",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.43h",
-        "started_at": "2026-10-04T22:34:01Z"
-      },
-      {
-        "cadence_s": 300.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 197.380795,
-        "hours_to_next_tip": 0.34969702027777777,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.35h",
-        "started_at": "2026-10-04T22:39:01Z"
-      },
-      {
-        "cadence_s": 300.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 196.695538,
-        "hours_to_next_tip": 0.26636365666666667,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.27h",
-        "started_at": "2026-10-04T22:44:01Z"
-      },
-      {
-        "cadence_s": 300.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 197.226911,
-        "hours_to_next_tip": 0.1830302911111111,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.18h",
-        "started_at": "2026-10-04T22:49:01Z"
-      },
-      {
-        "cadence_s": 300.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 196.017736,
-        "hours_to_next_tip": 0.09969692194444445,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.10h",
-        "started_at": "2026-10-04T22:54:01Z"
-      },
-      {
-        "cadence_s": 300.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 213.697608,
-        "hours_to_next_tip": 0.016363542777777778,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T+0.02h",
-        "started_at": "2026-10-04T22:59:01Z"
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T02:23:07Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 204.759609,
-        "hours_to_next_tip": 23.933030178611112,
-        "jobs_failed": [],
-        "jobs_run": [
-          "settle",
-          "evaluate",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T-0.07h",
-        "started_at": "2026-10-04T23:04:01Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 198.968008,
-        "hours_to_next_tip": 23.683030142777778,
-        "jobs_failed": [],
-        "jobs_run": [
-          "context",
-          "matchup_shadow",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T-0.32h",
-        "started_at": "2026-10-04T23:19:01Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 194.326173,
-        "hours_to_next_tip": 23.433030102777778,
-        "jobs_failed": [],
-        "jobs_run": [
-          "simulate",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T-0.57h",
-        "started_at": "2026-10-04T23:34:01Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 191.606813,
-        "hours_to_next_tip": 23.183030068055555,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T-0.82h",
-        "started_at": "2026-10-04T23:49:01Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 210.349434,
-        "hours_to_next_tip": 22.933030032222224,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T-1.07h",
-        "started_at": "2026-10-05T00:04:01Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 216.214427,
-        "hours_to_next_tip": 22.683029998055556,
-        "jobs_failed": [],
-        "jobs_run": [
-          "context",
-          "matchup_shadow",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "game at 2026-10-04T23:00:00+00:00 is T-1.32h",
-        "started_at": "2026-10-05T00:19:01Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 192.652682,
-        "hours_to_next_tip": 22.433029967777777,
+        "duration_s": 187.39097,
+        "hours_to_next_tip": 20.364629312777776,
         "jobs_failed": [],
         "jobs_run": [
           "simulate",
@@ -619,14 +336,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-05T00:34:01Z"
+        "started_at": "2026-10-05T02:38:07Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 192.35506,
-        "hours_to_next_tip": 22.183029932777778,
+        "duration_s": 184.041439,
+        "hours_to_next_tip": 20.1146292725,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -634,14 +351,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-05T00:49:01Z"
+        "started_at": "2026-10-05T02:53:07Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 194.229175,
-        "hours_to_next_tip": 21.9330299025,
+        "duration_s": 188.817194,
+        "hours_to_next_tip": 19.864629225277778,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -649,14 +366,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-05T01:04:01Z"
+        "started_at": "2026-10-05T03:08:07Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 216.391449,
-        "hours_to_next_tip": 21.683029860555557,
+        "duration_s": 212.450049,
+        "hours_to_next_tip": 19.614629188055556,
         "jobs_failed": [],
         "jobs_run": [
           "context",
@@ -666,14 +383,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-05T01:19:01Z"
+        "started_at": "2026-10-05T03:23:07Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 192.739096,
-        "hours_to_next_tip": 21.433029826944445,
+        "duration_s": 186.048821,
+        "hours_to_next_tip": 19.36462915083333,
         "jobs_failed": [],
         "jobs_run": [
           "simulate",
@@ -682,14 +399,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-05T01:34:01Z"
+        "started_at": "2026-10-05T03:38:07Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 190.526946,
-        "hours_to_next_tip": 21.183029795,
+        "duration_s": 182.555067,
+        "hours_to_next_tip": 19.11462911361111,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -697,14 +414,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-05T01:49:01Z"
+        "started_at": "2026-10-05T03:53:07Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 186.269908,
-        "hours_to_next_tip": 20.933029762222223,
+        "duration_s": 188.09126,
+        "hours_to_next_tip": 18.86462907638889,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -712,14 +429,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-05T02:04:01Z"
+        "started_at": "2026-10-05T04:08:07Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 195.400425,
-        "hours_to_next_tip": 20.68302971972222,
+        "duration_s": 189.230608,
+        "hours_to_next_tip": 18.614629028333333,
         "jobs_failed": [],
         "jobs_run": [
           "context",
@@ -729,13 +446,181 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-05T02:19:01Z"
+        "started_at": "2026-10-05T04:23:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 225.555063,
+        "hours_to_next_tip": 18.364628979722223,
+        "jobs_failed": [],
+        "jobs_run": [
+          "simulate",
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T04:38:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 185.114374,
+        "hours_to_next_tip": 18.11462893138889,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T04:53:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 189.887061,
+        "hours_to_next_tip": 17.864628880555557,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T05:08:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 182.140038,
+        "hours_to_next_tip": 17.61462884138889,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T05:23:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 200.430814,
+        "hours_to_next_tip": 17.36462879277778,
+        "jobs_failed": [],
+        "jobs_run": [
+          "simulate",
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T05:38:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 206.066127,
+        "hours_to_next_tip": 17.11462874277778,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T05:53:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 187.169422,
+        "hours_to_next_tip": 16.864628695277776,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T06:08:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 183.246494,
+        "hours_to_next_tip": 16.614628647777778,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T06:23:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 205.750286,
+        "hours_to_next_tip": 16.364628609444445,
+        "jobs_failed": [],
+        "jobs_run": [
+          "simulate",
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T06:38:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 207.260534,
+        "hours_to_next_tip": 16.1146285625,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T06:53:07Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 190.188555,
+        "hours_to_next_tip": 15.864628518888889,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-05T07:08:07Z"
       }
     ],
     "exit_reason": "planned retirement before next cadence tick",
     "fail_closed": false,
     "final_push_ok": true,
-    "generation": 37,
+    "generation": 38,
     "health": {
       "disposition": "DEGRADED",
       "failures": [],
@@ -747,50 +632,36 @@
       "state": "DEGRADED",
       "streams": {
         "capture": {
-          "attempts": 28,
+          "attempts": 20,
           "disposition": "OK",
           "failed": 0,
-          "ok": 28,
+          "ok": 20,
           "trailing_failures": 0
         },
         "context": {
-          "attempts": 5,
+          "attempts": 2,
           "disposition": "OK",
           "failed": 0,
-          "ok": 5,
-          "trailing_failures": 0
-        },
-        "evaluate": {
-          "attempts": 1,
-          "disposition": "OK",
-          "failed": 0,
-          "ok": 1,
+          "ok": 2,
           "trailing_failures": 0
         },
         "matchup_shadow": {
+          "attempts": 2,
+          "disposition": "OK",
+          "failed": 0,
+          "ok": 2,
+          "trailing_failures": 0
+        },
+        "push": {
+          "attempts": 21,
+          "failed": 0,
+          "ok": 21
+        },
+        "simulate": {
           "attempts": 5,
           "disposition": "OK",
           "failed": 0,
           "ok": 5,
-          "trailing_failures": 0
-        },
-        "push": {
-          "attempts": 29,
-          "failed": 0,
-          "ok": 29
-        },
-        "settle": {
-          "attempts": 1,
-          "disposition": "OK",
-          "failed": 0,
-          "ok": 1,
-          "trailing_failures": 0
-        },
-        "simulate": {
-          "attempts": 4,
-          "disposition": "OK",
-          "failed": 0,
-          "ok": 4,
           "trailing_failures": 0
         }
       },
@@ -800,11 +671,11 @@
       ]
     },
     "n_capture_failed": 0,
-    "n_captured": 28,
-    "n_cycles": 28,
+    "n_captured": 20,
+    "n_cycles": 20,
     "state": "ok",
     "successor_dispatch_attempts": 2,
     "successor_dispatched": true,
-    "worker_id": "37236830685"
+    "worker_id": "37255129887"
   }
 }
