@@ -1,36 +1,32 @@
 {
- "last_capture_utc": "2026-10-05T23:56:10Z",
- "n_markets": 5083,
+ "last_capture_utc": "2026-10-06T00:01:10Z",
+ "n_markets": 5087,
  "n_series": 264,
- "requests": 852,
+ "requests": 847,
  "run_id": "37377273294",
  "markets_written": {
-  "encoding": "delta",
-  "seq": 21,
-  "path": "kalshi/markets_delta/dt=2026-10-05/kalshi_markets_delta_20261005T235610Z_37377273294.json.gz",
-  "bytes": 14480,
-  "n_markets": 5083,
-  "n_changed": 426,
-  "changed_pct": 8.381,
-  "board_sha256": "5818187d6a48f4ec03c352fd27033e6a77fcb6c53567395a713ba6ada21750df"
+  "encoding": "checkpoint",
+  "reason": "UTC day rolled over; keeping day partitions self-contained",
+  "path": "kalshi/markets/dt=2026-10-06/kalshi_markets_20261006T000110Z_37377273294.jsonl.gz",
+  "bytes": 433219,
+  "n_markets": 5087,
+  "board_sha256": "87ef437176b97c430a4a2b8445abea35b082ead50a83c45ebfce295c90e89bde"
  },
  "orderbooks_written": {
-  "encoding": "delta",
-  "seq": 21,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-05/kalshi_orderbooks_delta_20261005T235610Z_37377273294.json.gz",
-  "bytes": 34463,
+  "encoding": "checkpoint",
+  "reason": "UTC day rolled over; keeping day partitions self-contained",
+  "path": "kalshi/orderbooks/dt=2026-10-06/kalshi_orderbooks_20261006T000110Z_37377273294.jsonl.gz",
+  "bytes": 40425,
   "n_markets": 300,
-  "n_changed": 261,
-  "changed_pct": 87.0,
-  "board_sha256": "c8a8680973636028daeb4ec3a7c1e33fdb7f50f2cff0bff7d2f5ea39f01e9430"
+  "board_sha256": "3e061c305cc7c83824a60cfcac22af32394582e1ade1e095c5902bf1846a5013"
  },
  "by_status": {
-  "active": 4967,
+  "active": 4971,
   "closed": 116
  },
  "by_support": {
-  "BUILDABLE": 568,
-  "MODELABLE": 456,
+  "BUILDABLE": 571,
+  "MODELABLE": 457,
   "RESEARCH": 1484,
   "UNMODELABLE": 2035,
   "UNRESOLVED": 540
@@ -45,12 +41,12 @@
   "draft": 15,
   "franchise_business": 26,
   "game_spread": 200,
-  "game_total": 174,
+  "game_total": 175,
   "game_unknown": 30,
   "game_winner": 78,
   "nba_cup": 90,
   "non_basketball_or_offcourt": 29,
-  "parlay_combo": 404,
+  "parlay_combo": 407,
   "period_spread": 55,
   "period_total": 55,
   "period_winner": 54,
@@ -73,7 +69,7 @@
   "series on the board with no ontology entry: ['KXNBACITYEXPAND', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAH2HWINS', 'KXNBASTATLEADER', 'KXNBATOJOINCBA']"
  ],
  "notes": [
-  "order books sampled by priority: 4967 live markets, cap 300"
+  "order books sampled by priority: 4971 live markets, cap 300"
  ],
  "alarm": true
 }
