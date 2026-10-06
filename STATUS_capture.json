@@ -1,35 +1,36 @@
 {
- "last_capture_utc": "2026-10-06T22:56:40Z",
- "n_markets": 5244,
+ "last_capture_utc": "2026-10-06T23:01:40Z",
+ "n_markets": 5253,
  "n_series": 270,
- "requests": 867,
+ "requests": 859,
  "run_id": "37535679294",
  "markets_written": {
   "encoding": "delta",
-  "seq": 12,
-  "path": "kalshi/markets_delta/dt=2026-10-06/kalshi_markets_delta_20261006T225640Z_37535679294.json.gz",
-  "bytes": 7872,
-  "n_markets": 5244,
-  "n_changed": 314,
-  "changed_pct": 5.988,
-  "board_sha256": "8d6c9675454cf86500953474502245f54d884e6acbb45e2ca1a2563e17be413c"
+  "seq": 13,
+  "path": "kalshi/markets_delta/dt=2026-10-06/kalshi_markets_delta_20261006T230140Z_37535679294.json.gz",
+  "bytes": 11117,
+  "n_markets": 5253,
+  "n_changed": 386,
+  "changed_pct": 7.348,
+  "board_sha256": "9f019e3d2518f9b3c1f15c6a79d33d8724e642606fff345e8ab1c387bc57ec15"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 12,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-06/kalshi_orderbooks_delta_20261006T225640Z_37535679294.json.gz",
-  "bytes": 29245,
+  "seq": 13,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-06/kalshi_orderbooks_delta_20261006T230140Z_37535679294.json.gz",
+  "bytes": 31234,
   "n_markets": 300,
-  "n_changed": 207,
-  "changed_pct": 69.0,
-  "board_sha256": "8201b552436e9d6850a4af5af09649daedaac76eee75b926fc578b0eede5ca34"
+  "n_changed": 223,
+  "changed_pct": 74.333,
+  "board_sha256": "c3e6963ad74c9892a9e97b533bf9ca032b6080e952c4d87a05d03fe8fd831d82"
  },
  "by_status": {
-  "active": 5244
+  "active": 5249,
+  "initialized": 4
  },
  "by_support": {
-  "BUILDABLE": 240,
-  "MODELABLE": 392,
+  "BUILDABLE": 245,
+  "MODELABLE": 396,
   "RESEARCH": 1599,
   "UNMODELABLE": 2193,
   "UNRESOLVED": 820
@@ -46,10 +47,10 @@
   "game_spread": 175,
   "game_total": 147,
   "game_unknown": 31,
-  "game_winner": 70,
+  "game_winner": 74,
   "nba_cup": 205,
   "non_basketball_or_offcourt": 29,
-  "parlay_combo": 159,
+  "parlay_combo": 164,
   "period_spread": 22,
   "period_total": 11,
   "period_winner": 48,
@@ -71,7 +72,7 @@
   "series on the board with no ontology entry: ['KXNBACITYEXPAND', 'KXNBAEXEC', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBASJC', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATOJOINCBA']"
  ],
  "notes": [
-  "order books sampled by priority: 5244 live markets, cap 300"
+  "order books sampled by priority: 5249 live markets, cap 300"
  ],
  "alarm": true
 }
