@@ -1,35 +1,36 @@
 {
- "last_capture_utc": "2026-10-10T02:16:22Z",
- "n_markets": 5725,
+ "last_capture_utc": "2026-10-10T02:31:22Z",
+ "n_markets": 5732,
  "n_series": 280,
- "requests": 881,
+ "requests": 877,
  "run_id": "38009327207",
  "markets_written": {
   "encoding": "delta",
-  "seq": 9,
-  "path": "kalshi/markets_delta/dt=2026-10-10/kalshi_markets_delta_20261010T021622Z_38009327207.json.gz",
-  "bytes": 9522,
-  "n_markets": 5725,
-  "n_changed": 341,
-  "changed_pct": 5.956,
-  "board_sha256": "661bd7b162718a050f8b19f9d4ba8b0f9a219fe148a5095f60c45f0017865b97"
+  "seq": 10,
+  "path": "kalshi/markets_delta/dt=2026-10-10/kalshi_markets_delta_20261010T023122Z_38009327207.json.gz",
+  "bytes": 11307,
+  "n_markets": 5732,
+  "n_changed": 383,
+  "changed_pct": 6.682,
+  "board_sha256": "fccd6ac45fbd887b67c94251e41d3a95092e369667ddd4734a8f871aec83fc54"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 9,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-10/kalshi_orderbooks_delta_20261010T021622Z_38009327207.json.gz",
-  "bytes": 34799,
+  "seq": 10,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-10/kalshi_orderbooks_delta_20261010T023122Z_38009327207.json.gz",
+  "bytes": 30934,
   "n_markets": 300,
-  "n_changed": 296,
-  "changed_pct": 98.667,
-  "board_sha256": "d56758557bd2548e36269c7c6f8c838ab3116e3fcdcc5743c116af6ce02365bb"
+  "n_changed": 270,
+  "changed_pct": 90.0,
+  "board_sha256": "d74df23e1f31706b80d029ce5b6292987ce9a3b3a90ea9123cd178817e4e114d"
  },
  "by_status": {
-  "active": 5725
+  "active": 5730,
+  "initialized": 2
  },
  "by_support": {
   "BUILDABLE": 45,
-  "MODELABLE": 459,
+  "MODELABLE": 466,
   "RESEARCH": 1605,
   "UNMODELABLE": 2193,
   "UNRESOLVED": 1423
@@ -44,9 +45,9 @@
   "draft": 15,
   "franchise_business": 26,
   "game_spread": 200,
-  "game_total": 171,
+  "game_total": 176,
   "game_unknown": 67,
-  "game_winner": 88,
+  "game_winner": 90,
   "nba_cup": 211,
   "non_basketball_or_offcourt": 29,
   "period_winner": 45,
@@ -68,7 +69,7 @@
   "series on the board with no ontology entry: ['KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 5725 live markets, cap 300"
+  "order books sampled by priority: 5730 live markets, cap 300"
  ],
  "alarm": true
 }
