@@ -189,6 +189,7 @@ def test_outcomes_then_evaluation_full_and_listed_cohorts(captured):
     assert rep["n_outcome_rows_absent_from_box"] == 5 * (n_elig - 2)  # one per player-game-stat, minus the 2 players in the fake box
     assert slot["pregame_market_listed"]["n_player_game_stat_rows"] == 1  # Tatum points
     assert "unconditional" in slot["all_eligible"]["pure_gate_compare_champion_vs_ewm5"]
+    assert rep["n_listing_rows"] == 1  # listings only, never the listings_status records
     assert rep["written"] and store.verify() == []
     again = E.evaluate(store, utcnow(), n_boot=50)
     assert not again["written"]  # nothing new matured: no duplicate report

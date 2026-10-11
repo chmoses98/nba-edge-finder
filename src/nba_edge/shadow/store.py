@@ -88,7 +88,12 @@ class ShadowStore:
         return e
 
     def entries(self, kind_prefix: str = "") -> list[ManifestEntry]:
-        return [e for e in self.ledger.manifest() if e.kind.startswith(kind_prefix)]
+        """Entries whose kind IS ``kind_prefix`` or lies under it as a path ("market/listings" does not
+        match "market/listings_status")."""
+        base = kind_prefix.rstrip("/")
+        if not base:
+            return self.ledger.manifest()
+        return [e for e in self.ledger.manifest() if e.kind == base or e.kind.startswith(base + "/")]
 
     def iter_rows(self, kind_prefix: str) -> Iterable[tuple[ManifestEntry, dict[str, Any]]]:
         for e in self.entries(kind_prefix):

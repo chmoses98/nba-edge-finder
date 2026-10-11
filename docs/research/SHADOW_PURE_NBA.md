@@ -100,3 +100,31 @@ not on main.
 
 Disable or delete the workflow. The data branch is independent of main and of `data-archive`, and no
 production flow reads it.
+
+## Dry run on Actions (run 38106857709, 2026-10-11 02:58–02:59 UTC, commit 7665b47)
+
+The PR dry run was label-gated (`shadow-dry-run`) and wrote to a throwaway store; nothing was committed.
+The artifact is `nba-shadow-pure-dry-run-38106857709`.
+
+- **Live capture (as_of 2026-10-11T02:59:09Z), truly prospective:** 4 **preseason** games on 2026-10-11
+  were projected before tip: espn:401898400 (tip 10:00Z), 401898401 (22:30Z), 401901821 (23:00Z) and
+  401908941 (2026-10-12 01:00Z). That is 117 eligible players and 585 rows per arm × conditionality file.
+  The 7 games of 2026-10-10 were skipped because they were already final (5) or in progress (2). There
+  were 0 refusals and 0 traded-player exclusions. The schedule was fetched at 02:59:08Z, before as_of.
+- **Replay capture (as_of 2026-10-09T15:00:00Z, labelled REPLAY_DRY_RUN):** espn:401908940 was projected
+  (28 eligible, 140 rows per file). espn:401898395 (tip 12:00Z, before the 15:00Z as_of) was **refused,
+  at_or_after_kickoff**, which is the refusal rule working on live data.
+- **Outcomes:** 2 final ESPN box scores for 2026-10-09, fetched at 02:59:17Z, giving 465 outcome rows.
+- **Market listings** (read-only archive board, reconstructed checkpoint + deltas): status OK for both
+  captures. The boards were observed at 02:42:21Z (5,502 markets) and 2026-10-09T14:52:48Z (5,364
+  markets). They held **0 player-prop listings** for these games, since there are no preseason
+  KXNBAPTS/REB/AST/3PT markets, so the listed cohort is empty (n = 0).
+- **Evaluation** (replay rows only, so this is not evidence): 1 matured game, 140 player-game-stat rows,
+  and gate compare with 140 matched rows. Champion points, unconditional: mean 8.46, Σpred/Σactual 3.08.
+  Non-eligible participants took 19 players and 58% of the minutes. That is a preseason game: rotations
+  are not representative, and offseason roster moves are invisible to the champion's roster rule until a
+  player appears for his new team. Preseason is excluded from live collection.
+- **Verification:** 0 internal hash-chain or manifest problems, and the vendored gate CLI
+  `validate --require-v1` passed on all 8 projection files.
+- The dry run surfaced one bug, fixed afterwards: kind matching counted `market/listings_status` records
+  as listings (`n_listing_rows` 2 instead of 0). Matching is now path-component exact, with a test.
