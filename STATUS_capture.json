@@ -1,34 +1,35 @@
 {
- "last_capture_utc": "2026-10-11T19:22:31Z",
- "n_markets": 5467,
+ "last_capture_utc": "2026-10-11T19:32:31Z",
+ "n_markets": 5490,
  "n_series": 280,
- "requests": 870,
+ "requests": 874,
  "run_id": "38151272942",
  "markets_written": {
   "encoding": "delta",
-  "seq": 6,
-  "path": "kalshi/markets_delta/dt=2026-10-11/kalshi_markets_delta_20261011T192231Z_38151272942.json.gz",
-  "bytes": 4211,
-  "n_markets": 5467,
-  "n_changed": 170,
-  "changed_pct": 3.11,
-  "board_sha256": "1e4f3920bd8fcddbee3ac8f66ca18a1a79f04dae223210ae212925b79711f9e7"
+  "seq": 7,
+  "path": "kalshi/markets_delta/dt=2026-10-11/kalshi_markets_delta_20261011T193231Z_38151272942.json.gz",
+  "bytes": 6523,
+  "n_markets": 5490,
+  "n_changed": 221,
+  "changed_pct": 4.026,
+  "board_sha256": "f0522a88c775f8e2bb05f5393cce00ccf421cc3e7d0a876de3c54204977eedb7"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 6,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-11/kalshi_orderbooks_delta_20261011T192231Z_38151272942.json.gz",
-  "bytes": 24451,
+  "seq": 7,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-11/kalshi_orderbooks_delta_20261011T193231Z_38151272942.json.gz",
+  "bytes": 24262,
   "n_markets": 300,
-  "n_changed": 185,
-  "changed_pct": 61.667,
-  "board_sha256": "307e0b95f296852f3736b9236f44aa0489520501ae6f3c6da1c213c73b4debe4"
+  "n_changed": 177,
+  "changed_pct": 59.0,
+  "board_sha256": "61a051b38e20f7a5dd733b6bb1ca4a2dcceecddb5879df1cd288e8ddf1b8b424"
  },
  "by_status": {
-  "active": 5467
+  "active": 5467,
+  "initialized": 23
  },
  "by_support": {
-  "BUILDABLE": 36,
+  "BUILDABLE": 59,
   "MODELABLE": 210,
   "RESEARCH": 1605,
   "UNMODELABLE": 2193,
@@ -49,6 +50,8 @@
   "game_winner": 72,
   "nba_cup": 211,
   "non_basketball_or_offcourt": 29,
+  "period_spread": 12,
+  "period_total": 11,
   "period_winner": 36,
   "player_unknown": 355,
   "playoff_round_reach": 30,
