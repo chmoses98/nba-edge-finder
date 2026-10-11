@@ -1,28 +1,30 @@
-# NBA slate 2026-10-10 — generated 2026-10-11T00:14:17Z — nba-sim-0.1.0
+# NBA slate 2026-10-11 — generated 2026-10-11T04:15:42Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
-Market snapshot age: 3 min · injury snapshot age: 42 min (espn)
+Market snapshot age: 3 min · injury snapshot age: 30 min (espn)
 
 ## Coverage
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 50 |
-| MODELABLE | 96 |
-| UNRESOLVED | 2 |
+| BUILDABLE | 8 |
+| MODELABLE | 54 |
+| UNRESOLVED | 4 |
 
 ## Games
 
 | game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |
 |---|---|---:|---|---|---:|---:|---|
-| SAC @ GSW | 2026-10-11T00:30:00Z | 0.749 | +10.9±16.2 | 234.8±20.4 | 0.049 | 40000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
-| SAS @ PHX | 2026-10-11T02:30:00Z | 0.185 | -14.3±16.0 | 221.4±19.9 | 0.047 | 40000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
+| DAL @ HOU | 2026-10-11T10:00:00Z | 0.802 | +13.2±15.7 | 222.1±19.5 | 0.047 | 40000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
+| ORL @ CLE | 2026-10-11T22:30:00Z | 0.618 | +4.8±16.0 | 221.9±19.7 | 0.047 | 40000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
+| MIL @ CHA | 2026-10-11T23:00:00Z | 0.882 | +19.1±16.0 | 226.6±20.3 | 0.048 | 60000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
+| CHI @ DEN | 2026-10-12T01:00:00Z | 0.859 | +17.2±16.1 | 242.6±20.6 | 0.048 | 40000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
 
 ## Contracts (OK gate, sorted by best EV)
 
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'CANNOT_TRUST_INPUTS': 146, 'UNSUPPORTED': 2}
+Other gates: {'CANNOT_TRUST_INPUTS': 62, 'UNSUPPORTED': 4}
 
