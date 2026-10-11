@@ -1,0 +1,31 @@
+name: pit-injury-reports
+# Point-in-time injury / availability records (research data). See docs/research/PIT_AVAILABILITY.md.
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/pit_injuries.yml"
+      - "src/nba_edge/availability/**"
+      - "scripts/probe_injury_reports.py"
+      - "scripts/pit_injury_backfill.py"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pit-injuries-${{ github.head_ref || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Probe official injury-report archive + ESPN injuries (read-only)
+        run: python scripts/probe_injury_reports.py
