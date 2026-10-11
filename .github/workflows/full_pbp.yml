@@ -1,0 +1,57 @@
+name: full-pbp-backfill
+# Research data backfill: persist the FULL ESPN play-by-play (every event type, not only shots) for a
+# bounded window, reconstruct five-man lineups from it, and certify (or not) each game.
+#
+# Runs on a GitHub-hosted runner because site.api.espn.com is denied by the development container's
+# egress policy. Additive only: writes data/history/espn_pbp/ and docs/research/lineup_pbp/, never the
+# shot-event or box-score datasets.
+#
+# Triggers:
+#   pull_request (paths-filtered to this lane's files) -- the PR branch IS the place the data lands;
+#     the job commits back to the head branch. GITHUB_TOKEN pushes do not retrigger workflows.
+#   workflow_dispatch -- only resolvable once this file is on the default branch; on the default branch
+#     the job refuses to push (same rule as shot-events-pull) and leaves the data in the artifact.
+# Idempotent: games already in data/history/espn_pbp/pbp_done_<season>.json are skipped.
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/full_pbp.yml"
+      - "src/nba_edge/pbp/**"
+      - "scripts/pbp_backfill.py"
+      - "scripts/probe_full_pbp.py"
+      - "scripts/lineup_certify.py"
+  workflow_dispatch:
+    inputs:
+      seasons:
+        description: "Comma list of seasons (YYYY-YY)"
+        default: "2025-26,2024-25"
+      max_games:
+        description: "Cap on NEW games per season per run (0 = no cap)"
+        default: "0"
+
+permissions:
+  contents: write
+
+concurrency:
+  # Own group: must never queue behind, or supersede, the capture worker / conductor.
+  group: full-pbp-${{ github.head_ref || github.ref }}
+  cancel-in-progress: false
+
+env:
+  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+  SEASONS: ${{ inputs.seasons || '2025-26,2024-25' }}
+  MAX_GAMES: ${{ inputs.max_games || '0' }}
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Probe ESPN + cdn.nba.com play-by-play shape (read-only)
+        run: python scripts/probe_full_pbp.py --date 2025-11-12 --games 1
