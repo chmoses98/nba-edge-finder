@@ -1,0 +1,12 @@
+{
+ "mode": "placeholder",
+ "cwd": "../../..",
+ "market_inputs": {
+  "kalshi_pts": {"path": "data/history/kalshi/markets_KXNBAPTS.jsonl.gz",
+                 "randomizer_cmd": "python3 scripts/nba_pure_mutation_test.py randomize {src} {dst} {seed}"}
+ },
+ "sports_inputs": {"espn": "data/history/espn"},
+ "outputs": ["forecast.jsonl.gz", "baseline.jsonl.gz"],
+ "compare": "bytes",
+ "env": {"OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
+}

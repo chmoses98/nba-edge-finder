@@ -1,0 +1,62 @@
+{
+ "n_games": 20,
+ "n_sims": 600,
+ "randomized_files": "all",
+ "pure": {
+  "removed": {
+   "ewm5_unc": true,
+   "sim_rotation_unc": true,
+   "sim_waterfill_unc": true,
+   "ewm5_cond": true,
+   "sim_rotation_cond": true,
+   "sim_waterfill_cond": true,
+   "outcomes": true,
+   "gate_sim_rotation_unc": {
+    "exit_code": 0,
+    "passed": true,
+    "base_rows": 2910,
+    "n_changed_model_outputs_listed": 0
+   }
+  },
+  "randomized": {
+   "ewm5_unc": true,
+   "sim_rotation_unc": true,
+   "sim_waterfill_unc": true,
+   "ewm5_cond": true,
+   "sim_rotation_cond": true,
+   "sim_waterfill_cond": true,
+   "outcomes": true,
+   "gate_sim_rotation_unc": {
+    "exit_code": 0,
+    "passed": true,
+    "base_rows": 2910,
+    "n_changed_model_outputs_listed": 0
+   }
+  }
+ },
+ "negative_control": {
+  "removed": {
+   "identical": false,
+   "gate": {
+    "exit_code": 1,
+    "passed": false,
+    "base_rows": 2910,
+    "n_changed_model_outputs_listed": 20
+   }
+  },
+  "randomized": {
+   "identical": false,
+   "gate": {
+    "exit_code": 1,
+    "passed": false,
+    "base_rows": 2910,
+    "n_changed_model_outputs_listed": 20
+   }
+  }
+ },
+ "normal_leaky_differs_from_pure": true,
+ "sha256_sim_rotation_unc": "ac26612b4f99958cc95ee340abd36352709c57ef689d18f0298ca74920c9ddc2",
+ "passed": true,
+ "pure_identical_under_all_mutations": true,
+ "negative_control_changed_under_all_mutations": true
+}
