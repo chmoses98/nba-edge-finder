@@ -1,8 +1,8 @@
-# NBA slate 2026-10-11 — generated 2026-10-11T08:20:09Z — nba-sim-0.1.0
+# NBA slate 2026-10-11 — generated 2026-10-11T09:22:11Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
-Market snapshot age: 3 min · injury snapshot age: 214 min (espn)
+Market snapshot age: 3 min · injury snapshot age: 277 min (espn)
 
 ## Coverage
 
