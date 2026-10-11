@@ -77,3 +77,43 @@ def test_espn_rows_take_the_athlete_id_from_the_player_card_link():
             {"href": "https://www.espn.com/nba/player/_/id/4585618/k-g"}]}}]}]}
     r = capture.espn_rows(payload, "2026-10-11T00:00:00Z")[0]
     assert r["nba_id"] == -4585618 and r["entry_date_utc"] == "2026-10-10T21:34Z"
+
+
+def _parse_fixture(name: str, slot: datetime):
+    from nba_edge.availability.official_report import parse_report_pdf
+
+    return parse_report_pdf((FIX / name).read_bytes(), slot)
+
+
+def test_real_report_parses_every_row_with_team_game_and_reason():
+    rows, meta = _parse_fixture("Injury-Report_2026-01-15_05_30PM.pdf", datetime(2026, 1, 15, 17, 30, tzinfo=ET))
+    assert meta["n_pages"] == 10 and meta["n_player_rows"] == 151 and meta["n_not_yet_submitted"] == 4
+    assert meta["rows_missing_team"] == 0 and meta["rows_missing_game"] == 0 and not meta["unresolved_team_text"]
+    assert meta["report_time_et"] == "2026-01-15T17:30:00-05:00"
+    first = rows[0]
+    assert (first["player_name_raw"], first["status"], first["away_tricode"], first["home_tricode"]) == (
+        "Clarke, Brandon", "out", "MEM", "ORL")
+    assert first["reason"] == "Injury/Illness - Right Calf; Strain"
+    edey = next(r for r in rows if r["player_name_raw"] == "Edey, Zach")
+    assert edey["reason"] == "Injury/Illness - Left Ankle; Stress Reaction"  # wrapped above + below the row
+    assert any(r["player_name_raw"] == "Hayes-Davis, Nigel" for r in rows)  # hyphen split across fragments
+    statuses = {r["status"] for r in rows}
+    assert {"out", "questionable", "probable", "available", "not_yet_submitted"} <= statuses
+
+
+def test_early_report_marks_teams_not_yet_submitted():
+    rows, meta = _parse_fixture("Injury-Report_2026-01-15_12_00PM.pdf", datetime(2026, 1, 15, 12, 0, tzinfo=ET))
+    nys = [r for r in rows if r["status"] == "not_yet_submitted"]
+    assert len(nys) == meta["n_not_yet_submitted"] == 15
+    assert all(r["player_name_raw"] is None and r["team_id"] is not None for r in nys)
+
+
+def test_legacy_line_parser_finds_nothing_in_current_layout():
+    """Documents why a positional parser was needed: the existing line-based parser returns 0 rows on
+    a real 2025-26 report (151 player rows), because plain text extraction emits one token per line."""
+    from datetime import UTC
+
+    from nba_edge.data.injuries import extract_pdf_text, parse_injury_report_text
+
+    text = extract_pdf_text((FIX / "Injury-Report_2026-01-15_05_30PM.pdf").read_bytes())
+    assert parse_injury_report_text(text, datetime(2026, 1, 15, 22, 30, tzinfo=UTC)) == []

@@ -35,7 +35,7 @@ _MATCHUP = re.compile(r"^([A-Z]{2,3})@([A-Z]{2,3})$")
 _DATE = re.compile(r"^(\d{2})/(\d{2})/(\d{4})$")
 _HEADER_TIME = re.compile(r"Injury Report:\s*(\d{2})/(\d{2})/(\d{2})\s+(\d{1,2}):(\d{2})\s*([AP]M)")
 LINE_TOL = 2.0
-PARSER_VERSION = "official-pdf-positional/1"
+PARSER_VERSION = "official-pdf-positional/2"
 
 
 def report_url(slot_et: datetime) -> str:
@@ -43,12 +43,27 @@ def report_url(slot_et: datetime) -> str:
     return URL.format(date=s.strftime("%Y-%m-%d"), hh=s.strftime("%I"), mm=s.strftime("%M"), ampm=s.strftime("%p"))
 
 
-def report_urls(slot_et: datetime) -> list[str]:
-    """Every filename variant a report for this slot has been published under, newest pattern first."""
+def report_urls(slot_et: datetime, extended: bool = False) -> list[str]:
+    """Filename variants a report filed under this slot may use, most common first.
+
+    Measured on the 2025-26 archive: from 2025-12-22 files are ``_HH_MMPM`` on a 15-minute grid and the
+    filename time is the report time. Before that, files were hourly ``_HHPM`` and the filename is NOT the
+    report time -- the PDF header says HH:30 (to 2025-12-18) or HH:45 (2025-12-19..21), and Last-Modified
+    agrees. The report time is therefore always taken from the PDF header, never from the filename.
+    ``extended`` adds rarer spellings, used only for games no standard variant located.
+    """
     s = slot_et.astimezone(ET)
+    d, hh, mm, ap = s.strftime("%Y-%m-%d"), s.strftime("%I"), s.strftime("%M"), s.strftime("%p")
     urls = [report_url(s)]
     if s.minute == 0:
-        urls.append(URL_HOURLY.format(date=s.strftime("%Y-%m-%d"), hh=s.strftime("%I"), ampm=s.strftime("%p")))
+        urls.append(URL_HOURLY.format(date=d, hh=hh, ampm=ap))
+    if extended:
+        base = "https://ak-static.cms.nba.com/referee/injury/Injury-Report_"
+        h1 = str(int(hh))
+        urls += [f"{base}{d}_{hh}_{mm}_{ap}.pdf", f"{base}{d}_{hh}{mm}{ap}.pdf", f"{base}{d}_{h1}_{mm}{ap}.pdf",
+                 f"{base}{d}_{hh}_{mm}{ap.lower()}.pdf", f"{base}{d}_{hh}-{mm}{ap}.pdf"]
+        if s.minute == 0:
+            urls += [f"{base}{d}_{h1}{ap}.pdf", f"{base}{d}_{hh}{ap.lower()}.pdf"]
     return urls
 
 
@@ -143,6 +158,17 @@ def _column(x: float, cols: dict[str, float]) -> str:
     return best or "game_date"
 
 
+def _join(ws: list[Word]) -> str:
+    """Join fragments; a fragment ending in '-' (a hyphenated name split across fragments) is glued to
+    the next one ('Hayes-' + 'Davis,' -> 'Hayes-Davis,')."""
+    out = ""
+    for w in ws:
+        if out and not (out.endswith("-") and len(out) > 1 and out[-2] != " "):
+            out += " "
+        out += w.text
+    return " ".join(out.split())
+
+
 def _team_index() -> dict[str, int]:
     return {t.name.lower(): t.team_id for t in registry().teams}
 
@@ -179,10 +205,16 @@ def parse_words(words: list[Word], slot_et: datetime) -> tuple[list[dict[str, An
         for ln in lines:
             if ln[0].top <= header_top + LINE_TOL:
                 continue
+            first = ln[0].text
+            if first.startswith("Injury") and any(w.text.startswith("Report") for w in ln[:3]):
+                continue  # page title
+            if first == "Page" and len(ln) <= 5:
+                continue  # page footer/header 'Page N of M'
+
             cells: dict[str, list[Word]] = {k: [] for k in COLUMNS}
             for w in ln:
                 cells[_column(w.x, cols)].append(w)
-            text = {k: " ".join(w.text for w in v).strip() for k, v in cells.items()}
+            text = {k: _join(v) for k, v in cells.items()}
             if text["game_date"] and _DATE.match(text["game_date"].split()[0]):
                 mo, d, y = _DATE.match(text["game_date"].split()[0]).groups()
                 ctx["game_date"] = f"{y}-{mo}-{d}"
@@ -218,7 +250,7 @@ def parse_words(words: list[Word], slot_et: datetime) -> tuple[list[dict[str, An
             row["_reason"].append(w)
         for top, row in anchors:
             frag = sorted(row.pop("_reason"), key=lambda w: (w.top, w.x))
-            reason = " ".join(" ".join(w.text for w in frag).split()) or None
+            reason = _join(frag) or None
             rows.append({**row, "reason": reason, "_top": top})
     for r in rows:
         r.pop("_top", None)
@@ -229,6 +261,10 @@ def parse_words(words: list[Word], slot_et: datetime) -> tuple[list[dict[str, An
     meta["rows_missing_game"] = sum(1 for r in rows if not (r["home_tricode"] and r["game_date"]))
     expected = slot_et.astimezone(ET).strftime("%Y-%m-%d %I:%M %p")
     meta["header_time_matches_slot"] = meta["header_time_et"] == expected
+    meta["report_time_et"] = None
+    if meta["header_time_et"]:
+        meta["report_time_et"] = datetime.strptime(meta["header_time_et"], "%Y-%m-%d %I:%M %p").replace(
+            tzinfo=ET).isoformat()
     meta["unresolved_team_text"] = sorted(set(meta["unresolved_team_text"]))[:20]
     return rows, meta
 
