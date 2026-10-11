@@ -324,6 +324,7 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
     _secondary_stats(rng, h, a, poss_total)
 
     players: dict[int, PlayerSim] = {}
+    by_team: dict[tuple[int, int], PlayerSim] = {}
     for td in (h, a):
         for j, pl in enumerate(td.team.players):
             played = td.played[:, j]
@@ -335,12 +336,16 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
                 "fta": np.where(played, td.fta[:, j], 0), "oreb": np.where(played, td.oreb[:, j], 0),
                 "dreb": np.where(played, td.dreb[:, j], 0), "min": np.where(played, td.minutes[:, j], 0.0),
             }
-            players[pl.nba_id] = PlayerSim(pl.nba_id, pl.team_id, pl.name, played, td.started[:, j], stats)
+            ps = PlayerSim(pl.nba_id, pl.team_id, pl.name, played, td.started[:, j], stats)
+            # ``players`` is keyed by id alone, so a player listed for BOTH teams (traded between the
+            # opponents) keeps only the away copy there; ``players_by_team`` keeps both.
+            players[pl.nba_id] = ps
+            by_team[(int(td.team.team_id), int(pl.nba_id))] = ps
 
     return SimResult(
         game_id=gp.game_id, home_team_id=home.team_id, away_team_id=away.team_id, n_sims=n, seed=-1, sim_version=SIM_VERSION,
         home_pts=home_pts, away_pts=away_pts, period_pts=period_pts, n_ot=n_ot, possessions=poss_total, players=players,
-        diagnostics={"ot_rate": float((n_ot > 0).mean()) if n else 0.0},
+        diagnostics={"ot_rate": float((n_ot > 0).mean()) if n else 0.0}, players_by_team=by_team,
     )
 
 
@@ -358,11 +363,21 @@ def concat_results(parts: list[SimResult], seed: int) -> SimResult:
             np.concatenate([p.players[pid].started for p in parts]),
             {k: np.concatenate([p.players[pid].stats[k] for p in parts]) for k in ps.stats},
         )
+    by_team = {}
+    for key, ps in first.players_by_team.items():
+        if players.get(key[1]) is not None and players[key[1]].team_id == key[0]:
+            by_team[key] = players[key[1]]  # same object as the id-keyed view, as in simulate_batch
+            continue
+        by_team[key] = PlayerSim(
+            ps.nba_id, ps.team_id, ps.name, np.concatenate([p.players_by_team[key].played for p in parts]),
+            np.concatenate([p.players_by_team[key].started for p in parts]),
+            {k: np.concatenate([p.players_by_team[key].stats[k] for p in parts]) for k in ps.stats},
+        )
     return SimResult(
         game_id=first.game_id, home_team_id=first.home_team_id, away_team_id=first.away_team_id, n_sims=sum(len(p.home_pts) for p in parts), seed=seed,
         sim_version=SIM_VERSION, home_pts=np.concatenate([p.home_pts for p in parts]), away_pts=np.concatenate([p.away_pts for p in parts]),
         period_pts=np.concatenate([p.period_pts for p in parts]), n_ot=np.concatenate([p.n_ot for p in parts]),
-        possessions=np.concatenate([p.possessions for p in parts]), players=players,
+        possessions=np.concatenate([p.possessions for p in parts]), players=players, players_by_team=by_team,
     )
 
 

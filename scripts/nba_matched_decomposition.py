@@ -61,7 +61,7 @@ def window_games(tg: pd.DataFrame, window: str) -> pd.DataFrame:
 
 
 def collect(data_root: Path, window: str, out: Path, n_sims: int, limit: int | None, arms: tuple[str, ...] = md.ARMS,
-            extra_arms=None, tag: str = "", challenger_cfg=None, every: int = 1) -> dict:
+            extra_arms=None, tag: str = "", challenger_cfg=None, every: int = 1, champion_cfg=None) -> dict:
     tg, pg = load(data_root)
     alpha = md.fit_baseline_dispersion(pg, DISPERSION_FIT_BEFORE)
     games = window_games(tg, window)
@@ -72,7 +72,7 @@ def collect(data_root: Path, window: str, out: Path, n_sims: int, limit: int | N
     wide, long, gmeta = [], [], []
     t0 = time.time()
     for i, (_, r) in enumerate(games.iterrows()):
-        meta, fc, gp = md.forecast_game(r, tg, pg, alpha, n_sims, arms, extra_arms, challenger_cfg)
+        meta, fc, gp = md.forecast_game(r, tg, pg, alpha, n_sims, arms, extra_arms, challenger_cfg, champion_cfg)
         box = pg[pg["game_id"] == r["game_id"]]
         w, lg = md.score_game(meta, fc, box)
         wide.extend(w)
@@ -91,7 +91,7 @@ def collect(data_root: Path, window: str, out: Path, n_sims: int, limit: int | N
     pd.DataFrame(wide).to_parquet(out / f"wide_{window}{tag}.parquet", index=False)
     pd.DataFrame(long).to_parquet(out / f"long_{window}{tag}.parquet", index=False)
     pd.DataFrame(gmeta).to_parquet(out / f"games_{window}{tag}.parquet", index=False)
-    info = {"challenger_cfg": repr(challenger_cfg) if challenger_cfg else None, "every": every, "window": window, "date_ranges": WINDOWS[window], "n_games": len(gmeta), "n_player_games": len(wide), "n_sims": n_sims,
+    info = {"challenger_cfg": repr(challenger_cfg) if challenger_cfg else None, "champion_cfg": repr(champion_cfg) if champion_cfg else None, "every": every, "window": window, "date_ranges": WINDOWS[window], "n_games": len(gmeta), "n_player_games": len(wide), "n_sims": n_sims,
             "baseline_nb_alpha": alpha, "dispersion_fit_before": DISPERSION_FIT_BEFORE, "seconds": round(time.time() - t0, 1)}
     (out / f"collect_{window}{tag}.json").write_text(json.dumps(info, indent=1))
     return info
@@ -284,6 +284,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["collect", "report", "sidecars"])
     ap.add_argument("--player-prior-minutes", type=float, help="challenger arm: BuildConfig.player_prior_minutes (preregistered)")
+    ap.add_argument("--resolve-cross-team-players", action="store_true",
+                    help="opt-in traded-player identity fix for the simulator arms (NOT the frozen V1 default)")
     ap.add_argument("--every", type=int, default=1, help="collect every k-th game (DEV-only sweeps)")
     ap.add_argument("--arms", default=",".join(md.ARMS))
     ap.add_argument("--tag", default="")
@@ -305,7 +307,8 @@ def main(argv=None) -> int:
 
         cfg = BuildConfig(player_prior_minutes=a.player_prior_minutes) if a.player_prior_minutes is not None else None
         print(json.dumps(collect(a.data, a.window, a.out, a.sims, a.limit, tuple(a.arms.split(",")), tag=a.tag,
-                                 challenger_cfg=cfg, every=a.every), indent=1))
+                                 challenger_cfg=cfg, every=a.every,
+                                 champion_cfg=BuildConfig(resolve_cross_team_players=True) if a.resolve_cross_team_players else None), indent=1))
     elif a.cmd == "report":
         cuts = tuple(float(x) for x in a.usage_cuts.split(",")) if a.usage_cuts else None
         rep = report(a.out, a.window, a.boot, cuts, a.listed, tag=a.tag)

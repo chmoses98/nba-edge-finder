@@ -74,3 +74,13 @@ Until (A) a materially better data source is available, (B) lineup/stint data is
 
 **The market beating us in all eight families is the current result. It is preserved, not
 worked around.**
+
+## Traded-player identity (2026-10-11): opt-in, not part of V1
+
+`BuildConfig.resolve_cross_team_players` (see `PLAYER_TEAM_IDENTITY.md`) fixes a player being simulated
+for both teams when he was traded between the two opponents. It changes predictions in 9 of the 501
+Wave 1 holdout games, so under the contract above it is a model change. It is therefore **off by
+default**, and V1's digest and outputs are unchanged (every other holdout row is bit-identical).
+`tests/test_player_team_identity.py::test_the_fix_is_off_in_the_frozen_baseline` fails if the default is
+flipped while `BASELINE_ID` is V1. Turning it on in production requires a new baseline id that adds the
+flag to `frozen_parameters()`, with V1 kept in `KNOWN_BASELINES`.

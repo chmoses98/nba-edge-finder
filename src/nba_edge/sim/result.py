@@ -59,6 +59,18 @@ class SimResult:
     possessions: np.ndarray  # float (n,) per-team possessions (regulation + OT)
     players: dict[int, PlayerSim] = field(default_factory=dict)
     diagnostics: dict[str, float] = field(default_factory=dict)
+    # The same PlayerSim objects keyed by (team_id, nba_id). Differs from ``players`` only when one
+    # player is listed for both teams (traded between the opponents): ``players`` then holds the away
+    # copy alone, this holds both. See docs/research/PLAYER_TEAM_IDENTITY.md.
+    players_by_team: dict[tuple[int, int], PlayerSim] = field(default_factory=dict)
+
+    @property
+    def cross_team_player_ids(self) -> set[int]:
+        """Player ids simulated for more than one team in this game (empty in a well-formed game)."""
+        seen: dict[int, int] = {}
+        for _tid, pid in self.players_by_team:
+            seen[pid] = seen.get(pid, 0) + 1
+        return {pid for pid, c in seen.items() if c > 1}
 
     # ---- derived team quantities -------------------------------------------------------------
     @property

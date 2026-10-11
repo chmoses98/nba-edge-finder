@@ -1,0 +1,3627 @@
+{
+ "window": "holdout",
+ "date_ranges": [
+  [
+   "2026-02-01",
+   "2026-04-12"
+  ]
+ ],
+ "n_sims": 2000,
+ "n_boot": 1000,
+ "n_games": 501,
+ "n_games_identical_params": 492,
+ "n_games_changed": 9,
+ "changed_games": [
+  {
+   "game_id": "espn:401810611",
+   "date": "2026-02-07",
+   "home_team_id": 1610612758,
+   "away_team_id": 1610612739,
+   "n_traded": 3,
+   "roster_added_by_fix": {
+    "1610612758": [
+     -3914285,
+     -2528588
+    ],
+    "1610612739": [
+     -4431734
+    ]
+   },
+   "roster_removed_by_fix": {
+    "1610612758": [
+     -4702177,
+     -3032979
+    ],
+    "1610612739": [
+     -4065732
+    ]
+   }
+  },
+  {
+   "game_id": "espn:401810633",
+   "date": "2026-02-11",
+   "home_team_id": 1610612738,
+   "away_team_id": 1610612741,
+   "n_traded": 2,
+   "roster_added_by_fix": {
+    "1610612738": [
+     -4701992
+    ],
+    "1610612741": [
+     -5159895
+    ]
+   },
+   "roster_removed_by_fix": {
+    "1610612738": [
+     -4351851
+    ],
+    "1610612741": [
+     -6478
+    ]
+   }
+  },
+  {
+   "game_id": "espn:401810644",
+   "date": "2026-02-12",
+   "home_team_id": 1610612760,
+   "away_team_id": 1610612749,
+   "n_traded": 1,
+   "roster_added_by_fix": {
+    "1610612760": [
+     -4684208
+    ],
+    "1610612749": []
+   },
+   "roster_removed_by_fix": {
+    "1610612760": [
+     -4997526
+    ],
+    "1610612749": []
+   }
+  },
+  {
+   "game_id": "espn:401810659",
+   "date": "2026-02-20",
+   "home_team_id": 1610612763,
+   "away_team_id": 1610612762,
+   "n_traded": 4,
+   "roster_added_by_fix": {
+    "1610612763": [
+     -4781746,
+     -4593125
+    ],
+    "1610612762": [
+     -4896372
+    ]
+   },
+   "roster_removed_by_fix": {
+    "1610612763": [
+     -4397227,
+     -4277961
+    ],
+    "1610612762": [
+     -2993874
+    ]
+   }
+  },
+  {
+   "game_id": "espn:401810669",
+   "date": "2026-02-21",
+   "home_team_id": 1610612741,
+   "away_team_id": 1610612765,
+   "n_traded": 1,
+   "roster_added_by_fix": {
+    "1610612741": [],
+    "1610612765": [
+     -4700852
+    ]
+   },
+   "roster_removed_by_fix": {
+    "1610612741": [],
+    "1610612765": [
+     -4433218
+    ]
+   }
+  },
+  {
+   "game_id": "espn:401810691",
+   "date": "2026-02-24",
+   "home_team_id": 1610612741,
+   "away_team_id": 1610612766,
+   "n_traded": 1,
+   "roster_added_by_fix": {
+    "1610612741": [],
+    "1610612766": [
+     -4592686
+    ]
+   },
+   "roster_removed_by_fix": {
+    "1610612741": [],
+    "1610612766": [
+     -4277811
+    ]
+   }
+  },
+  {
+   "game_id": "espn:401810714",
+   "date": "2026-02-27",
+   "home_team_id": 1610612738,
+   "away_team_id": 1610612751,
+   "n_traded": 1,
+   "roster_added_by_fix": {
+    "1610612738": [
+     -4593043
+    ],
+    "1610612751": []
+   },
+   "roster_removed_by_fix": {
+    "1610612738": [
+     -4687718
+    ],
+    "1610612751": []
+   }
+  },
+  {
+   "game_id": "espn:401810723",
+   "date": "2026-03-01",
+   "home_team_id": 1610612752,
+   "away_team_id": 1610612759,
+   "n_traded": 1,
+   "roster_added_by_fix": {
+    "1610612752": [],
+    "1610612759": [
+     -4279532
+    ]
+   },
+   "roster_removed_by_fix": {
+    "1610612752": [],
+    "1610612759": [
+     -4610139
+    ]
+   }
+  },
+  {
+   "game_id": "espn:401810751",
+   "date": "2026-03-04",
+   "home_team_id": 1610612763,
+   "away_team_id": 1610612757,
+   "n_traded": 1,
+   "roster_added_by_fix": {
+    "1610612763": [],
+    "1610612757": [
+     -4433144
+    ]
+   },
+   "roster_removed_by_fix": {
+    "1610612763": [],
+    "1610612757": [
+     -5099752
+    ]
+   }
+  }
+ ],
+ "traded_players": [
+  {
+   "game_id": "espn:401810611",
+   "date": "2026-02-07",
+   "player_id": -4702177,
+   "name": "Keon Ellis",
+   "keep_team_id": 1610612739,
+   "stale_team_id": 1610612758,
+   "last_dates": {
+    "1610612758": "2026-01-30",
+    "1610612739": "2026-02-04"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612739,
+   "box_team_id": 1610612739,
+   "box_played": true,
+   "act_min": 17.0,
+   "act_pts": 6.0,
+   "v1_reported_p_play": 0.42,
+   "v1_reported_min": 3.638,
+   "v1_reported_pts": 1.514,
+   "v1_stale_copy_p_play": 0.3485,
+   "v1_stale_copy_min": 5.62,
+   "v1_stale_copy_pts": 1.867,
+   "v1_keep_copy_p_play": 0.42,
+   "v1_keep_copy_min": 3.638,
+   "v1_keep_copy_pts": 1.514,
+   "fix_p_play": 0.432,
+   "fix_min": 3.957,
+   "fix_pts": 1.7
+  },
+  {
+   "game_id": "espn:401810611",
+   "date": "2026-02-07",
+   "player_id": -4065732,
+   "name": "De'Andre Hunter",
+   "keep_team_id": 1610612758,
+   "stale_team_id": 1610612739,
+   "last_dates": {
+    "1610612758": "2026-02-06",
+    "1610612739": "2026-01-30"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612739,
+   "box_team_id": null,
+   "box_played": false,
+   "act_min": 0.0,
+   "act_pts": 0.0,
+   "v1_reported_p_play": 0.4475,
+   "v1_reported_min": 9.585,
+   "v1_reported_pts": 5.439,
+   "v1_stale_copy_p_play": 0.4475,
+   "v1_stale_copy_min": 9.585,
+   "v1_stale_copy_pts": 5.439,
+   "v1_keep_copy_p_play": 0.511,
+   "v1_keep_copy_min": 6.311,
+   "v1_keep_copy_pts": 2.526,
+   "fix_p_play": 0.563,
+   "fix_min": 8.379,
+   "fix_pts": 3.328
+  },
+  {
+   "game_id": "espn:401810611",
+   "date": "2026-02-07",
+   "player_id": -3032979,
+   "name": "Dennis Schroder",
+   "keep_team_id": 1610612739,
+   "stale_team_id": 1610612758,
+   "last_dates": {
+    "1610612758": "2026-01-30",
+    "1610612739": "2026-02-04"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612739,
+   "box_team_id": 1610612739,
+   "box_played": true,
+   "act_min": 17.0,
+   "act_pts": 7.0,
+   "v1_reported_p_play": 0.409,
+   "v1_reported_min": 3.495,
+   "v1_reported_pts": 1.816,
+   "v1_stale_copy_p_play": 0.4475,
+   "v1_stale_copy_min": 9.931,
+   "v1_stale_copy_pts": 4.69,
+   "v1_keep_copy_p_play": 0.409,
+   "v1_keep_copy_min": 3.495,
+   "v1_keep_copy_pts": 1.816,
+   "fix_p_play": 0.422,
+   "fix_min": 3.95,
+   "fix_pts": 2.057
+  },
+  {
+   "game_id": "espn:401810633",
+   "date": "2026-02-11",
+   "player_id": -4351851,
+   "name": "Anfernee Simons",
+   "keep_team_id": 1610612741,
+   "stale_team_id": 1610612738,
+   "last_dates": {
+    "1610612738": "2026-02-01",
+    "1610612741": "2026-02-09"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612741,
+   "box_team_id": 1610612741,
+   "box_played": true,
+   "act_min": 28.0,
+   "act_pts": 7.0,
+   "v1_reported_p_play": 0.7595,
+   "v1_reported_min": 19.168,
+   "v1_reported_pts": 9.692,
+   "v1_stale_copy_p_play": 0.4195,
+   "v1_stale_copy_min": 9.68,
+   "v1_stale_copy_pts": 6.219,
+   "v1_keep_copy_p_play": 0.7595,
+   "v1_keep_copy_min": 19.168,
+   "v1_keep_copy_pts": 9.692,
+   "fix_p_play": 0.767,
+   "fix_min": 19.644,
+   "fix_pts": 9.799
+  },
+  {
+   "game_id": "espn:401810633",
+   "date": "2026-02-11",
+   "player_id": -6478,
+   "name": "Nikola Vucevic",
+   "keep_team_id": 1610612738,
+   "stale_team_id": 1610612741,
+   "last_dates": {
+    "1610612738": "2026-02-08",
+    "1610612741": "2026-02-01"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612741,
+   "box_team_id": 1610612738,
+   "box_played": true,
+   "act_min": 26.0,
+   "act_pts": 19.0,
+   "v1_reported_p_play": 0.534,
+   "v1_reported_min": 13.92,
+   "v1_reported_pts": 7.321,
+   "v1_stale_copy_p_play": 0.534,
+   "v1_stale_copy_min": 13.92,
+   "v1_stale_copy_pts": 7.321,
+   "v1_keep_copy_p_play": 0.4995,
+   "v1_keep_copy_min": 7.313,
+   "v1_keep_copy_pts": 3.772,
+   "fix_p_play": 0.5505,
+   "fix_min": 9.162,
+   "fix_pts": 4.649
+  },
+  {
+   "game_id": "espn:401810644",
+   "date": "2026-02-12",
+   "player_id": -4997526,
+   "name": "Ousmane Dieng",
+   "keep_team_id": 1610612749,
+   "stale_team_id": 1610612760,
+   "last_dates": {
+    "1610612760": "2026-02-03",
+    "1610612749": "2026-02-11"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612749,
+   "box_team_id": 1610612749,
+   "box_played": true,
+   "act_min": 36.0,
+   "act_pts": 19.0,
+   "v1_reported_p_play": 0.4675,
+   "v1_reported_min": 5.376,
+   "v1_reported_pts": 2.364,
+   "v1_stale_copy_p_play": 0.2605,
+   "v1_stale_copy_min": 2.193,
+   "v1_stale_copy_pts": 0.944,
+   "v1_keep_copy_p_play": 0.4675,
+   "v1_keep_copy_min": 5.376,
+   "v1_keep_copy_pts": 2.364,
+   "fix_p_play": 0.4675,
+   "fix_min": 5.328,
+   "fix_pts": 2.32
+  },
+  {
+   "game_id": "espn:401810659",
+   "date": "2026-02-20",
+   "player_id": -4397227,
+   "name": "Vince Williams Jr.",
+   "keep_team_id": 1610612762,
+   "stale_team_id": 1610612763,
+   "last_dates": {
+    "1610612763": "2026-02-02",
+    "1610612762": "2026-02-12"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612762,
+   "box_team_id": 1610612762,
+   "box_played": true,
+   "act_min": 23.0,
+   "act_pts": 7.0,
+   "v1_reported_p_play": 0.59,
+   "v1_reported_min": 7.71,
+   "v1_reported_pts": 3.223,
+   "v1_stale_copy_p_play": 0.4225,
+   "v1_stale_copy_min": 8.647,
+   "v1_stale_copy_pts": 3.999,
+   "v1_keep_copy_p_play": 0.59,
+   "v1_keep_copy_min": 7.71,
+   "v1_keep_copy_pts": 3.223,
+   "fix_p_play": 0.586,
+   "fix_min": 7.643,
+   "fix_pts": 3.155
+  },
+  {
+   "game_id": "espn:401810659",
+   "date": "2026-02-20",
+   "player_id": -4277961,
+   "name": "Jaren Jackson Jr.",
+   "keep_team_id": 1610612762,
+   "stale_team_id": 1610612763,
+   "last_dates": {
+    "1610612763": "2026-02-02",
+    "1610612762": "2026-02-11"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612762,
+   "box_team_id": null,
+   "box_played": false,
+   "act_min": 0.0,
+   "act_pts": 0.0,
+   "v1_reported_p_play": 0.3905,
+   "v1_reported_min": 6.817,
+   "v1_reported_pts": 4.761,
+   "v1_stale_copy_p_play": 0.424,
+   "v1_stale_copy_min": 10.992,
+   "v1_stale_copy_pts": 7.566,
+   "v1_keep_copy_p_play": 0.3905,
+   "v1_keep_copy_min": 6.817,
+   "v1_keep_copy_pts": 4.761,
+   "fix_p_play": 0.3875,
+   "fix_min": 6.713,
+   "fix_pts": 4.619
+  },
+  {
+   "game_id": "espn:401810659",
+   "date": "2026-02-20",
+   "player_id": -2993874,
+   "name": "Kyle Anderson",
+   "keep_team_id": 1610612763,
+   "stale_team_id": 1610612762,
+   "last_dates": {
+    "1610612763": "2026-02-11",
+    "1610612762": "2026-01-30"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612762,
+   "box_team_id": 1610612763,
+   "box_played": true,
+   "act_min": 18.0,
+   "act_pts": 10.0,
+   "v1_reported_p_play": 0.3795,
+   "v1_reported_min": 6.058,
+   "v1_reported_pts": 2.264,
+   "v1_stale_copy_p_play": 0.3795,
+   "v1_stale_copy_min": 6.058,
+   "v1_stale_copy_pts": 2.264,
+   "v1_keep_copy_p_play": 0.621,
+   "v1_keep_copy_min": 10.421,
+   "v1_keep_copy_pts": 4.216,
+   "fix_p_play": 0.6305,
+   "fix_min": 11.197,
+   "fix_pts": 4.537
+  },
+  {
+   "game_id": "espn:401810659",
+   "date": "2026-02-20",
+   "player_id": -3134932,
+   "name": "John Konchar",
+   "keep_team_id": 1610612762,
+   "stale_team_id": 1610612763,
+   "last_dates": {
+    "1610612763": "2026-01-30",
+    "1610612762": "2026-02-12"
+   },
+   "dual_eligible_in_v1": false,
+   "v1_id_keyed_copy_team_id": 1610612762,
+   "box_team_id": 1610612762,
+   "box_played": true,
+   "act_min": 31.0,
+   "act_pts": 6.0,
+   "v1_reported_p_play": 0.7785,
+   "v1_reported_min": 14.405,
+   "v1_reported_pts": 4.573,
+   "v1_keep_copy_p_play": 0.7785,
+   "v1_keep_copy_min": 14.405,
+   "v1_keep_copy_pts": 4.573,
+   "fix_p_play": 0.776,
+   "fix_min": 14.306,
+   "fix_pts": 4.537
+  },
+  {
+   "game_id": "espn:401810669",
+   "date": "2026-02-21",
+   "player_id": -4433218,
+   "name": "Jaden Ivey",
+   "keep_team_id": 1610612741,
+   "stale_team_id": 1610612765,
+   "last_dates": {
+    "1610612741": "2026-02-11",
+    "1610612765": "2026-02-01"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612765,
+   "box_team_id": null,
+   "box_played": false,
+   "act_min": 0.0,
+   "act_pts": 0.0,
+   "v1_reported_p_play": 0.3485,
+   "v1_reported_min": 4.63,
+   "v1_reported_pts": 2.509,
+   "v1_stale_copy_p_play": 0.3485,
+   "v1_stale_copy_min": 4.63,
+   "v1_stale_copy_pts": 2.509,
+   "v1_keep_copy_p_play": 0.4105,
+   "v1_keep_copy_min": 9.022,
+   "v1_keep_copy_pts": 3.397,
+   "fix_p_play": 0.4105,
+   "fix_min": 9.037,
+   "fix_pts": 3.392
+  },
+  {
+   "game_id": "espn:401810691",
+   "date": "2026-02-24",
+   "player_id": -4277811,
+   "name": "Collin Sexton",
+   "keep_team_id": 1610612741,
+   "stale_team_id": 1610612766,
+   "last_dates": {
+    "1610612741": "2026-02-22",
+    "1610612766": "2026-02-02"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612766,
+   "box_team_id": 1610612741,
+   "box_played": true,
+   "act_min": 28.0,
+   "act_pts": 10.0,
+   "v1_reported_p_play": 0.327,
+   "v1_reported_min": 4.021,
+   "v1_reported_pts": 2.412,
+   "v1_stale_copy_p_play": 0.327,
+   "v1_stale_copy_min": 4.021,
+   "v1_stale_copy_pts": 2.412,
+   "v1_keep_copy_p_play": 0.82,
+   "v1_keep_copy_min": 17.222,
+   "v1_keep_copy_pts": 9.083,
+   "fix_p_play": 0.82,
+   "fix_min": 17.224,
+   "fix_pts": 9.083
+  },
+  {
+   "game_id": "espn:401810714",
+   "date": "2026-02-27",
+   "player_id": -4687718,
+   "name": "Josh Minott",
+   "keep_team_id": 1610612751,
+   "stale_team_id": 1610612738,
+   "last_dates": {
+    "1610612738": "2026-02-04",
+    "1610612751": "2026-02-26"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612751,
+   "box_team_id": 1610612751,
+   "box_played": true,
+   "act_min": 16.0,
+   "act_pts": 9.0,
+   "v1_reported_p_play": 0.368,
+   "v1_reported_min": 1.322,
+   "v1_reported_pts": 0.435,
+   "v1_stale_copy_p_play": 0.055,
+   "v1_stale_copy_min": 0.235,
+   "v1_stale_copy_pts": 0.104,
+   "v1_keep_copy_p_play": 0.368,
+   "v1_keep_copy_min": 1.322,
+   "v1_keep_copy_pts": 0.435,
+   "fix_p_play": 0.368,
+   "fix_min": 1.319,
+   "fix_pts": 0.439
+  },
+  {
+   "game_id": "espn:401810723",
+   "date": "2026-03-01",
+   "player_id": -4610139,
+   "name": "Jeremy Sochan",
+   "keep_team_id": 1610612752,
+   "stale_team_id": 1610612759,
+   "last_dates": {
+    "1610612752": "2026-02-27",
+    "1610612759": "2026-02-07"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612759,
+   "box_team_id": 1610612752,
+   "box_played": true,
+   "act_min": 2.0,
+   "act_pts": 1.0,
+   "v1_reported_p_play": 0.0535,
+   "v1_reported_min": 0.177,
+   "v1_reported_pts": 0.064,
+   "v1_stale_copy_p_play": 0.0535,
+   "v1_stale_copy_min": 0.177,
+   "v1_stale_copy_pts": 0.064,
+   "v1_keep_copy_p_play": 0.4565,
+   "v1_keep_copy_min": 2.817,
+   "v1_keep_copy_pts": 0.969,
+   "fix_p_play": 0.4565,
+   "fix_min": 2.807,
+   "fix_pts": 0.959
+  },
+  {
+   "game_id": "espn:401810751",
+   "date": "2026-03-04",
+   "player_id": -5099752,
+   "name": "Rayan Rupert",
+   "keep_team_id": 1610612763,
+   "stale_team_id": 1610612757,
+   "last_dates": {
+    "1610612763": "2026-03-03",
+    "1610612757": "2026-02-12"
+   },
+   "dual_eligible_in_v1": true,
+   "v1_id_keyed_copy_team_id": 1610612757,
+   "box_team_id": 1610612763,
+   "box_played": true,
+   "act_min": 32.0,
+   "act_pts": 5.0,
+   "v1_reported_p_play": 0.344,
+   "v1_reported_min": 3.625,
+   "v1_reported_pts": 1.156,
+   "v1_stale_copy_p_play": 0.344,
+   "v1_stale_copy_min": 3.625,
+   "v1_stale_copy_pts": 1.156,
+   "v1_keep_copy_p_play": 0.6935,
+   "v1_keep_copy_min": 16.006,
+   "v1_keep_copy_pts": 6.728,
+   "fix_p_play": 0.6935,
+   "fix_min": 16.013,
+   "fix_pts": 6.715
+  }
+ ],
+ "population_after_fix": {
+  "n_player_games_in_changed_games": 270,
+  "n_traded_rows": 15,
+  "n_other_rows_in_changed_games": 255
+ },
+ "affected_games_all_rows": {
+  "participation": {
+   "n_player_games": 270,
+   "actual_play_rate": 0.7037,
+   "actual_10min_rate": 0.6074,
+   "ewm5": {
+    "mean_p_play": 0.6345,
+    "brier_play": 0.1808,
+    "mean_p_10min": 0.5755,
+    "brier_10min": 0.167
+   },
+   "sim_rotation_v1": {
+    "mean_p_play": 0.7188,
+    "brier_play": 0.1576,
+    "mean_p_10min": 0.619,
+    "brier_10min": 0.1627
+   },
+   "sim_rotation_v1_keepcopy": {
+    "mean_p_play": 0.7249,
+    "brier_play": 0.1519,
+    "mean_p_10min": 0.6221,
+    "brier_10min": 0.1592
+   },
+   "sim_rotation_fix": {
+    "mean_p_play": 0.7022,
+    "brier_play": 0.1565,
+    "mean_p_10min": 0.6021,
+    "brier_10min": 0.1519
+   },
+   "paired": [
+    {
+     "metric": "brier_play",
+     "n": 256,
+     "n_games": 9,
+     "sim_rotation_v1": 0.1576,
+     "sim_rotation_fix": 0.1525,
+     "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0051,
+     "delta_ci95": [
+      -0.0105,
+      0.0006
+     ]
+    },
+    {
+     "metric": "brier_10min",
+     "n": 256,
+     "n_games": 9,
+     "sim_rotation_v1": 0.1627,
+     "sim_rotation_fix": 0.1578,
+     "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.005,
+     "delta_ci95": [
+      -0.0104,
+      -0.0004
+     ]
+    },
+    {
+     "metric": "brier_play",
+     "n": 256,
+     "n_games": 9,
+     "sim_rotation_v1_keepcopy": 0.1519,
+     "sim_rotation_fix": 0.1525,
+     "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0006,
+     "delta_ci95": [
+      -0.0003,
+      0.002
+     ]
+    },
+    {
+     "metric": "brier_10min",
+     "n": 256,
+     "n_games": 9,
+     "sim_rotation_v1_keepcopy": 0.1592,
+     "sim_rotation_fix": 0.1578,
+     "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0014,
+     "delta_ci95": [
+      -0.0032,
+      -0.0002
+     ]
+    }
+   ]
+  },
+  "stats": {
+   "minutes": {
+    "unc": {
+     "n_player_games": 256,
+     "n_games": 9,
+     "actual_mean": 16.2656,
+     "ewm5": {
+      "mean_forecast": 14.6019,
+      "mae": 8.4746,
+      "rmse": 10.6194,
+      "bias": -1.6637,
+      "crps": 5.5306,
+      "p10_p90_coverage": 0.8477,
+      "brier_t_ref": 0.2334,
+      "ratio_sum_pred_over_sum_actual": 0.8977
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 16.5065,
+      "mae": 7.6106,
+      "rmse": 10.0545,
+      "bias": 0.2409,
+      "crps": 5.2121,
+      "p10_p90_coverage": 0.8125,
+      "brier_t_ref": 0.2178,
+      "ratio_sum_pred_over_sum_actual": 1.0148
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 16.6124,
+      "mae": 7.5198,
+      "rmse": 9.8811,
+      "bias": 0.3467,
+      "crps": 5.1034,
+      "p10_p90_coverage": 0.8242,
+      "brier_t_ref": 0.2146,
+      "ratio_sum_pred_over_sum_actual": 1.0213
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 16.8354,
+      "mae": 7.5254,
+      "rmse": 9.8667,
+      "bias": 0.5698,
+      "crps": 5.0893,
+      "p10_p90_coverage": 0.8242,
+      "brier_t_ref": 0.2148,
+      "ratio_sum_pred_over_sum_actual": 1.035
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 7.6106,
+       "sim_rotation_fix": 7.5254,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0851,
+       "delta_ci95": [
+        -0.2194,
+        0.043
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 101.0929,
+       "sim_rotation_fix": 97.3508,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -3.7421,
+       "delta_ci95": [
+        -8.8344,
+        0.8238
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 5.2121,
+       "sim_rotation_fix": 5.0893,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.1228,
+       "delta_ci95": [
+        -0.2794,
+        0.0181
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2178,
+       "sim_rotation_fix": 0.2148,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0029,
+       "delta_ci95": [
+        -0.0093,
+        0.0029
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.8125,
+       "sim_rotation_fix": 0.8242,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0117,
+       "delta_ci95": [
+        0.0,
+        0.0232
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2409,
+       "sim_rotation_fix": 0.5698,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.3289,
+       "delta_ci95": [
+        0.1699,
+        0.4908
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 7.5198,
+       "sim_rotation_fix": 7.5254,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0056,
+       "delta_ci95": [
+        -0.0449,
+        0.0621
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 97.6368,
+       "sim_rotation_fix": 97.3508,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.2859,
+       "delta_ci95": [
+        -1.2042,
+        0.433
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 5.1034,
+       "sim_rotation_fix": 5.0893,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0141,
+       "delta_ci95": [
+        -0.0507,
+        0.0153
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.2146,
+       "sim_rotation_fix": 0.2148,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0002,
+       "delta_ci95": [
+        -0.0008,
+        0.0012
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.8242,
+       "sim_rotation_fix": 0.8242,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0,
+       "delta_ci95": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.3467,
+       "sim_rotation_fix": 0.5698,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.2231,
+       "delta_ci95": [
+        0.0676,
+        0.4252
+       ]
+      }
+     ]
+    },
+    "cond": {
+     "n_player_games": 186,
+     "n_games": 9,
+     "actual_mean": 22.3871,
+     "ewm5": {
+      "mean_forecast": 21.7426,
+      "mae": 4.8819,
+      "rmse": 6.3922,
+      "bias": -0.6445,
+      "crps": 3.5064,
+      "p10_p90_coverage": 0.7419,
+      "brier_t_ref": 0.2439,
+      "ratio_sum_pred_over_sum_actual": 0.9712
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 21.9696,
+      "mae": 5.2797,
+      "rmse": 7.1084,
+      "bias": -0.4175,
+      "crps": 3.8787,
+      "p10_p90_coverage": 0.8333,
+      "brier_t_ref": 0.2438,
+      "ratio_sum_pred_over_sum_actual": 0.9814
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 22.0422,
+      "mae": 5.2372,
+      "rmse": 6.9413,
+      "bias": -0.3449,
+      "crps": 3.8139,
+      "p10_p90_coverage": 0.8441,
+      "brier_t_ref": 0.2402,
+      "ratio_sum_pred_over_sum_actual": 0.9846
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 22.2032,
+      "mae": 5.1813,
+      "rmse": 6.8281,
+      "bias": -0.1839,
+      "crps": 3.764,
+      "p10_p90_coverage": 0.8495,
+      "brier_t_ref": 0.2392,
+      "ratio_sum_pred_over_sum_actual": 0.9918
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 5.2797,
+       "sim_rotation_fix": 5.1813,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0985,
+       "delta_ci95": [
+        -0.2847,
+        0.0699
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 50.5291,
+       "sim_rotation_fix": 46.6227,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -3.9064,
+       "delta_ci95": [
+        -8.6372,
+        -0.2499
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 3.8787,
+       "sim_rotation_fix": 3.764,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.1147,
+       "delta_ci95": [
+        -0.2784,
+        0.0135
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2438,
+       "sim_rotation_fix": 0.2392,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0045,
+       "delta_ci95": [
+        -0.0145,
+        0.0037
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.8333,
+       "sim_rotation_fix": 0.8495,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0161,
+       "delta_ci95": [
+        0.0045,
+        0.0335
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": -0.4175,
+       "sim_rotation_fix": -0.1839,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.2336,
+       "delta_ci95": [
+        0.0818,
+        0.4148
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 5.2372,
+       "sim_rotation_fix": 5.1813,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0559,
+       "delta_ci95": [
+        -0.127,
+        -0.0025
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 48.182,
+       "sim_rotation_fix": 46.6227,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -1.5593,
+       "delta_ci95": [
+        -3.3814,
+        -0.1966
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 3.8139,
+       "sim_rotation_fix": 3.764,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0499,
+       "delta_ci95": [
+        -0.1054,
+        -0.0084
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.2402,
+       "sim_rotation_fix": 0.2392,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.001,
+       "delta_ci95": [
+        -0.0028,
+        0.0007
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.8441,
+       "sim_rotation_fix": 0.8495,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0054,
+       "delta_ci95": [
+        0.0,
+        0.0173
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": -0.3449,
+       "sim_rotation_fix": -0.1839,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.161,
+       "delta_ci95": [
+        0.0429,
+        0.3315
+       ]
+      }
+     ]
+    }
+   },
+   "points": {
+    "unc": {
+     "n_player_games": 256,
+     "n_games": 9,
+     "actual_mean": 7.8516,
+     "ewm5": {
+      "mean_forecast": 7.111,
+      "mae": 5.3151,
+      "rmse": 6.9032,
+      "bias": -0.7406,
+      "crps": 3.6221,
+      "p10_p90_coverage": 0.8359,
+      "brier_t_ref": 0.2209,
+      "ratio_sum_pred_over_sum_actual": 0.9057
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 7.788,
+      "mae": 5.1106,
+      "rmse": 6.5666,
+      "bias": -0.0636,
+      "crps": 3.4223,
+      "p10_p90_coverage": 0.8438,
+      "brier_t_ref": 0.2128,
+      "ratio_sum_pred_over_sum_actual": 0.9919
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 7.8252,
+      "mae": 5.071,
+      "rmse": 6.5611,
+      "bias": -0.0263,
+      "crps": 3.4066,
+      "p10_p90_coverage": 0.8477,
+      "brier_t_ref": 0.2115,
+      "ratio_sum_pred_over_sum_actual": 0.9966
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 7.9537,
+      "mae": 5.1004,
+      "rmse": 6.5755,
+      "bias": 0.1021,
+      "crps": 3.4122,
+      "p10_p90_coverage": 0.8281,
+      "brier_t_ref": 0.2119,
+      "ratio_sum_pred_over_sum_actual": 1.013
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 5.1106,
+       "sim_rotation_fix": 5.1004,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0101,
+       "delta_ci95": [
+        -0.0792,
+        0.0482
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 43.1197,
+       "sim_rotation_fix": 43.2374,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.1178,
+       "delta_ci95": [
+        -0.5878,
+        0.9827
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 3.4223,
+       "sim_rotation_fix": 3.4122,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0102,
+       "delta_ci95": [
+        -0.058,
+        0.0341
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2128,
+       "sim_rotation_fix": 0.2119,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.001,
+       "delta_ci95": [
+        -0.0062,
+        0.0032
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.8438,
+       "sim_rotation_fix": 0.8281,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0156,
+       "delta_ci95": [
+        -0.0469,
+        0.0116
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": -0.0636,
+       "sim_rotation_fix": 0.1021,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.1657,
+       "delta_ci95": [
+        0.0797,
+        0.2529
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 5.071,
+       "sim_rotation_fix": 5.1004,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0294,
+       "delta_ci95": [
+        0.0065,
+        0.0558
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 43.0483,
+       "sim_rotation_fix": 43.2374,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.1892,
+       "delta_ci95": [
+        -0.1074,
+        0.4935
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 3.4066,
+       "sim_rotation_fix": 3.4122,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0056,
+       "delta_ci95": [
+        -0.0123,
+        0.0225
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.2115,
+       "sim_rotation_fix": 0.2119,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0003,
+       "delta_ci95": [
+        -0.0015,
+        0.0019
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.8477,
+       "sim_rotation_fix": 0.8281,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0195,
+       "delta_ci95": [
+        -0.0395,
+        -0.0039
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": -0.0263,
+       "sim_rotation_fix": 0.1021,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.1285,
+       "delta_ci95": [
+        0.037,
+        0.2437
+       ]
+      }
+     ]
+    },
+    "cond": {
+     "n_player_games": 186,
+     "n_games": 9,
+     "actual_mean": 10.8065,
+     "ewm5": {
+      "mean_forecast": 10.3488,
+      "mae": 4.8334,
+      "rmse": 6.2671,
+      "bias": -0.4577,
+      "crps": 3.491,
+      "p10_p90_coverage": 0.7151,
+      "brier_t_ref": 0.242,
+      "ratio_sum_pred_over_sum_actual": 0.9576
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 10.1843,
+      "mae": 4.7142,
+      "rmse": 6.1103,
+      "bias": -0.6221,
+      "crps": 3.3724,
+      "p10_p90_coverage": 0.8441,
+      "brier_t_ref": 0.2355,
+      "ratio_sum_pred_over_sum_actual": 0.9424
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 10.2146,
+      "mae": 4.756,
+      "rmse": 6.1594,
+      "bias": -0.5918,
+      "crps": 3.4003,
+      "p10_p90_coverage": 0.8441,
+      "brier_t_ref": 0.2366,
+      "ratio_sum_pred_over_sum_actual": 0.9452
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 10.3111,
+      "mae": 4.7387,
+      "rmse": 6.1437,
+      "bias": -0.4953,
+      "crps": 3.3898,
+      "p10_p90_coverage": 0.8495,
+      "brier_t_ref": 0.2363,
+      "ratio_sum_pred_over_sum_actual": 0.9542
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 4.7142,
+       "sim_rotation_fix": 4.7387,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0245,
+       "delta_ci95": [
+        -0.0405,
+        0.0937
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 37.3357,
+       "sim_rotation_fix": 37.7446,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.4089,
+       "delta_ci95": [
+        -0.4656,
+        1.5781
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 3.3724,
+       "sim_rotation_fix": 3.3898,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0174,
+       "delta_ci95": [
+        -0.027,
+        0.0685
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2355,
+       "sim_rotation_fix": 0.2363,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0008,
+       "delta_ci95": [
+        -0.0061,
+        0.0067
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.8441,
+       "sim_rotation_fix": 0.8495,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0054,
+       "delta_ci95": [
+        -0.0173,
+        0.0283
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": -0.6221,
+       "sim_rotation_fix": -0.4953,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.1268,
+       "delta_ci95": [
+        0.0485,
+        0.224
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 4.756,
+       "sim_rotation_fix": 4.7387,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0173,
+       "delta_ci95": [
+        -0.0459,
+        0.0106
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 37.9378,
+       "sim_rotation_fix": 37.7446,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.1932,
+       "delta_ci95": [
+        -0.6308,
+        0.1572
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 3.4003,
+       "sim_rotation_fix": 3.3898,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0106,
+       "delta_ci95": [
+        -0.0326,
+        0.0087
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.2366,
+       "sim_rotation_fix": 0.2363,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0003,
+       "delta_ci95": [
+        -0.003,
+        0.0023
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.8441,
+       "sim_rotation_fix": 0.8495,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0054,
+       "delta_ci95": [
+        -0.0173,
+        0.0283
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": -0.5918,
+       "sim_rotation_fix": -0.4953,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0965,
+       "delta_ci95": [
+        0.0165,
+        0.2071
+       ]
+      }
+     ]
+    }
+   },
+   "rebounds": {
+    "unc": {
+     "n_player_games": 256,
+     "n_games": 9,
+     "actual_mean": 2.9062,
+     "ewm5": {
+      "mean_forecast": 2.7722,
+      "mae": 2.0407,
+      "rmse": 2.7555,
+      "bias": -0.134,
+      "crps": 1.3934,
+      "p10_p90_coverage": 0.8828,
+      "brier_t_ref": 0.213,
+      "ratio_sum_pred_over_sum_actual": 0.9539
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 3.0722,
+      "mae": 1.9785,
+      "rmse": 2.6769,
+      "bias": 0.1659,
+      "crps": 1.328,
+      "p10_p90_coverage": 0.8633,
+      "brier_t_ref": 0.2003,
+      "ratio_sum_pred_over_sum_actual": 1.0571
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 3.0879,
+      "mae": 1.9699,
+      "rmse": 2.6853,
+      "bias": 0.1817,
+      "crps": 1.3233,
+      "p10_p90_coverage": 0.8711,
+      "brier_t_ref": 0.1995,
+      "ratio_sum_pred_over_sum_actual": 1.0625
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 3.1287,
+      "mae": 1.979,
+      "rmse": 2.6794,
+      "bias": 0.2225,
+      "crps": 1.3213,
+      "p10_p90_coverage": 0.8867,
+      "brier_t_ref": 0.1999,
+      "ratio_sum_pred_over_sum_actual": 1.0766
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 1.9785,
+       "sim_rotation_fix": 1.979,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0005,
+       "delta_ci95": [
+        -0.0322,
+        0.0345
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 7.1656,
+       "sim_rotation_fix": 7.1791,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0135,
+       "delta_ci95": [
+        -0.1953,
+        0.2776
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 1.328,
+       "sim_rotation_fix": 1.3213,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0067,
+       "delta_ci95": [
+        -0.0316,
+        0.0197
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2003,
+       "sim_rotation_fix": 0.1999,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0004,
+       "delta_ci95": [
+        -0.0059,
+        0.0036
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.8633,
+       "sim_rotation_fix": 0.8867,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0234,
+       "delta_ci95": [
+        0.0078,
+        0.0392
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.1659,
+       "sim_rotation_fix": 0.2225,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0566,
+       "delta_ci95": [
+        0.0294,
+        0.0881
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 1.9699,
+       "sim_rotation_fix": 1.979,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0091,
+       "delta_ci95": [
+        -0.0039,
+        0.0234
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 7.2109,
+       "sim_rotation_fix": 7.1791,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0317,
+       "delta_ci95": [
+        -0.1006,
+        0.0466
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 1.3233,
+       "sim_rotation_fix": 1.3213,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.002,
+       "delta_ci95": [
+        -0.0089,
+        0.0053
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.1995,
+       "sim_rotation_fix": 0.1999,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0004,
+       "delta_ci95": [
+        -0.0009,
+        0.0017
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.8711,
+       "sim_rotation_fix": 0.8867,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0156,
+       "delta_ci95": [
+        0.0,
+        0.0316
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.1817,
+       "sim_rotation_fix": 0.2225,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0408,
+       "delta_ci95": [
+        0.013,
+        0.0734
+       ]
+      }
+     ]
+    },
+    "cond": {
+     "n_player_games": 186,
+     "n_games": 9,
+     "actual_mean": 4.0,
+     "ewm5": {
+      "mean_forecast": 4.128,
+      "mae": 1.9711,
+      "rmse": 2.5258,
+      "bias": 0.128,
+      "crps": 1.3656,
+      "p10_p90_coverage": 0.8441,
+      "brier_t_ref": 0.2412,
+      "ratio_sum_pred_over_sum_actual": 1.032
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 4.1212,
+      "mae": 1.9373,
+      "rmse": 2.4969,
+      "bias": 0.1212,
+      "crps": 1.3391,
+      "p10_p90_coverage": 0.871,
+      "brier_t_ref": 0.2241,
+      "ratio_sum_pred_over_sum_actual": 1.0303
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 4.1329,
+      "mae": 1.9398,
+      "rmse": 2.5277,
+      "bias": 0.1329,
+      "crps": 1.3463,
+      "p10_p90_coverage": 0.871,
+      "brier_t_ref": 0.2261,
+      "ratio_sum_pred_over_sum_actual": 1.0332
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 4.1576,
+      "mae": 1.9346,
+      "rmse": 2.5078,
+      "bias": 0.1576,
+      "crps": 1.3376,
+      "p10_p90_coverage": 0.8925,
+      "brier_t_ref": 0.2251,
+      "ratio_sum_pred_over_sum_actual": 1.0394
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 1.9373,
+       "sim_rotation_fix": 1.9346,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0027,
+       "delta_ci95": [
+        -0.0547,
+        0.051
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 6.2343,
+       "sim_rotation_fix": 6.2892,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0549,
+       "delta_ci95": [
+        -0.239,
+        0.4805
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 1.3391,
+       "sim_rotation_fix": 1.3376,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0015,
+       "delta_ci95": [
+        -0.0315,
+        0.0355
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2241,
+       "sim_rotation_fix": 0.2251,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.001,
+       "delta_ci95": [
+        -0.004,
+        0.0063
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.871,
+       "sim_rotation_fix": 0.8925,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0215,
+       "delta_ci95": [
+        0.0,
+        0.043
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.1212,
+       "sim_rotation_fix": 0.1576,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0363,
+       "delta_ci95": [
+        -0.0045,
+        0.0851
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 1.9398,
+       "sim_rotation_fix": 1.9346,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0052,
+       "delta_ci95": [
+        -0.0178,
+        0.0076
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 6.3894,
+       "sim_rotation_fix": 6.2892,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.1002,
+       "delta_ci95": [
+        -0.1911,
+        -0.0194
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 1.3463,
+       "sim_rotation_fix": 1.3376,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0087,
+       "delta_ci95": [
+        -0.0165,
+        -0.0012
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.2261,
+       "sim_rotation_fix": 0.2251,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.001,
+       "delta_ci95": [
+        -0.0029,
+        0.0008
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.871,
+       "sim_rotation_fix": 0.8925,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0215,
+       "delta_ci95": [
+        0.0053,
+        0.038
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.1329,
+       "sim_rotation_fix": 0.1576,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0247,
+       "delta_ci95": [
+        0.0001,
+        0.0557
+       ]
+      }
+     ]
+    }
+   },
+   "assists": {
+    "unc": {
+     "n_player_games": 256,
+     "n_games": 9,
+     "actual_mean": 1.8516,
+     "ewm5": {
+      "mean_forecast": 1.6684,
+      "mae": 1.3544,
+      "rmse": 1.8725,
+      "bias": -0.1831,
+      "crps": 0.8979,
+      "p10_p90_coverage": 0.918,
+      "brier_t_ref": 0.2008,
+      "ratio_sum_pred_over_sum_actual": 0.9011
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 1.7704,
+      "mae": 1.2647,
+      "rmse": 1.7337,
+      "bias": -0.0812,
+      "crps": 0.8204,
+      "p10_p90_coverage": 0.9258,
+      "brier_t_ref": 0.1775,
+      "ratio_sum_pred_over_sum_actual": 0.9561
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 1.7722,
+      "mae": 1.272,
+      "rmse": 1.7389,
+      "bias": -0.0793,
+      "crps": 0.8238,
+      "p10_p90_coverage": 0.9258,
+      "brier_t_ref": 0.1794,
+      "ratio_sum_pred_over_sum_actual": 0.9572
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 1.7921,
+      "mae": 1.2755,
+      "rmse": 1.734,
+      "bias": -0.0594,
+      "crps": 0.8219,
+      "p10_p90_coverage": 0.9219,
+      "brier_t_ref": 0.1786,
+      "ratio_sum_pred_over_sum_actual": 0.9679
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 1.2647,
+       "sim_rotation_fix": 1.2755,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0108,
+       "delta_ci95": [
+        -0.0003,
+        0.0229
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 3.0056,
+       "sim_rotation_fix": 3.0069,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0012,
+       "delta_ci95": [
+        -0.0424,
+        0.0412
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.8204,
+       "sim_rotation_fix": 0.8219,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0014,
+       "delta_ci95": [
+        -0.0064,
+        0.0101
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.1775,
+       "sim_rotation_fix": 0.1786,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.001,
+       "delta_ci95": [
+        -0.0017,
+        0.0045
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.9258,
+       "sim_rotation_fix": 0.9219,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0039,
+       "delta_ci95": [
+        -0.0119,
+        0.0
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": -0.0812,
+       "sim_rotation_fix": -0.0594,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0218,
+       "delta_ci95": [
+        0.007,
+        0.0404
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 1.272,
+       "sim_rotation_fix": 1.2755,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0036,
+       "delta_ci95": [
+        -0.0008,
+        0.0072
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 3.0236,
+       "sim_rotation_fix": 3.0069,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0167,
+       "delta_ci95": [
+        -0.047,
+        0.0065
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.8238,
+       "sim_rotation_fix": 0.8219,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0019,
+       "delta_ci95": [
+        -0.0054,
+        0.0011
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.1794,
+       "sim_rotation_fix": 0.1786,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0008,
+       "delta_ci95": [
+        -0.002,
+        0.0004
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.9258,
+       "sim_rotation_fix": 0.9219,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0039,
+       "delta_ci95": [
+        -0.0119,
+        0.0
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": -0.0793,
+       "sim_rotation_fix": -0.0594,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0199,
+       "delta_ci95": [
+        0.0041,
+        0.0427
+       ]
+      }
+     ]
+    },
+    "cond": {
+     "n_player_games": 186,
+     "n_games": 9,
+     "actual_mean": 2.5484,
+     "ewm5": {
+      "mean_forecast": 2.4272,
+      "mae": 1.3709,
+      "rmse": 1.8687,
+      "bias": -0.1212,
+      "crps": 0.9543,
+      "p10_p90_coverage": 0.8978,
+      "brier_t_ref": 0.2365,
+      "ratio_sum_pred_over_sum_actual": 0.9524
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 2.3236,
+      "mae": 1.3094,
+      "rmse": 1.7507,
+      "bias": -0.2248,
+      "crps": 0.8989,
+      "p10_p90_coverage": 0.9194,
+      "brier_t_ref": 0.21,
+      "ratio_sum_pred_over_sum_actual": 0.9118
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 2.3099,
+      "mae": 1.3124,
+      "rmse": 1.7497,
+      "bias": -0.2385,
+      "crps": 0.9003,
+      "p10_p90_coverage": 0.9194,
+      "brier_t_ref": 0.211,
+      "ratio_sum_pred_over_sum_actual": 0.9064
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 2.3231,
+      "mae": 1.3098,
+      "rmse": 1.7388,
+      "bias": -0.2253,
+      "crps": 0.8945,
+      "p10_p90_coverage": 0.9194,
+      "brier_t_ref": 0.2093,
+      "ratio_sum_pred_over_sum_actual": 0.9116
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 1.3094,
+       "sim_rotation_fix": 1.3098,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0004,
+       "delta_ci95": [
+        -0.0195,
+        0.0209
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 3.065,
+       "sim_rotation_fix": 3.0236,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0415,
+       "delta_ci95": [
+        -0.1109,
+        0.0144
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.8989,
+       "sim_rotation_fix": 0.8945,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0044,
+       "delta_ci95": [
+        -0.0186,
+        0.0088
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.21,
+       "sim_rotation_fix": 0.2093,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0007,
+       "delta_ci95": [
+        -0.0051,
+        0.0049
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.9194,
+       "sim_rotation_fix": 0.9194,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0,
+       "delta_ci95": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": -0.2248,
+       "sim_rotation_fix": -0.2253,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0004,
+       "delta_ci95": [
+        -0.023,
+        0.0195
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 1.3124,
+       "sim_rotation_fix": 1.3098,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0026,
+       "delta_ci95": [
+        -0.0092,
+        0.0037
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 3.0613,
+       "sim_rotation_fix": 3.0236,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0378,
+       "delta_ci95": [
+        -0.0894,
+        -0.0061
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.9003,
+       "sim_rotation_fix": 0.8945,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0058,
+       "delta_ci95": [
+        -0.0137,
+        0.0001
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.211,
+       "sim_rotation_fix": 0.2093,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0017,
+       "delta_ci95": [
+        -0.0036,
+        -0.0001
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.9194,
+       "sim_rotation_fix": 0.9194,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0,
+       "delta_ci95": [
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": -0.2385,
+       "sim_rotation_fix": -0.2253,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0132,
+       "delta_ci95": [
+        0.0025,
+        0.0276
+       ]
+      }
+     ]
+    }
+   },
+   "threes": {
+    "unc": {
+     "n_player_games": 256,
+     "n_games": 9,
+     "actual_mean": 1.0273,
+     "ewm5": {
+      "mean_forecast": 0.8692,
+      "mae": 0.8599,
+      "rmse": 1.2341,
+      "bias": -0.1582,
+      "crps": 0.5725,
+      "p10_p90_coverage": 0.9102,
+      "brier_t_ref": 0.198,
+      "ratio_sum_pred_over_sum_actual": 0.846
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 0.9734,
+      "mae": 0.884,
+      "rmse": 1.2197,
+      "bias": -0.054,
+      "crps": 0.5673,
+      "p10_p90_coverage": 0.9141,
+      "brier_t_ref": 0.2033,
+      "ratio_sum_pred_over_sum_actual": 0.9475
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 0.9776,
+      "mae": 0.8786,
+      "rmse": 1.2181,
+      "bias": -0.0498,
+      "crps": 0.5635,
+      "p10_p90_coverage": 0.9219,
+      "brier_t_ref": 0.1995,
+      "ratio_sum_pred_over_sum_actual": 0.9515
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 0.995,
+      "mae": 0.8829,
+      "rmse": 1.221,
+      "bias": -0.0323,
+      "crps": 0.565,
+      "p10_p90_coverage": 0.918,
+      "brier_t_ref": 0.1996,
+      "ratio_sum_pred_over_sum_actual": 0.9686
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.884,
+       "sim_rotation_fix": 0.8829,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0011,
+       "delta_ci95": [
+        -0.0088,
+        0.0054
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 1.4877,
+       "sim_rotation_fix": 1.4909,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0032,
+       "delta_ci95": [
+        -0.0231,
+        0.0255
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.5673,
+       "sim_rotation_fix": 0.565,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0023,
+       "delta_ci95": [
+        -0.0109,
+        0.0043
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2033,
+       "sim_rotation_fix": 0.1996,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0037,
+       "delta_ci95": [
+        -0.0085,
+        0.0008
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": 0.9141,
+       "sim_rotation_fix": 0.918,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0039,
+       "delta_ci95": [
+        -0.0079,
+        0.0158
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1": -0.054,
+       "sim_rotation_fix": -0.0323,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0216,
+       "delta_ci95": [
+        0.0111,
+        0.0328
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.8786,
+       "sim_rotation_fix": 0.8829,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0043,
+       "delta_ci95": [
+        0.0004,
+        0.0089
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 1.4838,
+       "sim_rotation_fix": 1.4909,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0071,
+       "delta_ci95": [
+        -0.0051,
+        0.0198
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.5635,
+       "sim_rotation_fix": 0.565,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0015,
+       "delta_ci95": [
+        -0.0018,
+        0.0048
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.1995,
+       "sim_rotation_fix": 0.1996,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0,
+       "delta_ci95": [
+        -0.0014,
+        0.0015
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.9219,
+       "sim_rotation_fix": 0.918,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0039,
+       "delta_ci95": [
+        -0.0119,
+        0.0
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 256,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": -0.0498,
+       "sim_rotation_fix": -0.0323,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0175,
+       "delta_ci95": [
+        0.006,
+        0.0319
+       ]
+      }
+     ]
+    },
+    "cond": {
+     "n_player_games": 186,
+     "n_games": 9,
+     "actual_mean": 1.414,
+     "ewm5": {
+      "mean_forecast": 1.2847,
+      "mae": 0.9294,
+      "rmse": 1.3014,
+      "bias": -0.1293,
+      "crps": 0.6444,
+      "p10_p90_coverage": 0.8871,
+      "brier_t_ref": 0.2073,
+      "ratio_sum_pred_over_sum_actual": 0.9086
+     },
+     "sim_rotation_v1": {
+      "mean_forecast": 1.2745,
+      "mae": 0.9738,
+      "rmse": 1.2891,
+      "bias": -0.1394,
+      "crps": 0.6489,
+      "p10_p90_coverage": 0.9409,
+      "brier_t_ref": 0.2187,
+      "ratio_sum_pred_over_sum_actual": 0.9014
+     },
+     "sim_rotation_v1_keepcopy": {
+      "mean_forecast": 1.2792,
+      "mae": 0.9725,
+      "rmse": 1.2933,
+      "bias": -0.1347,
+      "crps": 0.6492,
+      "p10_p90_coverage": 0.9409,
+      "brier_t_ref": 0.217,
+      "ratio_sum_pred_over_sum_actual": 0.9047
+     },
+     "sim_rotation_fix": {
+      "mean_forecast": 1.2925,
+      "mae": 0.9724,
+      "rmse": 1.2933,
+      "bias": -0.1215,
+      "crps": 0.6487,
+      "p10_p90_coverage": 0.9355,
+      "brier_t_ref": 0.2162,
+      "ratio_sum_pred_over_sum_actual": 0.9141
+     },
+     "paired": [
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.9738,
+       "sim_rotation_fix": 0.9724,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0014,
+       "delta_ci95": [
+        -0.0117,
+        0.0104
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 1.6617,
+       "sim_rotation_fix": 1.6726,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.011,
+       "delta_ci95": [
+        -0.0209,
+        0.0546
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.6489,
+       "sim_rotation_fix": 0.6487,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0002,
+       "delta_ci95": [
+        -0.0086,
+        0.0092
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.2187,
+       "sim_rotation_fix": 0.2162,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0025,
+       "delta_ci95": [
+        -0.0074,
+        0.0019
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": 0.9409,
+       "sim_rotation_fix": 0.9355,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0054,
+       "delta_ci95": [
+        -0.0229,
+        0.0109
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1": -0.1394,
+       "sim_rotation_fix": -0.1215,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0179,
+       "delta_ci95": [
+        0.0094,
+        0.0284
+       ]
+      },
+      {
+       "metric": "mae",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.9725,
+       "sim_rotation_fix": 0.9724,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0,
+       "delta_ci95": [
+        -0.0043,
+        0.0045
+       ]
+      },
+      {
+       "metric": "mse",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 1.6726,
+       "sim_rotation_fix": 1.6726,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0,
+       "delta_ci95": [
+        -0.0127,
+        0.0151
+       ]
+      },
+      {
+       "metric": "crps",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.6492,
+       "sim_rotation_fix": 0.6487,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0005,
+       "delta_ci95": [
+        -0.0043,
+        0.0032
+       ]
+      },
+      {
+       "metric": "brier_t_ref",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.217,
+       "sim_rotation_fix": 0.2162,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0008,
+       "delta_ci95": [
+        -0.0026,
+        0.0009
+       ]
+      },
+      {
+       "metric": "p10_p90_coverage",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": 0.9409,
+       "sim_rotation_fix": 0.9355,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0054,
+       "delta_ci95": [
+        -0.0229,
+        0.0109
+       ]
+      },
+      {
+       "metric": "bias",
+       "n": 186,
+       "n_games": 9,
+       "sim_rotation_v1_keepcopy": -0.1347,
+       "sim_rotation_fix": -0.1215,
+       "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0132,
+       "delta_ci95": [
+        0.0033,
+        0.0274
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "traded_rows_only": {
+  "minutes": {
+   "unc": {
+    "n_player_games": 15,
+    "n_games": 9,
+    "actual_mean": 18.2667,
+    "ewm5": {
+     "mean_forecast": 7.1101,
+     "mae": 14.7845,
+     "rmse": 16.304,
+     "bias": -11.1566,
+     "crps": 10.7719,
+     "p10_p90_coverage": 0.4667,
+     "brier_t_ref": 0.3155,
+     "ratio_sum_pred_over_sum_actual": 0.3892
+    },
+    "sim_rotation_v1": {
+     "mean_forecast": 6.9298,
+     "mae": 14.1411,
+     "rmse": 16.1928,
+     "bias": -11.3368,
+     "crps": 10.7296,
+     "p10_p90_coverage": 0.5333,
+     "brier_t_ref": 0.3237,
+     "ratio_sum_pred_over_sum_actual": 0.3794
+    },
+    "sim_rotation_v1_keepcopy": {
+     "mean_forecast": 8.7362,
+     "mae": 12.5927,
+     "rmse": 14.2557,
+     "bias": -9.5304,
+     "crps": 8.8746,
+     "p10_p90_coverage": 0.7333,
+     "brier_t_ref": 0.27,
+     "ratio_sum_pred_over_sum_actual": 0.4783
+    },
+    "sim_rotation_fix": {
+     "mean_forecast": 9.1119,
+     "mae": 12.4795,
+     "rmse": 14.0953,
+     "bias": -9.1548,
+     "crps": 8.7026,
+     "p10_p90_coverage": 0.7333,
+     "brier_t_ref": 0.269,
+     "ratio_sum_pred_over_sum_actual": 0.4988
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 14.1411,
+      "sim_rotation_fix": 12.4795,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -1.6616,
+      "delta_ci95": [
+       -4.9178,
+       0.5656
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 262.2081,
+      "sim_rotation_fix": 198.6786,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -63.5296,
+      "delta_ci95": [
+       -192.3818,
+       15.4985
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 10.7296,
+      "sim_rotation_fix": 8.7026,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -2.027,
+      "delta_ci95": [
+       -5.953,
+       0.4374
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.3237,
+      "sim_rotation_fix": 0.269,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0547,
+      "delta_ci95": [
+       -0.2251,
+       0.0408
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.5333,
+      "sim_rotation_fix": 0.7333,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.2,
+      "delta_ci95": [
+       0.0,
+       0.5457
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": -11.3368,
+      "sim_rotation_fix": -9.1548,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 2.182,
+      "delta_ci95": [
+       0.1322,
+       5.7055
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 12.5927,
+      "sim_rotation_fix": 12.4795,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.1132,
+      "delta_ci95": [
+       -0.5128,
+       0.2062
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 203.2239,
+      "sim_rotation_fix": 198.6786,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -4.5453,
+      "delta_ci95": [
+       -15.2521,
+       1.9468
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 8.8746,
+      "sim_rotation_fix": 8.7026,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.172,
+      "delta_ci95": [
+       -0.5529,
+       0.0496
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.27,
+      "sim_rotation_fix": 0.269,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.001,
+      "delta_ci95": [
+       -0.0136,
+       0.0064
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.7333,
+      "sim_rotation_fix": 0.7333,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0,
+      "delta_ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": -9.5304,
+      "sim_rotation_fix": -9.1548,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.3756,
+      "delta_ci95": [
+       0.0016,
+       0.7029
+      ]
+     }
+    ]
+   }
+  },
+  "points": {
+   "unc": {
+    "n_player_games": 15,
+    "n_games": 9,
+    "actual_mean": 7.0667,
+    "ewm5": {
+     "mean_forecast": 3.3779,
+     "mae": 5.7774,
+     "rmse": 7.4333,
+     "bias": -3.6888,
+     "crps": 4.7874,
+     "p10_p90_coverage": 0.6667,
+     "brier_t_ref": 0.4084,
+     "ratio_sum_pred_over_sum_actual": 0.478
+    },
+    "sim_rotation_v1": {
+     "mean_forecast": 3.3027,
+     "mae": 5.8173,
+     "rmse": 7.0649,
+     "bias": -3.7639,
+     "crps": 4.5821,
+     "p10_p90_coverage": 0.7333,
+     "brier_t_ref": 0.3655,
+     "ratio_sum_pred_over_sum_actual": 0.4674
+    },
+    "sim_rotation_v1_keepcopy": {
+     "mean_forecast": 3.9379,
+     "mae": 5.1426,
+     "rmse": 6.9781,
+     "bias": -3.1288,
+     "crps": 4.3135,
+     "p10_p90_coverage": 0.8,
+     "brier_t_ref": 0.3435,
+     "ratio_sum_pred_over_sum_actual": 0.5572
+    },
+    "sim_rotation_fix": {
+     "mean_forecast": 4.0857,
+     "mae": 5.0946,
+     "rmse": 6.8446,
+     "bias": -2.981,
+     "crps": 4.2151,
+     "p10_p90_coverage": 0.8,
+     "brier_t_ref": 0.3398,
+     "ratio_sum_pred_over_sum_actual": 0.5782
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 5.8173,
+      "sim_rotation_fix": 5.0946,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.7226,
+      "delta_ci95": [
+       -1.974,
+       0.2088
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 49.9132,
+      "sim_rotation_fix": 46.8487,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -3.0645,
+      "delta_ci95": [
+       -16.4672,
+       12.0368
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 4.5821,
+      "sim_rotation_fix": 4.2151,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.367,
+      "delta_ci95": [
+       -1.3005,
+       0.4405
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.3655,
+      "sim_rotation_fix": 0.3398,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0257,
+      "delta_ci95": [
+       -0.1208,
+       0.0495
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.7333,
+      "sim_rotation_fix": 0.8,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0667,
+      "delta_ci95": [
+       -0.1667,
+       0.2667
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": -3.7639,
+      "sim_rotation_fix": -2.981,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.783,
+      "delta_ci95": [
+       -0.2592,
+       2.4726
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 5.1426,
+      "sim_rotation_fix": 5.0946,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0479,
+      "delta_ci95": [
+       -0.1766,
+       0.0623
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 48.6942,
+      "sim_rotation_fix": 46.8487,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -1.8455,
+      "delta_ci95": [
+       -5.3953,
+       0.3096
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 4.3135,
+      "sim_rotation_fix": 4.2151,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0984,
+      "delta_ci95": [
+       -0.2812,
+       0.0247
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.3435,
+      "sim_rotation_fix": 0.3398,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0037,
+      "delta_ci95": [
+       -0.0165,
+       0.0064
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.8,
+      "sim_rotation_fix": 0.8,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0,
+      "delta_ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": -3.1288,
+      "sim_rotation_fix": -2.981,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.1478,
+      "delta_ci95": [
+       -0.0077,
+       0.2969
+      ]
+     }
+    ]
+   }
+  },
+  "rebounds": {
+   "unc": {
+    "n_player_games": 15,
+    "n_games": 9,
+    "actual_mean": 3.5333,
+    "ewm5": {
+     "mean_forecast": 1.2703,
+     "mae": 2.8483,
+     "rmse": 4.0279,
+     "bias": -2.263,
+     "crps": 2.3813,
+     "p10_p90_coverage": 0.5333,
+     "brier_t_ref": 0.3518,
+     "ratio_sum_pred_over_sum_actual": 0.3595
+    },
+    "sim_rotation_v1": {
+     "mean_forecast": 1.2313,
+     "mae": 2.7897,
+     "rmse": 3.7928,
+     "bias": -2.302,
+     "crps": 2.2433,
+     "p10_p90_coverage": 0.5333,
+     "brier_t_ref": 0.3195,
+     "ratio_sum_pred_over_sum_actual": 0.3485
+    },
+    "sim_rotation_v1_keepcopy": {
+     "mean_forecast": 1.4998,
+     "mae": 2.6423,
+     "rmse": 3.8932,
+     "bias": -2.0336,
+     "crps": 2.1643,
+     "p10_p90_coverage": 0.6667,
+     "brier_t_ref": 0.3058,
+     "ratio_sum_pred_over_sum_actual": 0.4245
+    },
+    "sim_rotation_fix": {
+     "mean_forecast": 1.5752,
+     "mae": 2.636,
+     "rmse": 3.8277,
+     "bias": -1.9581,
+     "crps": 2.1258,
+     "p10_p90_coverage": 0.8,
+     "brier_t_ref": 0.3048,
+     "ratio_sum_pred_over_sum_actual": 0.4458
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 2.7897,
+      "sim_rotation_fix": 2.636,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.1537,
+      "delta_ci95": [
+       -0.8848,
+       0.2876
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 14.3852,
+      "sim_rotation_fix": 14.6514,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.2662,
+      "delta_ci95": [
+       -3.9999,
+       4.5937
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 2.2433,
+      "sim_rotation_fix": 2.1258,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.1175,
+      "delta_ci95": [
+       -0.6926,
+       0.2971
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.3195,
+      "sim_rotation_fix": 0.3048,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0147,
+      "delta_ci95": [
+       -0.1276,
+       0.0488
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.5333,
+      "sim_rotation_fix": 0.8,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.2667,
+      "delta_ci95": [
+       0.0,
+       0.5501
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": -2.302,
+      "sim_rotation_fix": -1.9581,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.3439,
+      "delta_ci95": [
+       -0.0886,
+       1.03
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 2.6423,
+      "sim_rotation_fix": 2.636,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0063,
+      "delta_ci95": [
+       -0.0997,
+       0.0425
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 15.1567,
+      "sim_rotation_fix": 14.6514,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.5054,
+      "delta_ci95": [
+       -1.7923,
+       0.1047
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 2.1643,
+      "sim_rotation_fix": 2.1258,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0385,
+      "delta_ci95": [
+       -0.1549,
+       0.0188
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.3058,
+      "sim_rotation_fix": 0.3048,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.001,
+      "delta_ci95": [
+       -0.011,
+       0.0044
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.6667,
+      "sim_rotation_fix": 0.8,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.1333,
+      "delta_ci95": [
+       0.0,
+       0.375
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": -2.0336,
+      "sim_rotation_fix": -1.9581,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0755,
+      "delta_ci95": [
+       -0.0047,
+       0.1369
+      ]
+     }
+    ]
+   }
+  },
+  "assists": {
+   "unc": {
+    "n_player_games": 15,
+    "n_games": 9,
+    "actual_mean": 1.7333,
+    "ewm5": {
+     "mean_forecast": 0.7117,
+     "mae": 1.7165,
+     "rmse": 2.3461,
+     "bias": -1.0216,
+     "crps": 1.3933,
+     "p10_p90_coverage": 0.7333,
+     "brier_t_ref": 0.2636,
+     "ratio_sum_pred_over_sum_actual": 0.4106
+    },
+    "sim_rotation_v1": {
+     "mean_forecast": 0.7898,
+     "mae": 1.5873,
+     "rmse": 2.2134,
+     "bias": -0.9436,
+     "crps": 1.2365,
+     "p10_p90_coverage": 0.8,
+     "brier_t_ref": 0.2066,
+     "ratio_sum_pred_over_sum_actual": 0.4556
+    },
+    "sim_rotation_v1_keepcopy": {
+     "mean_forecast": 0.8219,
+     "mae": 1.7113,
+     "rmse": 2.2815,
+     "bias": -0.9114,
+     "crps": 1.2933,
+     "p10_p90_coverage": 0.8,
+     "brier_t_ref": 0.2377,
+     "ratio_sum_pred_over_sum_actual": 0.4742
+    },
+    "sim_rotation_fix": {
+     "mean_forecast": 0.8504,
+     "mae": 1.7018,
+     "rmse": 2.2594,
+     "bias": -0.8829,
+     "crps": 1.2739,
+     "p10_p90_coverage": 0.7333,
+     "brier_t_ref": 0.2318,
+     "ratio_sum_pred_over_sum_actual": 0.4906
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 1.5873,
+      "sim_rotation_fix": 1.7018,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.1145,
+      "delta_ci95": [
+       -0.0213,
+       0.3152
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 4.8991,
+      "sim_rotation_fix": 5.1047,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.2057,
+      "delta_ci95": [
+       -0.1217,
+       0.6806
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 1.2365,
+      "sim_rotation_fix": 1.2739,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0375,
+      "delta_ci95": [
+       -0.0569,
+       0.143
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.2066,
+      "sim_rotation_fix": 0.2318,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0253,
+      "delta_ci95": [
+       -0.0014,
+       0.0679
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.8,
+      "sim_rotation_fix": 0.7333,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0667,
+      "delta_ci95": [
+       -0.1579,
+       0.0
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": -0.9436,
+      "sim_rotation_fix": -0.8829,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0607,
+      "delta_ci95": [
+       -0.1141,
+       0.3205
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 1.7113,
+      "sim_rotation_fix": 1.7018,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0094,
+      "delta_ci95": [
+       -0.0522,
+       0.015
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 5.2055,
+      "sim_rotation_fix": 5.1047,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.1007,
+      "delta_ci95": [
+       -0.2717,
+       0.0231
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 1.2933,
+      "sim_rotation_fix": 1.2739,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0194,
+      "delta_ci95": [
+       -0.061,
+       0.0102
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.2377,
+      "sim_rotation_fix": 0.2318,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0059,
+      "delta_ci95": [
+       -0.0216,
+       0.0038
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.8,
+      "sim_rotation_fix": 0.7333,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0667,
+      "delta_ci95": [
+       -0.1579,
+       0.0
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": -0.9114,
+      "sim_rotation_fix": -0.8829,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0285,
+      "delta_ci95": [
+       -0.0045,
+       0.0631
+      ]
+     }
+    ]
+   }
+  },
+  "threes": {
+   "unc": {
+    "n_player_games": 15,
+    "n_games": 9,
+    "actual_mean": 1.1333,
+    "ewm5": {
+     "mean_forecast": 0.4184,
+     "mae": 0.9972,
+     "rmse": 1.4058,
+     "bias": -0.715,
+     "crps": 0.8582,
+     "p10_p90_coverage": 0.8,
+     "brier_t_ref": 0.386,
+     "ratio_sum_pred_over_sum_actual": 0.3691
+    },
+    "sim_rotation_v1": {
+     "mean_forecast": 0.4203,
+     "mae": 1.1058,
+     "rmse": 1.4194,
+     "bias": -0.713,
+     "crps": 0.8752,
+     "p10_p90_coverage": 0.6,
+     "brier_t_ref": 0.4206,
+     "ratio_sum_pred_over_sum_actual": 0.3709
+    },
+    "sim_rotation_v1_keepcopy": {
+     "mean_forecast": 0.4913,
+     "mae": 1.0139,
+     "rmse": 1.396,
+     "bias": -0.642,
+     "crps": 0.8102,
+     "p10_p90_coverage": 0.7333,
+     "brier_t_ref": 0.3562,
+     "ratio_sum_pred_over_sum_actual": 0.4335
+    },
+    "sim_rotation_fix": {
+     "mean_forecast": 0.5006,
+     "mae": 1.0105,
+     "rmse": 1.38,
+     "bias": -0.6327,
+     "crps": 0.8018,
+     "p10_p90_coverage": 0.7333,
+     "brier_t_ref": 0.3547,
+     "ratio_sum_pred_over_sum_actual": 0.4417
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 1.1058,
+      "sim_rotation_fix": 1.0105,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0953,
+      "delta_ci95": [
+       -0.2682,
+       0.0244
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 2.0148,
+      "sim_rotation_fix": 1.9044,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.1104,
+      "delta_ci95": [
+       -0.5616,
+       0.2361
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.8752,
+      "sim_rotation_fix": 0.8018,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0734,
+      "delta_ci95": [
+       -0.2432,
+       0.0326
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.4206,
+      "sim_rotation_fix": 0.3547,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": -0.0659,
+      "delta_ci95": [
+       -0.184,
+       0.008
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": 0.6,
+      "sim_rotation_fix": 0.7333,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.1333,
+      "delta_ci95": [
+       0.0,
+       0.313
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1": -0.713,
+      "sim_rotation_fix": -0.6327,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1": 0.0803,
+      "delta_ci95": [
+       -0.0354,
+       0.2726
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 1.0139,
+      "sim_rotation_fix": 1.0105,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0034,
+      "delta_ci95": [
+       -0.0254,
+       0.0142
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 1.9487,
+      "sim_rotation_fix": 1.9044,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0443,
+      "delta_ci95": [
+       -0.1585,
+       0.0153
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.8102,
+      "sim_rotation_fix": 0.8018,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0084,
+      "delta_ci95": [
+       -0.0378,
+       0.0078
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.3562,
+      "sim_rotation_fix": 0.3547,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": -0.0015,
+      "delta_ci95": [
+       -0.0137,
+       0.0066
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": 0.7333,
+      "sim_rotation_fix": 0.7333,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0,
+      "delta_ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 15,
+      "n_games": 9,
+      "sim_rotation_v1_keepcopy": -0.642,
+      "sim_rotation_fix": -0.6327,
+      "delta_sim_rotation_fix_minus_sim_rotation_v1_keepcopy": 0.0093,
+      "delta_ci95": [
+       -0.0082,
+       0.0276
+      ]
+     }
+    ]
+   }
+  }
+ }
+}
