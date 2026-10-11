@@ -14,7 +14,7 @@ file is read by any forecasting arm (proven by rerun below).
 |---|---|
 | Does the ~20% counting-stat low bias persist on the complete eligible holdout population? | **No.** Champion Σpred/Σactual: points **1.007 [0.999, 1.014]**, rebounds 1.056, assists 0.979, threes 1.026. The same forecasts look 16–25% low only in frames selected on the outcome (actually played: 0.838; actually ≥28 min: 0.747) or on market listing (0.896). |
 | Where is the residual error? | Offsetting channels: participation over-forecast (F 1.053), minutes given play slightly low (0.979), per-minute rate low (0.977 points, 0.953 assists) and **compressed** toward league rates (top own-usage tercile 0.962, bottom 1.012). |
-| One preregistered correction (`RATE_PRIOR_5`, rate prior mass 60 → 5 minutes) | **ACCEPTED_CHALLENGER (research collection only)** under rule 4: points ΔMAE −0.0118 [−0.0156, −0.0075], ΔCRPS −0.0040 [−0.0063, −0.0013]; no count stat's MAE or CRPS worse. Effect is tiny (0.24% of points MAE) and it over-corrects the bottom usage tercile. Not a promotion. |
+| One preregistered correction (`RATE_PRIOR_5`, rate prior mass 60 → 5 minutes) | **REJECTED — strict criteria applied (2026-10-11 review). Not promoted.** Points ΔMAE −0.0118 [−0.0156, −0.0075] and exact ΔCRPS −0.0040 [−0.0063, −0.0013] pass the MAE/CRPS wording of rule 4, but threes p10–p90 coverage (−0.0012 unc / −0.0020 cond) and threes bias (+0.0007 / +0.0012) worsen with CIs excluding zero, the gate's 3-quantile ΔCRPS CI spans zero, and it over-corrects the bottom usage tercile. Under the strict any-metric reading adopted at review it fails. Findings are kept as research evidence; the champion is unchanged. |
 | Blanket multiplier? | **NO PROMOTION.** A +20% multiplier would turn a ~1.00 full-population ratio into ~1.20. |
 | Injury R1 (stint/lineup impact) | **BLOCKED_DATA** — `LINEUP_FEASIBILITY_R1.md`. `impact_ppp` stays 0. |
 
@@ -205,8 +205,9 @@ a points ΔCRPS for the challenger of −0.0027 with CI [−0.0064, +0.0009], so
 robust to the approximation. The preregistered metric is the exact one.
 
 The challenger moves two other metrics with CIs excluding zero: threes p10–p90 coverage −0.0012 (unc) /
-−0.0020 (cond), and threes mean bias +0.0007 / +0.0012. Rule 4 is written on MAE and CRPS, so the
-verdict stands under the preregistered rule. A stricter any-metric reading would reject it.
+−0.0020 (cond), and threes mean bias +0.0007 / +0.0012. Rule 4 is written on MAE and CRPS; under that literal wording the challenger passed. At review (2026-10-11) the
+stricter any-metric reading was applied, so the final verdict is **REJECTED** (see Verdicts). For future NBA
+experiments, rule 4 should state explicitly that coverage and bias regressions with CIs excluding zero also fail.
 
 ## DEV (descriptive; `w1_nba/scorecard_dev.json`)
 
