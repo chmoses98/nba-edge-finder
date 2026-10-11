@@ -85,6 +85,7 @@ def certify_season(hist: Path, season: str, out_dir: Path) -> dict:
     ev_by = {g: d.sort_values("order").to_dict("records") for g, d in ev.groupby("game_id", sort=False)}
     bx_by = {g: d.to_dict("records") for g, d in bx.groupby("game_id", sort=False)}
     rows, stints, min_diffs = [], [], []
+    offcourt_types: Counter = Counter()
     for g in gm.to_dict("records"):
         gid = g["game_id"]
         r = reconstruct_game(ev_by.get(gid, []), bx_by.get(gid, []), g)
@@ -96,6 +97,7 @@ def certify_season(hist: Path, season: str, out_dir: Path) -> dict:
         for s in r["stints"]:
             stints.append({**s, "certified": r["certified"]})
         min_diffs.extend(r["player_minutes_diff"].values())
+        offcourt_types.update(r["offcourt_event_types"])
     cert = pd.DataFrame(rows).sort_values(["start_time_utc", "game_id"])
     out_dir.mkdir(parents=True, exist_ok=True)
     cert.to_csv(out_dir / f"certification_{season}.csv", index=False)
@@ -125,6 +127,9 @@ def certify_season(hist: Path, season: str, out_dir: Path) -> dict:
                                                    **_q(cert["possession_ratio"])},
         "plus_minus_players_exact_share": round(float(cert["plus_minus_players_exact"].sum()
                                                        / max(1, cert["plus_minus_players"].sum())), 6),
+        "plus_minus_players_exact_share_event_rule": round(float(cert["plus_minus_players_exact_event_rule"].sum()
+                                                                  / max(1, cert["plus_minus_players"].sum())), 6),
+        "offcourt_participation_event_types_top15": dict(offcourt_types.most_common(15)),
         "carryover_period_starts": int(cert["carryover_period_starts"].sum()),
         "q1_inferred_matches_box_starters_share": round(float(cert["q1_inferred_matches_box_starters"].mean()), 4),
         "stints": int(len(st)), "stints_in_certified_games": int(st["certified"].sum()) if len(st) else 0,

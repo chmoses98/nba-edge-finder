@@ -140,7 +140,11 @@ class _Season:
 
 
 def run_full_pbp_pull(out_root: Path, seasons: list[str], *, max_games: int | None = None,
-                      sleep_s: float = 0.1, season_types: tuple[str, ...] = RESEARCH_SEASON_TYPES) -> dict[str, Any]:
+                      sleep_s: float = 0.1, season_types: tuple[str, ...] = RESEARCH_SEASON_TYPES,
+                      max_minutes: float | None = None) -> dict[str, Any]:
+    """``max_minutes`` stops starting new games after that budget (Actions jobs stay under 30 minutes);
+    the next run resumes from the done set."""
+    deadline = time.time() + 60 * max_minutes if max_minutes else None
     out_root = Path(out_root)
     man_path = paths(out_root, "x")["manifest"]
     manifest: dict[str, Any] = {"seasons": {}, "errors": []}
@@ -152,6 +156,7 @@ def run_full_pbp_pull(out_root: Path, seasons: list[str], *, max_games: int | No
         except (OSError, ValueError):
             pass
     today_et = datetime.now(tz=ET).date()
+    manifest["complete"] = True
     for season in [s.strip() for s in seasons if s.strip()]:
         st = _Season(out_root, season)
         log.info(kv(event="pbp_season_start", season=season, already=len(st.done)))
@@ -193,8 +198,9 @@ def run_full_pbp_pull(out_root: Path, seasons: list[str], *, max_games: int | No
                     log.info(kv(event="pbp_progress", season=season, date=d.isoformat(), new=st.n_new))
                 if sleep_s:
                     time.sleep(sleep_s)
-                if max_games and st.n_new >= max_games:
+                if (max_games and st.n_new >= max_games) or (deadline and time.time() > deadline):
                     stop = True
+                    manifest["complete"] = False
                     break
         st.flush()
         manifest["seasons"][season] = st.summary()

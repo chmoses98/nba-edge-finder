@@ -11,7 +11,8 @@ name: full-pbp-backfill
 #     the job commits back to the head branch. GITHUB_TOKEN pushes do not retrigger workflows.
 #   workflow_dispatch -- only resolvable once this file is on the default branch; on the default branch
 #     the job refuses to push (same rule as shot-events-pull) and leaves the data in the artifact.
-# Idempotent: games already in data/history/espn_pbp/pbp_done_<season>.json are skipped.
+# Idempotent and time-budgeted (job <= 30 min): games already ingested are skipped, so re-running the
+# workflow continues the backfill in chunks, one run at a time.
 on:
   pull_request:
     paths:
@@ -45,7 +46,7 @@ env:
 jobs:
   backfill:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -59,7 +60,7 @@ jobs:
       - name: Backfill full play-by-play (resumable; skips games already ingested)
         env:
           NBA_EDGE_LOG_LEVEL: INFO
-        run: python scripts/pbp_backfill.py --seasons "$SEASONS" --max-games "$MAX_GAMES"
+        run: python scripts/pbp_backfill.py --seasons "$SEASONS" --max-games "$MAX_GAMES" --max-minutes 17
       - name: Reconstruct lineups and certify each game
         if: always()
         run: python scripts/lineup_certify.py --seasons "$SEASONS"

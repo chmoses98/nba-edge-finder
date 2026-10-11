@@ -25,8 +25,10 @@ def main() -> int:
     ap.add_argument("--out", default=str(ROOT / "data" / "history"))
     ap.add_argument("--seasons", default="2025-26,2024-25")
     ap.add_argument("--max-games", type=int, default=0, help="cap on NEW games per season (0 = no cap)")
+    ap.add_argument("--max-minutes", type=float, default=0, help="time budget; 0 = none")
     a = ap.parse_args()
-    man = run_full_pbp_pull(Path(a.out), a.seasons.split(","), max_games=a.max_games or None)
+    man = run_full_pbp_pull(Path(a.out), a.seasons.split(","), max_games=a.max_games or None,
+                            max_minutes=a.max_minutes or None)
     print(json.dumps({k: v for k, v in man.items() if k != "errors"}, indent=1))
     print("errors:", len(man.get("errors", [])))
     return 0

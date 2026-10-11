@@ -182,3 +182,18 @@ def test_ingest_writes_compact_files_and_is_idempotent(tmp_path, monkeypatch):
     ingest.run_full_pbp_pull(tmp_path, ["2025-26"], sleep_s=0)
     assert len(calls) == 1, "a re-run must not refetch an ingested game"
     assert len(pd.read_parquet(p["events"])) == 2
+
+
+def test_free_throw_points_belong_to_the_lineup_at_the_foul():
+    evs = game_events()
+    # foul at 6:00, substitution (-6 for -2), then the free throw: the point belongs to the unit with -2
+    evs.insert(2, ev(1.5, 1, 360.0, "Shooting Foul", A, (-11,), 2, 0))
+    evs.insert(4, ev(2.5, 1, 360.0, "Free Throw - 1 of 1", H, (-1,), 3, 0, True))
+    for e in evs[5:]:
+        e["home_score"] += 1
+    g = dict(GAME, home_pts=5)
+    r = reconstruct_game(evs, box_rows(), g)
+    first = r["stints"][0]
+    assert -2 in [first[f"home_p{i}"] for i in range(1, 6)] and first["home_pts"] == 3
+    assert sum(s["home_pts"] for s in r["stints"]) == 5
+    assert r["checks"]["score_ok"]

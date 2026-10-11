@@ -35,6 +35,10 @@ CORE  score_ok           the final event's score equals the box final score.
 CORE  no_offcourt        no player participates in an evidence event while reconstructed off court.
 CORE  subs_consistent    no substitution removes a player who is not on court or adds one who is.
 STRICT plus_minus_ok     every player's on-court point differential equals the box plus-minus exactly.
+                         Free-throw points are credited to the lineup on court at the FOUL (revision 2,
+                         made after the first backfill showed at-event crediting matched only ~36-42% of
+                         players; the at-event count is still reported as ``..._event_rule``). This check
+                         is STRICT-only, so the revision cannot change ``certified``.
 STRICT possessions_ok    play-by-play possessions within ``POSS_TOL`` (5%) of the box estimate
                          0.96*(FGA + 0.44*FTA - OREB + TOV), both teams combined.
 STRICT clock_ok          game clock present on every event and non-increasing within each period.
@@ -187,6 +191,8 @@ def reconstruct_game(events: list[dict[str, Any]], box: list[dict[str, Any]], ga
 
     secs: dict[int, float] = defaultdict(float)
     pm: dict[int, int] = defaultdict(int)
+    pm_event: dict[int, int] = defaultdict(int)
+    offcourt_types: list[str] = []
     stints: list[dict[str, Any]] = []
     poss = {home: 0, away: 0}
     period_rules: dict[str, str] = {}
@@ -218,9 +224,11 @@ def reconstruct_game(events: list[dict[str, Any]], box: list[dict[str, Any]], ga
         stint_first_order = _pid(evs[0].get("order")) if evs else None
         offense: int | None = None
         last_clock = plen
+        foul_lineup: dict[int, set[int]] | None = None
+        foul_stint: Any = None
 
         def close(end_clock: float, end_order: int | None, lineup=lineup, per=per) -> None:
-            nonlocal stint_start_clock, stint_pts, stint_poss, stint_first_order
+            nonlocal stint_start_clock, stint_pts, stint_poss, stint_first_order, foul_stint
             dur = max(0.0, stint_start_clock - end_clock)
             hl, al = sorted(lineup[home]), sorted(lineup[away])
             if dur > 0 or any(stint_pts.values()) or any(stint_poss.values()):
@@ -233,6 +241,8 @@ def reconstruct_game(events: list[dict[str, Any]], box: list[dict[str, Any]], ga
                     "home_pts": stint_pts[home], "away_pts": stint_pts[away],
                     "home_poss": stint_poss[home], "away_poss": stint_poss[away],
                 })
+                if foul_stint == "current":
+                    foul_stint = stints[-1]
             if len(hl) == 5 and len(al) == 5:
                 for p in hl + al:
                     secs[p] += dur
@@ -274,20 +284,37 @@ def reconstruct_game(events: list[dict[str, Any]], box: list[dict[str, Any]], ga
                         m["unknown_participant"] += 1
                     elif pid not in lineup[tm]:
                         m["offcourt_participation"] += 1
+                        offcourt_types.append(str(e.get("type_text")))
             if not (len(lineup[home]) == 5 and len(lineup[away]) == 5):
                 five_ok = False
                 m["events_not_five_per_side"] += 1
-            # points: score deltas attributed to the lineups on court AFTER this event
+            tt = _tt(e)
+            if "foul" in tt and "technical" not in tt:
+                foul_lineup = {t: set(lineup[t]) for t in teams}
+                foul_stint = "current"
+            # points: a free throw's points belong to the lineup on court when the FOUL happened (the
+            # convention behind the league's plus-minus; substitutions are made between the foul and the
+            # shots); every other score change belongs to the lineup on court at the event.
             h, a = _pid(e.get("home_score")), _pid(e.get("away_score"))
             if h is not None and a is not None:
                 dh, da = h - prev_h, a - prev_a
                 if dh or da:
-                    stint_pts[home] += dh
-                    stint_pts[away] += da
-                    for p in lineup[home]:
+                    is_ft = tt.startswith("free throw") and "technical" not in tt
+                    on = foul_lineup if (is_ft and foul_lineup is not None) else lineup
+                    if is_ft and isinstance(foul_stint, dict):
+                        foul_stint["home_pts"] += dh
+                        foul_stint["away_pts"] += da
+                    else:
+                        stint_pts[home] += dh
+                        stint_pts[away] += da
+                    for p in on[home]:
                         pm[p] += dh - da
-                    for p in lineup[away]:
+                    for p in on[away]:
                         pm[p] += da - dh
+                    for p in lineup[home]:  # at-event attribution, kept as a diagnostic
+                        pm_event[p] += dh - da
+                    for p in lineup[away]:
+                        pm_event[p] += da - dh
                 prev_h, prev_a = h, a
             # possessions: count each change of the team in control
             pt = possession_team(e)
@@ -311,6 +338,7 @@ def reconstruct_game(events: list[dict[str, Any]], box: list[dict[str, Any]], ga
     if not minutes_ok:
         reasons.append(f"minutes_max_abs_diff={worst_min:.2f}")
     pm_diffs = [pm.get(p, 0) - int(v) for p, v in box_pm.items() if v is not None and v == v]
+    pm_event_diffs = [pm_event.get(p, 0) - int(v) for p, v in box_pm.items() if v is not None and v == v]
     plus_minus_ok = bool(pm_diffs) and all(d == 0 for d in pm_diffs)
     last = events[-1] if events else {}
     score_ok = (_pid(last.get("home_score")) == _pid(game.get("home_pts"))
@@ -356,6 +384,7 @@ def reconstruct_game(events: list[dict[str, Any]], box: list[dict[str, Any]], ga
         "players_compared": len(min_diffs),
         "plus_minus_players_exact": sum(1 for d in pm_diffs if d == 0), "plus_minus_players": len(pm_diffs),
         "plus_minus_max_abs_diff": max((abs(d) for d in pm_diffs), default=None),
+        "plus_minus_players_exact_event_rule": sum(1 for d in pm_event_diffs if d == 0),
         "pbp_possessions_home": poss[home], "pbp_possessions_away": poss[away],
         "box_possession_estimate": round(est, 2) if est_ok else None,
         "possession_ratio": round(poss_ratio, 4) if poss_ratio is not None else None,
@@ -366,4 +395,4 @@ def reconstruct_game(events: list[dict[str, Any]], box: list[dict[str, Any]], ga
     })
     return {"game_id": game["game_id"], "checks": checks, "certified": core, "certified_strict": strict,
             "reasons": reasons, "period_rules": period_rules, "stints": stints,
-            "player_seconds": dict(secs), "player_minutes_diff": min_diffs, "metrics": metrics}
+            "player_seconds": dict(secs), "offcourt_event_types": offcourt_types, "player_minutes_diff": min_diffs, "metrics": metrics}
