@@ -1,28 +1,31 @@
 {
- "last_capture_utc": "2026-10-11T22:03:21Z",
+ "last_capture_utc": "2026-10-11T22:08:21Z",
  "n_markets": 5536,
  "n_series": 280,
- "requests": 885,
+ "requests": 873,
  "run_id": "38171464596",
  "markets_written": {
-  "encoding": "checkpoint",
-  "reason": "chain reached 24 deltas (limit 24)",
-  "path": "kalshi/markets/dt=2026-10-11/kalshi_markets_20261011T220321Z_38171464596.jsonl.gz",
-  "bytes": 476624,
+  "encoding": "delta",
+  "seq": 1,
+  "path": "kalshi/markets_delta/dt=2026-10-11/kalshi_markets_delta_20261011T220821Z_38171464596.json.gz",
+  "bytes": 4731,
   "n_markets": 5536,
-  "board_sha256": "f049390570e83c1fd28d767b6d2f26fb4afd27b00baa0d42c0598888064fffd1"
+  "n_changed": 199,
+  "changed_pct": 3.595,
+  "board_sha256": "1b1768c5691bec5f0a21be2802764757d5eed1ae169fabb0197cab745b330c85"
  },
  "orderbooks_written": {
-  "encoding": "checkpoint",
-  "reason": "chain reached 24 deltas (limit 24)",
-  "path": "kalshi/orderbooks/dt=2026-10-11/kalshi_orderbooks_20261011T220321Z_38171464596.jsonl.gz",
-  "bytes": 35413,
+  "encoding": "delta",
+  "seq": 1,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-11/kalshi_orderbooks_delta_20261011T220821Z_38171464596.json.gz",
+  "bytes": 28401,
   "n_markets": 300,
-  "board_sha256": "a72315ba0833c6dbc9ab207e48ca7d3b11abb29615a4b5892e6966ad7ae03359"
+  "n_changed": 246,
+  "changed_pct": 82.0,
+  "board_sha256": "ac360f082fe7177187407afb1c41e74792c6a24e6161457e22b922442e3ff57d"
  },
  "by_status": {
-  "active": 5513,
-  "initialized": 23
+  "active": 5536
  },
  "by_support": {
   "BUILDABLE": 105,
@@ -67,7 +70,7 @@
   "series on the board with no ontology entry: ['KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 5513 live markets, cap 300"
+  "order books sampled by priority: 5536 live markets, cap 300"
  ],
  "alarm": true
 }
