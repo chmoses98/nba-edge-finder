@@ -1,50 +1,56 @@
 name: pit-injury-reports
 # Point-in-time injury / availability records (research data). See docs/research/PIT_AVAILABILITY.md.
+#
+# Two jobs, never both for one event:
+#   backfill (pull_request only): bounded, time-budgeted backfill of the official NBA injury-report PDFs
+#     for 2025-26 (resumable; re-run the workflow to continue), plus a DRY-RUN of the prospective capture
+#     (fetch live, parse, validate, upload artifact, commit nothing). Commits data back to the PR branch.
+#   capture (schedule / workflow_dispatch, i.e. only once this file is on the default branch): append-only
+#     capture of the latest official report + an ESPN injuries snapshot, committed to the dedicated
+#     `data-injury-pit` branch -- never to main, never to the capture worker's `data-archive` branch.
+# ak-static.cms.nba.com and site.api.espn.com are reachable from runners, not from the dev container.
 on:
   pull_request:
     paths:
       - ".github/workflows/pit_injuries.yml"
       - "src/nba_edge/availability/**"
-      - "scripts/probe_injury_reports.py"
       - "scripts/pit_injury_backfill.py"
+      - "scripts/pit_capture.py"
+  schedule:
+    # hourly at :41 (off the :00 rush); the report itself is published every 15 minutes
+    - cron: "41 * * * *"
   workflow_dispatch: {}
 
 permissions:
   contents: write
 
 concurrency:
-  group: pit-injuries-${{ github.head_ref || github.ref }}
+  # constant, not ref-keyed: every writer of the data-injury-pit branch is in this one group
+  group: pit-injury-${{ github.event_name == 'pull_request' && github.head_ref || 'capture' }}
   cancel-in-progress: false
 
+env:
+  DATA_BRANCH: data-injury-pit
+
 jobs:
-  probe:
+  backfill:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
       - run: pip install -e .
-      - name: Probe official injury-report archive + ESPN injuries (read-only)
-        run: python scripts/probe_injury_reports.py
-
-  fixtures:
-    # Commits a handful of real official report PDFs as parser test fixtures (the dev container cannot
-    # reach ak-static.cms.nba.com). Skips any that already exist.
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-      - name: Download fixture PDFs
+      - name: Download parser fixture PDFs (skips existing)
         run: |
           mkdir -p tests/fixtures/injury_reports
           cd tests/fixtures/injury_reports
-          for spec in "2026-01-15:05_30PM" "2026-01-15:01_00PM,12_30PM,01_30PM,11_30AM" "2025-11-29:05_30PM,06_00PM,05_00PM,07_30PM" "2026-05-10:12_30PM,01_00PM,02_00PM,11_30AM"; do
+          for spec in "2026-01-15:05_30PM" "2026-01-15:12_00PM,12_15PM,12_30PM" "2026-04-25:06_00PM,06_15PM" "2026-05-12:11_00AM,11_15AM"; do
             d="${spec%%:*}"; slots="${spec#*:}"
             for t in ${slots//,/ }; do
               f="Injury-Report_${d}_${t}.pdf"
@@ -53,16 +59,67 @@ jobs:
               if [ "$code" = "200" ]; then echo "got $f"; break; else rm -f "$f"; echo "miss $f ($code)"; fi
             done
           done
-          ls -la
-      - name: Commit fixtures
+      - name: Backfill 2025-26 (time-budgeted chunk)
+        env:
+          NBA_EDGE_LOG_LEVEL: INFO
+        run: python scripts/pit_injury_backfill.py --season 2025-26 --max-minutes 18
+      - name: Prospective capture DRY-RUN (fetch live, parse, validate; commits nothing)
+        if: always()
+        run: python scripts/pit_capture.py --root "$RUNNER_TEMP/pit_dry" --dry-run
+      - name: Commit backfill + fixtures back to the PR branch
+        if: always()
         run: |
           git config user.name "nba-edge-bot"
           git config user.email "nba-edge-bot@users.noreply.github.com"
-          git add tests/fixtures/injury_reports
+          git add tests/fixtures/injury_reports data/history/injury_reports docs/research/pit_availability 2>/dev/null || true
           if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
-          git commit -m "pit-availability: official injury-report PDF test fixtures (run ${{ github.run_id }})"
+          git commit -m "pit-availability: official injury-report backfill chunk (run ${{ github.run_id }})"
           for i in 1 2 3 4; do
             git pull --rebase origin "${{ github.head_ref }}" && git push origin HEAD:"${{ github.head_ref }}" && exit 0
+            sleep $((2 ** i))
+          done
+          exit 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pit-dry-run
+          path: ${{ runner.temp }}/pit_dry
+          if-no-files-found: ignore
+
+  capture:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Check out the data branch (create it empty on first use)
+        run: |
+          if git fetch origin "$DATA_BRANCH" --depth=50 2>/dev/null; then
+            git worktree add "$RUNNER_TEMP/store" "origin/$DATA_BRANCH"
+            git -C "$RUNNER_TEMP/store" checkout -B "$DATA_BRANCH"
+          else
+            git worktree add --detach "$RUNNER_TEMP/store"
+            git -C "$RUNNER_TEMP/store" checkout --orphan "$DATA_BRANCH"
+            git -C "$RUNNER_TEMP/store" rm -rf --quiet . || true
+          fi
+      - name: Capture latest official report + ESPN injuries (append-only, hash-chained)
+        run: python scripts/pit_capture.py --root "$RUNNER_TEMP/store/injury_pit"
+      - name: Commit and push to the data branch
+        run: |
+          cd "$RUNNER_TEMP/store"
+          git config user.name "nba-edge-bot"
+          git config user.email "nba-edge-bot@users.noreply.github.com"
+          git add injury_pit
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit -m "pit capture $(date -u +%Y-%m-%dT%H:%MZ) (run ${{ github.run_id }})"
+          for i in 1 2 3 4; do
+            git pull --rebase origin "$DATA_BRANCH" 2>/dev/null || true
+            git push origin HEAD:"$DATA_BRANCH" && exit 0
             sleep $((2 ** i))
           done
           exit 1
