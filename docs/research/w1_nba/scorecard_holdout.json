@@ -1,0 +1,7860 @@
+{
+ "window": "holdout",
+ "date_ranges": [
+  [
+   "2026-02-01",
+   "2026-04-12"
+  ]
+ ],
+ "arms": [
+  "ewm5",
+  "sim_rotation",
+  "sim_waterfill",
+  "sim_challenger"
+ ],
+ "population": {
+  "n_games": 501,
+  "n_eligible_player_games": 14763,
+  "n_actually_played": 10290,
+  "n_dnp_in_box": 1885,
+  "n_not_in_box": 2588,
+  "n_excluded_ambiguous_team_rows": 28,
+  "non_eligible_participants": 476,
+  "non_eligible_minutes_share": 0.0246,
+  "non_eligible_points_share": 0.0219,
+  "eligibility_rule": "players of either team who appeared in >=1 of the team's last 10 regular-season games before the cutoff, top 15 by min_mean*p_play (features/build.py roster rule); fixed pre-tip",
+  "by_season": {
+   "2025-26": 14763
+  },
+  "n_listed_player_games": 3146
+ },
+ "usage_tercile_cuts_ewm5_fga_per_min": [
+  0.292,
+  0.3922
+ ],
+ "participation": {
+  "n_player_games": 14763,
+  "actual_play_rate": 0.697,
+  "actual_10min_rate": 0.6136,
+  "ewm5": {
+   "mean_p_play": 0.6805,
+   "brier_play": 0.166,
+   "mean_p_10min": 0.5998,
+   "brier_10min": 0.1587
+  },
+  "sim_rotation": {
+   "mean_p_play": 0.7045,
+   "brier_play": 0.1523,
+   "mean_p_10min": 0.6097,
+   "brier_10min": 0.152
+  },
+  "sim_waterfill": {
+   "mean_p_play": 0.8676,
+   "brier_play": 0.1893,
+   "mean_p_10min": 0.7162,
+   "brier_10min": 0.1539
+  },
+  "sim_challenger": {
+   "mean_p_play": 0.7045,
+   "brier_play": 0.1523,
+   "mean_p_10min": 0.6097,
+   "brier_10min": 0.152
+  },
+  "paired": [
+   {
+    "metric": "brier_play",
+    "n": 14763,
+    "n_games": 501,
+    "ewm5": 0.166,
+    "sim_rotation": 0.1523,
+    "delta_sim_rotation_minus_ewm5": -0.0137,
+    "delta_ci95": [
+     -0.0163,
+     -0.0111
+    ]
+   },
+   {
+    "metric": "brier_10min",
+    "n": 14763,
+    "n_games": 501,
+    "ewm5": 0.1587,
+    "sim_rotation": 0.152,
+    "delta_sim_rotation_minus_ewm5": -0.0067,
+    "delta_ci95": [
+     -0.0086,
+     -0.0049
+    ]
+   },
+   {
+    "metric": "brier_play",
+    "n": 14763,
+    "n_games": 501,
+    "sim_rotation": 0.1523,
+    "sim_waterfill": 0.1893,
+    "delta_sim_waterfill_minus_sim_rotation": 0.0371,
+    "delta_ci95": [
+     0.0322,
+     0.042
+    ]
+   },
+   {
+    "metric": "brier_10min",
+    "n": 14763,
+    "n_games": 501,
+    "sim_rotation": 0.152,
+    "sim_waterfill": 0.1539,
+    "delta_sim_waterfill_minus_sim_rotation": 0.002,
+    "delta_ci95": [
+     -0.0006,
+     0.0045
+    ]
+   },
+   {
+    "metric": "brier_play",
+    "n": 14763,
+    "n_games": 501,
+    "sim_rotation": 0.1523,
+    "sim_challenger": 0.1523,
+    "delta_sim_challenger_minus_sim_rotation": 0.0,
+    "delta_ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "metric": "brier_10min",
+    "n": 14763,
+    "n_games": 501,
+    "sim_rotation": 0.152,
+    "sim_challenger": 0.152,
+    "delta_sim_challenger_minus_sim_rotation": 0.0,
+    "delta_ci95": [
+     -0.0,
+     0.0
+    ]
+   }
+  ]
+ },
+ "minutes": {
+  "unc": {
+   "n_player_games": 14763,
+   "n_games": 501,
+   "actual_mean": 15.934,
+   "ewm5": {
+    "mean_forecast": 14.9166,
+    "mae": 8.1179,
+    "rmse": 10.3371,
+    "bias": -1.0174,
+    "crps": 5.2139,
+    "p10_p90_coverage": 0.8246,
+    "brier_t_ref": 0.2142,
+    "ratio_sum_pred_over_sum_actual": 0.9361
+   },
+   "sim_rotation": {
+    "mean_forecast": 16.362,
+    "mae": 7.3815,
+    "rmse": 10.0752,
+    "bias": 0.428,
+    "crps": 5.0591,
+    "p10_p90_coverage": 0.8185,
+    "brier_t_ref": 0.2065,
+    "ratio_sum_pred_over_sum_actual": 1.0269
+   },
+   "sim_waterfill": {
+    "mean_forecast": 16.3541,
+    "mae": 7.6828,
+    "rmse": 9.8091,
+    "bias": 0.42,
+    "crps": 5.38,
+    "p10_p90_coverage": 0.6357,
+    "brier_t_ref": 0.2337,
+    "ratio_sum_pred_over_sum_actual": 1.0264
+   },
+   "sim_challenger": {
+    "mean_forecast": 16.3624,
+    "mae": 7.3821,
+    "rmse": 10.0758,
+    "bias": 0.4284,
+    "crps": 5.0599,
+    "p10_p90_coverage": 0.8181,
+    "brier_t_ref": 0.2067,
+    "ratio_sum_pred_over_sum_actual": 1.0269
+   },
+   "paired": [
+    {
+     "metric": "mae",
+     "n": 14763,
+     "n_games": 501,
+     "ewm5": 8.1179,
+     "sim_rotation": 7.3815,
+     "delta_sim_rotation_minus_ewm5": -0.7364,
+     "delta_ci95": [
+      -0.8041,
+      -0.6688
+     ]
+    },
+    {
+     "metric": "mse",
+     "n": 14763,
+     "n_games": 501,
+     "ewm5": 106.8549,
+     "sim_rotation": 101.5088,
+     "delta_sim_rotation_minus_ewm5": -5.3461,
+     "delta_ci95": [
+      -6.9914,
+      -3.788
+     ]
+    },
+    {
+     "metric": "crps",
+     "n": 14763,
+     "n_games": 501,
+     "ewm5": 5.2139,
+     "sim_rotation": 5.0591,
+     "delta_sim_rotation_minus_ewm5": -0.1548,
+     "delta_ci95": [
+      -0.208,
+      -0.106
+     ]
+    },
+    {
+     "metric": "brier_t_ref",
+     "n": 14763,
+     "n_games": 501,
+     "ewm5": 0.2142,
+     "sim_rotation": 0.2065,
+     "delta_sim_rotation_minus_ewm5": -0.0077,
+     "delta_ci95": [
+      -0.0104,
+      -0.0051
+     ]
+    },
+    {
+     "metric": "p10_p90_coverage",
+     "n": 14763,
+     "n_games": 501,
+     "ewm5": 0.8246,
+     "sim_rotation": 0.8185,
+     "delta_sim_rotation_minus_ewm5": -0.006,
+     "delta_ci95": [
+      -0.013,
+      0.0008
+     ]
+    },
+    {
+     "metric": "bias",
+     "n": 14763,
+     "n_games": 501,
+     "ewm5": -1.0174,
+     "sim_rotation": 0.428,
+     "delta_sim_rotation_minus_ewm5": 1.4454,
+     "delta_ci95": [
+      1.42,
+      1.4693
+     ]
+    },
+    {
+     "metric": "mae",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 7.3815,
+     "sim_waterfill": 7.6828,
+     "delta_sim_waterfill_minus_sim_rotation": 0.3013,
+     "delta_ci95": [
+      0.2221,
+      0.3795
+     ]
+    },
+    {
+     "metric": "mse",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 101.5088,
+     "sim_waterfill": 96.2186,
+     "delta_sim_waterfill_minus_sim_rotation": -5.2902,
+     "delta_ci95": [
+      -7.0434,
+      -3.4934
+     ]
+    },
+    {
+     "metric": "crps",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 5.0591,
+     "sim_waterfill": 5.38,
+     "delta_sim_waterfill_minus_sim_rotation": 0.3209,
+     "delta_ci95": [
+      0.2515,
+      0.3885
+     ]
+    },
+    {
+     "metric": "brier_t_ref",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 0.2065,
+     "sim_waterfill": 0.2337,
+     "delta_sim_waterfill_minus_sim_rotation": 0.0271,
+     "delta_ci95": [
+      0.0226,
+      0.0315
+     ]
+    },
+    {
+     "metric": "p10_p90_coverage",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 0.8185,
+     "sim_waterfill": 0.6357,
+     "delta_sim_waterfill_minus_sim_rotation": -0.1828,
+     "delta_ci95": [
+      -0.1939,
+      -0.1714
+     ]
+    },
+    {
+     "metric": "bias",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 0.428,
+     "sim_waterfill": 0.42,
+     "delta_sim_waterfill_minus_sim_rotation": -0.008,
+     "delta_ci95": [
+      -0.016,
+      -0.0021
+     ]
+    },
+    {
+     "metric": "mae",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 7.3815,
+     "sim_challenger": 7.3821,
+     "delta_sim_challenger_minus_sim_rotation": 0.0005,
+     "delta_ci95": [
+      -0.0005,
+      0.0015
+     ]
+    },
+    {
+     "metric": "mse",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 101.5088,
+     "sim_challenger": 101.5212,
+     "delta_sim_challenger_minus_sim_rotation": 0.0124,
+     "delta_ci95": [
+      -0.0079,
+      0.0338
+     ]
+    },
+    {
+     "metric": "crps",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 5.0591,
+     "sim_challenger": 5.0599,
+     "delta_sim_challenger_minus_sim_rotation": 0.0008,
+     "delta_ci95": [
+      0.0001,
+      0.0015
+     ]
+    },
+    {
+     "metric": "brier_t_ref",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 0.2065,
+     "sim_challenger": 0.2067,
+     "delta_sim_challenger_minus_sim_rotation": 0.0001,
+     "delta_ci95": [
+      0.0001,
+      0.0002
+     ]
+    },
+    {
+     "metric": "p10_p90_coverage",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 0.8185,
+     "sim_challenger": 0.8181,
+     "delta_sim_challenger_minus_sim_rotation": -0.0005,
+     "delta_ci95": [
+      -0.0016,
+      0.0006
+     ]
+    },
+    {
+     "metric": "bias",
+     "n": 14763,
+     "n_games": 501,
+     "sim_rotation": 0.428,
+     "sim_challenger": 0.4284,
+     "delta_sim_challenger_minus_sim_rotation": 0.0003,
+     "delta_ci95": [
+      -0.0005,
+      0.0011
+     ]
+    }
+   ]
+  },
+  "cond": {
+   "n_player_games": 10290,
+   "n_games": 501,
+   "actual_mean": 22.8604,
+   "ewm5": {
+    "mean_forecast": 21.8929,
+    "mae": 5.1741,
+    "rmse": 6.6777,
+    "bias": -0.9675,
+    "crps": 3.6897,
+    "p10_p90_coverage": 0.7383,
+    "brier_t_ref": 0.2365,
+    "ratio_sum_pred_over_sum_actual": 0.9577
+   },
+   "sim_rotation": {
+    "mean_forecast": 22.5101,
+    "mae": 5.5351,
+    "rmse": 7.1699,
+    "bias": -0.3504,
+    "crps": 3.9447,
+    "p10_p90_coverage": 0.8125,
+    "brier_t_ref": 0.2383,
+    "ratio_sum_pred_over_sum_actual": 0.9847
+   },
+   "sim_waterfill": {
+    "mean_forecast": 19.6063,
+    "mae": 5.8705,
+    "rmse": 7.4232,
+    "bias": -3.2541,
+    "crps": 4.263,
+    "p10_p90_coverage": 0.6446,
+    "brier_t_ref": 0.3024,
+    "ratio_sum_pred_over_sum_actual": 0.8577
+   },
+   "sim_challenger": {
+    "mean_forecast": 22.5107,
+    "mae": 5.5359,
+    "rmse": 7.1712,
+    "bias": -0.3497,
+    "crps": 3.9458,
+    "p10_p90_coverage": 0.8124,
+    "brier_t_ref": 0.2385,
+    "ratio_sum_pred_over_sum_actual": 0.9847
+   },
+   "paired": [
+    {
+     "metric": "mae",
+     "n": 10290,
+     "n_games": 501,
+     "ewm5": 5.1741,
+     "sim_rotation": 5.5351,
+     "delta_sim_rotation_minus_ewm5": 0.361,
+     "delta_ci95": [
+      0.2955,
+      0.4263
+     ]
+    },
+    {
+     "metric": "mse",
+     "n": 10290,
+     "n_games": 501,
+     "ewm5": 44.5911,
+     "sim_rotation": 51.4081,
+     "delta_sim_rotation_minus_ewm5": 6.8169,
+     "delta_ci95": [
+      5.5474,
+      8.0788
+     ]
+    },
+    {
+     "metric": "crps",
+     "n": 10290,
+     "n_games": 501,
+     "ewm5": 3.6897,
+     "sim_rotation": 3.9447,
+     "delta_sim_rotation_minus_ewm5": 0.255,
+     "delta_ci95": [
+      0.2039,
+      0.3002
+     ]
+    },
+    {
+     "metric": "brier_t_ref",
+     "n": 10290,
+     "n_games": 501,
+     "ewm5": 0.2365,
+     "sim_rotation": 0.2383,
+     "delta_sim_rotation_minus_ewm5": 0.0018,
+     "delta_ci95": [
+      -0.0017,
+      0.0055
+     ]
+    },
+    {
+     "metric": "p10_p90_coverage",
+     "n": 10290,
+     "n_games": 501,
+     "ewm5": 0.7383,
+     "sim_rotation": 0.8125,
+     "delta_sim_rotation_minus_ewm5": 0.0742,
+     "delta_ci95": [
+      0.0659,
+      0.0828
+     ]
+    },
+    {
+     "metric": "bias",
+     "n": 10290,
+     "n_games": 501,
+     "ewm5": -0.9675,
+     "sim_rotation": -0.3504,
+     "delta_sim_rotation_minus_ewm5": 0.6172,
+     "delta_ci95": [
+      0.5519,
+      0.678
+     ]
+    },
+    {
+     "metric": "mae",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 5.5351,
+     "sim_waterfill": 5.8705,
+     "delta_sim_waterfill_minus_sim_rotation": 0.3355,
+     "delta_ci95": [
+      0.2498,
+      0.4268
+     ]
+    },
+    {
+     "metric": "mse",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 51.4081,
+     "sim_waterfill": 55.1039,
+     "delta_sim_waterfill_minus_sim_rotation": 3.6958,
+     "delta_ci95": [
+      2.2206,
+      5.2731
+     ]
+    },
+    {
+     "metric": "crps",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 3.9447,
+     "sim_waterfill": 4.263,
+     "delta_sim_waterfill_minus_sim_rotation": 0.3183,
+     "delta_ci95": [
+      0.2521,
+      0.3878
+     ]
+    },
+    {
+     "metric": "brier_t_ref",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 0.2383,
+     "sim_waterfill": 0.3024,
+     "delta_sim_waterfill_minus_sim_rotation": 0.0641,
+     "delta_ci95": [
+      0.0574,
+      0.0707
+     ]
+    },
+    {
+     "metric": "p10_p90_coverage",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 0.8125,
+     "sim_waterfill": 0.6446,
+     "delta_sim_waterfill_minus_sim_rotation": -0.1679,
+     "delta_ci95": [
+      -0.1795,
+      -0.156
+     ]
+    },
+    {
+     "metric": "bias",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": -0.3504,
+     "sim_waterfill": -3.2541,
+     "delta_sim_waterfill_minus_sim_rotation": -2.9038,
+     "delta_ci95": [
+      -2.9601,
+      -2.8421
+     ]
+    },
+    {
+     "metric": "mae",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 5.5351,
+     "sim_challenger": 5.5359,
+     "delta_sim_challenger_minus_sim_rotation": 0.0009,
+     "delta_ci95": [
+      -0.0007,
+      0.0025
+     ]
+    },
+    {
+     "metric": "mse",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 51.4081,
+     "sim_challenger": 51.4257,
+     "delta_sim_challenger_minus_sim_rotation": 0.0176,
+     "delta_ci95": [
+      -0.0039,
+      0.0396
+     ]
+    },
+    {
+     "metric": "crps",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 3.9447,
+     "sim_challenger": 3.9458,
+     "delta_sim_challenger_minus_sim_rotation": 0.0012,
+     "delta_ci95": [
+      0.0,
+      0.0023
+     ]
+    },
+    {
+     "metric": "brier_t_ref",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 0.2383,
+     "sim_challenger": 0.2385,
+     "delta_sim_challenger_minus_sim_rotation": 0.0002,
+     "delta_ci95": [
+      0.0,
+      0.0003
+     ]
+    },
+    {
+     "metric": "p10_p90_coverage",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": 0.8125,
+     "sim_challenger": 0.8124,
+     "delta_sim_challenger_minus_sim_rotation": -0.0001,
+     "delta_ci95": [
+      -0.0018,
+      0.0016
+     ]
+    },
+    {
+     "metric": "bias",
+     "n": 10290,
+     "n_games": 501,
+     "sim_rotation": -0.3504,
+     "sim_challenger": -0.3497,
+     "delta_sim_challenger_minus_sim_rotation": 0.0006,
+     "delta_ci95": [
+      -0.0007,
+      0.0019
+     ]
+    }
+   ]
+  }
+ },
+ "per_minute_conditional_on_playing": {
+  "ewm5": {
+   "fga": {
+    "n": 10290,
+    "pred_over_actual": 1.0204,
+    "ci95": [
+     1.0132,
+     1.028
+    ]
+   },
+   "fg3a": {
+    "n": 10290,
+    "pred_over_actual": 1.0235,
+    "ci95": [
+     1.0127,
+     1.0343
+    ]
+   },
+   "fta": {
+    "n": 10290,
+    "pred_over_actual": 1.0096,
+    "ci95": [
+     0.9881,
+     1.0325
+    ]
+   },
+   "tov": {
+    "n": 10290,
+    "pred_over_actual": 1.0295,
+    "ci95": [
+     1.0093,
+     1.0502
+    ]
+   },
+   "pts": {
+    "n": 10290,
+    "pred_over_actual": 1.0127,
+    "ci95": [
+     1.003,
+     1.0228
+    ]
+   },
+   "reb": {
+    "n": 10290,
+    "pred_over_actual": 1.0346,
+    "ci95": [
+     1.025,
+     1.0461
+    ]
+   },
+   "ast": {
+    "n": 10290,
+    "pred_over_actual": 1.0223,
+    "ci95": [
+     1.0069,
+     1.0373
+    ]
+   },
+   "fg3m": {
+    "n": 10290,
+    "pred_over_actual": 1.0209,
+    "ci95": [
+     1.0019,
+     1.0405
+    ]
+   },
+   "usage": {
+    "n": 10290,
+    "pred_over_actual": 1.0205,
+    "ci95": [
+     1.0142,
+     1.0274
+    ]
+   },
+   "points_per_shooting_possession_given_actual_shots": {
+    "n": 10290,
+    "pred_over_actual": 0.9932,
+    "ci95": [
+     0.9863,
+     1.0006
+    ]
+   },
+   "strata": {
+    "pred_starter (p_start>=0.5)": {
+     "pts": {
+      "n": 4346,
+      "pred_over_actual": 1.0415,
+      "ci95": [
+       1.0293,
+       1.054
+      ]
+     },
+     "fga": {
+      "n": 4346,
+      "pred_over_actual": 1.043,
+      "ci95": [
+       1.0351,
+       1.0516
+      ]
+     },
+     "reb": {
+      "n": 4346,
+      "pred_over_actual": 1.0542,
+      "ci95": [
+       1.0416,
+       1.069
+      ]
+     },
+     "ast": {
+      "n": 4346,
+      "pred_over_actual": 1.047,
+      "ci95": [
+       1.0299,
+       1.0652
+      ]
+     },
+     "fg3m": {
+      "n": 4346,
+      "pred_over_actual": 1.0604,
+      "ci95": [
+       1.0354,
+       1.0833
+      ]
+     }
+    },
+    "pred_bench (p_start<0.5)": {
+     "pts": {
+      "n": 5944,
+      "pred_over_actual": 0.9707,
+      "ci95": [
+       0.9554,
+       0.9861
+      ]
+     },
+     "fga": {
+      "n": 5944,
+      "pred_over_actual": 0.9886,
+      "ci95": [
+       0.9777,
+       1.0005
+      ]
+     },
+     "reb": {
+      "n": 5944,
+      "pred_over_actual": 1.0104,
+      "ci95": [
+       0.9954,
+       1.0256
+      ]
+     },
+     "ast": {
+      "n": 5944,
+      "pred_over_actual": 0.9865,
+      "ci95": [
+       0.9634,
+       1.0089
+      ]
+     },
+     "fg3m": {
+      "n": 5944,
+      "pred_over_actual": 0.973,
+      "ci95": [
+       0.948,
+       1.001
+      ]
+     }
+    },
+    "usage_low (ewm5 FGA/min<0.292)": {
+     "pts": {
+      "n": 3084,
+      "pred_over_actual": 0.9086,
+      "ci95": [
+       0.8869,
+       0.9323
+      ]
+     },
+     "fga": {
+      "n": 3084,
+      "pred_over_actual": 0.9263,
+      "ci95": [
+       0.9107,
+       0.9438
+      ]
+     },
+     "reb": {
+      "n": 3084,
+      "pred_over_actual": 0.9982,
+      "ci95": [
+       0.98,
+       1.0185
+      ]
+     },
+     "ast": {
+      "n": 3084,
+      "pred_over_actual": 0.9603,
+      "ci95": [
+       0.9305,
+       0.9926
+      ]
+     },
+     "fg3m": {
+      "n": 3084,
+      "pred_over_actual": 0.884,
+      "ci95": [
+       0.8428,
+       0.9323
+      ]
+     }
+    },
+    "usage_mid": {
+     "pts": {
+      "n": 3641,
+      "pred_over_actual": 0.997,
+      "ci95": [
+       0.9788,
+       1.0133
+      ]
+     },
+     "fga": {
+      "n": 3641,
+      "pred_over_actual": 1.005,
+      "ci95": [
+       0.9927,
+       1.0165
+      ]
+     },
+     "reb": {
+      "n": 3641,
+      "pred_over_actual": 1.0288,
+      "ci95": [
+       1.0109,
+       1.0476
+      ]
+     },
+     "ast": {
+      "n": 3641,
+      "pred_over_actual": 1.035,
+      "ci95": [
+       1.0101,
+       1.0607
+      ]
+     },
+     "fg3m": {
+      "n": 3641,
+      "pred_over_actual": 1.016,
+      "ci95": [
+       0.984,
+       1.0449
+      ]
+     }
+    },
+    "usage_high (ewm5 FGA/min>=0.392)": {
+     "pts": {
+      "n": 3565,
+      "pred_over_actual": 1.0568,
+      "ci95": [
+       1.0442,
+       1.0712
+      ]
+     },
+     "fga": {
+      "n": 3565,
+      "pred_over_actual": 1.0607,
+      "ci95": [
+       1.0514,
+       1.0701
+      ]
+     },
+     "reb": {
+      "n": 3565,
+      "pred_over_actual": 1.0638,
+      "ci95": [
+       1.0483,
+       1.081
+      ]
+     },
+     "ast": {
+      "n": 3565,
+      "pred_over_actual": 1.0385,
+      "ci95": [
+       1.0188,
+       1.0565
+      ]
+     },
+     "fg3m": {
+      "n": 3565,
+      "pred_over_actual": 1.0711,
+      "ci95": [
+       1.0414,
+       1.1013
+      ]
+     }
+    }
+   }
+  },
+  "sim_rotation": {
+   "fga": {
+    "n": 10290,
+    "pred_over_actual": 0.9653,
+    "ci95": [
+     0.9595,
+     0.9711
+    ]
+   },
+   "fg3a": {
+    "n": 10290,
+    "pred_over_actual": 0.9693,
+    "ci95": [
+     0.9593,
+     0.9794
+    ]
+   },
+   "fta": {
+    "n": 10290,
+    "pred_over_actual": 0.9467,
+    "ci95": [
+     0.9283,
+     0.9672
+    ]
+   },
+   "tov": {
+    "n": 10290,
+    "pred_over_actual": 1.0401,
+    "ci95": [
+     1.02,
+     1.0598
+    ]
+   },
+   "pts": {
+    "n": 10290,
+    "pred_over_actual": 0.9766,
+    "ci95": [
+     0.9687,
+     0.9846
+    ]
+   },
+   "reb": {
+    "n": 10290,
+    "pred_over_actual": 1.0287,
+    "ci95": [
+     1.0197,
+     1.039
+    ]
+   },
+   "ast": {
+    "n": 10290,
+    "pred_over_actual": 0.9532,
+    "ci95": [
+     0.9409,
+     0.9661
+    ]
+   },
+   "fg3m": {
+    "n": 10290,
+    "pred_over_actual": 0.9927,
+    "ci95": [
+     0.9749,
+     1.0101
+    ]
+   },
+   "usage": {
+    "n": 10290,
+    "pred_over_actual": 0.9726,
+    "ci95": [
+     0.9673,
+     0.9783
+    ]
+   },
+   "points_per_shooting_possession_given_actual_shots": {
+    "n": 10290,
+    "pred_over_actual": 1.0147,
+    "ci95": [
+     1.0078,
+     1.0216
+    ]
+   },
+   "strata": {
+    "pred_starter (p_start>=0.5)": {
+     "pts": {
+      "n": 4346,
+      "pred_over_actual": 0.9702,
+      "ci95": [
+       0.9596,
+       0.981
+      ]
+     },
+     "fga": {
+      "n": 4346,
+      "pred_over_actual": 0.9599,
+      "ci95": [
+       0.9525,
+       0.9675
+      ]
+     },
+     "reb": {
+      "n": 4346,
+      "pred_over_actual": 1.0275,
+      "ci95": [
+       1.0155,
+       1.0405
+      ]
+     },
+     "ast": {
+      "n": 4346,
+      "pred_over_actual": 0.9503,
+      "ci95": [
+       0.9353,
+       0.9659
+      ]
+     },
+     "fg3m": {
+      "n": 4346,
+      "pred_over_actual": 1.0055,
+      "ci95": [
+       0.9823,
+       1.0267
+      ]
+     }
+    },
+    "pred_bench (p_start<0.5)": {
+     "pts": {
+      "n": 5944,
+      "pred_over_actual": 0.9858,
+      "ci95": [
+       0.9725,
+       1.0001
+      ]
+     },
+     "fga": {
+      "n": 5944,
+      "pred_over_actual": 0.9728,
+      "ci95": [
+       0.9627,
+       0.9832
+      ]
+     },
+     "reb": {
+      "n": 5944,
+      "pred_over_actual": 1.0303,
+      "ci95": [
+       1.0152,
+       1.0451
+      ]
+     },
+     "ast": {
+      "n": 5944,
+      "pred_over_actual": 0.9573,
+      "ci95": [
+       0.9357,
+       0.9777
+      ]
+     },
+     "fg3m": {
+      "n": 5944,
+      "pred_over_actual": 0.9773,
+      "ci95": [
+       0.9522,
+       1.004
+      ]
+     }
+    },
+    "usage_low (ewm5 FGA/min<0.292)": {
+     "pts": {
+      "n": 3084,
+      "pred_over_actual": 1.0146,
+      "ci95": [
+       0.9933,
+       1.0396
+      ]
+     },
+     "fga": {
+      "n": 3084,
+      "pred_over_actual": 1.0161,
+      "ci95": [
+       1.0002,
+       1.033
+      ]
+     },
+     "reb": {
+      "n": 3084,
+      "pred_over_actual": 0.9896,
+      "ci95": [
+       0.972,
+       1.0103
+      ]
+     },
+     "ast": {
+      "n": 3084,
+      "pred_over_actual": 0.9465,
+      "ci95": [
+       0.9198,
+       0.9762
+      ]
+     },
+     "fg3m": {
+      "n": 3084,
+      "pred_over_actual": 1.0257,
+      "ci95": [
+       0.9828,
+       1.0807
+      ]
+     }
+    },
+    "usage_mid": {
+     "pts": {
+      "n": 3641,
+      "pred_over_actual": 0.9847,
+      "ci95": [
+       0.9687,
+       1.0
+      ]
+     },
+     "fga": {
+      "n": 3641,
+      "pred_over_actual": 0.972,
+      "ci95": [
+       0.9608,
+       0.9832
+      ]
+     },
+     "reb": {
+      "n": 3641,
+      "pred_over_actual": 1.0386,
+      "ci95": [
+       1.021,
+       1.0592
+      ]
+     },
+     "ast": {
+      "n": 3641,
+      "pred_over_actual": 0.9904,
+      "ci95": [
+       0.967,
+       1.016
+      ]
+     },
+     "fg3m": {
+      "n": 3641,
+      "pred_over_actual": 0.9948,
+      "ci95": [
+       0.9646,
+       1.0239
+      ]
+     }
+    },
+    "usage_high (ewm5 FGA/min>=0.392)": {
+     "pts": {
+      "n": 3565,
+      "pred_over_actual": 0.9589,
+      "ci95": [
+       0.9475,
+       0.9716
+      ]
+     },
+     "fga": {
+      "n": 3565,
+      "pred_over_actual": 0.9444,
+      "ci95": [
+       0.9365,
+       0.9529
+      ]
+     },
+     "reb": {
+      "n": 3565,
+      "pred_over_actual": 1.0467,
+      "ci95": [
+       1.0315,
+       1.0637
+      ]
+     },
+     "ast": {
+      "n": 3565,
+      "pred_over_actual": 0.9338,
+      "ci95": [
+       0.9172,
+       0.9512
+      ]
+     },
+     "fg3m": {
+      "n": 3565,
+      "pred_over_actual": 0.9799,
+      "ci95": [
+       0.9538,
+       1.0058
+      ]
+     }
+    }
+   }
+  },
+  "sim_waterfill": {
+   "fga": {
+    "n": 10290,
+    "pred_over_actual": 0.9666,
+    "ci95": [
+     0.9608,
+     0.9726
+    ]
+   },
+   "fg3a": {
+    "n": 10290,
+    "pred_over_actual": 0.9702,
+    "ci95": [
+     0.9602,
+     0.9806
+    ]
+   },
+   "fta": {
+    "n": 10290,
+    "pred_over_actual": 0.9489,
+    "ci95": [
+     0.9304,
+     0.9693
+    ]
+   },
+   "tov": {
+    "n": 10290,
+    "pred_over_actual": 1.0366,
+    "ci95": [
+     1.0164,
+     1.0563
+    ]
+   },
+   "pts": {
+    "n": 10290,
+    "pred_over_actual": 0.9781,
+    "ci95": [
+     0.97,
+     0.9862
+    ]
+   },
+   "reb": {
+    "n": 10290,
+    "pred_over_actual": 1.0262,
+    "ci95": [
+     1.0171,
+     1.0367
+    ]
+   },
+   "ast": {
+    "n": 10290,
+    "pred_over_actual": 0.9526,
+    "ci95": [
+     0.9402,
+     0.9649
+    ]
+   },
+   "fg3m": {
+    "n": 10290,
+    "pred_over_actual": 0.9934,
+    "ci95": [
+     0.9756,
+     1.0108
+    ]
+   },
+   "usage": {
+    "n": 10290,
+    "pred_over_actual": 0.9735,
+    "ci95": [
+     0.968,
+     0.9792
+    ]
+   },
+   "points_per_shooting_possession_given_actual_shots": {
+    "n": 10290,
+    "pred_over_actual": 1.0147,
+    "ci95": [
+     1.0078,
+     1.0216
+    ]
+   },
+   "strata": {
+    "pred_starter (p_start>=0.5)": {
+     "pts": {
+      "n": 4346,
+      "pred_over_actual": 0.9735,
+      "ci95": [
+       0.963,
+       0.9842
+      ]
+     },
+     "fga": {
+      "n": 4346,
+      "pred_over_actual": 0.9628,
+      "ci95": [
+       0.955,
+       0.9702
+      ]
+     },
+     "reb": {
+      "n": 4346,
+      "pred_over_actual": 1.0256,
+      "ci95": [
+       1.0137,
+       1.0385
+      ]
+     },
+     "ast": {
+      "n": 4346,
+      "pred_over_actual": 0.9514,
+      "ci95": [
+       0.9364,
+       0.967
+      ]
+     },
+     "fg3m": {
+      "n": 4346,
+      "pred_over_actual": 1.0082,
+      "ci95": [
+       0.9851,
+       1.0295
+      ]
+     }
+    },
+    "pred_bench (p_start<0.5)": {
+     "pts": {
+      "n": 5944,
+      "pred_over_actual": 0.9847,
+      "ci95": [
+       0.9712,
+       0.9988
+      ]
+     },
+     "fga": {
+      "n": 5944,
+      "pred_over_actual": 0.9721,
+      "ci95": [
+       0.9618,
+       0.9825
+      ]
+     },
+     "reb": {
+      "n": 5944,
+      "pred_over_actual": 1.027,
+      "ci95": [
+       1.0124,
+       1.0418
+      ]
+     },
+     "ast": {
+      "n": 5944,
+      "pred_over_actual": 0.9542,
+      "ci95": [
+       0.933,
+       0.9748
+      ]
+     },
+     "fg3m": {
+      "n": 5944,
+      "pred_over_actual": 0.9754,
+      "ci95": [
+       0.9504,
+       1.0017
+      ]
+     }
+    },
+    "usage_low (ewm5 FGA/min<0.292)": {
+     "pts": {
+      "n": 3084,
+      "pred_over_actual": 1.0102,
+      "ci95": [
+       0.9893,
+       1.0347
+      ]
+     },
+     "fga": {
+      "n": 3084,
+      "pred_over_actual": 1.0114,
+      "ci95": [
+       0.9953,
+       1.0282
+      ]
+     },
+     "reb": {
+      "n": 3084,
+      "pred_over_actual": 0.9882,
+      "ci95": [
+       0.9709,
+       1.0089
+      ]
+     },
+     "ast": {
+      "n": 3084,
+      "pred_over_actual": 0.9418,
+      "ci95": [
+       0.9149,
+       0.9709
+      ]
+     },
+     "fg3m": {
+      "n": 3084,
+      "pred_over_actual": 1.0195,
+      "ci95": [
+       0.9768,
+       1.0751
+      ]
+     }
+    },
+    "usage_mid": {
+     "pts": {
+      "n": 3641,
+      "pred_over_actual": 0.9841,
+      "ci95": [
+       0.9679,
+       0.9993
+      ]
+     },
+     "fga": {
+      "n": 3641,
+      "pred_over_actual": 0.9717,
+      "ci95": [
+       0.9603,
+       0.983
+      ]
+     },
+     "reb": {
+      "n": 3641,
+      "pred_over_actual": 1.0358,
+      "ci95": [
+       1.0184,
+       1.0566
+      ]
+     },
+     "ast": {
+      "n": 3641,
+      "pred_over_actual": 0.9877,
+      "ci95": [
+       0.9646,
+       1.0127
+      ]
+     },
+     "fg3m": {
+      "n": 3641,
+      "pred_over_actual": 0.9939,
+      "ci95": [
+       0.9637,
+       1.0222
+      ]
+     }
+    },
+    "usage_high (ewm5 FGA/min>=0.392)": {
+     "pts": {
+      "n": 3565,
+      "pred_over_actual": 0.9637,
+      "ci95": [
+       0.952,
+       0.976
+      ]
+     },
+     "fga": {
+      "n": 3565,
+      "pred_over_actual": 0.9488,
+      "ci95": [
+       0.9408,
+       0.957
+      ]
+     },
+     "reb": {
+      "n": 3565,
+      "pred_over_actual": 1.0438,
+      "ci95": [
+       1.0288,
+       1.0604
+      ]
+     },
+     "ast": {
+      "n": 3565,
+      "pred_over_actual": 0.936,
+      "ci95": [
+       0.9192,
+       0.9535
+      ]
+     },
+     "fg3m": {
+      "n": 3565,
+      "pred_over_actual": 0.9841,
+      "ci95": [
+       0.9578,
+       1.0104
+      ]
+     }
+    }
+   }
+  },
+  "sim_challenger": {
+   "fga": {
+    "n": 10290,
+    "pred_over_actual": 0.9661,
+    "ci95": [
+     0.96,
+     0.9722
+    ]
+   },
+   "fg3a": {
+    "n": 10290,
+    "pred_over_actual": 0.9708,
+    "ci95": [
+     0.9608,
+     0.9809
+    ]
+   },
+   "fta": {
+    "n": 10290,
+    "pred_over_actual": 0.9475,
+    "ci95": [
+     0.9289,
+     0.9681
+    ]
+   },
+   "tov": {
+    "n": 10290,
+    "pred_over_actual": 1.0402,
+    "ci95": [
+     1.0202,
+     1.0603
+    ]
+   },
+   "pts": {
+    "n": 10290,
+    "pred_over_actual": 0.9772,
+    "ci95": [
+     0.9693,
+     0.9853
+    ]
+   },
+   "reb": {
+    "n": 10290,
+    "pred_over_actual": 1.0288,
+    "ci95": [
+     1.0196,
+     1.0393
+    ]
+   },
+   "ast": {
+    "n": 10290,
+    "pred_over_actual": 0.9536,
+    "ci95": [
+     0.9411,
+     0.967
+    ]
+   },
+   "fg3m": {
+    "n": 10290,
+    "pred_over_actual": 0.9947,
+    "ci95": [
+     0.9766,
+     1.0121
+    ]
+   },
+   "usage": {
+    "n": 10290,
+    "pred_over_actual": 0.9734,
+    "ci95": [
+     0.9677,
+     0.9793
+    ]
+   },
+   "points_per_shooting_possession_given_actual_shots": {
+    "n": 10290,
+    "pred_over_actual": 1.0147,
+    "ci95": [
+     1.0079,
+     1.0217
+    ]
+   },
+   "strata": {
+    "pred_starter (p_start>=0.5)": {
+     "pts": {
+      "n": 4346,
+      "pred_over_actual": 0.9733,
+      "ci95": [
+       0.9625,
+       0.9843
+      ]
+     },
+     "fga": {
+      "n": 4346,
+      "pred_over_actual": 0.9631,
+      "ci95": [
+       0.9557,
+       0.9707
+      ]
+     },
+     "reb": {
+      "n": 4346,
+      "pred_over_actual": 1.0296,
+      "ci95": [
+       1.0175,
+       1.0427
+      ]
+     },
+     "ast": {
+      "n": 4346,
+      "pred_over_actual": 0.9547,
+      "ci95": [
+       0.9398,
+       0.9701
+      ]
+     },
+     "fg3m": {
+      "n": 4346,
+      "pred_over_actual": 1.0096,
+      "ci95": [
+       0.9866,
+       1.0309
+      ]
+     }
+    },
+    "pred_bench (p_start<0.5)": {
+     "pts": {
+      "n": 5944,
+      "pred_over_actual": 0.983,
+      "ci95": [
+       0.9695,
+       0.9971
+      ]
+     },
+     "fga": {
+      "n": 5944,
+      "pred_over_actual": 0.9703,
+      "ci95": [
+       0.9604,
+       0.9809
+      ]
+     },
+     "reb": {
+      "n": 5944,
+      "pred_over_actual": 1.0278,
+      "ci95": [
+       1.0128,
+       1.0427
+      ]
+     },
+     "ast": {
+      "n": 5944,
+      "pred_over_actual": 0.9521,
+      "ci95": [
+       0.9302,
+       0.9736
+      ]
+     },
+     "fg3m": {
+      "n": 5944,
+      "pred_over_actual": 0.9766,
+      "ci95": [
+       0.9513,
+       1.0033
+      ]
+     }
+    },
+    "usage_low (ewm5 FGA/min<0.292)": {
+     "pts": {
+      "n": 3084,
+      "pred_over_actual": 0.9753,
+      "ci95": [
+       0.9549,
+       0.9994
+      ]
+     },
+     "fga": {
+      "n": 3084,
+      "pred_over_actual": 0.977,
+      "ci95": [
+       0.9614,
+       0.9931
+      ]
+     },
+     "reb": {
+      "n": 3084,
+      "pred_over_actual": 0.9997,
+      "ci95": [
+       0.9817,
+       1.0203
+      ]
+     },
+     "ast": {
+      "n": 3084,
+      "pred_over_actual": 0.9273,
+      "ci95": [
+       0.8999,
+       0.9573
+      ]
+     },
+     "fg3m": {
+      "n": 3084,
+      "pred_over_actual": 0.9887,
+      "ci95": [
+       0.9473,
+       1.0406
+      ]
+     }
+    },
+    "usage_mid": {
+     "pts": {
+      "n": 3641,
+      "pred_over_actual": 0.9837,
+      "ci95": [
+       0.9676,
+       0.999
+      ]
+     },
+     "fga": {
+      "n": 3641,
+      "pred_over_actual": 0.971,
+      "ci95": [
+       0.9594,
+       0.9824
+      ]
+     },
+     "reb": {
+      "n": 3641,
+      "pred_over_actual": 1.0346,
+      "ci95": [
+       1.0172,
+       1.0548
+      ]
+     },
+     "ast": {
+      "n": 3641,
+      "pred_over_actual": 0.9848,
+      "ci95": [
+       0.9614,
+       1.01
+      ]
+     },
+     "fg3m": {
+      "n": 3641,
+      "pred_over_actual": 0.9944,
+      "ci95": [
+       0.9646,
+       1.0232
+      ]
+     }
+    },
+    "usage_high (ewm5 FGA/min>=0.392)": {
+     "pts": {
+      "n": 3565,
+      "pred_over_actual": 0.9739,
+      "ci95": [
+       0.9624,
+       0.9862
+      ]
+     },
+     "fga": {
+      "n": 3565,
+      "pred_over_actual": 0.9595,
+      "ci95": [
+       0.9515,
+       0.9678
+      ]
+     },
+     "reb": {
+      "n": 3565,
+      "pred_over_actual": 1.0433,
+      "ci95": [
+       1.0278,
+       1.0603
+      ]
+     },
+     "ast": {
+      "n": 3565,
+      "pred_over_actual": 0.9453,
+      "ci95": [
+       0.9283,
+       0.9629
+      ]
+     },
+     "fg3m": {
+      "n": 3565,
+      "pred_over_actual": 0.997,
+      "ci95": [
+       0.9701,
+       1.0238
+      ]
+     }
+    }
+   }
+  }
+ },
+ "final_stats": {
+  "points": {
+   "unc": {
+    "n_player_games": 14763,
+    "n_games": 501,
+    "actual_mean": 7.6606,
+    "ewm5": {
+     "mean_forecast": 7.3089,
+     "mae": 5.0423,
+     "rmse": 6.8883,
+     "bias": -0.3517,
+     "crps": 3.419,
+     "p10_p90_coverage": 0.8433,
+     "brier_t_ref": 0.2038,
+     "ratio_sum_pred_over_sum_actual": 0.9541
+    },
+    "sim_rotation": {
+     "mean_forecast": 7.7116,
+     "mae": 4.8669,
+     "rmse": 6.7344,
+     "bias": 0.051,
+     "crps": 3.2974,
+     "p10_p90_coverage": 0.8435,
+     "brier_t_ref": 0.1986,
+     "ratio_sum_pred_over_sum_actual": 1.0067
+    },
+    "sim_waterfill": {
+     "mean_forecast": 7.7097,
+     "mae": 5.0138,
+     "rmse": 6.6777,
+     "bias": 0.0491,
+     "crps": 3.3525,
+     "p10_p90_coverage": 0.7988,
+     "brier_t_ref": 0.1996,
+     "ratio_sum_pred_over_sum_actual": 1.0064
+    },
+    "sim_challenger": {
+     "mean_forecast": 7.7108,
+     "mae": 4.8551,
+     "rmse": 6.7298,
+     "bias": 0.0502,
+     "crps": 3.2935,
+     "p10_p90_coverage": 0.8432,
+     "brier_t_ref": 0.1983,
+     "ratio_sum_pred_over_sum_actual": 1.0066
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 5.0423,
+      "sim_rotation": 4.8669,
+      "delta_sim_rotation_minus_ewm5": -0.1754,
+      "delta_ci95": [
+       -0.2058,
+       -0.1436
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 47.4481,
+      "sim_rotation": 45.352,
+      "delta_sim_rotation_minus_ewm5": -2.0961,
+      "delta_ci95": [
+       -2.6963,
+       -1.5213
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 3.419,
+      "sim_rotation": 3.2974,
+      "delta_sim_rotation_minus_ewm5": -0.1216,
+      "delta_ci95": [
+       -0.146,
+       -0.0975
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.2038,
+      "sim_rotation": 0.1986,
+      "delta_sim_rotation_minus_ewm5": -0.0052,
+      "delta_ci95": [
+       -0.0069,
+       -0.0034
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.8433,
+      "sim_rotation": 0.8435,
+      "delta_sim_rotation_minus_ewm5": 0.0002,
+      "delta_ci95": [
+       -0.005,
+       0.0052
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": -0.3517,
+      "sim_rotation": 0.051,
+      "delta_sim_rotation_minus_ewm5": 0.4027,
+      "delta_ci95": [
+       0.3739,
+       0.4313
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 4.8669,
+      "sim_waterfill": 5.0138,
+      "delta_sim_waterfill_minus_sim_rotation": 0.1469,
+      "delta_ci95": [
+       0.1096,
+       0.1829
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 45.352,
+      "sim_waterfill": 44.592,
+      "delta_sim_waterfill_minus_sim_rotation": -0.76,
+      "delta_ci95": [
+       -1.401,
+       -0.1141
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 3.2974,
+      "sim_waterfill": 3.3525,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0551,
+      "delta_ci95": [
+       0.027,
+       0.0835
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.1986,
+      "sim_waterfill": 0.1996,
+      "delta_sim_waterfill_minus_sim_rotation": 0.001,
+      "delta_ci95": [
+       -0.0011,
+       0.0028
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.8435,
+      "sim_waterfill": 0.7988,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0447,
+      "delta_ci95": [
+       -0.0502,
+       -0.0391
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.051,
+      "sim_waterfill": 0.0491,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0019,
+      "delta_ci95": [
+       -0.0058,
+       0.0014
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 4.8669,
+      "sim_challenger": 4.8551,
+      "delta_sim_challenger_minus_sim_rotation": -0.0118,
+      "delta_ci95": [
+       -0.0156,
+       -0.0075
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 45.352,
+      "sim_challenger": 45.2903,
+      "delta_sim_challenger_minus_sim_rotation": -0.0617,
+      "delta_ci95": [
+       -0.1254,
+       0.0059
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 3.2974,
+      "sim_challenger": 3.2935,
+      "delta_sim_challenger_minus_sim_rotation": -0.004,
+      "delta_ci95": [
+       -0.0063,
+       -0.0013
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.1986,
+      "sim_challenger": 0.1983,
+      "delta_sim_challenger_minus_sim_rotation": -0.0003,
+      "delta_ci95": [
+       -0.0006,
+       -0.0001
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.8435,
+      "sim_challenger": 0.8432,
+      "delta_sim_challenger_minus_sim_rotation": -0.0003,
+      "delta_ci95": [
+       -0.0019,
+       0.0014
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.051,
+      "sim_challenger": 0.0502,
+      "delta_sim_challenger_minus_sim_rotation": -0.0008,
+      "delta_ci95": [
+       -0.0018,
+       0.0003
+      ]
+     }
+    ]
+   },
+   "cond": {
+    "n_player_games": 10290,
+    "n_games": 501,
+    "actual_mean": 10.9907,
+    "ewm5": {
+     "mean_forecast": 10.6495,
+     "mae": 4.7317,
+     "rmse": 6.2064,
+     "bias": -0.3412,
+     "crps": 3.4181,
+     "p10_p90_coverage": 0.7282,
+     "brier_t_ref": 0.2421,
+     "ratio_sum_pred_over_sum_actual": 0.969
+    },
+    "sim_rotation": {
+     "mean_forecast": 10.5041,
+     "mae": 4.8064,
+     "rmse": 6.2775,
+     "bias": -0.4866,
+     "crps": 3.3953,
+     "p10_p90_coverage": 0.845,
+     "brier_t_ref": 0.2397,
+     "ratio_sum_pred_over_sum_actual": 0.9557
+    },
+    "sim_waterfill": {
+     "mean_forecast": 9.2205,
+     "mae": 4.8111,
+     "rmse": 6.4072,
+     "bias": -1.7702,
+     "crps": 3.4678,
+     "p10_p90_coverage": 0.7979,
+     "brier_t_ref": 0.2484,
+     "ratio_sum_pred_over_sum_actual": 0.8389
+    },
+    "sim_challenger": {
+     "mean_forecast": 10.5028,
+     "mae": 4.7845,
+     "rmse": 6.2559,
+     "bias": -0.4879,
+     "crps": 3.3857,
+     "p10_p90_coverage": 0.8465,
+     "brier_t_ref": 0.239,
+     "ratio_sum_pred_over_sum_actual": 0.9556
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 4.7317,
+      "sim_rotation": 4.8064,
+      "delta_sim_rotation_minus_ewm5": 0.0747,
+      "delta_ci95": [
+       0.0341,
+       0.1143
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 38.5191,
+      "sim_rotation": 39.4067,
+      "delta_sim_rotation_minus_ewm5": 0.8876,
+      "delta_ci95": [
+       0.2157,
+       1.5554
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 3.4181,
+      "sim_rotation": 3.3953,
+      "delta_sim_rotation_minus_ewm5": -0.0227,
+      "delta_ci95": [
+       -0.0536,
+       0.0039
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.2421,
+      "sim_rotation": 0.2397,
+      "delta_sim_rotation_minus_ewm5": -0.0024,
+      "delta_ci95": [
+       -0.0049,
+       0.0
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.7282,
+      "sim_rotation": 0.845,
+      "delta_sim_rotation_minus_ewm5": 0.1168,
+      "delta_ci95": [
+       0.11,
+       0.1239
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": -0.3412,
+      "sim_rotation": -0.4866,
+      "delta_sim_rotation_minus_ewm5": -0.1453,
+      "delta_ci95": [
+       -0.1999,
+       -0.097
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 4.8064,
+      "sim_waterfill": 4.8111,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0047,
+      "delta_ci95": [
+       -0.0351,
+       0.0486
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 39.4067,
+      "sim_waterfill": 41.0523,
+      "delta_sim_waterfill_minus_sim_rotation": 1.6457,
+      "delta_ci95": [
+       1.0484,
+       2.294
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 3.3953,
+      "sim_waterfill": 3.4678,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0724,
+      "delta_ci95": [
+       0.0468,
+       0.1017
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.2397,
+      "sim_waterfill": 0.2484,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0087,
+      "delta_ci95": [
+       0.0062,
+       0.0115
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.845,
+      "sim_waterfill": 0.7979,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0471,
+      "delta_ci95": [
+       -0.0535,
+       -0.0407
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": -0.4866,
+      "sim_waterfill": -1.7702,
+      "delta_sim_waterfill_minus_sim_rotation": -1.2836,
+      "delta_ci95": [
+       -1.3136,
+       -1.2513
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 4.8064,
+      "sim_challenger": 4.7845,
+      "delta_sim_challenger_minus_sim_rotation": -0.0219,
+      "delta_ci95": [
+       -0.0278,
+       -0.0155
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 39.4067,
+      "sim_challenger": 39.1361,
+      "delta_sim_challenger_minus_sim_rotation": -0.2706,
+      "delta_ci95": [
+       -0.353,
+       -0.1764
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 3.3953,
+      "sim_challenger": 3.3857,
+      "delta_sim_challenger_minus_sim_rotation": -0.0096,
+      "delta_ci95": [
+       -0.0135,
+       -0.0054
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.2397,
+      "sim_challenger": 0.239,
+      "delta_sim_challenger_minus_sim_rotation": -0.0007,
+      "delta_ci95": [
+       -0.0011,
+       -0.0002
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.845,
+      "sim_challenger": 0.8465,
+      "delta_sim_challenger_minus_sim_rotation": 0.0015,
+      "delta_ci95": [
+       -0.0009,
+       0.0037
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": -0.4866,
+      "sim_challenger": -0.4879,
+      "delta_sim_challenger_minus_sim_rotation": -0.0013,
+      "delta_ci95": [
+       -0.0052,
+       0.0023
+      ]
+     }
+    ]
+   }
+  },
+  "rebounds": {
+   "unc": {
+    "n_player_games": 14763,
+    "n_games": 501,
+    "actual_mean": 2.8686,
+    "ewm5": {
+     "mean_forecast": 2.7804,
+     "mae": 1.9634,
+     "rmse": 2.7106,
+     "bias": -0.0882,
+     "crps": 1.3211,
+     "p10_p90_coverage": 0.8962,
+     "brier_t_ref": 0.2074,
+     "ratio_sum_pred_over_sum_actual": 0.9693
+    },
+    "sim_rotation": {
+     "mean_forecast": 3.0278,
+     "mae": 1.9412,
+     "rmse": 2.7031,
+     "bias": 0.1593,
+     "crps": 1.3081,
+     "p10_p90_coverage": 0.8685,
+     "brier_t_ref": 0.207,
+     "ratio_sum_pred_over_sum_actual": 1.0555
+    },
+    "sim_waterfill": {
+     "mean_forecast": 3.0276,
+     "mae": 1.9688,
+     "rmse": 2.6516,
+     "bias": 0.159,
+     "crps": 1.3075,
+     "p10_p90_coverage": 0.8344,
+     "brier_t_ref": 0.2037,
+     "ratio_sum_pred_over_sum_actual": 1.0554
+    },
+    "sim_challenger": {
+     "mean_forecast": 3.0288,
+     "mae": 1.9347,
+     "rmse": 2.7022,
+     "bias": 0.1602,
+     "crps": 1.3065,
+     "p10_p90_coverage": 0.8675,
+     "brier_t_ref": 0.2068,
+     "ratio_sum_pred_over_sum_actual": 1.0559
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 1.9634,
+      "sim_rotation": 1.9412,
+      "delta_sim_rotation_minus_ewm5": -0.0223,
+      "delta_ci95": [
+       -0.0351,
+       -0.0097
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 7.3473,
+      "sim_rotation": 7.3068,
+      "delta_sim_rotation_minus_ewm5": -0.0405,
+      "delta_ci95": [
+       -0.1359,
+       0.0519
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 1.3211,
+      "sim_rotation": 1.3081,
+      "delta_sim_rotation_minus_ewm5": -0.013,
+      "delta_ci95": [
+       -0.0231,
+       -0.0037
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.2074,
+      "sim_rotation": 0.207,
+      "delta_sim_rotation_minus_ewm5": -0.0003,
+      "delta_ci95": [
+       -0.0023,
+       0.0015
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.8962,
+      "sim_rotation": 0.8685,
+      "delta_sim_rotation_minus_ewm5": -0.0277,
+      "delta_ci95": [
+       -0.0329,
+       -0.0228
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": -0.0882,
+      "sim_rotation": 0.1593,
+      "delta_sim_rotation_minus_ewm5": 0.2474,
+      "delta_ci95": [
+       0.2332,
+       0.2616
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 1.9412,
+      "sim_waterfill": 1.9688,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0276,
+      "delta_ci95": [
+       0.0137,
+       0.0409
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 7.3068,
+      "sim_waterfill": 7.031,
+      "delta_sim_waterfill_minus_sim_rotation": -0.2758,
+      "delta_ci95": [
+       -0.374,
+       -0.1758
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 1.3081,
+      "sim_waterfill": 1.3075,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0006,
+      "delta_ci95": [
+       -0.0114,
+       0.01
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.207,
+      "sim_waterfill": 0.2037,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0033,
+      "delta_ci95": [
+       -0.0057,
+       -0.0011
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.8685,
+      "sim_waterfill": 0.8344,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0341,
+      "delta_ci95": [
+       -0.0396,
+       -0.0288
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.1593,
+      "sim_waterfill": 0.159,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0002,
+      "delta_ci95": [
+       -0.0019,
+       0.0014
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 1.9412,
+      "sim_challenger": 1.9347,
+      "delta_sim_challenger_minus_sim_rotation": -0.0065,
+      "delta_ci95": [
+       -0.0086,
+       -0.0043
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 7.3068,
+      "sim_challenger": 7.3017,
+      "delta_sim_challenger_minus_sim_rotation": -0.0051,
+      "delta_ci95": [
+       -0.019,
+       0.0094
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 1.3081,
+      "sim_challenger": 1.3065,
+      "delta_sim_challenger_minus_sim_rotation": -0.0016,
+      "delta_ci95": [
+       -0.0029,
+       -0.0002
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.207,
+      "sim_challenger": 0.2068,
+      "delta_sim_challenger_minus_sim_rotation": -0.0003,
+      "delta_ci95": [
+       -0.0006,
+       0.0001
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.8685,
+      "sim_challenger": 0.8675,
+      "delta_sim_challenger_minus_sim_rotation": -0.0009,
+      "delta_ci95": [
+       -0.0029,
+       0.001
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.1593,
+      "sim_challenger": 0.1602,
+      "delta_sim_challenger_minus_sim_rotation": 0.001,
+      "delta_ci95": [
+       0.0002,
+       0.0017
+      ]
+     }
+    ]
+   },
+   "cond": {
+    "n_player_games": 10290,
+    "n_games": 501,
+    "actual_mean": 4.1155,
+    "ewm5": {
+     "mean_forecast": 4.0813,
+     "mae": 1.929,
+     "rmse": 2.5554,
+     "bias": -0.0343,
+     "crps": 1.3543,
+     "p10_p90_coverage": 0.8546,
+     "brier_t_ref": 0.2379,
+     "ratio_sum_pred_over_sum_actual": 0.9917
+    },
+    "sim_rotation": {
+     "mean_forecast": 4.1638,
+     "mae": 1.9773,
+     "rmse": 2.5997,
+     "bias": 0.0482,
+     "crps": 1.3796,
+     "p10_p90_coverage": 0.8722,
+     "brier_t_ref": 0.2412,
+     "ratio_sum_pred_over_sum_actual": 1.0117
+    },
+    "sim_waterfill": {
+     "mean_forecast": 3.6277,
+     "mae": 1.9076,
+     "rmse": 2.5927,
+     "bias": -0.4879,
+     "crps": 1.3612,
+     "p10_p90_coverage": 0.8425,
+     "brier_t_ref": 0.2378,
+     "ratio_sum_pred_over_sum_actual": 0.8815
+    },
+    "sim_challenger": {
+     "mean_forecast": 4.1639,
+     "mae": 1.9688,
+     "rmse": 2.5913,
+     "bias": 0.0483,
+     "crps": 1.3766,
+     "p10_p90_coverage": 0.8741,
+     "brier_t_ref": 0.241,
+     "ratio_sum_pred_over_sum_actual": 1.0117
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 1.929,
+      "sim_rotation": 1.9773,
+      "delta_sim_rotation_minus_ewm5": 0.0483,
+      "delta_ci95": [
+       0.0307,
+       0.0642
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 6.53,
+      "sim_rotation": 6.7587,
+      "delta_sim_rotation_minus_ewm5": 0.2287,
+      "delta_ci95": [
+       0.1068,
+       0.3495
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 1.3543,
+      "sim_rotation": 1.3796,
+      "delta_sim_rotation_minus_ewm5": 0.0253,
+      "delta_ci95": [
+       0.014,
+       0.0361
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.2379,
+      "sim_rotation": 0.2412,
+      "delta_sim_rotation_minus_ewm5": 0.0033,
+      "delta_ci95": [
+       0.0007,
+       0.0058
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.8546,
+      "sim_rotation": 0.8722,
+      "delta_sim_rotation_minus_ewm5": 0.0176,
+      "delta_ci95": [
+       0.0117,
+       0.0232
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": -0.0343,
+      "sim_rotation": 0.0482,
+      "delta_sim_rotation_minus_ewm5": 0.0825,
+      "delta_ci95": [
+       0.057,
+       0.107
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 1.9773,
+      "sim_waterfill": 1.9076,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0698,
+      "delta_ci95": [
+       -0.0851,
+       -0.0539
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 6.7587,
+      "sim_waterfill": 6.722,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0367,
+      "delta_ci95": [
+       -0.1398,
+       0.07
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 1.3796,
+      "sim_waterfill": 1.3612,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0184,
+      "delta_ci95": [
+       -0.0293,
+       -0.0074
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.2412,
+      "sim_waterfill": 0.2378,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0034,
+      "delta_ci95": [
+       -0.006,
+       -0.001
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.8722,
+      "sim_waterfill": 0.8425,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0297,
+      "delta_ci95": [
+       -0.0354,
+       -0.0242
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.0482,
+      "sim_waterfill": -0.4879,
+      "delta_sim_waterfill_minus_sim_rotation": -0.5361,
+      "delta_ci95": [
+       -0.548,
+       -0.5231
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 1.9773,
+      "sim_challenger": 1.9688,
+      "delta_sim_challenger_minus_sim_rotation": -0.0086,
+      "delta_ci95": [
+       -0.0122,
+       -0.0047
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 6.7587,
+      "sim_challenger": 6.7148,
+      "delta_sim_challenger_minus_sim_rotation": -0.0439,
+      "delta_ci95": [
+       -0.0672,
+       -0.0202
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 1.3796,
+      "sim_challenger": 1.3766,
+      "delta_sim_challenger_minus_sim_rotation": -0.003,
+      "delta_ci95": [
+       -0.0054,
+       -0.0006
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.2412,
+      "sim_challenger": 0.241,
+      "delta_sim_challenger_minus_sim_rotation": -0.0002,
+      "delta_ci95": [
+       -0.0009,
+       0.0005
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.8722,
+      "sim_challenger": 0.8741,
+      "delta_sim_challenger_minus_sim_rotation": 0.0019,
+      "delta_ci95": [
+       -0.0006,
+       0.0043
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.0482,
+      "sim_challenger": 0.0483,
+      "delta_sim_challenger_minus_sim_rotation": 0.0001,
+      "delta_ci95": [
+       -0.0018,
+       0.0021
+      ]
+     }
+    ]
+   }
+  },
+  "assists": {
+   "unc": {
+    "n_player_games": 14763,
+    "n_games": 501,
+    "actual_mean": 1.7855,
+    "ewm5": {
+     "mean_forecast": 1.7087,
+     "mae": 1.3427,
+     "rmse": 1.9526,
+     "bias": -0.0767,
+     "crps": 0.8912,
+     "p10_p90_coverage": 0.9086,
+     "brier_t_ref": 0.1867,
+     "ratio_sum_pred_over_sum_actual": 0.957
+    },
+    "sim_rotation": {
+     "mean_forecast": 1.7477,
+     "mae": 1.3052,
+     "rmse": 1.9222,
+     "bias": -0.0377,
+     "crps": 0.8725,
+     "p10_p90_coverage": 0.8869,
+     "brier_t_ref": 0.1832,
+     "ratio_sum_pred_over_sum_actual": 0.9789
+    },
+    "sim_waterfill": {
+     "mean_forecast": 1.7462,
+     "mae": 1.3397,
+     "rmse": 1.9076,
+     "bias": -0.0393,
+     "crps": 0.8812,
+     "p10_p90_coverage": 0.8703,
+     "brier_t_ref": 0.1833,
+     "ratio_sum_pred_over_sum_actual": 0.978
+    },
+    "sim_challenger": {
+     "mean_forecast": 1.7471,
+     "mae": 1.3014,
+     "rmse": 1.9199,
+     "bias": -0.0384,
+     "crps": 0.872,
+     "p10_p90_coverage": 0.8853,
+     "brier_t_ref": 0.1831,
+     "ratio_sum_pred_over_sum_actual": 0.9785
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 1.3427,
+      "sim_rotation": 1.3052,
+      "delta_sim_rotation_minus_ewm5": -0.0375,
+      "delta_ci95": [
+       -0.0454,
+       -0.0298
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 3.8126,
+      "sim_rotation": 3.6948,
+      "delta_sim_rotation_minus_ewm5": -0.1178,
+      "delta_ci95": [
+       -0.168,
+       -0.0667
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.8912,
+      "sim_rotation": 0.8725,
+      "delta_sim_rotation_minus_ewm5": -0.0186,
+      "delta_ci95": [
+       -0.0247,
+       -0.0127
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.1867,
+      "sim_rotation": 0.1832,
+      "delta_sim_rotation_minus_ewm5": -0.0036,
+      "delta_ci95": [
+       -0.0051,
+       -0.0021
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.9086,
+      "sim_rotation": 0.8869,
+      "delta_sim_rotation_minus_ewm5": -0.0217,
+      "delta_ci95": [
+       -0.0259,
+       -0.0177
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": -0.0767,
+      "sim_rotation": -0.0377,
+      "delta_sim_rotation_minus_ewm5": 0.039,
+      "delta_ci95": [
+       0.0291,
+       0.0492
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 1.3052,
+      "sim_waterfill": 1.3397,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0345,
+      "delta_ci95": [
+       0.0256,
+       0.0427
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 3.6948,
+      "sim_waterfill": 3.6388,
+      "delta_sim_waterfill_minus_sim_rotation": -0.056,
+      "delta_ci95": [
+       -0.1022,
+       -0.0097
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.8725,
+      "sim_waterfill": 0.8812,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0087,
+      "delta_ci95": [
+       0.0022,
+       0.0154
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.1832,
+      "sim_waterfill": 0.1833,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0002,
+      "delta_ci95": [
+       -0.0014,
+       0.0017
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.8869,
+      "sim_waterfill": 0.8703,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0166,
+      "delta_ci95": [
+       -0.0204,
+       -0.0124
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": -0.0377,
+      "sim_waterfill": -0.0393,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0015,
+      "delta_ci95": [
+       -0.0025,
+       -0.0006
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 1.3052,
+      "sim_challenger": 1.3014,
+      "delta_sim_challenger_minus_sim_rotation": -0.0038,
+      "delta_ci95": [
+       -0.0054,
+       -0.0022
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 3.6948,
+      "sim_challenger": 3.686,
+      "delta_sim_challenger_minus_sim_rotation": -0.0088,
+      "delta_ci95": [
+       -0.0173,
+       -0.0004
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.8725,
+      "sim_challenger": 0.872,
+      "delta_sim_challenger_minus_sim_rotation": -0.0006,
+      "delta_ci95": [
+       -0.0016,
+       0.0005
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.1832,
+      "sim_challenger": 0.1831,
+      "delta_sim_challenger_minus_sim_rotation": -0.0001,
+      "delta_ci95": [
+       -0.0004,
+       0.0003
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.8869,
+      "sim_challenger": 0.8853,
+      "delta_sim_challenger_minus_sim_rotation": -0.0016,
+      "delta_ci95": [
+       -0.0034,
+       0.0003
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": -0.0377,
+      "sim_challenger": -0.0384,
+      "delta_sim_challenger_minus_sim_rotation": -0.0006,
+      "delta_ci95": [
+       -0.0011,
+       -0.0002
+      ]
+     }
+    ]
+   },
+   "cond": {
+    "n_player_games": 10290,
+    "n_games": 501,
+    "actual_mean": 2.5616,
+    "ewm5": {
+     "mean_forecast": 2.5047,
+     "mae": 1.4009,
+     "rmse": 1.9115,
+     "bias": -0.0569,
+     "crps": 0.969,
+     "p10_p90_coverage": 0.8842,
+     "brier_t_ref": 0.2241,
+     "ratio_sum_pred_over_sum_actual": 0.9778
+    },
+    "sim_rotation": {
+     "mean_forecast": 2.3859,
+     "mae": 1.4106,
+     "rmse": 1.9416,
+     "bias": -0.1757,
+     "crps": 0.9789,
+     "p10_p90_coverage": 0.8892,
+     "brier_t_ref": 0.2239,
+     "ratio_sum_pred_over_sum_actual": 0.9314
+    },
+    "sim_waterfill": {
+     "mean_forecast": 2.0927,
+     "mae": 1.3959,
+     "rmse": 1.9766,
+     "bias": -0.4689,
+     "crps": 0.9936,
+     "p10_p90_coverage": 0.8573,
+     "brier_t_ref": 0.2287,
+     "ratio_sum_pred_over_sum_actual": 0.817
+    },
+    "sim_challenger": {
+     "mean_forecast": 2.3846,
+     "mae": 1.4048,
+     "rmse": 1.9326,
+     "bias": -0.177,
+     "crps": 0.9768,
+     "p10_p90_coverage": 0.8874,
+     "brier_t_ref": 0.2237,
+     "ratio_sum_pred_over_sum_actual": 0.9309
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 1.4009,
+      "sim_rotation": 1.4106,
+      "delta_sim_rotation_minus_ewm5": 0.0097,
+      "delta_ci95": [
+       -0.0011,
+       0.0224
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 3.6539,
+      "sim_rotation": 3.7699,
+      "delta_sim_rotation_minus_ewm5": 0.116,
+      "delta_ci95": [
+       0.05,
+       0.1872
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.969,
+      "sim_rotation": 0.9789,
+      "delta_sim_rotation_minus_ewm5": 0.0099,
+      "delta_ci95": [
+       0.0026,
+       0.0178
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.2241,
+      "sim_rotation": 0.2239,
+      "delta_sim_rotation_minus_ewm5": -0.0003,
+      "delta_ci95": [
+       -0.0024,
+       0.002
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.8842,
+      "sim_rotation": 0.8892,
+      "delta_sim_rotation_minus_ewm5": 0.0051,
+      "delta_ci95": [
+       -0.0005,
+       0.0101
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": -0.0569,
+      "sim_rotation": -0.1757,
+      "delta_sim_rotation_minus_ewm5": -0.1188,
+      "delta_ci95": [
+       -0.136,
+       -0.1039
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 1.4106,
+      "sim_waterfill": 1.3959,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0147,
+      "delta_ci95": [
+       -0.0233,
+       -0.0058
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 3.7699,
+      "sim_waterfill": 3.907,
+      "delta_sim_waterfill_minus_sim_rotation": 0.1371,
+      "delta_ci95": [
+       0.0911,
+       0.1897
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.9789,
+      "sim_waterfill": 0.9936,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0147,
+      "delta_ci95": [
+       0.0081,
+       0.0219
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.2239,
+      "sim_waterfill": 0.2287,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0048,
+      "delta_ci95": [
+       0.0028,
+       0.0069
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.8892,
+      "sim_waterfill": 0.8573,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0319,
+      "delta_ci95": [
+       -0.0363,
+       -0.0275
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": -0.1757,
+      "sim_waterfill": -0.4689,
+      "delta_sim_waterfill_minus_sim_rotation": -0.2932,
+      "delta_ci95": [
+       -0.3004,
+       -0.2851
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 1.4106,
+      "sim_challenger": 1.4048,
+      "delta_sim_challenger_minus_sim_rotation": -0.0058,
+      "delta_ci95": [
+       -0.0088,
+       -0.0032
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 3.7699,
+      "sim_challenger": 3.7351,
+      "delta_sim_challenger_minus_sim_rotation": -0.0348,
+      "delta_ci95": [
+       -0.0492,
+       -0.0224
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.9789,
+      "sim_challenger": 0.9768,
+      "delta_sim_challenger_minus_sim_rotation": -0.002,
+      "delta_ci95": [
+       -0.0039,
+       -0.0004
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.2239,
+      "sim_challenger": 0.2237,
+      "delta_sim_challenger_minus_sim_rotation": -0.0001,
+      "delta_ci95": [
+       -0.0007,
+       0.0005
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.8892,
+      "sim_challenger": 0.8874,
+      "delta_sim_challenger_minus_sim_rotation": -0.0018,
+      "delta_ci95": [
+       -0.0039,
+       0.0006
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": -0.1757,
+      "sim_challenger": -0.177,
+      "delta_sim_challenger_minus_sim_rotation": -0.0014,
+      "delta_ci95": [
+       -0.003,
+       0.0002
+      ]
+     }
+    ]
+   }
+  },
+  "threes": {
+   "unc": {
+    "n_player_games": 14763,
+    "n_games": 501,
+    "actual_mean": 0.8834,
+    "ewm5": {
+     "mean_forecast": 0.8453,
+     "mae": 0.7927,
+     "rmse": 1.1863,
+     "bias": -0.038,
+     "crps": 0.5128,
+     "p10_p90_coverage": 0.9287,
+     "brier_t_ref": 0.1844,
+     "ratio_sum_pred_over_sum_actual": 0.957
+    },
+    "sim_rotation": {
+     "mean_forecast": 0.9067,
+     "mae": 0.7947,
+     "rmse": 1.1699,
+     "bias": 0.0233,
+     "crps": 0.5054,
+     "p10_p90_coverage": 0.927,
+     "brier_t_ref": 0.1824,
+     "ratio_sum_pred_over_sum_actual": 1.0264
+    },
+    "sim_waterfill": {
+     "mean_forecast": 0.9005,
+     "mae": 0.8147,
+     "rmse": 1.165,
+     "bias": 0.0171,
+     "crps": 0.5053,
+     "p10_p90_coverage": 0.9264,
+     "brier_t_ref": 0.1815,
+     "ratio_sum_pred_over_sum_actual": 1.0194
+    },
+    "sim_challenger": {
+     "mean_forecast": 0.9074,
+     "mae": 0.7934,
+     "rmse": 1.1697,
+     "bias": 0.024,
+     "crps": 0.5049,
+     "p10_p90_coverage": 0.9259,
+     "brier_t_ref": 0.1821,
+     "ratio_sum_pred_over_sum_actual": 1.0272
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.7927,
+      "sim_rotation": 0.7947,
+      "delta_sim_rotation_minus_ewm5": 0.002,
+      "delta_ci95": [
+       -0.0023,
+       0.006
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 1.4074,
+      "sim_rotation": 1.3688,
+      "delta_sim_rotation_minus_ewm5": -0.0386,
+      "delta_ci95": [
+       -0.0525,
+       -0.0256
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.5128,
+      "sim_rotation": 0.5054,
+      "delta_sim_rotation_minus_ewm5": -0.0075,
+      "delta_ci95": [
+       -0.0106,
+       -0.0045
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.1844,
+      "sim_rotation": 0.1824,
+      "delta_sim_rotation_minus_ewm5": -0.002,
+      "delta_ci95": [
+       -0.0036,
+       -0.0004
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": 0.9287,
+      "sim_rotation": 0.927,
+      "delta_sim_rotation_minus_ewm5": -0.0016,
+      "delta_ci95": [
+       -0.0049,
+       0.0015
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "ewm5": -0.038,
+      "sim_rotation": 0.0233,
+      "delta_sim_rotation_minus_ewm5": 0.0613,
+      "delta_ci95": [
+       0.0562,
+       0.0663
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.7947,
+      "sim_waterfill": 0.8147,
+      "delta_sim_waterfill_minus_sim_rotation": 0.02,
+      "delta_ci95": [
+       0.0161,
+       0.0239
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 1.3688,
+      "sim_waterfill": 1.3573,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0114,
+      "delta_ci95": [
+       -0.0231,
+       0.001
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.5054,
+      "sim_waterfill": 0.5053,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0001,
+      "delta_ci95": [
+       -0.0029,
+       0.003
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.1824,
+      "sim_waterfill": 0.1815,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0009,
+      "delta_ci95": [
+       -0.0026,
+       0.0007
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.927,
+      "sim_waterfill": 0.9264,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0007,
+      "delta_ci95": [
+       -0.0037,
+       0.002
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.0233,
+      "sim_waterfill": 0.0171,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0062,
+      "delta_ci95": [
+       -0.0082,
+       -0.0041
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.7947,
+      "sim_challenger": 0.7934,
+      "delta_sim_challenger_minus_sim_rotation": -0.0013,
+      "delta_ci95": [
+       -0.002,
+       -0.0007
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 1.3688,
+      "sim_challenger": 1.3682,
+      "delta_sim_challenger_minus_sim_rotation": -0.0005,
+      "delta_ci95": [
+       -0.0025,
+       0.0016
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.5054,
+      "sim_challenger": 0.5049,
+      "delta_sim_challenger_minus_sim_rotation": -0.0005,
+      "delta_ci95": [
+       -0.0009,
+       0.0
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.1824,
+      "sim_challenger": 0.1821,
+      "delta_sim_challenger_minus_sim_rotation": -0.0003,
+      "delta_ci95": [
+       -0.0005,
+       -0.0001
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.927,
+      "sim_challenger": 0.9259,
+      "delta_sim_challenger_minus_sim_rotation": -0.0012,
+      "delta_ci95": [
+       -0.0023,
+       -0.0001
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 14763,
+      "n_games": 501,
+      "sim_rotation": 0.0233,
+      "sim_challenger": 0.024,
+      "delta_sim_challenger_minus_sim_rotation": 0.0007,
+      "delta_ci95": [
+       0.0004,
+       0.0011
+      ]
+     }
+    ]
+   },
+   "cond": {
+    "n_player_games": 10290,
+    "n_games": 501,
+    "actual_mean": 1.2673,
+    "ewm5": {
+     "mean_forecast": 1.2368,
+     "mae": 0.9077,
+     "rmse": 1.2746,
+     "bias": -0.0305,
+     "crps": 0.6115,
+     "p10_p90_coverage": 0.919,
+     "brier_t_ref": 0.2117,
+     "ratio_sum_pred_over_sum_actual": 0.9759
+    },
+    "sim_rotation": {
+     "mean_forecast": 1.239,
+     "mae": 0.9241,
+     "rmse": 1.2616,
+     "bias": -0.0284,
+     "crps": 0.6094,
+     "p10_p90_coverage": 0.9282,
+     "brier_t_ref": 0.213,
+     "ratio_sum_pred_over_sum_actual": 0.9776
+    },
+    "sim_waterfill": {
+     "mean_forecast": 1.0797,
+     "mae": 0.9073,
+     "rmse": 1.2737,
+     "bias": -0.1877,
+     "crps": 0.6115,
+     "p10_p90_coverage": 0.9088,
+     "brier_t_ref": 0.2116,
+     "ratio_sum_pred_over_sum_actual": 0.8519
+    },
+    "sim_challenger": {
+     "mean_forecast": 1.2402,
+     "mae": 0.9221,
+     "rmse": 1.2603,
+     "bias": -0.0272,
+     "crps": 0.6084,
+     "p10_p90_coverage": 0.9261,
+     "brier_t_ref": 0.2125,
+     "ratio_sum_pred_over_sum_actual": 0.9786
+    },
+    "paired": [
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.9077,
+      "sim_rotation": 0.9241,
+      "delta_sim_rotation_minus_ewm5": 0.0163,
+      "delta_ci95": [
+       0.0099,
+       0.0225
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 1.6246,
+      "sim_rotation": 1.5917,
+      "delta_sim_rotation_minus_ewm5": -0.0329,
+      "delta_ci95": [
+       -0.0527,
+       -0.0128
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.6115,
+      "sim_rotation": 0.6094,
+      "delta_sim_rotation_minus_ewm5": -0.002,
+      "delta_ci95": [
+       -0.0065,
+       0.002
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.2117,
+      "sim_rotation": 0.213,
+      "delta_sim_rotation_minus_ewm5": 0.0013,
+      "delta_ci95": [
+       -0.0009,
+       0.0034
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": 0.919,
+      "sim_rotation": 0.9282,
+      "delta_sim_rotation_minus_ewm5": 0.0092,
+      "delta_ci95": [
+       0.0052,
+       0.0132
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "ewm5": -0.0305,
+      "sim_rotation": -0.0284,
+      "delta_sim_rotation_minus_ewm5": 0.0022,
+      "delta_ci95": [
+       -0.0062,
+       0.0101
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.9241,
+      "sim_waterfill": 0.9073,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0167,
+      "delta_ci95": [
+       -0.0217,
+       -0.0119
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 1.5917,
+      "sim_waterfill": 1.6222,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0305,
+      "delta_ci95": [
+       0.0149,
+       0.047
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.6094,
+      "sim_waterfill": 0.6115,
+      "delta_sim_waterfill_minus_sim_rotation": 0.0021,
+      "delta_ci95": [
+       -0.001,
+       0.0056
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.213,
+      "sim_waterfill": 0.2116,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0014,
+      "delta_ci95": [
+       -0.003,
+       0.0002
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.9282,
+      "sim_waterfill": 0.9088,
+      "delta_sim_waterfill_minus_sim_rotation": -0.0193,
+      "delta_ci95": [
+       -0.0228,
+       -0.0162
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": -0.0284,
+      "sim_waterfill": -0.1877,
+      "delta_sim_waterfill_minus_sim_rotation": -0.1593,
+      "delta_ci95": [
+       -0.164,
+       -0.1545
+      ]
+     },
+     {
+      "metric": "mae",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.9241,
+      "sim_challenger": 0.9221,
+      "delta_sim_challenger_minus_sim_rotation": -0.0019,
+      "delta_ci95": [
+       -0.003,
+       -0.001
+      ]
+     },
+     {
+      "metric": "mse",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 1.5917,
+      "sim_challenger": 1.5884,
+      "delta_sim_challenger_minus_sim_rotation": -0.0034,
+      "delta_ci95": [
+       -0.0065,
+       -0.0002
+      ]
+     },
+     {
+      "metric": "crps",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.6094,
+      "sim_challenger": 0.6084,
+      "delta_sim_challenger_minus_sim_rotation": -0.001,
+      "delta_ci95": [
+       -0.0017,
+       -0.0002
+      ]
+     },
+     {
+      "metric": "brier_t_ref",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.213,
+      "sim_challenger": 0.2125,
+      "delta_sim_challenger_minus_sim_rotation": -0.0005,
+      "delta_ci95": [
+       -0.0009,
+       -0.0002
+      ]
+     },
+     {
+      "metric": "p10_p90_coverage",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": 0.9282,
+      "sim_challenger": 0.9261,
+      "delta_sim_challenger_minus_sim_rotation": -0.002,
+      "delta_ci95": [
+       -0.0036,
+       -0.0006
+      ]
+     },
+     {
+      "metric": "bias",
+      "n": 10290,
+      "n_games": 501,
+      "sim_rotation": -0.0284,
+      "sim_challenger": -0.0272,
+      "delta_sim_challenger_minus_sim_rotation": 0.0012,
+      "delta_ci95": [
+       0.0005,
+       0.0018
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "decomposition_full_eligible_population": {
+  "ewm5": {
+   "points": {
+    "ratio_pred_over_actual": {
+     "point": 0.9541,
+     "ci95": [
+      0.9464,
+      0.9624
+     ]
+    },
+    "F_participation": {
+     "point": 0.9847,
+     "ci95": [
+      0.9746,
+      0.9952
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9568,
+     "ci95": [
+      0.9492,
+      0.9639
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 1.0127,
+     "ci95": [
+      1.003,
+      1.0228
+     ]
+    },
+    "identity_product": {
+     "point": 0.9541,
+     "ci95": [
+      0.9464,
+      0.9624
+     ]
+    }
+   },
+   "rebounds": {
+    "ratio_pred_over_actual": {
+     "point": 0.9693,
+     "ci95": [
+      0.9593,
+      0.9791
+     ]
+    },
+    "F_participation": {
+     "point": 0.9774,
+     "ci95": [
+      0.968,
+      0.9874
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9585,
+     "ci95": [
+      0.9507,
+      0.966
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 1.0346,
+     "ci95": [
+      1.025,
+      1.0461
+     ]
+    },
+    "identity_product": {
+     "point": 0.9693,
+     "ci95": [
+      0.9593,
+      0.9791
+     ]
+    }
+   },
+   "assists": {
+    "ratio_pred_over_actual": {
+     "point": 0.957,
+     "ci95": [
+      0.9446,
+      0.9696
+     ]
+    },
+    "F_participation": {
+     "point": 0.9788,
+     "ci95": [
+      0.9677,
+      0.9897
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9565,
+     "ci95": [
+      0.9488,
+      0.9638
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 1.0223,
+     "ci95": [
+      1.0069,
+      1.0373
+     ]
+    },
+    "identity_product": {
+     "point": 0.957,
+     "ci95": [
+      0.9446,
+      0.9696
+     ]
+    }
+   },
+   "threes": {
+    "ratio_pred_over_actual": {
+     "point": 0.957,
+     "ci95": [
+      0.939,
+      0.9751
+     ]
+    },
+    "F_participation": {
+     "point": 0.9806,
+     "ci95": [
+      0.9703,
+      0.9909
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9559,
+     "ci95": [
+      0.9476,
+      0.9641
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 1.0209,
+     "ci95": [
+      1.0019,
+      1.0405
+     ]
+    },
+    "identity_product": {
+     "point": 0.957,
+     "ci95": [
+      0.939,
+      0.9751
+     ]
+    }
+   }
+  },
+  "sim_rotation": {
+   "points": {
+    "ratio_pred_over_actual": {
+     "point": 1.0067,
+     "ci95": [
+      0.9987,
+      1.0143
+     ]
+    },
+    "F_participation": {
+     "point": 1.0533,
+     "ci95": [
+      1.0439,
+      1.0634
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9787,
+     "ci95": [
+      0.9711,
+      0.9855
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9766,
+     "ci95": [
+      0.9687,
+      0.9846
+     ]
+    },
+    "identity_product": {
+     "point": 1.0067,
+     "ci95": [
+      0.9987,
+      1.0143
+     ]
+    }
+   },
+   "rebounds": {
+    "ratio_pred_over_actual": {
+     "point": 1.0555,
+     "ci95": [
+      1.0451,
+      1.0661
+     ]
+    },
+    "F_participation": {
+     "point": 1.0433,
+     "ci95": [
+      1.0345,
+      1.0533
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9835,
+     "ci95": [
+      0.9753,
+      0.9908
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 1.0287,
+     "ci95": [
+      1.0197,
+      1.039
+     ]
+    },
+    "identity_product": {
+     "point": 1.0555,
+     "ci95": [
+      1.0451,
+      1.0661
+     ]
+    }
+   },
+   "assists": {
+    "ratio_pred_over_actual": {
+     "point": 0.9789,
+     "ci95": [
+      0.9667,
+      0.9916
+     ]
+    },
+    "F_participation": {
+     "point": 1.0509,
+     "ci95": [
+      1.0408,
+      1.0614
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9772,
+     "ci95": [
+      0.9695,
+      0.984
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9532,
+     "ci95": [
+      0.9409,
+      0.9661
+     ]
+    },
+    "identity_product": {
+     "point": 0.9789,
+     "ci95": [
+      0.9667,
+      0.9916
+     ]
+    }
+   },
+   "threes": {
+    "ratio_pred_over_actual": {
+     "point": 1.0264,
+     "ci95": [
+      1.0077,
+      1.0445
+     ]
+    },
+    "F_participation": {
+     "point": 1.0499,
+     "ci95": [
+      1.0398,
+      1.06
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9848,
+     "ci95": [
+      0.9766,
+      0.9925
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9927,
+     "ci95": [
+      0.9749,
+      1.0101
+     ]
+    },
+    "identity_product": {
+     "point": 1.0264,
+     "ci95": [
+      1.0077,
+      1.0445
+     ]
+    }
+   }
+  },
+  "sim_waterfill": {
+   "points": {
+    "ratio_pred_over_actual": {
+     "point": 1.0064,
+     "ci95": [
+      0.9985,
+      1.0139
+     ]
+    },
+    "F_participation": {
+     "point": 1.1996,
+     "ci95": [
+      1.1873,
+      1.2131
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.8578,
+     "ci95": [
+      0.8511,
+      0.8647
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9781,
+     "ci95": [
+      0.97,
+      0.9862
+     ]
+    },
+    "identity_product": {
+     "point": 1.0064,
+     "ci95": [
+      0.9985,
+      1.0139
+     ]
+    }
+   },
+   "rebounds": {
+    "ratio_pred_over_actual": {
+     "point": 1.0554,
+     "ci95": [
+      1.045,
+      1.0658
+     ]
+    },
+    "F_participation": {
+     "point": 1.1974,
+     "ci95": [
+      1.1853,
+      1.2097
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.8589,
+     "ci95": [
+      0.8516,
+      0.8657
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 1.0262,
+     "ci95": [
+      1.0171,
+      1.0367
+     ]
+    },
+    "identity_product": {
+     "point": 1.0554,
+     "ci95": [
+      1.045,
+      1.0658
+     ]
+    }
+   },
+   "assists": {
+    "ratio_pred_over_actual": {
+     "point": 0.978,
+     "ci95": [
+      0.966,
+      0.9906
+     ]
+    },
+    "F_participation": {
+     "point": 1.1971,
+     "ci95": [
+      1.1843,
+      1.2107
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.8576,
+     "ci95": [
+      0.8507,
+      0.8645
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9526,
+     "ci95": [
+      0.9402,
+      0.9649
+     ]
+    },
+    "identity_product": {
+     "point": 0.978,
+     "ci95": [
+      0.966,
+      0.9906
+     ]
+    }
+   },
+   "threes": {
+    "ratio_pred_over_actual": {
+     "point": 1.0194,
+     "ci95": [
+      1.0,
+      1.0378
+     ]
+    },
+    "F_participation": {
+     "point": 1.1966,
+     "ci95": [
+      1.1841,
+      1.2094
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.8576,
+     "ci95": [
+      0.8503,
+      0.8652
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9934,
+     "ci95": [
+      0.9756,
+      1.0108
+     ]
+    },
+    "identity_product": {
+     "point": 1.0194,
+     "ci95": [
+      1.0,
+      1.0378
+     ]
+    }
+   }
+  },
+  "sim_challenger": {
+   "points": {
+    "ratio_pred_over_actual": {
+     "point": 1.0066,
+     "ci95": [
+      0.9986,
+      1.0142
+     ]
+    },
+    "F_participation": {
+     "point": 1.0533,
+     "ci95": [
+      1.0439,
+      1.0634
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9779,
+     "ci95": [
+      0.9703,
+      0.9846
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9772,
+     "ci95": [
+      0.9693,
+      0.9853
+     ]
+    },
+    "identity_product": {
+     "point": 1.0066,
+     "ci95": [
+      0.9986,
+      1.0142
+     ]
+    }
+   },
+   "rebounds": {
+    "ratio_pred_over_actual": {
+     "point": 1.0559,
+     "ci95": [
+      1.0453,
+      1.0666
+     ]
+    },
+    "F_participation": {
+     "point": 1.0436,
+     "ci95": [
+      1.0345,
+      1.0537
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9835,
+     "ci95": [
+      0.9753,
+      0.9907
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 1.0288,
+     "ci95": [
+      1.0196,
+      1.0393
+     ]
+    },
+    "identity_product": {
+     "point": 1.0559,
+     "ci95": [
+      1.0453,
+      1.0666
+     ]
+    }
+   },
+   "assists": {
+    "ratio_pred_over_actual": {
+     "point": 0.9785,
+     "ci95": [
+      0.9665,
+      0.9912
+     ]
+    },
+    "F_participation": {
+     "point": 1.0512,
+     "ci95": [
+      1.041,
+      1.062
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9762,
+     "ci95": [
+      0.9686,
+      0.983
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9536,
+     "ci95": [
+      0.9411,
+      0.967
+     ]
+    },
+    "identity_product": {
+     "point": 0.9785,
+     "ci95": [
+      0.9665,
+      0.9912
+     ]
+    }
+   },
+   "threes": {
+    "ratio_pred_over_actual": {
+     "point": 1.0272,
+     "ci95": [
+      1.0084,
+      1.0453
+     ]
+    },
+    "F_participation": {
+     "point": 1.0497,
+     "ci95": [
+      1.0394,
+      1.06
+     ]
+    },
+    "F_minutes_given_play": {
+     "point": 0.9838,
+     "ci95": [
+      0.9756,
+      0.9915
+     ]
+    },
+    "F_rate_per_played_minute": {
+     "point": 0.9947,
+     "ci95": [
+      0.9766,
+      1.0121
+     ]
+    },
+    "identity_product": {
+     "point": 1.0272,
+     "ci95": [
+      1.0084,
+      1.0453
+     ]
+    }
+   }
+  }
+ },
+ "decomposition_by_stratum": {
+  "pred_starter (p_start>=0.5)": {
+   "ewm5": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 1.0097,
+      "ci95": [
+       0.9904,
+       1.0297
+      ]
+     },
+     "F_participation": {
+      "point": 1.0085,
+      "ci95": [
+       0.9913,
+       1.0262
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9613,
+      "ci95": [
+       0.953,
+       0.9695
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0415,
+      "ci95": [
+       1.0293,
+       1.054
+      ]
+     },
+     "identity_product": {
+      "point": 1.0097,
+      "ci95": [
+       0.9904,
+       1.0297
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0124,
+      "ci95": [
+       0.992,
+       1.0341
+      ]
+     },
+     "F_participation": {
+      "point": 0.9984,
+      "ci95": [
+       0.9815,
+       1.0151
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9618,
+      "ci95": [
+       0.9529,
+       0.9705
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0542,
+      "ci95": [
+       1.0416,
+       1.069
+      ]
+     },
+     "identity_product": {
+      "point": 1.0124,
+      "ci95": [
+       0.992,
+       1.0341
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 1.006,
+      "ci95": [
+       0.9833,
+       1.0288
+      ]
+     },
+     "F_participation": {
+      "point": 1.0012,
+      "ci95": [
+       0.9832,
+       1.02
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9597,
+      "ci95": [
+       0.9503,
+       0.9683
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.047,
+      "ci95": [
+       1.0299,
+       1.0652
+      ]
+     },
+     "identity_product": {
+      "point": 1.006,
+      "ci95": [
+       0.9833,
+       1.0288
+      ]
+     }
+    }
+   },
+   "sim_rotation": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 1.0127,
+      "ci95": [
+       0.9941,
+       1.0322
+      ]
+     },
+     "F_participation": {
+      "point": 1.0917,
+      "ci95": [
+       1.0757,
+       1.1096
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9561,
+      "ci95": [
+       0.9468,
+       0.9648
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9702,
+      "ci95": [
+       0.9596,
+       0.981
+      ]
+     },
+     "identity_product": {
+      "point": 1.0127,
+      "ci95": [
+       0.9941,
+       1.0322
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0686,
+      "ci95": [
+       1.0471,
+       1.0926
+      ]
+     },
+     "F_participation": {
+      "point": 1.0851,
+      "ci95": [
+       1.0689,
+       1.1018
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9584,
+      "ci95": [
+       0.9492,
+       0.9674
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0275,
+      "ci95": [
+       1.0155,
+       1.0405
+      ]
+     },
+     "identity_product": {
+      "point": 1.0686,
+      "ci95": [
+       1.0471,
+       1.0926
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9861,
+      "ci95": [
+       0.9631,
+       1.0088
+      ]
+     },
+     "F_participation": {
+      "point": 1.0863,
+      "ci95": [
+       1.0694,
+       1.1046
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9552,
+      "ci95": [
+       0.9455,
+       0.9642
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9503,
+      "ci95": [
+       0.9353,
+       0.9659
+      ]
+     },
+     "identity_product": {
+      "point": 0.9861,
+      "ci95": [
+       0.9631,
+       1.0088
+      ]
+     }
+    }
+   },
+   "sim_challenger": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 1.0156,
+      "ci95": [
+       0.9967,
+       1.0353
+      ]
+     },
+     "F_participation": {
+      "point": 1.0919,
+      "ci95": [
+       1.0758,
+       1.1099
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9556,
+      "ci95": [
+       0.9463,
+       0.9642
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9733,
+      "ci95": [
+       0.9625,
+       0.9843
+      ]
+     },
+     "identity_product": {
+      "point": 1.0156,
+      "ci95": [
+       0.9967,
+       1.0353
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0706,
+      "ci95": [
+       1.0487,
+       1.0949
+      ]
+     },
+     "F_participation": {
+      "point": 1.0853,
+      "ci95": [
+       1.069,
+       1.1024
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9582,
+      "ci95": [
+       0.9489,
+       0.967
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0296,
+      "ci95": [
+       1.0175,
+       1.0427
+      ]
+     },
+     "identity_product": {
+      "point": 1.0706,
+      "ci95": [
+       1.0487,
+       1.0949
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9897,
+      "ci95": [
+       0.9669,
+       1.0128
+      ]
+     },
+     "F_participation": {
+      "point": 1.0863,
+      "ci95": [
+       1.0691,
+       1.1049
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9544,
+      "ci95": [
+       0.9448,
+       0.9634
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9547,
+      "ci95": [
+       0.9398,
+       0.9701
+      ]
+     },
+     "identity_product": {
+      "point": 0.9897,
+      "ci95": [
+       0.9669,
+       1.0128
+      ]
+     }
+    }
+   }
+  },
+  "pred_bench (p_start<0.5)": {
+   "ewm5": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 0.8731,
+      "ci95": [
+       0.8501,
+       0.8978
+      ]
+     },
+     "F_participation": {
+      "point": 0.947,
+      "ci95": [
+       0.9353,
+       0.9587
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9499,
+      "ci95": [
+       0.9361,
+       0.9644
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9707,
+      "ci95": [
+       0.9554,
+       0.9861
+      ]
+     },
+     "identity_product": {
+      "point": 0.8731,
+      "ci95": [
+       0.8501,
+       0.8978
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 0.9161,
+      "ci95": [
+       0.893,
+       0.941
+      ]
+     },
+     "F_participation": {
+      "point": 0.9501,
+      "ci95": [
+       0.9379,
+       0.9624
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9543,
+      "ci95": [
+       0.9394,
+       0.9707
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0104,
+      "ci95": [
+       0.9954,
+       1.0256
+      ]
+     },
+     "identity_product": {
+      "point": 0.9161,
+      "ci95": [
+       0.893,
+       0.941
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.8861,
+      "ci95": [
+       0.8565,
+       0.9183
+      ]
+     },
+     "F_participation": {
+      "point": 0.9439,
+      "ci95": [
+       0.9306,
+       0.9569
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9516,
+      "ci95": [
+       0.9363,
+       0.9669
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9865,
+      "ci95": [
+       0.9634,
+       1.0089
+      ]
+     },
+     "identity_product": {
+      "point": 0.8861,
+      "ci95": [
+       0.8565,
+       0.9183
+      ]
+     }
+    }
+   },
+   "sim_rotation": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 0.9978,
+      "ci95": [
+       0.9737,
+       1.0239
+      ]
+     },
+     "F_participation": {
+      "point": 1.0012,
+      "ci95": [
+       0.9896,
+       1.0129
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.011,
+      "ci95": [
+       0.9956,
+       1.0268
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9858,
+      "ci95": [
+       0.9725,
+       1.0001
+      ]
+     },
+     "identity_product": {
+      "point": 0.9978,
+      "ci95": [
+       0.9737,
+       1.0239
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0394,
+      "ci95": [
+       1.0161,
+       1.0665
+      ]
+     },
+     "F_participation": {
+      "point": 0.9947,
+      "ci95": [
+       0.9831,
+       1.007
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0143,
+      "ci95": [
+       0.9975,
+       1.0308
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0303,
+      "ci95": [
+       1.0152,
+       1.0451
+      ]
+     },
+     "identity_product": {
+      "point": 1.0394,
+      "ci95": [
+       1.0161,
+       1.0665
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9684,
+      "ci95": [
+       0.9366,
+       1.0023
+      ]
+     },
+     "F_participation": {
+      "point": 1.0028,
+      "ci95": [
+       0.9908,
+       1.0153
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0088,
+      "ci95": [
+       0.9932,
+       1.0251
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9573,
+      "ci95": [
+       0.9357,
+       0.9777
+      ]
+     },
+     "identity_product": {
+      "point": 0.9684,
+      "ci95": [
+       0.9366,
+       1.0023
+      ]
+     }
+    }
+   },
+   "sim_challenger": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 0.9934,
+      "ci95": [
+       0.969,
+       1.0194
+      ]
+     },
+     "F_participation": {
+      "point": 1.0007,
+      "ci95": [
+       0.989,
+       1.0123
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0099,
+      "ci95": [
+       0.9948,
+       1.0258
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.983,
+      "ci95": [
+       0.9695,
+       0.9971
+      ]
+     },
+     "identity_product": {
+      "point": 0.9934,
+      "ci95": [
+       0.969,
+       1.0194
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0376,
+      "ci95": [
+       1.0138,
+       1.065
+      ]
+     },
+     "F_participation": {
+      "point": 0.9949,
+      "ci95": [
+       0.9833,
+       1.0074
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0148,
+      "ci95": [
+       0.9977,
+       1.0318
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0278,
+      "ci95": [
+       1.0128,
+       1.0427
+      ]
+     },
+     "identity_product": {
+      "point": 1.0376,
+      "ci95": [
+       1.0138,
+       1.065
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9623,
+      "ci95": [
+       0.9311,
+       0.9958
+      ]
+     },
+     "F_participation": {
+      "point": 1.0029,
+      "ci95": [
+       0.9903,
+       1.016
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0078,
+      "ci95": [
+       0.9921,
+       1.0244
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9521,
+      "ci95": [
+       0.9302,
+       0.9736
+      ]
+     },
+     "identity_product": {
+      "point": 0.9623,
+      "ci95": [
+       0.9311,
+       0.9958
+      ]
+     }
+    }
+   }
+  },
+  "usage_low (ewm5 FGA/min<0.292)": {
+   "ewm5": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 0.8295,
+      "ci95": [
+       0.8,
+       0.8586
+      ]
+     },
+     "F_participation": {
+      "point": 0.9588,
+      "ci95": [
+       0.9423,
+       0.9759
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9522,
+      "ci95": [
+       0.9361,
+       0.9679
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9086,
+      "ci95": [
+       0.8869,
+       0.9323
+      ]
+     },
+     "identity_product": {
+      "point": 0.8295,
+      "ci95": [
+       0.8,
+       0.8586
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 0.921,
+      "ci95": [
+       0.894,
+       0.9505
+      ]
+     },
+     "F_participation": {
+      "point": 0.9632,
+      "ci95": [
+       0.9454,
+       0.9828
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9579,
+      "ci95": [
+       0.9423,
+       0.9736
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9982,
+      "ci95": [
+       0.98,
+       1.0185
+      ]
+     },
+     "identity_product": {
+      "point": 0.921,
+      "ci95": [
+       0.894,
+       0.9505
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.8699,
+      "ci95": [
+       0.8349,
+       0.9064
+      ]
+     },
+     "F_participation": {
+      "point": 0.9478,
+      "ci95": [
+       0.9292,
+       0.968
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9556,
+      "ci95": [
+       0.9375,
+       0.9734
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9603,
+      "ci95": [
+       0.9305,
+       0.9926
+      ]
+     },
+     "identity_product": {
+      "point": 0.8699,
+      "ci95": [
+       0.8349,
+       0.9064
+      ]
+     }
+    }
+   },
+   "sim_rotation": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 0.999,
+      "ci95": [
+       0.9657,
+       1.0327
+      ]
+     },
+     "F_participation": {
+      "point": 0.9956,
+      "ci95": [
+       0.9806,
+       1.0119
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9889,
+      "ci95": [
+       0.9711,
+       1.0062
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0146,
+      "ci95": [
+       0.9933,
+       1.0396
+      ]
+     },
+     "identity_product": {
+      "point": 0.999,
+      "ci95": [
+       0.9657,
+       1.0327
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 0.9827,
+      "ci95": [
+       0.9543,
+       1.0131
+      ]
+     },
+     "F_participation": {
+      "point": 1.0002,
+      "ci95": [
+       0.9836,
+       1.0175
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9929,
+      "ci95": [
+       0.9756,
+       1.0092
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9896,
+      "ci95": [
+       0.972,
+       1.0103
+      ]
+     },
+     "identity_product": {
+      "point": 0.9827,
+      "ci95": [
+       0.9543,
+       1.0131
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9308,
+      "ci95": [
+       0.8947,
+       0.9691
+      ]
+     },
+     "F_participation": {
+      "point": 0.9959,
+      "ci95": [
+       0.9796,
+       1.0136
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9874,
+      "ci95": [
+       0.9693,
+       1.0047
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9465,
+      "ci95": [
+       0.9198,
+       0.9762
+      ]
+     },
+     "identity_product": {
+      "point": 0.9308,
+      "ci95": [
+       0.8947,
+       0.9691
+      ]
+     }
+    }
+   },
+   "sim_challenger": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 0.963,
+      "ci95": [
+       0.9308,
+       0.9956
+      ]
+     },
+     "F_participation": {
+      "point": 0.9964,
+      "ci95": [
+       0.9815,
+       1.0126
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9909,
+      "ci95": [
+       0.9734,
+       1.008
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9753,
+      "ci95": [
+       0.9549,
+       0.9994
+      ]
+     },
+     "identity_product": {
+      "point": 0.963,
+      "ci95": [
+       0.9308,
+       0.9956
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 0.9917,
+      "ci95": [
+       0.9631,
+       1.0225
+      ]
+     },
+     "F_participation": {
+      "point": 0.9999,
+      "ci95": [
+       0.9833,
+       1.017
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9921,
+      "ci95": [
+       0.9744,
+       1.0091
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9997,
+      "ci95": [
+       0.9817,
+       1.0203
+      ]
+     },
+     "identity_product": {
+      "point": 0.9917,
+      "ci95": [
+       0.9631,
+       1.0225
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9104,
+      "ci95": [
+       0.8752,
+       0.9472
+      ]
+     },
+     "F_participation": {
+      "point": 0.9963,
+      "ci95": [
+       0.9794,
+       1.0143
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9855,
+      "ci95": [
+       0.9672,
+       1.0036
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9273,
+      "ci95": [
+       0.8999,
+       0.9573
+      ]
+     },
+     "identity_product": {
+      "point": 0.9104,
+      "ci95": [
+       0.8752,
+       0.9472
+      ]
+     }
+    }
+   }
+  },
+  "usage_mid": {
+   "ewm5": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 0.9239,
+      "ci95": [
+       0.904,
+       0.9438
+      ]
+     },
+     "F_participation": {
+      "point": 0.9676,
+      "ci95": [
+       0.9546,
+       0.9826
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9577,
+      "ci95": [
+       0.9467,
+       0.9688
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.997,
+      "ci95": [
+       0.9803,
+       1.0143
+      ]
+     },
+     "identity_product": {
+      "point": 0.9239,
+      "ci95": [
+       0.904,
+       0.9438
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 0.9648,
+      "ci95": [
+       0.9426,
+       0.9857
+      ]
+     },
+     "F_participation": {
+      "point": 0.9743,
+      "ci95": [
+       0.9592,
+       0.9914
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9625,
+      "ci95": [
+       0.9505,
+       0.9737
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0288,
+      "ci95": [
+       1.0109,
+       1.0465
+      ]
+     },
+     "identity_product": {
+      "point": 0.9648,
+      "ci95": [
+       0.9426,
+       0.9857
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9577,
+      "ci95": [
+       0.9323,
+       0.9859
+      ]
+     },
+     "F_participation": {
+      "point": 0.9686,
+      "ci95": [
+       0.9522,
+       0.9856
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9553,
+      "ci95": [
+       0.9435,
+       0.9676
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.035,
+      "ci95": [
+       1.0116,
+       1.0608
+      ]
+     },
+     "identity_product": {
+      "point": 0.9577,
+      "ci95": [
+       0.9323,
+       0.9859
+      ]
+     }
+    }
+   },
+   "sim_rotation": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 1.0197,
+      "ci95": [
+       0.9987,
+       1.042
+      ]
+     },
+     "F_participation": {
+      "point": 1.0324,
+      "ci95": [
+       1.0191,
+       1.0476
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0031,
+      "ci95": [
+       0.9907,
+       1.0146
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9847,
+      "ci95": [
+       0.969,
+       1.0009
+      ]
+     },
+     "identity_product": {
+      "point": 1.0197,
+      "ci95": [
+       0.9987,
+       1.042
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0829,
+      "ci95": [
+       1.0573,
+       1.1062
+      ]
+     },
+     "F_participation": {
+      "point": 1.0371,
+      "ci95": [
+       1.0229,
+       1.0538
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0053,
+      "ci95": [
+       0.9927,
+       1.017
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0386,
+      "ci95": [
+       1.021,
+       1.0565
+      ]
+     },
+     "identity_product": {
+      "point": 1.0829,
+      "ci95": [
+       1.0573,
+       1.1062
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 1.0268,
+      "ci95": [
+       0.9989,
+       1.0574
+      ]
+     },
+     "F_participation": {
+      "point": 1.0335,
+      "ci95": [
+       1.0195,
+       1.05
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0031,
+      "ci95": [
+       0.9904,
+       1.0148
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9904,
+      "ci95": [
+       0.9679,
+       1.0148
+      ]
+     },
+     "identity_product": {
+      "point": 1.0268,
+      "ci95": [
+       0.9989,
+       1.0574
+      ]
+     }
+    }
+   },
+   "sim_challenger": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 1.0174,
+      "ci95": [
+       0.9962,
+       1.0394
+      ]
+     },
+     "F_participation": {
+      "point": 1.0318,
+      "ci95": [
+       1.0187,
+       1.0468
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0024,
+      "ci95": [
+       0.9899,
+       1.0141
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9837,
+      "ci95": [
+       0.9683,
+       0.9993
+      ]
+     },
+     "identity_product": {
+      "point": 1.0174,
+      "ci95": [
+       0.9962,
+       1.0394
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0807,
+      "ci95": [
+       1.055,
+       1.1036
+      ]
+     },
+     "F_participation": {
+      "point": 1.0385,
+      "ci95": [
+       1.0239,
+       1.0553
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0059,
+      "ci95": [
+       0.9932,
+       1.0176
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0346,
+      "ci95": [
+       1.0166,
+       1.0525
+      ]
+     },
+     "identity_product": {
+      "point": 1.0807,
+      "ci95": [
+       1.055,
+       1.1036
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 1.0219,
+      "ci95": [
+       0.9938,
+       1.0522
+      ]
+     },
+     "F_participation": {
+      "point": 1.0336,
+      "ci95": [
+       1.0191,
+       1.0502
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 1.0039,
+      "ci95": [
+       0.9908,
+       1.0159
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9848,
+      "ci95": [
+       0.9626,
+       1.009
+      ]
+     },
+     "identity_product": {
+      "point": 1.0219,
+      "ci95": [
+       0.9938,
+       1.0522
+      ]
+     }
+    }
+   }
+  },
+  "usage_high (ewm5 FGA/min>=0.392)": {
+   "ewm5": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 1.0139,
+      "ci95": [
+       0.9966,
+       1.0329
+      ]
+     },
+     "F_participation": {
+      "point": 1.0018,
+      "ci95": [
+       0.9852,
+       1.0192
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9577,
+      "ci95": [
+       0.9496,
+       0.9658
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0568,
+      "ci95": [
+       1.0442,
+       1.0712
+      ]
+     },
+     "identity_product": {
+      "point": 1.0139,
+      "ci95": [
+       0.9966,
+       1.0329
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0054,
+      "ci95": [
+       0.9838,
+       1.0282
+      ]
+     },
+     "F_participation": {
+      "point": 0.989,
+      "ci95": [
+       0.973,
+       1.005
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9557,
+      "ci95": [
+       0.9472,
+       0.9648
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0638,
+      "ci95": [
+       1.0483,
+       1.081
+      ]
+     },
+     "identity_product": {
+      "point": 1.0054,
+      "ci95": [
+       0.9838,
+       1.0282
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.99,
+      "ci95": [
+       0.9678,
+       1.0131
+      ]
+     },
+     "F_participation": {
+      "point": 0.9956,
+      "ci95": [
+       0.9788,
+       1.0153
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9574,
+      "ci95": [
+       0.9482,
+       0.9662
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0385,
+      "ci95": [
+       1.0188,
+       1.0565
+      ]
+     },
+     "identity_product": {
+      "point": 0.99,
+      "ci95": [
+       0.9678,
+       1.0131
+      ]
+     }
+    }
+   },
+   "sim_rotation": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 1.0012,
+      "ci95": [
+       0.9839,
+       1.0193
+      ]
+     },
+     "F_participation": {
+      "point": 1.0879,
+      "ci95": [
+       1.0724,
+       1.1052
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9598,
+      "ci95": [
+       0.9503,
+       0.9684
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9589,
+      "ci95": [
+       0.9475,
+       0.9716
+      ]
+     },
+     "identity_product": {
+      "point": 1.0012,
+      "ci95": [
+       0.9839,
+       1.0193
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0815,
+      "ci95": [
+       1.0583,
+       1.1077
+      ]
+     },
+     "F_participation": {
+      "point": 1.0771,
+      "ci95": [
+       1.0615,
+       1.0937
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9593,
+      "ci95": [
+       0.9499,
+       0.9683
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0467,
+      "ci95": [
+       1.0315,
+       1.0637
+      ]
+     },
+     "identity_product": {
+      "point": 1.0815,
+      "ci95": [
+       1.0583,
+       1.1077
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9691,
+      "ci95": [
+       0.9477,
+       0.9916
+      ]
+     },
+     "F_participation": {
+      "point": 1.0844,
+      "ci95": [
+       1.0679,
+       1.1027
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.957,
+      "ci95": [
+       0.9467,
+       0.9659
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9338,
+      "ci95": [
+       0.9172,
+       0.9512
+      ]
+     },
+     "identity_product": {
+      "point": 0.9691,
+      "ci95": [
+       0.9477,
+       0.9916
+      ]
+     }
+    }
+   },
+   "sim_challenger": {
+    "points": {
+     "ratio_pred_over_actual": {
+      "point": 1.0144,
+      "ci95": [
+       0.9969,
+       1.0328
+      ]
+     },
+     "F_participation": {
+      "point": 1.0868,
+      "ci95": [
+       1.0713,
+       1.1039
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9584,
+      "ci95": [
+       0.9491,
+       0.967
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9739,
+      "ci95": [
+       0.9624,
+       0.9862
+      ]
+     },
+     "identity_product": {
+      "point": 1.0144,
+      "ci95": [
+       0.9969,
+       1.0328
+      ]
+     }
+    },
+    "rebounds": {
+     "ratio_pred_over_actual": {
+      "point": 1.0781,
+      "ci95": [
+       1.0549,
+       1.1046
+      ]
+     },
+     "F_participation": {
+      "point": 1.0772,
+      "ci95": [
+       1.0616,
+       1.0939
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9593,
+      "ci95": [
+       0.9499,
+       0.9684
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 1.0433,
+      "ci95": [
+       1.0278,
+       1.0603
+      ]
+     },
+     "identity_product": {
+      "point": 1.0781,
+      "ci95": [
+       1.0549,
+       1.1046
+      ]
+     }
+    },
+    "assists": {
+     "ratio_pred_over_actual": {
+      "point": 0.9791,
+      "ci95": [
+       0.9579,
+       1.0018
+      ]
+     },
+     "F_participation": {
+      "point": 1.0837,
+      "ci95": [
+       1.067,
+       1.102
+      ]
+     },
+     "F_minutes_given_play": {
+      "point": 0.9557,
+      "ci95": [
+       0.9454,
+       0.9648
+      ]
+     },
+     "F_rate_per_played_minute": {
+      "point": 0.9453,
+      "ci95": [
+       0.9283,
+       0.9629
+      ]
+     },
+     "identity_product": {
+      "point": 0.9791,
+      "ci95": [
+       0.9579,
+       1.0018
+      ]
+     }
+    }
+   }
+  }
+ },
+ "per_minute_by_own_usage_tercile": {
+  "ewm5": {
+   "low": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.9162,
+     "ci95": [
+      0.8956,
+      0.9378
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 0.9358,
+     "ci95": [
+      0.9202,
+      0.9525
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.9656,
+     "ci95": [
+      0.9354,
+      0.9991
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0028,
+     "ci95": [
+      0.9846,
+      1.0231
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 0.887,
+     "ci95": [
+      0.8488,
+      0.9285
+     ]
+    }
+   },
+   "mid": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.999,
+     "ci95": [
+      0.982,
+      1.0163
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 1.0051,
+     "ci95": [
+      0.9937,
+      1.0172
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 1.0333,
+     "ci95": [
+      1.01,
+      1.0579
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0297,
+     "ci95": [
+      1.0113,
+      1.0481
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 1.0234,
+     "ci95": [
+      0.9923,
+      1.0541
+     ]
+    }
+   },
+   "high": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 1.0582,
+     "ci95": [
+      1.0453,
+      1.0724
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 1.0621,
+     "ci95": [
+      1.0526,
+      1.0715
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 1.0408,
+     "ci95": [
+      1.0209,
+      1.0591
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0627,
+     "ci95": [
+      1.0467,
+      1.0806
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 1.0748,
+     "ci95": [
+      1.0462,
+      1.104
+     ]
+    }
+   }
+  },
+  "sim_rotation": {
+   "low": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 1.0118,
+     "ci95": [
+      0.9926,
+      1.0338
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 1.0138,
+     "ci95": [
+      0.999,
+      1.0295
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.9619,
+     "ci95": [
+      0.9368,
+      0.9899
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 0.9935,
+     "ci95": [
+      0.9746,
+      1.0133
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 1.0201,
+     "ci95": [
+      0.9789,
+      1.0646
+     ]
+    }
+   },
+   "mid": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.9777,
+     "ci95": [
+      0.9617,
+      0.9931
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 0.9596,
+     "ci95": [
+      0.947,
+      0.9714
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.9801,
+     "ci95": [
+      0.9557,
+      1.0055
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0473,
+     "ci95": [
+      1.0274,
+      1.0678
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 0.9853,
+     "ci95": [
+      0.9548,
+      1.015
+     ]
+    }
+   },
+   "high": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.9617,
+     "ci95": [
+      0.9495,
+      0.9742
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 0.9494,
+     "ci95": [
+      0.9418,
+      0.9577
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.9341,
+     "ci95": [
+      0.9174,
+      0.9506
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0424,
+     "ci95": [
+      1.0262,
+      1.0587
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 0.9865,
+     "ci95": [
+      0.9597,
+      1.0121
+     ]
+    }
+   }
+  },
+  "sim_waterfill": {
+   "low": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 1.0138,
+     "ci95": [
+      0.9947,
+      1.0354
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 1.0148,
+     "ci95": [
+      1.0004,
+      1.0306
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.9585,
+     "ci95": [
+      0.933,
+      0.9874
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 0.9986,
+     "ci95": [
+      0.9803,
+      1.0181
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 1.0157,
+     "ci95": [
+      0.975,
+      1.0602
+     ]
+    }
+   },
+   "mid": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.9735,
+     "ci95": [
+      0.9567,
+      0.9895
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 0.9572,
+     "ci95": [
+      0.9463,
+      0.9685
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.9769,
+     "ci95": [
+      0.9527,
+      1.0019
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0434,
+     "ci95": [
+      1.0217,
+      1.0627
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 0.9876,
+     "ci95": [
+      0.9579,
+      1.0178
+     ]
+    }
+   },
+   "high": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.9664,
+     "ci95": [
+      0.955,
+      0.9783
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 0.9534,
+     "ci95": [
+      0.9456,
+      0.9617
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.9363,
+     "ci95": [
+      0.9195,
+      0.9522
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0348,
+     "ci95": [
+      1.019,
+      1.0515
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 0.9881,
+     "ci95": [
+      0.9621,
+      1.0133
+     ]
+    }
+   }
+  },
+  "sim_challenger": {
+   "low": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.9781,
+     "ci95": [
+      0.9598,
+      0.9988
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 0.9796,
+     "ci95": [
+      0.9653,
+      0.9943
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.938,
+     "ci95": [
+      0.9138,
+      0.9662
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0082,
+     "ci95": [
+      0.9899,
+      1.028
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 0.9908,
+     "ci95": [
+      0.9516,
+      1.0326
+     ]
+    }
+   },
+   "mid": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.9763,
+     "ci95": [
+      0.9597,
+      0.9918
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 0.9585,
+     "ci95": [
+      0.9469,
+      0.9694
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.985,
+     "ci95": [
+      0.9613,
+      1.009
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0402,
+     "ci95": [
+      1.0207,
+      1.0607
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 0.9801,
+     "ci95": [
+      0.9513,
+      1.0092
+     ]
+    }
+   },
+   "high": {
+    "pts": {
+     "n": 3430,
+     "pred_over_actual": 0.9774,
+     "ci95": [
+      0.965,
+      0.9899
+     ]
+    },
+    "fga": {
+     "n": 3430,
+     "pred_over_actual": 0.9654,
+     "ci95": [
+      0.9576,
+      0.9745
+     ]
+    },
+    "ast": {
+     "n": 3430,
+     "pred_over_actual": 0.9431,
+     "ci95": [
+      0.9261,
+      0.9604
+     ]
+    },
+    "reb": {
+     "n": 3430,
+     "pred_over_actual": 1.0361,
+     "ci95": [
+      1.0195,
+      1.0536
+     ]
+    },
+    "fg3m": {
+     "n": 3430,
+     "pred_over_actual": 1.0069,
+     "ci95": [
+      0.9808,
+      1.0349
+     ]
+    }
+   }
+  }
+ },
+ "observation_choice": {
+  "A full eligible population (pre-tip)": {
+   "n_player_games": 14763,
+   "ewm5": {
+    "minutes": {
+     "ratio": 0.9361,
+     "ci95": [
+      0.9322,
+      0.9401
+     ]
+    },
+    "points": {
+     "ratio": 0.9541,
+     "ci95": [
+      0.9464,
+      0.9624
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.9693,
+     "ci95": [
+      0.9593,
+      0.9791
+     ]
+    },
+    "assists": {
+     "ratio": 0.957,
+     "ci95": [
+      0.9446,
+      0.9696
+     ]
+    },
+    "threes": {
+     "ratio": 0.957,
+     "ci95": [
+      0.939,
+      0.9751
+     ]
+    }
+   },
+   "sim_rotation": {
+    "minutes": {
+     "ratio": 1.0269,
+     "ci95": [
+      1.0227,
+      1.0311
+     ]
+    },
+    "points": {
+     "ratio": 1.0067,
+     "ci95": [
+      0.9987,
+      1.0143
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0555,
+     "ci95": [
+      1.0451,
+      1.0661
+     ]
+    },
+    "assists": {
+     "ratio": 0.9789,
+     "ci95": [
+      0.9667,
+      0.9916
+     ]
+    },
+    "threes": {
+     "ratio": 1.0264,
+     "ci95": [
+      1.0077,
+      1.0445
+     ]
+    }
+   },
+   "sim_waterfill": {
+    "minutes": {
+     "ratio": 1.0264,
+     "ci95": [
+      1.0221,
+      1.0306
+     ]
+    },
+    "points": {
+     "ratio": 1.0064,
+     "ci95": [
+      0.9985,
+      1.0139
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0554,
+     "ci95": [
+      1.045,
+      1.0658
+     ]
+    },
+    "assists": {
+     "ratio": 0.978,
+     "ci95": [
+      0.966,
+      0.9906
+     ]
+    },
+    "threes": {
+     "ratio": 1.0194,
+     "ci95": [
+      1.0,
+      1.0378
+     ]
+    }
+   },
+   "sim_challenger": {
+    "minutes": {
+     "ratio": 1.0269,
+     "ci95": [
+      1.0227,
+      1.0311
+     ]
+    },
+    "points": {
+     "ratio": 1.0066,
+     "ci95": [
+      0.9986,
+      1.0142
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0559,
+     "ci95": [
+      1.0453,
+      1.0666
+     ]
+    },
+    "assists": {
+     "ratio": 0.9785,
+     "ci95": [
+      0.9665,
+      0.9912
+     ]
+    },
+    "threes": {
+     "ratio": 1.0272,
+     "ci95": [
+      1.0084,
+      1.0453
+     ]
+    }
+   }
+  },
+  "B predicted starters (pre-tip)": {
+   "n_player_games": 5707,
+   "ewm5": {
+    "minutes": {
+     "ratio": 0.9638,
+     "ci95": [
+      0.9466,
+      0.981
+     ]
+    },
+    "points": {
+     "ratio": 1.0097,
+     "ci95": [
+      0.9904,
+      1.0297
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0124,
+     "ci95": [
+      0.992,
+      1.0341
+     ]
+    },
+    "assists": {
+     "ratio": 1.006,
+     "ci95": [
+      0.9833,
+      1.0288
+     ]
+    },
+    "threes": {
+     "ratio": 1.0216,
+     "ci95": [
+      0.9938,
+      1.0533
+     ]
+    }
+   },
+   "sim_rotation": {
+    "minutes": {
+     "ratio": 1.0415,
+     "ci95": [
+      1.023,
+      1.0603
+     ]
+    },
+    "points": {
+     "ratio": 1.0127,
+     "ci95": [
+      0.9941,
+      1.0322
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0686,
+     "ci95": [
+      1.0471,
+      1.0926
+     ]
+    },
+    "assists": {
+     "ratio": 0.9861,
+     "ci95": [
+      0.9631,
+      1.0088
+     ]
+    },
+    "threes": {
+     "ratio": 1.0542,
+     "ci95": [
+      1.0267,
+      1.085
+     ]
+    }
+   },
+   "sim_waterfill": {
+    "minutes": {
+     "ratio": 1.0197,
+     "ci95": [
+      1.0025,
+      1.0386
+     ]
+    },
+    "points": {
+     "ratio": 1.0023,
+     "ci95": [
+      0.9835,
+      1.0218
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0503,
+     "ci95": [
+      1.03,
+      1.0735
+     ]
+    },
+    "assists": {
+     "ratio": 0.9735,
+     "ci95": [
+      0.9513,
+      0.9958
+     ]
+    },
+    "threes": {
+     "ratio": 1.0301,
+     "ci95": [
+      1.0016,
+      1.0601
+     ]
+    }
+   },
+   "sim_challenger": {
+    "minutes": {
+     "ratio": 1.0415,
+     "ci95": [
+      1.0228,
+      1.0602
+     ]
+    },
+    "points": {
+     "ratio": 1.0156,
+     "ci95": [
+      0.9967,
+      1.0353
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0706,
+     "ci95": [
+      1.0487,
+      1.0949
+     ]
+    },
+    "assists": {
+     "ratio": 0.9897,
+     "ci95": [
+      0.9669,
+      1.0128
+     ]
+    },
+    "threes": {
+     "ratio": 1.0578,
+     "ci95": [
+      1.03,
+      1.0883
+     ]
+    }
+   }
+  },
+  "C sim predicts >=28 min | play (pre-tip)": {
+   "n_player_games": 3211,
+   "ewm5": {
+    "minutes": {
+     "ratio": 0.9588,
+     "ci95": [
+      0.9411,
+      0.9766
+     ]
+    },
+    "points": {
+     "ratio": 1.0061,
+     "ci95": [
+      0.9856,
+      1.0274
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0215,
+     "ci95": [
+      0.9986,
+      1.0462
+     ]
+    },
+    "assists": {
+     "ratio": 1.0006,
+     "ci95": [
+      0.9769,
+      1.0252
+     ]
+    },
+    "threes": {
+     "ratio": 1.025,
+     "ci95": [
+      0.9933,
+      1.0607
+     ]
+    }
+   },
+   "sim_rotation": {
+    "minutes": {
+     "ratio": 1.0775,
+     "ci95": [
+      1.0591,
+      1.0961
+     ]
+    },
+    "points": {
+     "ratio": 1.046,
+     "ci95": [
+      1.0246,
+      1.0672
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.1266,
+     "ci95": [
+      1.1016,
+      1.155
+     ]
+    },
+    "assists": {
+     "ratio": 1.0214,
+     "ci95": [
+      0.9971,
+      1.0452
+     ]
+    },
+    "threes": {
+     "ratio": 1.0895,
+     "ci95": [
+      1.0561,
+      1.1269
+     ]
+    }
+   },
+   "sim_waterfill": {
+    "minutes": {
+     "ratio": 0.9625,
+     "ci95": [
+      0.9466,
+      0.979
+     ]
+    },
+    "points": {
+     "ratio": 0.9435,
+     "ci95": [
+      0.9251,
+      0.9633
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.0096,
+     "ci95": [
+      0.9873,
+      1.0354
+     ]
+    },
+    "assists": {
+     "ratio": 0.9198,
+     "ci95": [
+      0.8984,
+      0.941
+     ]
+    },
+    "threes": {
+     "ratio": 0.9754,
+     "ci95": [
+      0.9456,
+      1.009
+     ]
+    }
+   },
+   "sim_challenger": {
+    "minutes": {
+     "ratio": 1.0775,
+     "ci95": [
+      1.0591,
+      1.0961
+     ]
+    },
+    "points": {
+     "ratio": 1.05,
+     "ci95": [
+      1.0285,
+      1.0715
+     ]
+    },
+    "rebounds": {
+     "ratio": 1.1238,
+     "ci95": [
+      1.0986,
+      1.1517
+     ]
+    },
+    "assists": {
+     "ratio": 1.0272,
+     "ci95": [
+      1.0026,
+      1.0511
+     ]
+    },
+    "threes": {
+     "ratio": 1.0938,
+     "ci95": [
+      1.0604,
+      1.131
+     ]
+    }
+   }
+  },
+  "D actually played (outcome-selected)": {
+   "n_player_games": 10290,
+   "ewm5": {
+    "minutes": {
+     "ratio": 0.7508,
+     "ci95": [
+      0.7435,
+      0.7577
+     ]
+    },
+    "points": {
+     "ratio": 0.7657,
+     "ci95": [
+      0.7541,
+      0.7773
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.7788,
+     "ci95": [
+      0.7671,
+      0.7903
+     ]
+    },
+    "assists": {
+     "ratio": 0.7694,
+     "ci95": [
+      0.7559,
+      0.7838
+     ]
+    },
+    "threes": {
+     "ratio": 0.7725,
+     "ci95": [
+      0.7556,
+      0.7893
+     ]
+    }
+   },
+   "sim_rotation": {
+    "minutes": {
+     "ratio": 0.8578,
+     "ci95": [
+      0.8501,
+      0.8648
+     ]
+    },
+    "points": {
+     "ratio": 0.8377,
+     "ci95": [
+      0.8267,
+      0.8484
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.8802,
+     "ci95": [
+      0.868,
+      0.8924
+     ]
+    },
+    "assists": {
+     "ratio": 0.8167,
+     "ci95": [
+      0.8039,
+      0.8301
+     ]
+    },
+    "threes": {
+     "ratio": 0.8559,
+     "ci95": [
+      0.8387,
+      0.873
+     ]
+    }
+   },
+   "sim_waterfill": {
+    "minutes": {
+     "ratio": 0.8202,
+     "ci95": [
+      0.8131,
+      0.8268
+     ]
+    },
+    "points": {
+     "ratio": 0.8026,
+     "ci95": [
+      0.792,
+      0.8131
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.8423,
+     "ci95": [
+      0.8303,
+      0.8543
+     ]
+    },
+    "assists": {
+     "ratio": 0.7819,
+     "ci95": [
+      0.7696,
+      0.7941
+     ]
+    },
+    "threes": {
+     "ratio": 0.815,
+     "ci95": [
+      0.7987,
+      0.8306
+     ]
+    }
+   },
+   "sim_challenger": {
+    "minutes": {
+     "ratio": 0.8578,
+     "ci95": [
+      0.8501,
+      0.8648
+     ]
+    },
+    "points": {
+     "ratio": 0.8376,
+     "ci95": [
+      0.8266,
+      0.8483
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.88,
+     "ci95": [
+      0.8678,
+      0.8921
+     ]
+    },
+    "assists": {
+     "ratio": 0.8163,
+     "ci95": [
+      0.8035,
+      0.8297
+     ]
+    },
+    "threes": {
+     "ratio": 0.8566,
+     "ci95": [
+      0.8391,
+      0.8733
+     ]
+    }
+   }
+  },
+  "E actually >=28 min (outcome-selected)": {
+   "n_player_games": 3637,
+   "ewm5": {
+    "minutes": {
+     "ratio": 0.6811,
+     "ci95": [
+      0.6713,
+      0.69
+     ]
+    },
+    "points": {
+     "ratio": 0.7052,
+     "ci95": [
+      0.6915,
+      0.7191
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.7165,
+     "ci95": [
+      0.7004,
+      0.7326
+     ]
+    },
+    "assists": {
+     "ratio": 0.7111,
+     "ci95": [
+      0.6941,
+      0.7278
+     ]
+    },
+    "threes": {
+     "ratio": 0.705,
+     "ci95": [
+      0.6837,
+      0.7277
+     ]
+    }
+   },
+   "sim_rotation": {
+    "minutes": {
+     "ratio": 0.7746,
+     "ci95": [
+      0.7643,
+      0.784
+     ]
+    },
+    "points": {
+     "ratio": 0.7465,
+     "ci95": [
+      0.734,
+      0.7591
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.7968,
+     "ci95": [
+      0.78,
+      0.812
+     ]
+    },
+    "assists": {
+     "ratio": 0.7344,
+     "ci95": [
+      0.7189,
+      0.7508
+     ]
+    },
+    "threes": {
+     "ratio": 0.7608,
+     "ci95": [
+      0.7398,
+      0.7819
+     ]
+    }
+   },
+   "sim_waterfill": {
+    "minutes": {
+     "ratio": 0.7265,
+     "ci95": [
+      0.718,
+      0.7349
+     ]
+    },
+    "points": {
+     "ratio": 0.7059,
+     "ci95": [
+      0.6941,
+      0.7179
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.7493,
+     "ci95": [
+      0.7342,
+      0.7634
+     ]
+    },
+    "assists": {
+     "ratio": 0.6938,
+     "ci95": [
+      0.6791,
+      0.7088
+     ]
+    },
+    "threes": {
+     "ratio": 0.7131,
+     "ci95": [
+      0.6933,
+      0.7325
+     ]
+    }
+   },
+   "sim_challenger": {
+    "minutes": {
+     "ratio": 0.7746,
+     "ci95": [
+      0.7643,
+      0.784
+     ]
+    },
+    "points": {
+     "ratio": 0.7489,
+     "ci95": [
+      0.7362,
+      0.7617
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.7952,
+     "ci95": [
+      0.7787,
+      0.8104
+     ]
+    },
+    "assists": {
+     "ratio": 0.7376,
+     "ci95": [
+      0.7218,
+      0.7542
+     ]
+    },
+    "threes": {
+     "ratio": 0.7635,
+     "ci95": [
+      0.7423,
+      0.785
+     ]
+    }
+   }
+  },
+  "F has a listed player-prop contract (selection by listing; diagnostic only)": {
+   "n_player_games": 3146,
+   "ewm5": {
+    "minutes": {
+     "ratio": 0.8315,
+     "ci95": [
+      0.8179,
+      0.8449
+     ]
+    },
+    "points": {
+     "ratio": 0.862,
+     "ci95": [
+      0.8453,
+      0.878
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.8775,
+     "ci95": [
+      0.8577,
+      0.8977
+     ]
+    },
+    "assists": {
+     "ratio": 0.8697,
+     "ci95": [
+      0.8491,
+      0.8898
+     ]
+    },
+    "threes": {
+     "ratio": 0.866,
+     "ci95": [
+      0.8379,
+      0.8922
+     ]
+    }
+   },
+   "sim_rotation": {
+    "minutes": {
+     "ratio": 0.9338,
+     "ci95": [
+      0.919,
+      0.9487
+     ]
+    },
+    "points": {
+     "ratio": 0.8965,
+     "ci95": [
+      0.8796,
+      0.9136
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.9565,
+     "ci95": [
+      0.9341,
+      0.9793
+     ]
+    },
+    "assists": {
+     "ratio": 0.886,
+     "ci95": [
+      0.8665,
+      0.9048
+     ]
+    },
+    "threes": {
+     "ratio": 0.9161,
+     "ci95": [
+      0.8876,
+      0.9435
+     ]
+    }
+   },
+   "sim_waterfill": {
+    "minutes": {
+     "ratio": 0.8955,
+     "ci95": [
+      0.8822,
+      0.9085
+     ]
+    },
+    "points": {
+     "ratio": 0.8699,
+     "ci95": [
+      0.8543,
+      0.8858
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.921,
+     "ci95": [
+      0.9008,
+      0.9418
+     ]
+    },
+    "assists": {
+     "ratio": 0.8571,
+     "ci95": [
+      0.8379,
+      0.8748
+     ]
+    },
+    "threes": {
+     "ratio": 0.8804,
+     "ci95": [
+      0.8537,
+      0.9063
+     ]
+    }
+   },
+   "sim_challenger": {
+    "minutes": {
+     "ratio": 0.9338,
+     "ci95": [
+      0.9192,
+      0.9486
+     ]
+    },
+    "points": {
+     "ratio": 0.9019,
+     "ci95": [
+      0.8847,
+      0.9191
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.9587,
+     "ci95": [
+      0.9365,
+      0.9816
+     ]
+    },
+    "assists": {
+     "ratio": 0.8929,
+     "ci95": [
+      0.873,
+      0.9119
+     ]
+    },
+    "threes": {
+     "ratio": 0.9225,
+     "ci95": [
+      0.8936,
+      0.95
+     ]
+    }
+   }
+  },
+  "G listed AND actually played (selection by listing + outcome)": {
+   "n_player_games": 2980,
+   "ewm5": {
+    "minutes": {
+     "ratio": 0.7911,
+     "ci95": [
+      0.7812,
+      0.8008
+     ]
+    },
+    "points": {
+     "ratio": 0.8193,
+     "ci95": [
+      0.8059,
+      0.8331
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.8336,
+     "ci95": [
+      0.8168,
+      0.8502
+     ]
+    },
+    "assists": {
+     "ratio": 0.8261,
+     "ci95": [
+      0.8086,
+      0.8438
+     ]
+    },
+    "threes": {
+     "ratio": 0.8248,
+     "ci95": [
+      0.7999,
+      0.8483
+     ]
+    }
+   },
+   "sim_rotation": {
+    "minutes": {
+     "ratio": 0.8879,
+     "ci95": [
+      0.8766,
+      0.8986
+     ]
+    },
+    "points": {
+     "ratio": 0.8513,
+     "ci95": [
+      0.8364,
+      0.866
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.908,
+     "ci95": [
+      0.8897,
+      0.9263
+     ]
+    },
+    "assists": {
+     "ratio": 0.8416,
+     "ci95": [
+      0.8232,
+      0.859
+     ]
+    },
+    "threes": {
+     "ratio": 0.8713,
+     "ci95": [
+      0.8456,
+      0.8979
+     ]
+    }
+   },
+   "sim_waterfill": {
+    "minutes": {
+     "ratio": 0.8492,
+     "ci95": [
+      0.8403,
+      0.8584
+     ]
+    },
+    "points": {
+     "ratio": 0.8237,
+     "ci95": [
+      0.8099,
+      0.8379
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.8718,
+     "ci95": [
+      0.8553,
+      0.888
+     ]
+    },
+    "assists": {
+     "ratio": 0.8118,
+     "ci95": [
+      0.7949,
+      0.8286
+     ]
+    },
+    "threes": {
+     "ratio": 0.8353,
+     "ci95": [
+      0.81,
+      0.8599
+     ]
+    }
+   },
+   "sim_challenger": {
+    "minutes": {
+     "ratio": 0.8879,
+     "ci95": [
+      0.8767,
+      0.8985
+     ]
+    },
+    "points": {
+     "ratio": 0.8565,
+     "ci95": [
+      0.8415,
+      0.8711
+     ]
+    },
+    "rebounds": {
+     "ratio": 0.91,
+     "ci95": [
+      0.8917,
+      0.9285
+     ]
+    },
+    "assists": {
+     "ratio": 0.8482,
+     "ci95": [
+      0.8293,
+      0.8655
+     ]
+    },
+    "threes": {
+     "ratio": 0.8776,
+     "ci95": [
+      0.8516,
+      0.904
+     ]
+    }
+   }
+  }
+ },
+ "by_month_points_ratio": {
+  "2026-02": {
+   "ewm5": 0.9632,
+   "sim_rotation": 1.0238,
+   "sim_waterfill": 1.0228,
+   "sim_challenger": 1.0238
+  },
+  "2026-03": {
+   "ewm5": 0.9472,
+   "sim_rotation": 0.9985,
+   "sim_waterfill": 0.9986,
+   "sim_challenger": 0.9985
+  },
+  "2026-04": {
+   "ewm5": 0.9559,
+   "sim_rotation": 0.9982,
+   "sim_waterfill": 0.9983,
+   "sim_challenger": 0.9977
+  }
+ }
+}

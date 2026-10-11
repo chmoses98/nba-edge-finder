@@ -1,0 +1,201 @@
+{
+  "certified": true,
+  "checks": {
+    "control_deterministic": true,
+    "control_normal_ok": true,
+    "control_responds_to_every_mutation": true,
+    "market_inputs_restored_unchanged": true,
+    "model_deterministic": true,
+    "model_identical_under_all_mutations": true,
+    "model_normal_ok": true,
+    "randomization_effective": true,
+    "sports_inputs_unchanged": true
+  },
+  "compare": "bytes",
+  "control_command": [
+    "$SCRATCH/nba/venv/bin/python",
+    "scripts/nba_pure_mutation_test.py",
+    "control",
+    "--out",
+    "{out}",
+    "--market-file",
+    "{market[kalshi_pts]}",
+    "--games",
+    "3",
+    "--sims",
+    "300"
+  ],
+  "gate": "pure_gate 1.0.0",
+  "market_inputs": {
+    "kalshi_pts": {
+      "path": "data/history/kalshi/markets_KXNBAPTS.jsonl.gz",
+      "sha256": "6a18c0116dabefc6d1b2532a68c5d4409ee84cc5bddc64d42d6bd842eb33e09f"
+    }
+  },
+  "mode": "placeholder",
+  "model_command": [
+    "$SCRATCH/nba/venv/bin/python",
+    "scripts/nba_pure_mutation_test.py",
+    "model",
+    "--out",
+    "{out}",
+    "--market-file",
+    "{market[kalshi_pts]}",
+    "--games",
+    "3",
+    "--sims",
+    "300"
+  ],
+  "mutation_seed": 20261010,
+  "note": "Each arm ran the actual command at identical seed, sports inputs and command-line paths. Model-owned outputs must be bit-identical with market inputs deleted or randomized; the market-reading negative control must change, proving the mutation reaches readers. This cannot detect market information baked into the sports snapshot itself or into frozen parameters; pair it with the source/dependency audit.",
+  "passed": true,
+  "per_arm": {
+    "control_responded": {
+      "deleted": "output_changed",
+      "randomized_0": "output_changed"
+    },
+    "model_identical": {
+      "deleted": true,
+      "randomized_0": true
+    }
+  },
+  "random_draws": 1,
+  "randomization_effective_by_input": {
+    "kalshi_pts@20261010": true
+  },
+  "runs": {
+    "control": {
+      "deleted": {
+        "arm": "deleted",
+        "exit_code": 0,
+        "kept_outputs": "$SCRATCH/nba/pg_rerun/results/control-deleted",
+        "ok": true,
+        "output_problem": null,
+        "outputs_sha256": {
+          "baseline.jsonl.gz": "36e485f2f21b9ae3de0bef609336732fa7789c1839e8c90a3e6364f3cbfb4a91",
+          "forecast.jsonl.gz": "d5ac9bcab1c526bb49324ab16a3c0ca939a7d5f59232a0ad721914226ea25bbb"
+        },
+        "role": "control",
+        "seconds": 4.795,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      },
+      "normal": {
+        "arm": "normal",
+        "exit_code": 0,
+        "kept_outputs": "$SCRATCH/nba/pg_rerun/results/control-normal",
+        "ok": true,
+        "output_problem": null,
+        "outputs_sha256": {
+          "baseline.jsonl.gz": "36e485f2f21b9ae3de0bef609336732fa7789c1839e8c90a3e6364f3cbfb4a91",
+          "forecast.jsonl.gz": "812301a13fab6fde6b651632e204c98436d8440f62e545f2a3dfd2c5181e6504"
+        },
+        "role": "control",
+        "seconds": 6.01,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      },
+      "normal_repeat": {
+        "arm": "normal_repeat",
+        "exit_code": 0,
+        "kept_outputs": "$SCRATCH/nba/pg_rerun/results/control-normal_repeat",
+        "ok": true,
+        "output_problem": null,
+        "outputs_sha256": {
+          "baseline.jsonl.gz": "36e485f2f21b9ae3de0bef609336732fa7789c1839e8c90a3e6364f3cbfb4a91",
+          "forecast.jsonl.gz": "812301a13fab6fde6b651632e204c98436d8440f62e545f2a3dfd2c5181e6504"
+        },
+        "role": "control",
+        "seconds": 5.191,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      },
+      "randomized_0": {
+        "arm": "randomized_0",
+        "exit_code": 0,
+        "kept_outputs": "$SCRATCH/nba/pg_rerun/results/control-randomized_0",
+        "ok": true,
+        "output_problem": null,
+        "outputs_sha256": {
+          "baseline.jsonl.gz": "36e485f2f21b9ae3de0bef609336732fa7789c1839e8c90a3e6364f3cbfb4a91",
+          "forecast.jsonl.gz": "d5ac9bcab1c526bb49324ab16a3c0ca939a7d5f59232a0ad721914226ea25bbb"
+        },
+        "role": "control",
+        "seconds": 5.673,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      }
+    },
+    "model": {
+      "deleted": {
+        "arm": "deleted",
+        "exit_code": 0,
+        "kept_outputs": "$SCRATCH/nba/pg_rerun/results/model-deleted",
+        "ok": true,
+        "output_problem": null,
+        "outputs_sha256": {
+          "baseline.jsonl.gz": "36e485f2f21b9ae3de0bef609336732fa7789c1839e8c90a3e6364f3cbfb4a91",
+          "forecast.jsonl.gz": "d5ac9bcab1c526bb49324ab16a3c0ca939a7d5f59232a0ad721914226ea25bbb"
+        },
+        "role": "model",
+        "seconds": 4.947,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      },
+      "normal": {
+        "arm": "normal",
+        "exit_code": 0,
+        "kept_outputs": "$SCRATCH/nba/pg_rerun/results/model-normal",
+        "ok": true,
+        "output_problem": null,
+        "outputs_sha256": {
+          "baseline.jsonl.gz": "36e485f2f21b9ae3de0bef609336732fa7789c1839e8c90a3e6364f3cbfb4a91",
+          "forecast.jsonl.gz": "d5ac9bcab1c526bb49324ab16a3c0ca939a7d5f59232a0ad721914226ea25bbb"
+        },
+        "role": "model",
+        "seconds": 5.329,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      },
+      "normal_repeat": {
+        "arm": "normal_repeat",
+        "exit_code": 0,
+        "kept_outputs": "$SCRATCH/nba/pg_rerun/results/model-normal_repeat",
+        "ok": true,
+        "output_problem": null,
+        "outputs_sha256": {
+          "baseline.jsonl.gz": "36e485f2f21b9ae3de0bef609336732fa7789c1839e8c90a3e6364f3cbfb4a91",
+          "forecast.jsonl.gz": "d5ac9bcab1c526bb49324ab16a3c0ca939a7d5f59232a0ad721914226ea25bbb"
+        },
+        "role": "model",
+        "seconds": 4.871,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      },
+      "randomized_0": {
+        "arm": "randomized_0",
+        "exit_code": 0,
+        "kept_outputs": "$SCRATCH/nba/pg_rerun/results/model-randomized_0",
+        "ok": true,
+        "output_problem": null,
+        "outputs_sha256": {
+          "baseline.jsonl.gz": "36e485f2f21b9ae3de0bef609336732fa7789c1839e8c90a3e6364f3cbfb4a91",
+          "forecast.jsonl.gz": "d5ac9bcab1c526bb49324ab16a3c0ca939a7d5f59232a0ad721914226ea25bbb"
+        },
+        "role": "model",
+        "seconds": 5.587,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      }
+    }
+  },
+  "seed": 7,
+  "sports_inputs": {
+    "espn": {
+      "path": "data/history/espn",
+      "sha256": "82e83929b8844fdf9495f70908800050c89d3efb0a94fd3c5648ebf0cb3cdc28"
+    }
+  },
+  "verdict": "PASS_RUNTIME_NONLEAKAGE",
+  "workdir": "$SCRATCH/nba/pg_rerun"
+}

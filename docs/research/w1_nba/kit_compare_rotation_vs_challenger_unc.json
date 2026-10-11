@@ -1,0 +1,123 @@
+{
+  "conditional_dnp_excluded": 0,
+  "coverage": {
+    "challenger_only_without_champion": 0,
+    "champion_only_without_challenger": 0,
+    "matched_forecasts_without_outcome": 0,
+    "settled_with_both_forecasts": 73815
+  },
+  "metric_policy": "matched unique player-game-statistic; one closest-to-50% common ladder rung per player-game; bootstrap clustered by game",
+  "note": "Scores use outcomes and player-stat projections only. Market odds are never model inputs. Comparisons require a new untouched chronological holdout for promotion.",
+  "statistic_scorecards": {
+    "NBA:assists": {
+      "challenger_bias": -0.038367,
+      "challenger_brier": 0.188386,
+      "challenger_mae": 1.301361,
+      "challenger_p10_p90_coverage": 0.885321,
+      "challenger_rmse": 1.919892,
+      "champion_bias": -0.037731,
+      "champion_brier": 0.18837,
+      "champion_mae": 1.305184,
+      "champion_p10_p90_coverage": 0.886879,
+      "champion_rmse": 1.92218,
+      "delta_mae_challenger_minus_champion": -0.003822,
+      "delta_mae_game_cluster_bootstrap_95ci": [
+        -0.00536,
+        -0.002329
+      ],
+      "delta_mean_squared_error": -0.008792,
+      "n_common_thresholds_scored_one_per_player_game": 14763,
+      "n_games": 501,
+      "n_player_games": 14763,
+      "status": "DESCRIPTIVE_ONLY_NOT_AUTOMATIC_PROMOTION"
+    },
+    "NBA:minutes": {
+      "challenger_bias": 0.428366,
+      "challenger_brier": 0.216073,
+      "challenger_mae": 7.382061,
+      "challenger_p10_p90_coverage": 0.818059,
+      "challenger_rmse": 10.075772,
+      "champion_bias": 0.428021,
+      "champion_brier": 0.215965,
+      "champion_mae": 7.381533,
+      "champion_p10_p90_coverage": 0.818533,
+      "champion_rmse": 10.075156,
+      "delta_mae_challenger_minus_champion": 0.000529,
+      "delta_mae_game_cluster_bootstrap_95ci": [
+        -0.000465,
+        0.001557
+      ],
+      "delta_mean_squared_error": 0.012432,
+      "n_common_thresholds_scored_one_per_player_game": 14763,
+      "n_games": 501,
+      "n_player_games": 14763,
+      "status": "DESCRIPTIVE_ONLY_NOT_AUTOMATIC_PROMOTION"
+    },
+    "NBA:points": {
+      "challenger_bias": 0.050207,
+      "challenger_brier": 0.209949,
+      "challenger_mae": 4.855145,
+      "challenger_p10_p90_coverage": 0.843189,
+      "challenger_rmse": 6.729806,
+      "champion_bias": 0.05098,
+      "champion_brier": 0.210325,
+      "champion_mae": 4.866921,
+      "champion_p10_p90_coverage": 0.843528,
+      "champion_rmse": 6.734391,
+      "delta_mae_challenger_minus_champion": -0.011775,
+      "delta_mae_game_cluster_bootstrap_95ci": [
+        -0.016169,
+        -0.007045
+      ],
+      "delta_mean_squared_error": -0.061743,
+      "n_common_thresholds_scored_one_per_player_game": 14763,
+      "n_games": 501,
+      "n_player_games": 14763,
+      "status": "DESCRIPTIVE_ONLY_NOT_AUTOMATIC_PROMOTION"
+    },
+    "NBA:rebounds": {
+      "challenger_bias": 0.160234,
+      "challenger_brier": 0.213644,
+      "challenger_mae": 1.934664,
+      "challenger_p10_p90_coverage": 0.867507,
+      "challenger_rmse": 2.702172,
+      "champion_bias": 0.159257,
+      "champion_brier": 0.214066,
+      "champion_mae": 1.941154,
+      "champion_p10_p90_coverage": 0.868455,
+      "champion_rmse": 2.703109,
+      "delta_mae_challenger_minus_champion": -0.006489,
+      "delta_mae_game_cluster_bootstrap_95ci": [
+        -0.008475,
+        -0.004161
+      ],
+      "delta_mean_squared_error": -0.005069,
+      "n_common_thresholds_scored_one_per_player_game": 14763,
+      "n_games": 501,
+      "n_player_games": 14763,
+      "status": "DESCRIPTIVE_ONLY_NOT_AUTOMATIC_PROMOTION"
+    },
+    "NBA:threes": {
+      "challenger_bias": 0.024035,
+      "challenger_brier": 0.189799,
+      "challenger_mae": 0.793392,
+      "challenger_p10_p90_coverage": 0.925896,
+      "challenger_rmse": 1.169708,
+      "champion_bias": 0.0233,
+      "champion_brier": 0.190085,
+      "champion_mae": 0.794733,
+      "champion_p10_p90_coverage": 0.927047,
+      "champion_rmse": 1.169937,
+      "delta_mae_challenger_minus_champion": -0.001341,
+      "delta_mae_game_cluster_bootstrap_95ci": [
+        -0.001945,
+        -0.00077
+      ],
+      "delta_mean_squared_error": -0.000535,
+      "n_common_thresholds_scored_one_per_player_game": 14763,
+      "n_games": 501,
+      "n_player_games": 14763,
+      "status": "DESCRIPTIVE_ONLY_NOT_AUTOMATIC_PROMOTION"
+    }
+  }
+}
