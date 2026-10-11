@@ -64,14 +64,18 @@ def _http_dt(v: str | None) -> datetime | None:
 
 
 class SlotProber:
-    """HEAD-probe report slots with a persistent cache (published slots never disappear; a missing
-    slot is cached too, but only for slots older than a day so a late upload is still found)."""
+    """HEAD-probe report slots with a persistent cache of FOUND files only.
+
+    A 403 is not cached: the CDN answers 403 both for "no such file" and, transiently, for files that
+    exist (the first 2025-26 run cached 403s for Dec 25-31 reports that a later run found), so a miss is
+    re-checked on every run."""
 
     def __init__(self, client: httpx.Client, cache_path: Path, sleep_s: float = 0.05) -> None:
         self.c = client
         self.path = cache_path
         self.sleep_s = sleep_s
-        self.cache: dict[str, dict[str, Any]] = json.loads(cache_path.read_text()) if cache_path.exists() else {}
+        raw = json.loads(cache_path.read_text()) if cache_path.exists() else {}
+        self.cache: dict[str, dict[str, Any]] = {k: v for k, v in raw.items() if v.get("code") == 200}
         self.n_head = 0
 
     def status(self, slot_et: datetime, extended: bool = False) -> dict[str, Any]:
@@ -89,7 +93,7 @@ class SlotProber:
                 st = {"code": f"error:{type(e).__name__}", "url": url}
             if st["code"] == 200:
                 break
-        if isinstance(st["code"], int) and (st["code"] == 200 or slot_et < utcnow().astimezone(ET) - timedelta(days=1)):
+        if st["code"] == 200:
             self.cache[key] = st
         if self.sleep_s:
             time.sleep(self.sleep_s)
