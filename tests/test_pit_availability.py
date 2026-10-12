@@ -58,17 +58,31 @@ def test_capture_store_is_write_once_and_hash_chained(tmp_path):
 
 def test_snapshot_is_pit_ok_only_if_published_before_tip():
     snaps = pd.DataFrame([{"game_id": "g1", "tip_utc": "2026-01-16T00:00:00Z", "last_pre_tip_slot_et": "2026-01-15T18:30",
-                           "t_minus_60_slot_et": "2026-01-15T18:00"}])
+                           "t_minus_60_slot_et": "2026-01-15T17:45"}])
     reports = pd.DataFrame([
         {"slot_et": "2026-01-15T18:30", "report_time_utc": "2026-01-15T23:30:00Z", "last_modified_utc": "2026-01-16T00:01:00Z"},
-        {"slot_et": "2026-01-15T18:00", "report_time_utc": "2026-01-15T23:00:00Z", "last_modified_utc": "2026-01-15T23:02:00Z"},
+        {"slot_et": "2026-01-15T17:45", "report_time_utc": "2026-01-15T22:45:00Z", "last_modified_utc": "2026-01-15T22:45:05Z"},
     ])
-    rows = pd.DataFrame([{"slot_et": s, "game_id": "g1", "team_id": t} for s in ("2026-01-15T18:30", "2026-01-15T18:00")
+    rows = pd.DataFrame([{"slot_et": s, "game_id": "g1", "team_id": t} for s in ("2026-01-15T18:30", "2026-01-15T17:45")
                          for t in (1, 2)])
     out = verify_snapshots(snaps, reports, rows).iloc[0]
     assert out["last_pre_tip_nominal_before_tip"] and not out["last_pre_tip_published_before_tip"]
     assert not out["last_pre_tip_pit_ok"], "a report uploaded after the tip must never be attached to the game"
-    assert out["t_minus_60_pit_ok"] and out["t_minus_60_lead_minutes"] == 60.0
+    assert out["t_minus_60_pit_ok"] and out["t_minus_60_lead_minutes"] == 75.0
+    assert out["t_minus_60_before_cutoff"] and out["t_minus_60_cutoff_utc"] == "2026-01-15T23:00:00Z"
+
+
+def test_t_minus_60_snapshot_must_precede_its_own_cutoff_not_only_the_tip():
+    snaps = pd.DataFrame([{"game_id": "g1", "tip_utc": "2026-01-16T00:00:00Z", "last_pre_tip_slot_et": "2026-01-15T18:30",
+                           "t_minus_60_slot_et": "2026-01-15T18:30"}])
+    reports = pd.DataFrame([{"slot_et": "2026-01-15T18:30", "report_time_utc": "2026-01-15T23:30:00Z",
+                             "last_modified_utc": "2026-01-15T23:30:05Z"}])
+    rows = pd.DataFrame([{"slot_et": "2026-01-15T18:30", "game_id": "g1", "team_id": 1}])
+    out = verify_snapshots(snaps, reports, rows).iloc[0]
+    assert out["last_pre_tip_pit_ok"]
+    # uploaded 30 min before tip: before the tip, but after the T-60 decision time -> not a T-60 snapshot
+    assert out["t_minus_60_published_before_tip"] and not out["t_minus_60_before_cutoff"]
+    assert not out["t_minus_60_pit_ok"]
 
 
 def test_espn_rows_take_the_athlete_id_from_the_player_card_link():

@@ -16,6 +16,7 @@ on:
       - "src/nba_edge/availability/**"
       - "scripts/pit_injury_backfill.py"
       - "scripts/pit_capture.py"
+      - "scripts/pit_refetch_spotcheck.py"
   schedule:
     # hourly at :41 (off the :00 rush); the report itself is published every 15 minutes
     - cron: "41 * * * *"
@@ -63,6 +64,9 @@ jobs:
         env:
           NBA_EDGE_LOG_LEVEL: INFO
         run: python scripts/pit_injury_backfill.py --season 2025-26 --max-minutes 18
+      - name: Provenance spot-check (re-fetch a seeded sample of stored reports; sha256, Last-Modified, rows)
+        if: always()
+        run: python scripts/pit_refetch_spotcheck.py --season 2025-26 --n 6
       - name: Prospective capture DRY-RUN (fetch live, parse, validate; commits nothing)
         if: always()
         run: python scripts/pit_capture.py --root "$RUNNER_TEMP/pit_dry" --dry-run

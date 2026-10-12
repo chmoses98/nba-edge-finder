@@ -11,8 +11,8 @@ Files are found by HEAD-probing the archive (``ak-static.cms.nba.com``: 200 = ex
 file) backwards over filename slots. The filename is only a locator: the report time is the one printed
 in the PDF header (hourly-era files named ``_06PM`` are the 6:30 or 6:45 report). Each distinct report is
 downloaded once, parsed, and stored with ``fetched_at_utc``, ``last_modified_utc`` and a sha256. A game's
-snapshot is ``pit_ok`` only if the header report time AND the upload instant both precede the tip and the
-report lists the game. Nothing uploaded at or after the tip is attached to a game; no post-game source is
+snapshot is ``pit_ok`` only if the header report time AND the upload instant both precede the tip AND the
+snapshot's own cutoff (tip, or tip - 60 min for ``t_minus_60``), and the report lists the game. Nothing uploaded at or after the tip is attached to a game; no post-game source is
 an input (the box score is read only by the coverage script, to validate the parser).
 
 Outputs (``out_root/injury_reports/``): ``reports_<season>.parquet``, ``report_rows_<season>.parquet``,
@@ -241,7 +241,7 @@ def verify_snapshots(snaps: pd.DataFrame, reports: pd.DataFrame, rows: pd.DataFr
     out = []
     for s in snaps.to_dict("records"):
         tip = parse_iso(s["tip_utc"])
-        for tag in ("last_pre_tip", "t_minus_60"):
+        for tag, cutoff in (("last_pre_tip", tip), ("t_minus_60", tip - T60)):
             key = s[f"{tag}_slot_et"]
             r = rep.loc[key] if key is not None and len(rep) and key in rep.index else None
             nominal = parse_iso(r["report_time_utc"]) if r is not None and r["report_time_utc"] else None
@@ -251,9 +251,14 @@ def verify_snapshots(snaps: pd.DataFrame, reports: pd.DataFrame, rows: pd.DataFr
             s[f"{tag}_lead_minutes"] = round((tip - nominal).total_seconds() / 60, 1) if nominal else None
             s[f"{tag}_nominal_before_tip"] = bool(nominal is not None and nominal < tip)
             s[f"{tag}_published_before_tip"] = bool(lm is not None and lm < tip)
+            # the snapshot's own decision cutoff (tip for last_pre_tip, tip - 60 min for t_minus_60): the
+            # locator already selects by upload < cutoff; this re-asserts it on the stored report times
+            s[f"{tag}_cutoff_utc"] = iso(cutoff)
+            s[f"{tag}_before_cutoff"] = bool(nominal is not None and lm is not None and nominal < cutoff
+                                             and lm < cutoff)
             s[f"{tag}_rows_for_game"] = int(have_rows.get((key, s["game_id"]), 0)) if key else 0
             s[f"{tag}_teams_listed"] = int(teams_rows.get((key, s["game_id"]), 0)) if key else 0
             s[f"{tag}_pit_ok"] = bool(s[f"{tag}_nominal_before_tip"] and s[f"{tag}_published_before_tip"]
-                                      and s[f"{tag}_rows_for_game"] > 0)
+                                      and s[f"{tag}_before_cutoff"] and s[f"{tag}_rows_for_game"] > 0)
         out.append(s)
     return pd.DataFrame(out)

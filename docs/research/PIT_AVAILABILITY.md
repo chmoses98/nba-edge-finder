@@ -28,8 +28,13 @@ the tip and which lists the game. Same coverage for a T-60 snapshot (1,310). No 
 
 For each game (schedule and scheduled tip from the committed ESPN team-games dataset):
 `last_pre_tip` = latest report uploaded strictly before tip; `t_minus_60` = latest uploaded strictly
-before tip − 60 min. `pit_ok` = header report time < tip AND upload instant < tip AND the report lists
-the game. Nothing uploaded at/after tip is ever attached; no post-game source is an input.
+before tip − 60 min. `pit_ok` = header report time < tip AND upload instant < tip AND both precede the
+snapshot's own cutoff (`<tag>_cutoff_utc`: the tip, or tip − 60 min for `t_minus_60`; flag
+`<tag>_before_cutoff`) AND the report lists the game. Nothing uploaded at/after a snapshot's cutoff is
+ever attached; no post-game source is an input to any status. (Review fix: the T-60 flag originally
+re-checked only "< tip"; the locator already selected by upload < tip − 60, and re-verification on the
+stored data found 0 of 1,312 located T-60 reports with header or upload ≥ tip − 60, so every count
+below is unchanged.)
 
 | | last_pre_tip | t_minus_60 |
 |---|---:|---:|
@@ -64,6 +69,16 @@ team_season 107,753; season_any_team 1,534; team_initial_last 281; unmatched 4,3
 distinct (team, name) pairs**. Unmatched are players with no 2025-26 box-score line (season-long
 absences, e.g. Kyrie Irving, Tyrese Haliburton, Dante Exum; unsigned/two-way names).
 
+**Identity mapping is a retrospective join, not point-in-time.** Name → id candidates come from the
+2025-26 ESPN box scores, including the game's own box (`game_box`) and the full season
+(`team_season`, `season_any_team`), i.e. box scores published after the report. Only the id lookup
+uses them; the status, reason, report time and upload instant of every row come from the PDF alone.
+Consequences for users: (1) the 2.76% unmatched rows are disproportionately players who never logged
+a 2025-26 box line, so a matched-only join under-represents season-long absences; (2) a prospective
+consumer must map names with rosters known before the cutoff (the prospective ESPN capture carries the
+athlete id directly). Report rows link to their report's `url`, `fetched_at_utc`,
+`last_modified_utc` and `sha256` through `slot_et`.
+
 Validation only (post-game box read to check the parser and mapping, never as an input): of matched
 players in the certified last-pre-tip report, **Out 11,017 → 0.0% played**, Doubtful 7 → 0%,
 Questionable 66 → 60.6%, Probable 25 → 96%, Available 2,619 → 86.7%.
@@ -79,6 +94,12 @@ Every capture first self-tests the parser on a known report (151 rows). PR runs 
 38105674909 fetched live, self-test 151 rows / 0 missing team, found no official report in the last 6
 hours (off-season), captured 134 ESPN injury rows (134 with athlete id), chain verified, artifact
 uploaded, nothing committed.
+
+## Re-fetch spot-check
+
+`scripts/pit_refetch_spotcheck.py` (workflow step on pull requests) re-downloads a seeded sample of
+stored reports, including the T-60 reports of seeded games, and compares sha256, `Last-Modified`
+and the parsed rows with the stored records; results in `docs/research/pit_availability/refetch_spotcheck.json`.
 
 ## Files
 
