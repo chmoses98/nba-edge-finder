@@ -84,3 +84,8 @@ default**, and V1's digest and outputs are unchanged (every other holdout row is
 `tests/test_player_team_identity.py::test_the_fix_is_off_in_the_frozen_baseline` fails if the default is
 flipped while `BASELINE_ID` is V1. Turning it on in production requires a new baseline id that adds the
 flag to `frozen_parameters()`, with V1 kept in `KNOWN_BASELINES`.
+
+`BuildConfig.drop_departed_players` (same document, "Departed players") covers the more common form of
+the same defect: a player traded to any third team is still simulated for the team he left. It changes the
+roster in 138 of the 501 holdout games, and it is also **off by default** and outside `frozen_parameters()`.
+The guard test covers both flags. A V2 baseline that adopts the identity fix should record both flags.

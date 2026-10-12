@@ -18,7 +18,7 @@ from __future__ import annotations
 import pandas as pd
 
 from nba_edge.baseline.manifest import BASELINE_DIGEST, BASELINE_ID, compute_digest
-from nba_edge.features.build import BuildConfig, build_game_params, cross_team_resolution
+from nba_edge.features.build import BuildConfig, build_game_params, cross_team_resolution, departed_players
 from nba_edge.sim.engine import simulate
 
 TRADED = 99
@@ -114,6 +114,7 @@ def test_the_fix_is_off_in_the_frozen_baseline():
     a new BASELINE_ID that records the flag (see MODEL_FREEZE.md, 'Traded-player identity')."""
     assert BASELINE_ID == "NBA_BASELINE_2026_PRESEASON_V1"
     assert BuildConfig().resolve_cross_team_players is False
+    assert BuildConfig().drop_departed_players is False
     assert compute_digest() == BASELINE_DIGEST
 
 
@@ -149,3 +150,80 @@ def test_resolution_reaches_a_fixed_point_when_a_freed_roster_slot_admits_anothe
     home, away = _ids(gp)
     assert not set(home) & set(away)
     assert {TRADED, 98} <= set(away)
+
+
+# ---- departed players: traded to a THIRD team (not this game's opponent) ----------------------------------
+THIRD = 3
+
+
+def _frames_traded_to_third_team() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Player 99 plays for team 1 on Jan 1..7, then for team 3 from Jan 9 (team 3 plays only in his
+    rows here). The game under test is 1 vs 2 on Jan 16: team 1's last-10 window still contains him."""
+    tg, pg = _frames()
+    moved = (pg["nba_id"] == TRADED) & (pg["team_id"] == AWAY)
+    pg.loc[moved, "team_id"] = THIRD
+    pg.loc[moved, "game_id"] = pg.loc[moved, "game_id"].str.replace("g2-", "g3-")
+    return tg, pg
+
+
+def test_v1_keeps_a_player_traded_to_a_third_team_on_his_old_team():
+    tg, pg = _frames_traded_to_third_team()
+    gp, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}})
+    home, away = _ids(gp)
+    stale = next(p for p in gp.home.players if p.nba_id == TRADED)
+    assert TRADED not in away and stale.p_play == 0.6  # 'missed the team's last game', not 'gone'
+    # resolve_cross_team_players alone cannot see it: he is not eligible for the opponent
+    gp2, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}}, None, BuildConfig(resolve_cross_team_players=True))
+    assert TRADED in _ids(gp2)[0]
+
+
+def test_drop_departed_players_removes_him_from_the_old_team():
+    tg, pg = _frames_traded_to_third_team()
+    assert departed_players(HOME, pg, CUTOFF) == {TRADED: {"last_team_id": THIRD, "last_date": "2026-01-14", "last_date_here": "2026-01-07"}}
+    assert departed_players(AWAY, pg, CUTOFF) == {}
+    gp, rep = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}}, None, BuildConfig(drop_departed_players=True))
+    home, away = _ids(gp)
+    assert TRADED not in home and TRADED not in away
+    assert any(f"player {TRADED}: last appearance for team {THIRD}" in w for w in rep.warnings)
+    v1, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}})
+    assert gp.away == v1.away  # the untouched team is identical
+
+
+def test_drop_departed_players_respects_the_cutoff():
+    tg, pg = _frames_traded_to_third_team()
+    # on Jan 9 his first team-3 row is ON the cutoff date (excluded), so he has not departed yet
+    assert departed_players(HOME, pg, "2026-01-09") == {}
+    assert departed_players(HOME, pg, "2026-01-10")[TRADED]["last_date"] == "2026-01-09"
+
+
+def test_a_dnp_row_for_the_new_team_counts_as_an_appearance():
+    tg, pg = _frames_traded_to_third_team()
+    new = (pg["nba_id"] == TRADED) & (pg["team_id"] == THIRD)
+    pg.loc[new, ["played", "minutes"]] = [False, 0.0]  # listed in team 3's box scores, never played
+    assert TRADED in departed_players(HOME, pg, CUTOFF)
+
+
+def test_drop_departed_players_alone_resolves_the_opponent_collision_the_same_way():
+    tg, pg = _frames()
+    a, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}}, None, BuildConfig(resolve_cross_team_players=True))
+    b, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}}, None, BuildConfig(drop_departed_players=True))
+    c, rep = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}}, None,
+                               BuildConfig(resolve_cross_team_players=True, drop_departed_players=True))
+    assert (a.home, a.away) == (b.home, b.away) == (c.home, c.away)  # only the warning text differs
+    assert not any("eligible for both teams" in w for w in rep.warnings)  # nothing left for the second pass
+
+
+def test_drop_departed_players_leaves_explicit_rosters_alone():
+    tg, pg = _frames_traded_to_third_team()
+    roster = {HOME: [TRADED] + [HOME * 100 + j for j in range(10)]}
+    a, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}}, roster)
+    b, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}}, roster, BuildConfig(drop_departed_players=True))
+    assert a == b and TRADED in _ids(b)[0]
+
+
+def test_drop_departed_players_on_does_not_change_a_game_without_a_departure():
+    tg, pg = _frames()
+    pg = pg[pg["nba_id"] != TRADED]
+    a, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}})
+    b, _ = build_game_params(GAME, tg, pg, CUTOFF, {HOME: {}, AWAY: {}}, None, BuildConfig(drop_departed_players=True))
+    assert a == b

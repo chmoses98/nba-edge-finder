@@ -63,6 +63,13 @@ class BuildConfig:
     # NBA_BASELINE_2026_PRESEASON_V1: turning it on changes predictions for the affected games, which
     # docs/research/MODEL_FREEZE.md treats as a model change requiring a new baseline id.
     resolve_cross_team_players: bool = False
+    # Departed players (docs/research/PLAYER_TEAM_IDENTITY.md, "Departed players"). Without an explicit
+    # roster, a player traded to ANY other team stays eligible for his old team until he drops out of
+    # its last ``recent_team_games`` games, typically with p_play 0.6 ("missed the team's last game").
+    # When True, a player is simulated for a team only if his most recent box-score row (played or
+    # DNP) strictly before the cutoff is for that team. Teams with an explicit roster are not touched.
+    # OFF in the frozen baseline for the same reason as ``resolve_cross_team_players``.
+    drop_departed_players: bool = False
 
 
 @dataclass
@@ -294,8 +301,19 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
     if cfg.rating_scale != 1.0:
         L = league["ppp"]
         ratings = {t: (L + (o - L) * cfg.rating_scale, L + (d - L) * cfg.rating_scale, n) for t, (o, d, n) in ratings.items()}
-    resolution = cross_team_resolution(game, team_games, player_games, cutoff_date, injuries_by_team, rosters, cfg) if cfg.resolve_cross_team_players else {}
     exclude: dict[int, set[int]] = {}
+    if cfg.drop_departed_players:
+        for side in ("home", "away"):
+            tid = int(game[f"{side}_team_id"])
+            if (rosters or {}).get(tid) is not None:
+                continue  # an explicit roster already says who is on the team
+            for pid, d in sorted(departed_players(tid, player_games, cutoff_date, cfg).items()):
+                exclude.setdefault(tid, set()).add(pid)
+                report.warnings.append(
+                    f"player {pid}: last appearance for team {d['last_team_id']} on {d['last_date']} (after team {tid}, last {d['last_date_here']}); "
+                    f"removed from team {tid}"
+                )
+    resolution = cross_team_resolution(game, team_games, player_games, cutoff_date, injuries_by_team, rosters, cfg, exclude) if cfg.resolve_cross_team_players else {}
     for pid, r in sorted(resolution.items()):
         exclude.setdefault(r["stale_team_id"], set()).add(pid)
         report.warnings.append(
@@ -323,8 +341,36 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
     return gp, report
 
 
+def departed_players(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cfg: BuildConfig | None = None) -> dict[int, dict[str, Any]]:
+    """Players with box-score history for ``team_id`` whose most recent box-score row (played or DNP)
+    strictly before ``cutoff_date`` is for a DIFFERENT team: traded, waived and signed elsewhere, so no
+    longer on this team. A player with rows for two teams on his last date (not seen in clean data) is
+    ambiguous and is left alone.
+
+    Returns ``{player_id: {"last_team_id", "last_date", "last_date_here"}}``. Reads sports history only."""
+    cfg = cfg or BuildConfig()
+    pg = player_games[player_games["game_date_et"] < cutoff_date]
+    if not cfg.include_preseason and "season_type" in pg:
+        pg = pg[pg["season_type"] != "preseason"]
+    here = pg[pg["team_id"] == team_id]
+    if here.empty:
+        return {}
+    ids = set(here["nba_id"].astype(int))
+    mine = pg[pg["nba_id"].isin(ids)]
+    last_date = mine.groupby("nba_id")["game_date_et"].max()
+    last_rows = mine[mine["game_date_et"].to_numpy() == last_date.reindex(mine["nba_id"]).to_numpy()]
+    last_here = here.groupby("nba_id")["game_date_et"].max()
+    out: dict[int, dict[str, Any]] = {}
+    for pid, teams in last_rows.groupby("nba_id")["team_id"]:
+        t = {int(x) for x in teams}
+        if len(t) == 1 and team_id not in t:
+            out[int(pid)] = {"last_team_id": t.pop(), "last_date": str(last_date[pid]), "last_date_here": str(last_here[pid])}
+    return out
+
+
 def cross_team_resolution(game: dict[str, Any], team_games: pd.DataFrame, player_games: pd.DataFrame, cutoff_date: str, injuries_by_team: dict[int, dict[int, InjuryStatus]],
-                          rosters: dict[int, list[int]] | None = None, cfg: BuildConfig | None = None) -> dict[int, dict[str, Any]]:
+                          rosters: dict[int, list[int]] | None = None, cfg: BuildConfig | None = None,
+                          initial_exclude: dict[int, set[int]] | None = None) -> dict[int, dict[str, Any]]:
     """Players who would be eligible for BOTH teams of this game, and which team each belongs to.
 
     Eligibility is the unchanged roster rule (``player_params``, run here on a scratch report). For
@@ -332,6 +378,9 @@ def cross_team_resolution(game: dict[str, Any], team_games: pd.DataFrame, player
     appearance (a box-score row with ``played``; any box-score row if he never played) strictly
     before ``cutoff_date``. Ties -- impossible in clean data, since one player cannot appear for two
     teams on one date -- keep the player on the HOME team, so the result is deterministic.
+
+    ``initial_exclude`` (``{team_id: ids}``, e.g. from :func:`departed_players`) is removed from the
+    candidate lists first, so only collisions that survive it are resolved here.
 
     Returns ``{player_id: {"keep_team_id", "stale_team_id", "last_dates": {team_id: date or None}}}``;
     empty when no player is eligible for both teams. Reads sports history only."""
@@ -341,7 +390,7 @@ def cross_team_resolution(game: dict[str, Any], team_games: pd.DataFrame, player
     if not cfg.include_preseason and "season_type" in pg:
         pg = pg[pg["season_type"] != "preseason"]
     out: dict[int, dict[str, Any]] = {}
-    exclude: dict[int, set[int]] = {h: set(), a: set()}
+    exclude: dict[int, set[int]] = {h: set((initial_exclude or {}).get(h, set())), a: set((initial_exclude or {}).get(a, set()))}
     # Removing a stale entry frees a slot under ``max_roster``, which can admit a player who is ALSO
     # eligible for the other team (measured once on the 2025-26 holdout). Iterate to a fixed point;
     # each player is decided once, from his own appearance dates, so the order cannot matter.

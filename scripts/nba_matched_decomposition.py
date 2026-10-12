@@ -286,6 +286,8 @@ def main(argv=None) -> int:
     ap.add_argument("--player-prior-minutes", type=float, help="challenger arm: BuildConfig.player_prior_minutes (preregistered)")
     ap.add_argument("--resolve-cross-team-players", action="store_true",
                     help="opt-in traded-player identity fix for the simulator arms (NOT the frozen V1 default)")
+    ap.add_argument("--drop-departed-players", action="store_true",
+                    help="opt-in: drop players whose last box-score row is for another team (NOT the frozen V1 default)")
     ap.add_argument("--every", type=int, default=1, help="collect every k-th game (DEV-only sweeps)")
     ap.add_argument("--arms", default=",".join(md.ARMS))
     ap.add_argument("--tag", default="")
@@ -308,7 +310,8 @@ def main(argv=None) -> int:
         cfg = BuildConfig(player_prior_minutes=a.player_prior_minutes) if a.player_prior_minutes is not None else None
         print(json.dumps(collect(a.data, a.window, a.out, a.sims, a.limit, tuple(a.arms.split(",")), tag=a.tag,
                                  challenger_cfg=cfg, every=a.every,
-                                 champion_cfg=BuildConfig(resolve_cross_team_players=True) if a.resolve_cross_team_players else None), indent=1))
+                                 champion_cfg=BuildConfig(resolve_cross_team_players=a.resolve_cross_team_players, drop_departed_players=a.drop_departed_players)
+                                 if (a.resolve_cross_team_players or a.drop_departed_players) else None), indent=1))
     elif a.cmd == "report":
         cuts = tuple(float(x) for x in a.usage_cuts.split(",")) if a.usage_cuts else None
         rep = report(a.out, a.window, a.boot, cuts, a.listed, tag=a.tag)

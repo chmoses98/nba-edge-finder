@@ -127,6 +127,50 @@ own minutes and participation, where the reported V1 copy was often the wrong te
 scorecards in `MATCHED_DECOMPOSITION.md` are unaffected. Those 28 rows were excluded there, and every
 other row is bit-identical.
 
+## Departed players: traded to a third team (`drop_departed_players`, added 2026-10-12)
+
+**The same identity defect, and much more common.** The collision above only happens when the old and
+new teams meet each other. More often, a player traded to **any** team stays eligible for his old team
+until he drops out of its last 10 games. During that time he is simulated for the old team, typically
+with `p_play` 0.6 ("missed the team's last game"). `resolve_cross_team_players` cannot see this, because
+he is not eligible for this game's opponent.
+
+The audit covers the same holdout, 501 games, using `GameParams` only. For each simulated player it
+checks the team of his most recent box-score row (played or DNP) strictly before the game date, and the
+team he appeared for in that game's box score. Output: `w1_nba/player_team_identity_roster_audit.json`.
+
+| config | roster entries | on most-recent team | stale: opponent | stale: third team (Σ p_play) | on both rosters | in this game's box | in box for the OTHER side | games changed vs V1 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| V1 (frozen) | 14,791 | 14,533 | 14 | **244** (125.7) | 14 | 12,198 | 12 | – |
+| `resolve_cross_team_players` | 14,791 | 14,546 | 1 | **244** (125.7) | 0 | 12,195 | 2 | 9 |
+| `drop_departed_players` | 14,724 | 14,724 | 0 | **0** | 0 | 12,291 | 1 | 138 |
+| both | 14,724 | 14,724 | 0 | 0 | 0 | 12,291 | 1 | 138 |
+
+The V1 third-team entries are the 2026 trade-deadline moves, still simulated for the team they had left.
+Examples: Vucevic was simulated for CHI on 02-05 after playing for BOS on 02-04. McCain was simulated
+for PHI on 02-05 at `p_play` 1.0 after playing for OKC on 02-04. Schroder and Ellis were simulated for
+SAC after playing for CLE, and Landale for MEM after playing for ATL.
+
+**Rule.** With `BuildConfig.drop_departed_players=True` (default **False**), a player is simulated for a
+team only if his most recent box-score row before the cutoff is for that team. A DNP row counts, since
+being listed in a team's box score means being on its roster that day. A player with rows for two teams on
+his last date is ambiguous and is left alone (0 such player-dates in 2025-26). Teams with an explicit
+roster are not touched. The production path (`workflows/simulate.py`) passes rosters built by
+`NameIndex.roster`, which already attributes each player to the team of his last box-score row. This
+flag gives the research (no-roster) path the same rule. Collisions become impossible by construction,
+so with both flags on, `cross_team_resolution` finds nothing left to resolve; it is kept as a guard for
+mixed roster/no-roster calls.
+
+**What remains.** With the rule on, there is 1 entry for a player who then played for the other side:
+Kyle Anderson, MEM → MIN, on 2026-03-03. His first MIN appearance was that game, so no box history before
+tip could show the move. Only an official roster or transactions feed can close that gap.
+
+**Freeze.** This is off by default for the same reason as the collision fix. `test_the_fix_is_off_in_the_frozen_baseline`
+covers both flags, and the V1 digest is unchanged. It changes the roster in 138 of the 501 holdout games.
+The sim-level accuracy effect has **not** been measured here. Reproduce it with
+`nba_matched_decomposition.py collect --drop-departed-players` against a V1 collect. Adopting it means
+minting a new baseline that records both flags, as described above.
+
 ## Files
 
 - `src/nba_edge/features/build.py`: `BuildConfig.resolve_cross_team_players`, `cross_team_resolution`,
@@ -135,6 +179,8 @@ other row is bit-identical.
   `cross_team_player_ids`. Additive; no draw changes.
 - `src/nba_edge/research/matched_decomposition.py`, `scripts/nba_matched_decomposition.py`: the optional
   `champion_cfg` and `--resolve-cross-team-players`.
-- `scripts/nba_player_team_identity.py`: the audit and bit-identity comparison.
-- `tests/test_player_team_identity.py`: 8 tests.
-- `docs/research/w1_nba/player_team_identity_{audit,bit_identity}.json`: the outputs.
+- `src/nba_edge/features/build.py`: `BuildConfig.drop_departed_players` and `departed_players`
+  (additive; the default path is unchanged).
+- `scripts/nba_player_team_identity.py`: the audit, the bit-identity comparison and `roster-audit`.
+- `tests/test_player_team_identity.py`: 15 tests.
+- `docs/research/w1_nba/player_team_identity_{audit,bit_identity,roster_audit}.json`: the outputs.

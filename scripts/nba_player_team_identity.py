@@ -5,6 +5,9 @@
     # 2. bit-identity of every other output: a full holdout collect with the fix on
     #    (nba_matched_decomposition.py collect --resolve-cross-team-players) against a V1 collect
     python scripts/nba_player_team_identity.py compare --fixed $OUT/fix --reference $W1/hold --json ...
+    # 3. roster attribution: for every holdout game and side, is each simulated player on the team of his
+    #    most recent prior box-score row, and on the team he actually played for? (V1 and each opt-in fix)
+    python scripts/nba_player_team_identity.py roster-audit --json docs/research/w1_nba/player_team_identity_roster_audit.json
 
 The frozen champion NBA_BASELINE_2026_PRESEASON_V1 is not modified. ``audit`` runs it exactly as the
 matched-decomposition harness does (``BuildConfig()``), and runs the fix as
@@ -178,9 +181,74 @@ def compare(fixed: Path, reference: Path, window: str, changed_games: set[str]) 
     return out
 
 
+ROSTER_CONFIGS = {
+    "v1": BuildConfig(),
+    "resolve_cross_team_players": BuildConfig(resolve_cross_team_players=True),
+    "drop_departed_players": BuildConfig(drop_departed_players=True),
+    "both": BuildConfig(resolve_cross_team_players=True, drop_departed_players=True),
+}
+
+
+def roster_audit(data_root: Path, n_examples: int = 25) -> dict:
+    """Team attribution of every simulated player (no simulation: GameParams only), per config.
+
+    A roster entry for team T is ``current`` when the player's most recent box-score row (played or DNP)
+    before the game date is for T, ``stale_opponent`` when it is for this game's opponent, and
+    ``stale_third_team`` when it is for any other team. ``box_wrong_team`` counts entries for a player
+    who then appears in THIS game's box score for the other side."""
+    tg, pg = runner.load(data_root)
+    games = runner.window_games(tg, "holdout")
+    pg = pg.sort_values("game_date_et", kind="stable")
+    keys = ("current", "stale_opponent", "stale_third_team")
+    res: dict = {k: {f"entries_{x}": 0 for x in keys} | {f"p_play_sum_{x}": 0.0 for x in keys} | {
+        "entries": 0, "players_on_both_rosters": 0, "in_box": 0, "box_wrong_team": 0, "games_changed_vs_v1": 0} for k in ROSTER_CONFIGS}
+    examples: list[dict] = []
+    for _, r in games.iterrows():
+        date = str(r["game_date_et"])
+        tgc, pgc = tg[tg["game_date_et"] < date], pg[pg["game_date_et"] < date]
+        game = md.game_inputs(r, tgc)
+        h, a = int(game["home_team_id"]), int(game["away_team_id"])
+        box = pg[pg["game_id"] == r["game_id"]]
+        box_team = dict(zip(box["nba_id"].astype(int), box["team_id"].astype(int), strict=True))
+        last = pgc.groupby("nba_id").tail(1).set_index("nba_id")
+        ref = None
+        for name, cfg in ROSTER_CONFIGS.items():
+            gp, _ = build_game_params(game, tgc, pgc, date, {h: {}, a: {}}, None, cfg)
+            sides = ((gp.home, h, a), (gp.away, a, h))
+            if ref is None:
+                ref = (gp.home, gp.away)
+            elif (gp.home, gp.away) != ref:
+                res[name]["games_changed_vs_v1"] += 1
+            seen: dict[int, int] = {}
+            for team, tid, opp in sides:
+                for p in team.players:
+                    seen[p.nba_id] = seen.get(p.nba_id, 0) + 1
+                    lt = int(last.loc[p.nba_id, "team_id"]) if p.nba_id in last.index else tid
+                    kind = "current" if lt == tid else ("stale_opponent" if lt == opp else "stale_third_team")
+                    res[name]["entries"] += 1
+                    res[name][f"entries_{kind}"] += 1
+                    res[name][f"p_play_sum_{kind}"] += float(p.p_play)
+                    bt = box_team.get(p.nba_id)
+                    if bt is not None:
+                        res[name]["in_box"] += 1
+                        res[name]["box_wrong_team"] += int(bt != tid)
+                    if name == "v1" and kind != "current" and len(examples) < n_examples:
+                        examples.append({"game_id": r["game_id"], "date": date, "sim_team_id": tid, "player": p.name, "nba_id": p.nba_id,
+                                         "p_play": round(float(p.p_play), 2), "kind": kind, "last_team_id": lt,
+                                         "last_date": str(last.loc[p.nba_id, "game_date_et"]), "box_team_id_this_game": bt})
+            res[name]["players_on_both_rosters"] += sum(1 for v in seen.values() if v > 1)
+    for v in res.values():
+        for k in list(v):
+            if k.startswith("p_play_sum"):
+                v[k] = round(v[k], 2)
+    return {"window": "holdout", "date_ranges": runner.WINDOWS["holdout"], "n_games": int(len(games)),
+            "source": "committed ESPN box history (regular season); GameParams only, no simulation, no market file",
+            "configs": {k: repr(v) for k, v in ROSTER_CONFIGS.items()}, "counts": res, "v1_examples": examples}
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["audit", "compare"])
+    ap.add_argument("cmd", choices=["audit", "compare", "roster-audit"])
     ap.add_argument("--data", type=Path, default=ROOT / "data")
     ap.add_argument("--sims", type=int, default=runner.N_SIMS)
     ap.add_argument("--boot", type=int, default=1000)
@@ -191,6 +259,8 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.cmd == "audit":
         rep = audit(a.data, a.sims, a.boot)
+    elif a.cmd == "roster-audit":
+        rep = roster_audit(a.data)
     else:
         changed = {g["game_id"] for g in json.loads(a.audit_json.read_text())["changed_games"]}
         rep = compare(a.fixed, a.reference, "holdout", changed)
