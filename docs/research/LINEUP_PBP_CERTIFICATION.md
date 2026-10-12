@@ -116,8 +116,9 @@ period start 6 / 1. Failing games are quarantined (`certified = false` with `rea
 
 ## Provenance re-verification (review, 2026-10-12)
 
-* **Re-fetch spot-check** (`scripts/pbp_refetch_spotcheck.py`, workflow step; Actions run
-  38193844683, `docs/research/lineup_pbp/refetch_spotcheck.json`): 8 seeded games (4 per season)
+* **Re-fetch spot-check** (`scripts/pbp_refetch_spotcheck.py`, workflow step; Actions runs
+  38193844683 and 38194259669 — the committed `docs/research/lineup_pbp/refetch_spotcheck.json` is the
+  second; later no-op runs keep their result in the run log/artifact only): 8 seeded games (4 per season)
   downloaded again on 2026-10-12 02:00Z, ~24 h after the backfill, and parsed with the same parser:
   **8 / 8 identical** in every stored event field (3,936 events) and every box line. Raw payload sha256
   differs for all 8, as expected (the summary also carries volatile news/odds/standings sections, which
