@@ -6,6 +6,7 @@ The game is synthetic and exists only to pin the rules; it is never reported as 
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 
 import pytest
 
@@ -197,3 +198,55 @@ def test_free_throw_points_belong_to_the_lineup_at_the_foul():
     assert -2 in [first[f"home_p{i}"] for i in range(1, 6)] and first["home_pts"] == 3
     assert sum(s["home_pts"] for s in r["stints"]) == 5
     assert r["checks"]["score_ok"]
+
+
+def test_refetch_spotcheck_matches_stored_rows_and_flags_a_revision(tmp_path, monkeypatch):
+    """The provenance spot-check compares a fresh re-fetch with the STORED (dtype-compacted) rows."""
+    import importlib.util
+    import json as _json
+    from datetime import date
+
+    import pandas as pd
+
+    from nba_edge.data.http import Fetched
+    from nba_edge.pbp import ingest
+
+    board_game = {"event_id": "1", "game_id": "espn:1", "start_time_utc": "2025-11-13T00:00:00Z",
+                  "season_type": "regular", "espn_season_type": 2}
+    monkeypatch.setattr(ingest, "iter_season_dates", lambda s: iter([date(2025, 11, 12)]))
+    monkeypatch.setattr(ingest, "fetch_json", lambda *a, **k: ({}, False))
+    monkeypatch.setattr(ingest, "scoreboard_events", lambda b: [board_game])
+    monkeypatch.setattr(ingest, "fetch", lambda url, **k: Fetched(
+        url, 200, _json.dumps(_payload()).encode(), "2026-10-11T00:00:00Z", False, 1))
+    ingest.run_full_pbp_pull(tmp_path, ["2025-26"], sleep_s=0)
+    p = ingest.paths(tmp_path, "2025-26")
+    gm, ev, bx = (pd.read_parquet(p[k]) for k in ("games", "events", "box"))
+
+    spec = importlib.util.spec_from_file_location(
+        "pbp_refetch_spotcheck", Path(__file__).resolve().parents[1] / "scripts" / "pbp_refetch_spotcheck.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    class _Resp:
+        def __init__(self, payload):
+            self.status_code = 200
+            self.content = _json.dumps(payload).encode()
+            self._p = payload
+
+        def json(self):
+            return self._p
+
+    class _Client:
+        def __init__(self, payload):
+            self.payload = payload
+
+        def get(self, url, headers=None):
+            return _Resp(self.payload)
+
+    g = gm.to_dict("records")[0]
+    same = mod.check_game(_Client(_payload()), g, ev, bx)
+    assert same["ok"] and same["events_identical"] and same["box_identical"] and same["events_stored"] == 2
+    revised = _payload()
+    revised["plays"][0]["clock"] = {"displayValue": "5:50"}
+    diff = mod.check_game(_Client(revised), g, ev, bx)
+    assert not diff["ok"] and not diff["events_identical"] and diff["events_first_diffs"][0]["order"] == 0

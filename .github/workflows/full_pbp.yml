@@ -21,6 +21,7 @@ on:
       - "scripts/pbp_backfill.py"
       - "scripts/probe_full_pbp.py"
       - "scripts/lineup_certify.py"
+      - "scripts/pbp_refetch_spotcheck.py"
   workflow_dispatch:
     inputs:
       seasons:
@@ -64,6 +65,9 @@ jobs:
       - name: Reconstruct lineups and certify each game
         if: always()
         run: python scripts/lineup_certify.py --seasons "$SEASONS"
+      - name: Provenance spot-check (re-fetch a seeded sample of stored games and compare parsed rows)
+        if: always()
+        run: python scripts/pbp_refetch_spotcheck.py --seasons "$SEASONS" --per-season 4
       - name: Size guard (added data must stay small)
         if: always()
         run: |
