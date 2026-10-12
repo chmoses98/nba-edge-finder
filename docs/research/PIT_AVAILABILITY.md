@@ -23,10 +23,14 @@ the tip and which lists the game. T-60 snapshot: 1,317 (99.62%). No model was fi
   the cutoff (`<tag>_fallback_fetched`, 1 game; verified like every other snapshot).
 * ESPN `/injuries` has no history (current statuses only, each with its own update `date` and the ESPN
   athlete id in the player-card link); it is captured prospectively, not backfilled.
-* The repo's existing official-report parser (`data/injuries.py`, used by the context refresh) returns
-  **0 rows** on a real 2025-26 report: plain `extract_text` emits one token per line. A positional parser
-  (`availability/official_report.py`, pypdf text-visitor coordinates) was written instead; a test pins
-  the legacy behaviour. Fixing production is out of scope (separate task suggested).
+* Parser alignment with production: when this was written, the production parser (`data/injuries.py`,
+  context refresh) returned 0 rows on real 2025-26 reports (plain `extract_text` emits one token per
+  line). #26 (merged) fixed production with the same positional method. This PR keeps its research
+  parser (`availability/official_report.py`, `official-pdf-positional/2`) because the 164,314 committed
+  rows are version-pinned to it and it emits columns production does not (page, team text, tricodes,
+  NOT YET SUBMITTED rows, per-report diagnostics). `test_research_parser_agrees_with_production_parser`
+  pins that both emit identical player rows (date, team, name, status, reason) on all four real report
+  fixtures; a future change to either parser that breaks agreement fails CI.
 
 ## Backfill (bounded: 2025-26 regular season, play-in, playoffs)
 

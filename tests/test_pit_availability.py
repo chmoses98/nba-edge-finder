@@ -122,15 +122,27 @@ def test_early_report_marks_teams_not_yet_submitted():
     assert all(r["player_name_raw"] is None and r["team_id"] is not None for r in nys)
 
 
-def test_legacy_line_parser_finds_nothing_in_current_layout():
-    """Documents why a positional parser was needed: the existing line-based parser returns 0 rows on
-    a real 2025-26 report (151 player rows), because plain text extraction emits one token per line."""
+@pytest.mark.parametrize("name,slot", [
+    ("Injury-Report_2026-01-15_05_30PM.pdf", datetime(2026, 1, 15, 17, 30, tzinfo=ET)),
+    ("Injury-Report_2026-01-15_12_00PM.pdf", datetime(2026, 1, 15, 12, 0, tzinfo=ET)),
+    ("Injury-Report_2026-04-25_06_00PM.pdf", datetime(2026, 4, 25, 18, 0, tzinfo=ET)),
+    ("Injury-Report_2026-05-12_11_00AM.pdf", datetime(2026, 5, 12, 11, 0, tzinfo=ET)),
+])
+def test_research_parser_agrees_with_production_parser(name, slot):
+    """The research parser (version-pinned to the committed 2025-26 rows, with extra columns: page, team
+    text, tricodes, NOT YET SUBMITTED rows) and the production parser merged in #26
+    (``data.injuries.parse_injury_report_pdf``) use the same positional method; on every real report
+    fixture they must emit the same player rows."""
     from datetime import UTC
 
-    from nba_edge.data.injuries import extract_pdf_text, parse_injury_report_text
+    from nba_edge.data.injuries import parse_injury_report_pdf
 
-    text = extract_pdf_text((FIX / "Injury-Report_2026-01-15_05_30PM.pdf").read_bytes())
-    assert parse_injury_report_text(text, datetime(2026, 1, 15, 22, 30, tzinfo=UTC)) == []
+    rows, _ = _parse_fixture(name, slot)
+    ours = sorted((r["game_date"], r["team_id"], report_name_to_display(r["player_name_raw"]), r["status"],
+                   r["reason"] or "") for r in rows if r["player_name_raw"] is not None)
+    entries, meta = parse_injury_report_pdf((FIX / name).read_bytes(), slot.astimezone(UTC))
+    prod = sorted((e.game_date_et, e.team_id, e.player_name_raw, e.status.value, e.reason or "") for e in entries)
+    assert len(ours) > 0 and ours == prod
 
 
 def test_unfetchable_located_report_falls_back_to_latest_fetched_before_cutoff():
