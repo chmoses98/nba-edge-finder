@@ -61,6 +61,7 @@ P(play) at 0.5. Non-eligible participants are counted in every evaluation.
 | `captures/` | per run: slot, mode, as_of, games, refusals, skipped games and why, input provenance, per-game projection digest, code commit |
 | `outcomes/box/`, `outcomes/gate/` | ESPN summary box rows (player + team) with `fetched_at`; pure_gate outcome rows (`source=espn_summary`, `observed_at`) |
 | `market/listings/`, `market/listings_status/` | **separate family.** Kalshi player-prop listings (points/rebounds/assists/threes) read **read-only** from the existing capture archive (`data-archive`) as reconstructed at `as_of`: ticker, threshold as `at_least`, open time, board observed time, quote cents, `listed_by_as_of`. Written after the projections, never read by them |
+| `missed/<morning\|pretip>/` | one row per eligible game whose slot window closed with no capture after collection started (`NO_CAPTURE_IN_WINDOW`, window close time, game status at detection); written once, never back-filled |
 | `reconciliation/` | projection↔outcome joins; a listing's venue result vs the box-score outcome mismatch flag |
 | `evaluations/` | evaluation reports (only when something new matured) |
 
