@@ -135,6 +135,35 @@ def captured_keys(store: ShadowStore) -> set[tuple[str, str]]:
     return out
 
 
+def slot_closes_at(g: pj.GameRef, slot: str) -> datetime:
+    """The instant after which ``slot`` can no longer be captured for ``g`` (its window's late edge)."""
+    lead = MORNING_MIN_LEAD_MIN if slot == "morning" else PRETIP_WINDOW_MIN[0]
+    return parse_iso(g.kickoff) - timedelta(minutes=lead)
+
+
+def collection_started_at(store: ShadowStore) -> datetime | None:
+    """as_of of the first LIVE capture in the store; slots that closed before it were never collectable."""
+    starts = [parse_iso(r["as_of"]) for _e, r in store.iter_rows("captures") if r.get("mode") == "LIVE" and r.get("as_of")]
+    return min(starts) if starts else None
+
+
+def missed_slots(games: list[tuple[pj.GameRef, str]], now: datetime, slot: str, allowed: tuple[str, ...],
+                 done: set[tuple[str, str]], already: set[tuple[str, str]], start: datetime | None) -> list[dict[str, Any]]:
+    """Eligible games whose ``slot`` window closed after collection started with no capture: a miss, recorded
+    once and never back-filled. Postponed/cancelled games are not misses."""
+    if start is None:
+        return []
+    out = []
+    for g, status in games:
+        closes = slot_closes_at(g, slot)
+        if (g.season_type in allowed and status not in ("postponed", "cancelled") and start < closes < now
+                and (g.game_id, slot) not in done and (g.game_id, slot) not in already):
+            out.append({"record": "missed_capture", "game_id": g.game_id, "slot": slot, "kickoff": g.kickoff,
+                        "season_type": g.season_type, "status_at_detection": status, "window_closed_at": iso(closes),
+                        "detected_at": iso(now), "reason": "NO_CAPTURE_IN_WINDOW"})
+    return out
+
+
 # --------------------------------------------------------------------------------------------------
 # history (inputs)
 # --------------------------------------------------------------------------------------------------
@@ -240,6 +269,12 @@ def capture(store: ShadowStore, data_root: Path, slot: str, fetcher: Fetcher, da
             due.append(g)
     record: dict[str, Any] = {"record": "capture", "slot": slot, "mode": mode, "dates_et": dates, "schedule": sched_prov,
                               "skipped": skipped, "code_commit": code_commit(), "gate_vendored": GATE_PATH.relative_to(REPO).as_posix()}
+    if mode == "LIVE":
+        already = {(r["game_id"], r["slot"]) for _e, r in store.iter_rows("missed")}
+        missed = missed_slots(games, clock, slot, allowed, done, already, collection_started_at(store))
+        if missed:
+            store.append_rows(f"missed/{slot}", missed, observed_at=_ceil_second(clock), meta={"slot": slot, "n_games": len(missed)})
+        record["missed"] = missed
     if not due:
         record.update({"as_of": iso(clock), "games": [], "refused": [], "files": {}})
         return record

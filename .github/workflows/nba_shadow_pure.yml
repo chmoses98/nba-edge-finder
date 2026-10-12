@@ -15,7 +15,7 @@ on:
   schedule:
     - cron: "13 14 * * *"       # morning slot (~10:13 ET in EDT), outcomes, evaluation
     - cron: "43 15 * * *"       # morning retry
-    - cron: "*/15 21-23 * * *"  # pretip (T-60m) sweeps: tips ~23:00-03:30 UTC
+    - cron: "*/15 15-23 * * *"  # pretip (T-60m) sweeps: tips ~16:00-03:30 UTC (weekend/holiday afternoon tips included)
     - cron: "*/15 0-3 * * *"
   workflow_dispatch:
     inputs:

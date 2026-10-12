@@ -34,9 +34,14 @@ back-to-back, home, the simulator's expected team points, and prior games used.
 | slot | when | note |
 |---|---|---|
 | `morning` | game day (ET), ≥ 4 h before the scheduled tip | cron 14:13 and 15:43 UTC |
-| `pretip` | 30–90 min before the tip (T-60m, after the injury report) | cron every 15 min, 21:00–03:45 UTC. With the participation proxy, a pretip capture differs from the morning one only if new box scores arrived; both are kept as captured |
+| `pretip` | 30–90 min before the tip (T-60m, after the injury report) | cron every 15 min, 15:00–03:45 UTC (covers weekend and holiday afternoon tips). With the participation proxy, a pretip capture differs from the morning one only if new box scores arrived; both are kept as captured |
 
-One capture per game per slot. A slot that no run reached is missed; it is never back-filled. The
+One capture per game per slot. A slot that no run reached is missed; it is never back-filled. Once
+collection has started (the first LIVE capture), every eligible game whose slot window closes without a
+capture is written once to the `missed/<slot>` family (`reason = NO_CAPTURE_IN_WINDOW`, with the window's
+close time and the game status at detection); postponed and cancelled games are not misses. Tips before
+~18:13 UTC (noon/1 pm ET) cannot get a `morning` slot from the 14:13 UTC run and are recorded as missed
+for that slot; their `pretip` slot is covered by the 15:00 UTC start of the sweeps. The
 collector **refuses** to capture at or after the tip and **raises** if any input was observed at or
 after `as_of`. That covers the schedule fetch, the committed history (obtained 2026-09-19T00:37:29Z),
 and current-season box rows this collector fetched (`fetched_at < as_of`). It also re-checks the V1

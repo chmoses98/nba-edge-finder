@@ -51,14 +51,14 @@ def _summary(eid: str, when: str):
 
 
 class FakeESPN:
-    def __init__(self, kickoff: str, completed: bool = False):
-        self.kickoff, self.completed, self.calls = kickoff, completed, []
+    def __init__(self, kickoff: str, completed: bool = False, eid: str = "999001"):
+        self.kickoff, self.completed, self.eid, self.calls = kickoff, completed, eid, []
 
     def __call__(self, url: str):
         self.calls.append(url)
         if "scoreboard" in url:
-            return {"events": [_event("999001", self.kickoff, self.completed)]}, iso(utcnow() - timedelta(seconds=5))
-        return _summary("999001", self.kickoff), iso(utcnow())
+            return {"events": [_event(self.eid, self.kickoff, self.completed)]}, iso(utcnow() - timedelta(seconds=5))
+        return _summary(self.eid, self.kickoff), iso(utcnow())
 
 
 def _game_soon(minutes: float = 60.0) -> tuple[str, str]:
@@ -208,3 +208,20 @@ def test_frozen_baseline_is_enforced():
     bad = pd.concat([pg, pg.head(500).assign(game_date_et="2023-11-01", pts=99)], ignore_index=True)
     with pytest.raises(RuntimeError, match="re-fit"):
         pj.assert_frozen(bad)
+
+
+def test_a_slot_window_that_closes_uncaptured_is_recorded_missed_once(tmp_path):
+    store = ShadowStore(tmp_path / "store", run_id="test")
+    kickoff, d = _game_soon(60)
+    later = utcnow() + timedelta(hours=2)
+    # before collection has started nothing is a miss
+    assert C.capture(store, DATA, "pretip", FakeESPN(kickoff, eid="999002"), dates=[d], now=later, n_sims=SIMS)["missed"] == []
+    C.capture(store, DATA, "pretip", FakeESPN(kickoff), dates=[d], n_sims=SIMS)          # collection starts
+    k2 = iso((utcnow() + timedelta(minutes=100)).replace(microsecond=0))                    # its pretip closes at +70 min
+    rec = C.capture(store, DATA, "pretip", FakeESPN(k2, eid="999002"), dates=[d], now=later, n_sims=SIMS)
+    assert rec["games"] == [] and [(m["game_id"], m["reason"]) for m in rec["missed"]] == [("espn:999002", "NO_CAPTURE_IN_WINDOW")]
+    assert [r["game_id"] for r in _rows(store, "missed")] == ["espn:999002"] and store.verify() == []
+    again = C.capture(store, DATA, "pretip", FakeESPN(k2, eid="999002"), dates=[d], now=later + timedelta(minutes=15), n_sims=SIMS)
+    assert again["missed"] == [] and len(_rows(store, "missed")) == 1                      # recorded once, never filled in
+    morning = C.capture(store, DATA, "morning", FakeESPN(k2, eid="999002"), dates=[d], now=later, n_sims=SIMS)
+    assert morning["missed"] == []          # its morning window closed before collection started
