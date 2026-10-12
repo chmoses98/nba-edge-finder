@@ -59,13 +59,24 @@ def _team_name_index() -> dict[str, int]:
     return _TEAM_NAMES
 
 
+# Publication cadence, measured on the 2025-26 archive (2,430 located files) and the 2026-27 preseason capture:
+# through 2025-12-21 reports were hourly and named ``_HHPM`` (the file named 06PM is the 6:30/6:45 PM report);
+# from 2025-12-22 a report can appear in any 15-minute slot, named ``_HH_MMPM`` and uploaded ~5 s after the
+# slot. No ``_HH_MM`` file exists before that date and no ``_HH`` file after it, so the hourly spelling is only
+# tried for older dates.
+HOURLY_NAMING_UNTIL = "2025-12-21"
+SEARCH_MAX_HOURS = 24  # never look further back than this
+SEARCH_MIN_SLOTS = 8  # ...but always at least the previous 2 hours, even just after midnight ET
+SEARCH_MAX_REQUESTS = 100  # hard bound on HTTP requests per search (a full ET day is at most 96 slots)
+
+
 def candidate_pdf_urls(report_time_et: datetime) -> list[str]:
     d = report_time_et.strftime("%Y-%m-%d")
     hh = report_time_et.strftime("%I")
     mm = report_time_et.strftime("%M")
     ampm = report_time_et.strftime("%p")
     urls = [PDF_URL_NEW.format(date=d, hh=hh, mm=mm, ampm=ampm)]
-    if mm == "00":
+    if mm == "00" and d <= HOURLY_NAMING_UNTIL:
         urls.append(PDF_URL_OLD.format(date=d, hh=hh, ampm=ampm))
     return urls
 
@@ -364,34 +375,46 @@ def _header_time_utc(header_time_et: str | None) -> datetime | None:
     return datetime.strptime(header_time_et, "%Y-%m-%d %I:%M %p").replace(tzinfo=ET).astimezone(UTC)
 
 
-def fetch_official_injury_report(report_time_et: datetime) -> tuple[list[InjuryEntry], dict[str, Any]]:
+def fetch_official_injury_report(report_time_et: datetime, max_retries: int = 3) -> tuple[list[InjuryEntry], dict[str, Any]]:
     """Fetch the report published at ``report_time_et`` (an ET-aware datetime on a 15-minute grid). Returns
     (entries, provenance). Missing report (404/403) -> empty list with provenance['missing']=True. A report that
-    is present but unparseable raises :class:`InjuryReportParseError` (the caller records it as an error)."""
+    is present but unparseable raises :class:`InjuryReportParseError` (the caller records it as an error).
+
+    Rows are stamped with the report time printed in the PDF header (``report_time_source = "pdf_header"``),
+    never with anything later. Without a usable header the slot time is used; it is never later than the
+    header (hourly-era files are named for the hour and printed HH:30/HH:45; 15-minute files match)."""
     last_err: str | None = None
-    for url in candidate_pdf_urls(report_time_et):
+    urls = candidate_pdf_urls(report_time_et)
+    for i, url in enumerate(urls):
         try:
-            f = fetch(url, headers=PLAIN_HEADERS_OK, ttl_s=None)
+            f = fetch(url, headers=PLAIN_HEADERS_OK, ttl_s=None, max_retries=max_retries)
         except FetchError as e:
             last_err = str(e)[:200]
             continue
         slot_utc = report_time_et.astimezone(UTC)
-        # The PDF header carries the report's own as-of time (older hourly files were filed under a
-        # slot that is NOT the report time); stamp rows with it when present.
         try:
             entries, meta = parse_injury_report_pdf(f.content, slot_utc)
         except InjuryReportParseError as e:
             log.error(kv(event="injury_report_parse_failed", url=url, error=str(e)[:200]))
             raise
         header_utc = _header_time_utc(meta.get("header_time_et"))
-        if header_utc is not None and header_utc != slot_utc:
-            entries = [e.model_copy(update={"report_time_utc": header_utc}) for e in entries]
+        fetched_utc = datetime.fromisoformat(f.fetched_at_utc.replace("Z", "+00:00"))
+        source = "slot"
+        if header_utc is not None and header_utc <= fetched_utc:
+            source = "pdf_header"
+            if header_utc != slot_utc:
+                entries = [e.model_copy(update={"report_time_utc": header_utc}) for e in entries]
+        elif header_utc is not None:  # a header time after we downloaded it cannot be right; keep the slot
+            log.warning(kv(event="injury_report_header_after_fetch", url=url, header=meta.get("header_time_et")))
+        report_time = header_utc if source == "pdf_header" else slot_utc
         log.info(kv(event="official_injury_report", url=url, n=len(entries), pages=meta["pages"]))
         return entries, {"source": "nba_official_pdf", "url": url, "fetched_at_utc": f.fetched_at_utc, "n": len(entries), "bytes": len(f.content),
-                         "pages": meta["pages"], "n_player_rows": meta["n_player_rows"], "n_dropped_no_team": meta["n_dropped_no_team"],
+                         "slot_et": report_time_et.astimezone(ET).strftime("%Y-%m-%dT%H:%M"),
+                         "report_time_utc": report_time.strftime("%Y-%m-%dT%H:%M:%SZ"), "report_time_source": source,
+                         "requests": i + 1, "pages": meta["pages"], "n_player_rows": meta["n_player_rows"], "n_dropped_no_team": meta["n_dropped_no_team"],
                          "header_time_et": meta["header_time_et"], "not_yet_submitted": meta["not_yet_submitted"],
                          "unresolved_team_text": meta["unresolved_team_text"]}
-    return [], {"source": "nba_official_pdf", "missing": True, "error": last_err, "report_time_et": report_time_et.isoformat()}
+    return [], {"source": "nba_official_pdf", "missing": True, "error": last_err, "report_time_et": report_time_et.isoformat(), "requests": len(urls)}
 
 
 def latest_report_slots(now_utc: datetime, lookback_hours: int = 6) -> list[datetime]:
@@ -404,17 +427,42 @@ def latest_report_slots(now_utc: datetime, lookback_hours: int = 6) -> list[date
     return slots
 
 
-def fetch_latest_official_injury_report(now_utc: datetime) -> tuple[list[InjuryEntry], dict[str, Any]]:
-    tried = 0
-    for slot in latest_report_slots(now_utc):
-        entries, prov = fetch_official_injury_report(slot)
-        tried += 1
-        if not prov.get("missing"):
-            prov["slots_tried"] = tried
-            return entries, prov
-        if tried >= 8:
+def report_search_slots(now_utc: datetime, max_hours: int = SEARCH_MAX_HOURS, min_slots: int = SEARCH_MIN_SLOTS) -> list[datetime]:
+    """The 15-minute slots to probe for the latest published report, newest first: back to the start of the
+    current ET game day (00:00 ET), at least ``min_slots`` and at most ``max_hours`` back.
+
+    A report from an earlier ET day lists that day's games, which have been played, so it is not the
+    "latest report" for anything still to tip; the 2-hour floor keeps the old behaviour just after midnight."""
+    now_et = now_utc.astimezone(ET).replace(second=0, microsecond=0)
+    newest = now_et - timedelta(minutes=now_et.minute % 15)
+    day_start = newest.replace(hour=0, minute=0)
+    n = int((newest - day_start).total_seconds() // 900) + 1
+    n = max(min_slots, min(n, max_hours * 4))
+    return [newest - timedelta(minutes=15 * k) for k in range(n)]
+
+
+def fetch_latest_official_injury_report(now_utc: datetime, max_requests: int = SEARCH_MAX_REQUESTS) -> tuple[list[InjuryEntry], dict[str, Any]]:
+    """Probe :func:`report_search_slots` newest first and return the first report found (the latest one
+    published), with provenance naming the slot found, slots probed and HTTP requests made. Each probe is a
+    single attempt plus one retry on transport errors; the search stops at ``max_requests``."""
+    slots = report_search_slots(now_utc)
+    window = {"search_newest_slot_et": slots[0].strftime("%Y-%m-%dT%H:%M"), "search_oldest_slot_et": slots[-1].strftime("%Y-%m-%dT%H:%M"),
+              "search_window_slots": len(slots), "max_requests": max_requests}
+    tried = requests = 0
+    for slot in slots:
+        if requests + len(candidate_pdf_urls(slot)) > max_requests:
             break
-    return [], {"source": "nba_official_pdf", "missing": True, "slots_tried": tried}
+        entries, prov = fetch_official_injury_report(slot, max_retries=1)
+        tried += 1
+        requests += prov.get("requests", 1)
+        if not prov.get("missing"):
+            prov.update(window, slots_tried=tried, requests=requests)
+            age = (now_utc - datetime.fromisoformat(prov["report_time_utc"].replace("Z", "+00:00"))).total_seconds() / 60
+            prov["report_age_min"] = round(age, 1)
+            return entries, prov
+    log.info(kv(event="official_injury_report_missing", slots_tried=tried, requests=requests, oldest=window["search_oldest_slot_et"]))
+    return [], {"source": "nba_official_pdf", "missing": True, "slots_tried": tried, "requests": requests,
+                "budget_exhausted": tried < len(slots), **window}
 
 
 def parse_espn_injuries(payload: dict[str, Any], report_time_utc: datetime) -> list[InjuryEntry]:

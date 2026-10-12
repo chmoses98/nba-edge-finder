@@ -10,11 +10,13 @@ from nba_edge.data.injuries import (
     InjuryReportParseError,
     candidate_pdf_urls,
     extract_pdf_text,
+    fetch_latest_official_injury_report,
     fetch_official_injury_report,
     latest_report_slots,
     parse_espn_injuries,
     parse_injury_report_pdf,
     parse_injury_report_text,
+    report_search_slots,
 )
 from nba_edge.schemas.core import InjuryStatus
 from nba_edge.timeutil import ET
@@ -47,10 +49,14 @@ def test_parse_official_report_text():
 
 
 def test_candidate_urls_new_and_old_formats():
-    t = datetime(2025, 12, 26, 18, 0, tzinfo=ET)
+    # hourly ``_HHPM`` naming existed only through 2025-12-21; from 2025-12-22 every file is ``_HH_MMPM``
+    t = datetime(2025, 12, 21, 18, 0, tzinfo=ET)
     urls = candidate_pdf_urls(t)
-    assert urls[0].endswith("Injury-Report_2025-12-26_06_00PM.pdf")
-    assert urls[1].endswith("Injury-Report_2025-12-26_06PM.pdf")
+    assert urls[0].endswith("Injury-Report_2025-12-21_06_00PM.pdf")
+    assert urls[1].endswith("Injury-Report_2025-12-21_06PM.pdf")
+    assert candidate_pdf_urls(datetime(2025, 12, 22, 18, 0, tzinfo=ET)) == [
+        "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2025-12-22_06_00PM.pdf"]
+    assert len(candidate_pdf_urls(datetime(2026, 10, 7, 10, 0, tzinfo=ET))) == 1
     t2 = datetime(2025, 12, 26, 11, 45, tzinfo=ET)
     assert candidate_pdf_urls(t2) == ["https://ak-static.cms.nba.com/referee/injury/Injury-Report_2025-12-26_11_45AM.pdf"]
 
@@ -162,3 +168,81 @@ def test_fetch_propagates_parse_failure(monkeypatch):
     monkeypatch.setattr(injuries, "_team_name_index", lambda: {})
     with pytest.raises(InjuryReportParseError):
         fetch_official_injury_report(datetime(2026, 4, 25, 18, 0, tzinfo=ET))
+
+
+
+# ---- latest-report search (lookback) ---------------------------------------------------------------------
+# Production archive 2026-09-18..10-12: 193 of 195 context snapshots found no report with the old 8-slot (2 h)
+# window. The one preseason report seen (2026-10-07 09:45 AM) was found at 10:09 and 11:09 ET and missed by
+# every later snapshot that day although it was still the latest published report.
+def _serve(urls: dict[str, bytes], log: list[str], fetched_at: str = "2026-10-08T03:40:00Z"):
+    def fake_fetch(url, **kw):
+        log.append(url)
+        if url in urls:
+            return Fetched(url, 200, urls[url], fetched_at, False, 1)
+        raise injuries.FetchError(f"HTTP 403 {url}")
+    return fake_fetch
+
+
+def test_search_window_runs_back_to_start_of_et_day_newest_first():
+    slots = report_search_slots(datetime(2026, 10, 12, 1, 31, tzinfo=UTC))  # 21:31 EDT Oct 11
+    assert slots[0] == datetime(2026, 10, 11, 21, 30, tzinfo=ET) and slots[-1] == datetime(2026, 10, 11, 0, 0, tzinfo=ET)
+    assert len(slots) == 87 and slots == sorted(slots, reverse=True)
+    assert all(s.minute % 15 == 0 for s in slots)
+
+
+def test_search_window_keeps_two_hours_just_after_midnight_and_caps_at_24h():
+    slots = report_search_slots(datetime(2026, 10, 12, 4, 20, tzinfo=UTC))  # 00:20 EDT
+    assert len(slots) == 8 and slots[-1] == datetime(2026, 10, 11, 22, 30, tzinfo=ET)
+    assert len(report_search_slots(datetime(2026, 10, 12, 3, 59, tzinfo=UTC), max_hours=6)) == 24
+
+
+def test_latest_report_found_hours_back_and_search_stops_at_first_hit(monkeypatch):
+    """At 23:38 ET the 09:45 AM report is still the latest published one: found, newest first, then stop."""
+    pdf = FIXTURE_PDF.read_bytes()  # header 04/25/26 06:00 PM -- any real report; the date is irrelevant here
+    target = "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-10-07_09_45AM.pdf"
+    seen: list[str] = []
+    monkeypatch.setattr(injuries, "fetch", _serve({target: pdf}, seen))
+    monkeypatch.setattr(injuries, "_header_time_utc", lambda h: datetime(2026, 10, 7, 13, 45, tzinfo=UTC))
+    now = datetime(2026, 10, 8, 3, 38, tzinfo=UTC)  # 23:38 EDT
+    entries, prov = fetch_latest_official_injury_report(now)
+    assert len(entries) == 20 and not prov.get("missing")
+    assert seen[-1] == target and seen[0].endswith("2026-10-07_11_30PM.pdf")
+    assert len(seen) == prov["requests"] == prov["slots_tried"] == 56  # 23:30 back to 09:45, one URL each
+    assert prov["slot_et"] == "2026-10-07T09:45" and prov["search_oldest_slot_et"] == "2026-10-07T00:00"
+    assert prov["report_time_source"] == "pdf_header" and prov["report_time_utc"] == "2026-10-07T13:45:00Z"
+    assert prov["report_age_min"] == 833.0
+    assert all(e.report_time_utc == datetime(2026, 10, 7, 13, 45, tzinfo=UTC) for e in entries)
+
+
+def test_search_with_no_report_is_bounded_and_says_how_far_it_looked(monkeypatch):
+    seen: list[str] = []
+    monkeypatch.setattr(injuries, "fetch", _serve({}, seen))
+    entries, prov = fetch_latest_official_injury_report(datetime(2026, 10, 12, 1, 31, tzinfo=UTC))
+    assert entries == [] and prov["missing"] and prov["slots_tried"] == 87 == len(seen) == prov["requests"]
+    assert prov["search_oldest_slot_et"] == "2026-10-11T00:00" and prov["budget_exhausted"] is False
+    seen.clear()
+    _, prov = fetch_latest_official_injury_report(datetime(2026, 10, 12, 1, 31, tzinfo=UTC), max_requests=10)
+    assert len(seen) == 10 and prov["budget_exhausted"] is True
+
+
+def test_probe_requests_are_single_attempts(monkeypatch):
+    kws: list[dict] = []
+
+    def fake_fetch(url, **kw):
+        kws.append(kw)
+        raise injuries.FetchError("HTTP 403")
+    monkeypatch.setattr(injuries, "fetch", fake_fetch)
+    fetch_latest_official_injury_report(datetime(2026, 10, 12, 4, 20, tzinfo=UTC))
+    assert kws and all(k["max_retries"] == 1 for k in kws)
+
+
+def test_report_time_is_never_later_than_the_printed_header(monkeypatch):
+    """Rows carry the printed header time (test_fetch_stamps_rows_with_pdf_header_time_when_slot_differs). A
+    header that post-dates the download cannot be right; it is rejected in favour of the earlier slot time."""
+    pdf = FIXTURE_PDF.read_bytes()
+    monkeypatch.setattr(injuries, "fetch", _serve({"https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-04-25_05_45PM.pdf": pdf}, [],
+                                                  fetched_at="2026-04-25T21:50:00Z"))  # before the 22:00Z header time
+    entries, prov = fetch_official_injury_report(datetime(2026, 4, 25, 17, 45, tzinfo=ET))
+    assert prov["report_time_source"] == "slot" and prov["report_time_utc"] == "2026-04-25T21:45:00Z"
+    assert {e.report_time_utc for e in entries} == {datetime(2026, 4, 25, 21, 45, tzinfo=UTC)}
