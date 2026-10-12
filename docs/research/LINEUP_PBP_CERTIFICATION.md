@@ -112,6 +112,26 @@ participant 33 / 6 (e.g. `"Zach Edey enters the game for "` with no exiting play
 minutes outside ±1.0 28 / 14; not five per side 14 / 5; final-score mismatch 11 / 5; over-full
 period start 6 / 1. Failing games are quarantined (`certified = false` with `reasons`), never repaired.
 
+## Provenance re-verification (review, 2026-10-12)
+
+* **Re-fetch spot-check** (`scripts/pbp_refetch_spotcheck.py`, workflow step; Actions run
+  38193844683, `docs/research/lineup_pbp/refetch_spotcheck.json`): 8 seeded games (4 per season)
+  downloaded again on 2026-10-12 02:00Z, ~24 h after the backfill, and parsed with the same parser:
+  **8 / 8 identical** in every stored event field (3,936 events) and every box line. Raw payload sha256
+  differs for all 8, as expected (the summary also carries volatile news/odds/standings sections, which
+  are not parsed); the parsed play-by-play and box content is what is compared. The same run re-ran
+  the backfill (0 new games) and the certification; the committed stints / certification / summary
+  files came out byte-identical (deterministic).
+* **Independent earlier fetch** (offline): the committed box-score history
+  `data/history/espn/player_games_<season>` (pulled 2026-09-19) agrees with this PR's same-payload box
+  lines on **69,965 / 69,965 common player-game rows** (minutes and points exact; 34,767 in 2025-26,
+  35,198 in 2024-25). The committed shot-event dataset (observed 2026-09-28/29) matches this PR's
+  shooting plays by ESPN event id on **591,089 rows** (2025-26: 298,340 of 298,340; 2024-25: 292,749 of
+  292,750) with identical shooter, period and type; clocks agree to float32 precision; the only
+  semantic difference is that missed free throws carry `score_value` 0 here and an attempt value of 1
+  there. One gap belongs to the older dataset, not this one: 10 2025-26 box lines for Lachlan Olbrich
+  (CHI, ESPN 5107156) are in this PR's box but missing from `player_games_2025-26`.
+
 ## Use
 
 For R1-style work: use `stints_<season>.parquet` rows with `certified == True` (38,677 / 36,683
