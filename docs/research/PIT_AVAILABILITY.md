@@ -1,8 +1,8 @@
 # Point-in-time availability: official NBA injury reports, 2025-26 — certified data
 
-**Status: 1,318 of 1,322 games (99.70%) have a certified point-in-time snapshot** — the latest
+**Status: 1,320 of 1,322 games (99.85%) have a certified point-in-time snapshot** — the latest
 official injury report uploaded before tip, whose printed report time and upload instant both precede
-the tip and which lists the game. T-60 snapshot: 1,317 (99.62%). No model was fitted.
+the tip and which lists the game. T-60 snapshot: 1,320 (99.85%). No model was fitted.
 
 ## Source and what was learned about it
 
@@ -17,16 +17,19 @@ the tip and which lists the game. T-60 snapshot: 1,317 (99.62%). No model was fi
   the upload instant is the HTTP `Last-Modified`.
 * The CDN returns 403 transiently for files that exist (a first run "lost" Dec 25-31 that a later run
   found), so misses are never cached. A re-run on 2026-10-12 (Actions run 38194230872) located 7 of the 9
-  Dec 25-26 games left over by the first backfill; 2 (Dec 25) remain unlocated. That run was then
+  Dec 25-26 games left over by the first backfill (2 Dec 25 games still unlocated then). That run was then
   throttled by the CDN (every GET answered 403 after ~4,200 HEAD probes): one located report could not
   be downloaded, and its game now falls back to the latest *fetched* report of that day uploaded before
-  the cutoff (`<tag>_fallback_fetched`, 1 game; verified like every other snapshot).
+  the cutoff (`<tag>_fallback_fetched`; verified like every other snapshot). The next re-run (run
+  38204511141, after the checks were moved ahead of the bulk probing) located every game, fetched 20
+  more reports, and needed no fallback; 20 December games moved to a later, previously 403'd report
+  (still uploaded before their cutoff).
 * ESPN `/injuries` has no history (current statuses only, each with its own update `date` and the ESPN
   athlete id in the player-card link); it is captured prospectively, not backfilled.
 * Parser alignment with production: when this was written, the production parser (`data/injuries.py`,
   context refresh) returned 0 rows on real 2025-26 reports (plain `extract_text` emits one token per
   line). #26 (merged) fixed production with the same positional method. This PR keeps its research
-  parser (`availability/official_report.py`, `official-pdf-positional/2`) because the 164,314 committed
+  parser (`availability/official_report.py`, `official-pdf-positional/2`) because the 167,101 committed
   rows are version-pinned to it and it emits columns production does not (page, team text, tricodes,
   NOT YET SUBMITTED rows, per-report diagnostics). `test_research_parser_agrees_with_production_parser`
   pins that both emit identical player rows (date, team, name, status, reason) on all four real report
@@ -42,40 +45,40 @@ snapshot's own cutoff (`<tag>_cutoff_utc`: the tip, or tip − 60 min for `t_min
 ever attached; no post-game source is an input to any status. (Review fix: the T-60 flag originally
 re-checked only "< tip"; the locator already selected by upload < tip − 60, and re-verification on the
 stored data found 0 of 1,312 located T-60 reports with header or upload ≥ tip − 60, so the tighter
-flag changed no count; after the 2026-10-12 re-run, 0 of 1,318 / 1,317 pit_ok snapshots have a
+flag changed no count; after the 2026-10-12 re-run, 0 of 1,320 / 1,320 pit_ok snapshots have a
 header time or upload instant at or after their cutoff.)
 
 | | last_pre_tip | t_minus_60 |
 |---|---:|---:|
 | games | 1,322 | 1,322 |
-| report located | 1,320 | 1,319 |
-| header time and upload < cutoff | 1,320 / 1,320 | 1,319 / 1,319 |
-| game listed in that report | 1,318 | 1,317 |
-| both teams listed | 1,277 | 1,274 |
-| **pit_ok** | **1,318 (99.70%)** | **1,317 (99.62%)** |
-| lead (tip − report time), q10 / q50 / q90 / q99 min | 15 / 15 / 48 / 72 | 75 / 75 / 105 / 120 |
+| report located | 1,322 | 1,322 |
+| header time and upload < cutoff | 1,322 / 1,322 | 1,322 / 1,322 |
+| game listed in that report | 1,320 | 1,320 |
+| both teams listed | 1,279 | 1,277 |
+| **pit_ok** | **1,320 (99.85%)** | **1,320 (99.85%)** |
+| lead (tip − report time), q10 / q50 / q90 / q99 min | 15 / 15 / 30 / 60 | 75 / 75 / 90 / 120 |
 | upload lag after report time, q50 / q99 s | 5 / 10 | 5 / 11 |
 
-* By month (last_pre_tip pit_ok): Oct–Nov 1.000, Dec 0.990 (2 unlocated Dec 25 games; 3 for T-60), Jan–Apr
+* By month (last_pre_tip pit_ok): Oct–Nov 1.000, Dec 1.000, Jan–Apr
   1.000, May 0.947, Jun 1.000. W1 holdout window (ET game dates 2026-02-01..04-12, regular, W1's definition): **501 / 501**
   (the first version said 498 / 498, counting by UTC date).
 * The 2 May failures (espn:401873342, espn:401873343) are playoff games absent from the last pre-tip
   report (7:45 PM listed only the next day's game); they are not filled from an earlier report.
 * "Both teams listed" < "game listed": a team with nothing to report can be absent from the report.
 
-Reports: 1,333 PDFs, 0 fetch/parse errors; every row has team and game (0 missing); 310 hourly-era and
-1,023 15-minute files. Each report row stores `url`, `fetched_at_utc` (2026-10-11), `last_modified_utc`,
+Reports: 1,353 PDFs, 0 fetch/parse errors; every row has team and game (0 missing); 310 hourly-era and
+1,043 15-minute files. Each report row stores `url`, `fetched_at_utc` (2026-10-11 / -12), `last_modified_utc`,
 `sha256`, `parser_version`.
 
 ## Rows and identity mapping
 
-164,314 rows: 157,164 player rows + 7,150 `NOT YET SUBMITTED` team rows. Status mix: out 116,341,
-available 16,929, questionable 15,631, probable 4,728, doubtful 3,535. Rows mapped to an ESPN game id:
-99.71%.
+167,101 rows: 159,829 player rows + 7,272 `NOT YET SUBMITTED` team rows. Status mix: out 118,263,
+available 17,394, questionable 15,814, probable 4,800, doubtful 3,558. Rows mapped to an ESPN game id:
+99.72%.
 
 Player → repo ESPN id (`nba_id = -espn_athlete_id`, candidates from the committed 2025-26 ESPN box
-scores; tiers in `availability/identity.py`, never a guess): **97.24% of player rows** (game_box 43,261;
-team_season 107,753; season_any_team 1,534; team_initial_last 281; unmatched 4,335), **98.61% of 647
+scores; tiers in `availability/identity.py`, never a guess): **97.24% of player rows** (game_box 44,069;
+team_season 109,509; season_any_team 1,534; team_initial_last 298; unmatched 4,419), **98.61% of 647
 distinct (team, name) pairs**. Unmatched are players with no 2025-26 box-score line (season-long
 absences, e.g. Kyrie Irving, Tyrese Haliburton, Dante Exum; unsigned/two-way names).
 
@@ -90,8 +93,8 @@ athlete id directly). Report rows link to their report's `url`, `fetched_at_utc`
 `last_modified_utc` and `sha256` through `slot_et`.
 
 Validation only (post-game box read to check the parser and mapping, never as an input): of matched
-players in the certified last-pre-tip report, **Out 11,072 → 0.0% played**, Doubtful 8 → 0%,
-Questionable 75 → 60.0%, Probable 32 → 93.8%, Available 2,630 → 86.7%.
+players in the certified last-pre-tip report, **Out 11,094 → 0.0% played**, Doubtful 5 → 0%,
+Questionable 57 → 59.6%, Probable 25 → 96.0%, Available 2,660 → 86.8%.
 
 ## Prospective capture (append-only)
 
