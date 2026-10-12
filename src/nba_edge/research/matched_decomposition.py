@@ -268,14 +268,17 @@ def forecast_game(
     arms: tuple[str, ...] = ARMS,
     extra_arms: dict[str, Callable[[GameParams, dict[int, ArmForecast]], dict[int, ArmForecast]]] | None = None,
     challenger_cfg: BuildConfig | None = None,
+    champion_cfg: BuildConfig | None = None,
 ) -> tuple[list[dict], dict[str, dict[int, ArmForecast]], GameParams]:
     """Forecast every eligible player of one game under every arm. ``tg``/``pg`` are regular-season
-    sports history; only rows dated strictly before the game date are used (enforced here too)."""
+    sports history; only rows dated strictly before the game date are used (enforced here too).
+    ``champion_cfg`` (default ``BuildConfig()``, the frozen V1 builder) exists only to run the opt-in
+    traded-player identity fix (``resolve_cross_team_players``) on identical rows."""
     date = str(r["game_date_et"])
     tgc = tg[tg["game_date_et"] < date]
     pgc = pg[pg["game_date_et"] < date]
     game = game_inputs(r, tgc)
-    gp, rep = build_game_params(game, tgc, pgc, date, {game["home_team_id"]: {}, game["away_team_id"]: {}}, None, BuildConfig())
+    gp, rep = build_game_params(game, tgc, pgc, date, {game["home_team_id"]: {}, game["away_team_id"]: {}}, None, champion_cfg or BuildConfig())
     seed = game_seed(str(r["game_id"]))
     out: dict[str, dict[int, ArmForecast]] = {}
     if "sim_rotation" in arms:

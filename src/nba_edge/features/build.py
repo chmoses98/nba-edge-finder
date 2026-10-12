@@ -56,6 +56,20 @@ class BuildConfig:
     # Not refined past this grid on purpose: a finer search against the same holdout would make it
     # a tune set, which is the error this replaced.
     rating_scale: float = 1.9
+    # Traded-player identity (docs/research/PLAYER_TEAM_IDENTITY.md). Without an explicit roster, a
+    # player traded between the two opponents inside ``recent_team_games`` is eligible for BOTH teams
+    # and is simulated twice. When True, he is kept only on the team of his most recent appearance
+    # strictly before the cutoff and removed from the other (stale) team. OFF in the frozen baseline
+    # NBA_BASELINE_2026_PRESEASON_V1: turning it on changes predictions for the affected games, which
+    # docs/research/MODEL_FREEZE.md treats as a model change requiring a new baseline id.
+    resolve_cross_team_players: bool = False
+    # Departed players (docs/research/PLAYER_TEAM_IDENTITY.md, "Departed players"). Without an explicit
+    # roster, a player traded to ANY other team stays eligible for his old team until he drops out of
+    # its last ``recent_team_games`` games, typically with p_play 0.6 ("missed the team's last game").
+    # When True, a player is simulated for a team only if his most recent box-score row (played or
+    # DNP) strictly before the cutoff is for that team. Teams with an explicit roster are not touched.
+    # OFF in the frozen baseline for the same reason as ``resolve_cross_team_players``.
+    drop_departed_players: bool = False
 
 
 @dataclass
@@ -177,7 +191,8 @@ def _wsum_fn(w: np.ndarray):
     return wsum
 
 
-def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cfg: BuildConfig, injuries: dict[int, InjuryStatus], roster_ids: list[int] | None, report: BuildReport) -> list[PlayerParams]:
+def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cfg: BuildConfig, injuries: dict[int, InjuryStatus], roster_ids: list[int] | None, report: BuildReport,
+                  exclude_ids: set[int] | None = None) -> list[PlayerParams]:
     pg = player_games[(player_games["team_id"] == team_id) & (player_games["game_date_et"] < cutoff_date)]
     if not cfg.include_preseason:
         pg = pg[pg["season_type"] != "preseason"]
@@ -189,6 +204,8 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
     played_dates: dict[int, set] = {int(k): set(v) for k, v in pg[pg["played"]].groupby("nba_id")["game_date_et"]}
     ids = roster_ids if roster_ids is not None else list(pg["nba_id"].unique())
     for pid in ids:
+        if exclude_ids and int(pid) in exclude_ids:
+            continue  # resolved to the other team of this game (cross_team_resolution)
         rows = pg[pg["nba_id"] == pid].sort_values("game_date_et")
         played = rows[rows["played"]]
         n = len(played)
@@ -284,6 +301,25 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
     if cfg.rating_scale != 1.0:
         L = league["ppp"]
         ratings = {t: (L + (o - L) * cfg.rating_scale, L + (d - L) * cfg.rating_scale, n) for t, (o, d, n) in ratings.items()}
+    exclude: dict[int, set[int]] = {}
+    if cfg.drop_departed_players:
+        for side in ("home", "away"):
+            tid = int(game[f"{side}_team_id"])
+            if (rosters or {}).get(tid) is not None:
+                continue  # an explicit roster already says who is on the team
+            for pid, d in sorted(departed_players(tid, player_games, cutoff_date, cfg).items()):
+                exclude.setdefault(tid, set()).add(pid)
+                report.warnings.append(
+                    f"player {pid}: last appearance for team {d['last_team_id']} on {d['last_date']} (after team {tid}, last {d['last_date_here']}); "
+                    f"removed from team {tid}"
+                )
+    resolution = cross_team_resolution(game, team_games, player_games, cutoff_date, injuries_by_team, rosters, cfg, exclude) if cfg.resolve_cross_team_players else {}
+    for pid, r in sorted(resolution.items()):
+        exclude.setdefault(r["stale_team_id"], set()).add(pid)
+        report.warnings.append(
+            f"player {pid}: eligible for both teams; kept on team {r['keep_team_id']} (last appearance {r['last_dates'][r['keep_team_id']]}), "
+            f"removed from team {r['stale_team_id']} (last appearance {r['last_dates'][r['stale_team_id']]})"
+        )
     teams = {}
     for side in ("home", "away"):
         tid = int(game[f"{side}_team_id"])
@@ -293,13 +329,89 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
         rest = int(rest_known) if rest_known is not None else 2
         b2b = bool(game.get(f"{side}_b2b", rest_known is not None and rest <= 1))
         tp = team_params(tid, str(game.get(f"{side}_tricode", tid)), team_games, cutoff_date, league, cfg, rest, b2b, report, ratings)
-        tp.players = player_params(tid, player_games, cutoff_date, cfg, injuries_by_team.get(tid, {}), (rosters or {}).get(tid), report)
+        if exclude.get(tid):
+            tp.players = player_params(tid, player_games, cutoff_date, cfg, injuries_by_team.get(tid, {}), (rosters or {}).get(tid), report, exclude[tid])
+        else:
+            tp.players = player_params(tid, player_games, cutoff_date, cfg, injuries_by_team.get(tid, {}), (rosters or {}).get(tid), report)
         if len([p for p in tp.players if p.p_play > 0]) < 8:
             report.warnings.append(f"team {tp.tricode}: fewer than 8 available players known; CANNOT_TRUST_INPUTS")
         teams[side] = tp
     gp = GameParams(game_id=str(game["game_id"]), home=teams["home"], away=teams["away"], neutral_site=bool(game.get("neutral_site", False)))
     gp.notes = list(report.warnings)
     return gp, report
+
+
+def departed_players(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cfg: BuildConfig | None = None) -> dict[int, dict[str, Any]]:
+    """Players with box-score history for ``team_id`` whose most recent box-score row (played or DNP)
+    strictly before ``cutoff_date`` is for a DIFFERENT team: traded, waived and signed elsewhere, so no
+    longer on this team. A player with rows for two teams on his last date (not seen in clean data) is
+    ambiguous and is left alone.
+
+    Returns ``{player_id: {"last_team_id", "last_date", "last_date_here"}}``. Reads sports history only."""
+    cfg = cfg or BuildConfig()
+    pg = player_games[player_games["game_date_et"] < cutoff_date]
+    if not cfg.include_preseason and "season_type" in pg:
+        pg = pg[pg["season_type"] != "preseason"]
+    here = pg[pg["team_id"] == team_id]
+    if here.empty:
+        return {}
+    ids = set(here["nba_id"].astype(int))
+    mine = pg[pg["nba_id"].isin(ids)]
+    last_date = mine.groupby("nba_id")["game_date_et"].max()
+    last_rows = mine[mine["game_date_et"].to_numpy() == last_date.reindex(mine["nba_id"]).to_numpy()]
+    last_here = here.groupby("nba_id")["game_date_et"].max()
+    out: dict[int, dict[str, Any]] = {}
+    for pid, teams in last_rows.groupby("nba_id")["team_id"]:
+        t = {int(x) for x in teams}
+        if len(t) == 1 and team_id not in t:
+            out[int(pid)] = {"last_team_id": t.pop(), "last_date": str(last_date[pid]), "last_date_here": str(last_here[pid])}
+    return out
+
+
+def cross_team_resolution(game: dict[str, Any], team_games: pd.DataFrame, player_games: pd.DataFrame, cutoff_date: str, injuries_by_team: dict[int, dict[int, InjuryStatus]],
+                          rosters: dict[int, list[int]] | None = None, cfg: BuildConfig | None = None,
+                          initial_exclude: dict[int, set[int]] | None = None) -> dict[int, dict[str, Any]]:
+    """Players who would be eligible for BOTH teams of this game, and which team each belongs to.
+
+    Eligibility is the unchanged roster rule (``player_params``, run here on a scratch report). For
+    each player on both candidate lists, the team he belongs to is the one with his most recent
+    appearance (a box-score row with ``played``; any box-score row if he never played) strictly
+    before ``cutoff_date``. Ties -- impossible in clean data, since one player cannot appear for two
+    teams on one date -- keep the player on the HOME team, so the result is deterministic.
+
+    ``initial_exclude`` (``{team_id: ids}``, e.g. from :func:`departed_players`) is removed from the
+    candidate lists first, so only collisions that survive it are resolved here.
+
+    Returns ``{player_id: {"keep_team_id", "stale_team_id", "last_dates": {team_id: date or None}}}``;
+    empty when no player is eligible for both teams. Reads sports history only."""
+    cfg = cfg or BuildConfig()
+    h, a = int(game["home_team_id"]), int(game["away_team_id"])
+    pg = player_games[(player_games["game_date_et"] < cutoff_date) & player_games["team_id"].isin([h, a])]
+    if not cfg.include_preseason and "season_type" in pg:
+        pg = pg[pg["season_type"] != "preseason"]
+    out: dict[int, dict[str, Any]] = {}
+    exclude: dict[int, set[int]] = {h: set((initial_exclude or {}).get(h, set())), a: set((initial_exclude or {}).get(a, set()))}
+    # Removing a stale entry frees a slot under ``max_roster``, which can admit a player who is ALSO
+    # eligible for the other team (measured once on the 2025-26 holdout). Iterate to a fixed point;
+    # each player is decided once, from his own appearance dates, so the order cannot matter.
+    while True:
+        scratch = BuildReport(cutoff_date=cutoff_date)
+        cand = {tid: {p.nba_id for p in player_params(tid, player_games, cutoff_date, cfg, injuries_by_team.get(tid, {}), (rosters or {}).get(tid), scratch, exclude[tid])}
+                for tid in (h, a)}
+        both = sorted(cand[h] & cand[a])
+        if not both:
+            return out
+        for pid in both:
+            last: dict[int, str | None] = {}
+            for tid in (h, a):
+                rows = pg[(pg["nba_id"] == pid) & (pg["team_id"] == tid)]
+                played = rows[rows["played"]] if "played" in rows else rows
+                src = played if len(played) else rows
+                last[tid] = str(src["game_date_et"].max()) if len(src) else None
+            keep = a if (last[a] or "") > (last[h] or "") else h
+            stale = a if keep == h else h
+            out[int(pid)] = {"keep_team_id": keep, "stale_team_id": stale, "last_dates": last}
+            exclude[stale].add(int(pid))
 
 
 def rest_days_for(team_id: int, game_date_et: str, team_games: pd.DataFrame) -> int | None:

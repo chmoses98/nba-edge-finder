@@ -1,0 +1,42 @@
+{
+ "fixed": "$SCRATCH/nba-shadow/identity/fix",
+ "reference": "$SCRATCH/nba/hold",
+ "changed_games_excluded": [
+  "espn:401810611",
+  "espn:401810633",
+  "espn:401810644",
+  "espn:401810659",
+  "espn:401810669",
+  "espn:401810691",
+  "espn:401810714",
+  "espn:401810723",
+  "espn:401810751"
+ ],
+ "arms_compared": [
+  "ewm5",
+  "sim_rotation"
+ ],
+ "n_long_rows_fixed": 295820,
+ "n_long_rows_fixed_in_changed_games": 5400,
+ "n_long_rows_reference": 295260,
+ "n_long_rows_reference_in_changed_games": 4840,
+ "n_long_rows_compared": 290420,
+ "n_long_rows_only_in_one": 0,
+ "n_long_rows_differing_by_column": {
+  "mean": 0,
+  "median": 0,
+  "p10": 0,
+  "p90": 0,
+  "crps": 0,
+  "p_ref": 0,
+  "t_ref": 0,
+  "n_draws": 0,
+  "actual": 0,
+  "probs": 0
+ },
+ "n_wide_rows_compared": 14521,
+ "n_wide_rows_only_in_one": 0,
+ "n_wide_cells_differing": 0,
+ "n_wide_columns_compared": 72,
+ "bit_identical_outside_changed_games": true
+}
