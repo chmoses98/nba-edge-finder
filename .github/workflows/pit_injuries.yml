@@ -79,6 +79,12 @@ jobs:
           git config user.email "nba-edge-bot@users.noreply.github.com"
           git add tests/fixtures/injury_reports data/history/injury_reports docs/research/pit_availability 2>/dev/null || true
           if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          # Commit only new reports / rows / snapshots / fixtures. A re-run that found nothing new changes
+          # just the manifest, probe cache and spot-check record; those stay in this run's log, so a push
+          # to the PR does not loop through bot commits.
+          if git diff --cached --quiet -- 'data/history/injury_reports/*.parquet' tests/fixtures/injury_reports; then
+            echo "no new reports and no snapshot change: not committing"; exit 0
+          fi
           git commit -m "pit-availability: official injury-report backfill chunk (run ${{ github.run_id }})"
           for i in 1 2 3 4; do
             git pull --rebase origin "${{ github.head_ref }}" && git push origin HEAD:"${{ github.head_ref }}" && exit 0
