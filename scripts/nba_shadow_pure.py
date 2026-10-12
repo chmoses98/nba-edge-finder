@@ -65,7 +65,8 @@ def cmd_outcomes(a) -> int:
 def cmd_evaluate(a) -> int:
     store = ShadowStore(a.store)
     rep = E.evaluate(store, utcnow(), include_replay=a.include_replay, n_boot=a.boot, archive_root=a.archive)
-    _dump({k: rep[k] for k in ("evaluated_at", "n_projection_rows", "n_outcome_rows", "n_listing_rows", "written", "reconciliation_summary")}
+    _dump({k: rep[k] for k in ("evaluated_at", "n_projection_rows", "n_outcome_rows", "n_listing_rows", "written", "reconciliation_summary",
+                               "scorecards")}
           | {"slots": {s: {c: v[c].get("n_player_game_stat_rows") for c in ("all_eligible", "pregame_market_listed")} for s, v in rep["by_slot"].items()}})
     return 0
 
@@ -136,7 +137,8 @@ def cmd_dry_run(a) -> int:
         summary["steps"]["replay_capture"] = {"status": "NO_COMPLETED_GAMES_IN_LAST_7_DAYS"}
     # 4. evaluation over everything matured (replay rows included and labelled)
     rep = E.evaluate(store, utcnow(), include_replay=True, n_boot=a.boot, archive_root=a.archive)
-    summary["steps"]["evaluate"] = {k: rep.get(k) for k in ("n_projection_rows", "n_outcome_rows", "n_listing_rows", "written", "reconciliation_summary")}
+    summary["steps"]["evaluate"] = {k: rep.get(k) for k in ("n_projection_rows", "n_outcome_rows", "n_listing_rows", "written", "reconciliation_summary",
+                                                            "scorecards")}
     summary["steps"]["evaluate"]["by_slot"] = {
         s: {"matured_games": v["matured_games"], **{c: {"n_rows": v[c].get("n_player_game_stat_rows"), "n_games": v[c].get("n_games"),
                                                          "points_unc": (v[c].get("final_stats", {}).get("points", {}).get("unc") or {}).get("sim_rotation"),

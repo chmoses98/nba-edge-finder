@@ -81,6 +81,31 @@ never from settlement. Scoring uses the Wave 1 matched-decomposition functions: 
 `pure_gate compare`. An eligible player absent from a final box scores 0 / not played, as in Wave 1.
 CRPS is the 7-level quantile approximation, because draws are not stored. The output is descriptive only.
 
+### Scorecards (alongside the evaluation above, which is unchanged)
+
+`nba_edge/shadow/scorecards.py` runs the vendored, unmodified `tools/pure_gate/accuracy_scorecard.py` and
+`value_scorecard.py` (see `tools/pure_gate/SCORECARDS.md`). Whenever the evaluation itself is written, it appends
+one record each under `scorecards/accuracy` and `scorecards/value`.
+
+* **`accuracy_scorecard`** scores the challenger, the frozen V1 simulator, against the `statistical_baseline`, EWM5.
+  * **Rows.** The unconditional and conditional rows are scored separately.
+  * **Populations.** `full_eligible` and `pregame_market_listed`. A row is in the listed cohort if its listing opened
+    and was observed by our records at or before as_of.
+  * **Breakdowns.** By slot, season type and hours to tip.
+  * **Maturity.** A game is matured once it has outcomes, or once kickoff + 6 h has passed. In a game that has passed
+    kickoff + 6 h but has no box score, the missing outcome is counted.
+  * **Counts.** It also counts missing forecasts, conditional DNP exclusions and missed slots.
+  * **Small samples.** With fewer than 20 game clusters, including zero matured rows, the result reads
+    `INSUFFICIENT_SAMPLE`.
+* **`value_scorecard`** runs in `DRY_RUN_DIAGNOSTIC` mode under
+  [`SHADOW_PURE_NBA_VALUE_PREREG.md`](SHADOW_PURE_NBA_VALUE_PREREG.md). The sha256 of its JSON copy is written into
+  every record.
+  * **Inputs.** The listing's `at_least` maps to the same integer rung. Prices stay in cents. Only quotes observed
+    at or before as_of are used.
+  * **Settlement.** DNP is `void`, the nearest policy to the series' pre-game fair-price settlement.
+  * **Verdict.** Only the V1 simulator at pretip, conditional rows, is eligible for an independent-value verdict.
+* **Failure.** A scorecard failure is written as an `ERROR` record and never blocks the evaluation.
+
 ## Workflow (`.github/workflows/nba_shadow_pure.yml`)
 
 - `schedule` (default branch only, so after merge) and `workflow_dispatch mode=live`: outcomes, then
