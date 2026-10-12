@@ -1,32 +1,28 @@
 {
- "last_capture_utc": "2026-10-12T21:45:49Z",
+ "last_capture_utc": "2026-10-12T21:52:49Z",
  "n_markets": 5714,
  "n_series": 280,
- "requests": 881,
+ "requests": 869,
  "run_id": "38307571710",
  "markets_written": {
-  "encoding": "delta",
-  "seq": 24,
-  "path": "kalshi/markets_delta/dt=2026-10-12/kalshi_markets_delta_20261012T214549Z_38307571710.json.gz",
-  "bytes": 11469,
+  "encoding": "checkpoint",
+  "reason": "chain reached 24 deltas (limit 24)",
+  "path": "kalshi/markets/dt=2026-10-12/kalshi_markets_20261012T215249Z_38307571710.jsonl.gz",
+  "bytes": 488755,
   "n_markets": 5714,
-  "n_changed": 456,
-  "changed_pct": 7.98,
-  "board_sha256": "8009569fef8ae52b7a823e3a1b2fde33225a9a16ea6dfe73cec52c663f025a8b"
+  "board_sha256": "b4f5df9814dda1f630dd566026e03912e628356e95583d308556426ca016eac6"
  },
  "orderbooks_written": {
-  "encoding": "delta",
-  "seq": 24,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-12/kalshi_orderbooks_delta_20261012T214549Z_38307571710.json.gz",
-  "bytes": 35933,
+  "encoding": "checkpoint",
+  "reason": "chain reached 24 deltas (limit 24)",
+  "path": "kalshi/orderbooks/dt=2026-10-12/kalshi_orderbooks_20261012T215249Z_38307571710.jsonl.gz",
+  "bytes": 38124,
   "n_markets": 300,
-  "n_changed": 294,
-  "changed_pct": 98.0,
-  "board_sha256": "7495eb9071ba889748bece140f0ec5c75306a24e0819865a158cf562dc4be00f"
+  "board_sha256": "cd03ebf1ce673666c3ff88d9ef0b92c4517797cd1ee5d3efed45d7d76f3c08c4"
  },
  "by_status": {
-  "active": 5683,
-  "initialized": 31
+  "active": 5704,
+  "initialized": 10
  },
  "by_support": {
   "BUILDABLE": 117,
@@ -71,7 +67,7 @@
   "series on the board with no ontology entry: ['KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 5683 live markets, cap 300"
+  "order books sampled by priority: 5704 live markets, cap 300"
  ],
  "alarm": true
 }
