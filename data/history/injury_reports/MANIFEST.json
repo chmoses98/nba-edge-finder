@@ -1,14 +1,20 @@
 {
  "season": "2025-26",
- "built_at": "2026-10-11T03:21:33Z",
+ "built_at": "2026-10-12T02:12:04Z",
  "games": 1322,
  "reports": 1333,
  "rows": 164314,
- "new_reports_this_run": 39,
+ "new_reports_this_run": 0,
  "complete": true,
  "games_located_this_run": 1322,
- "head_requests_this_run": 5491,
- "errors": [],
- "n_errors": 0,
+ "head_requests_this_run": 4174,
+ "errors": [
+  {
+   "slot_et": "2025-12-26T21:00",
+   "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2025-12-26_09_00PM.pdf",
+   "error": "ValueError: HTTP 403"
+  }
+ ],
+ "n_errors": 1,
  "source": "ak-static.cms.nba.com/referee/injury (official NBA injury report PDFs)"
 }
