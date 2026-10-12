@@ -1122,8 +1122,11 @@ _INJ_STATUS = {"out": "OUT", "questionable": "QUESTIONABLE", "doubtful": "DOUBTF
 def _availability(ctx: _Ctx, row: dict, event_id: str | None = None) -> dict:
     status = _INJ_STATUS.get(str(row.get("status") or "").lower(), str(row.get("status") or "UNKNOWN").upper())
     reason = f" ({row['reason']})" if row.get("reason") else ""
+    src = row.get("source") or "espn_injuries"
+    if src != "nba_official_pdf":
+        src += " (official NBA report not captured)"
     return {"status": status, "detail": f"{row.get('player_name_raw')}{reason}", "as_of": ctx.inp.injuries_at,
-            "source": f"{row.get('source') or 'espn_injuries'} (official NBA report not captured)", "event_id": event_id}
+            "source": src, "event_id": event_id}
 
 
 def _build_players(ctx: _Ctx) -> dict[str, dict]:
