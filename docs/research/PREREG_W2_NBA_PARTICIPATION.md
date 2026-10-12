@@ -110,3 +110,35 @@ clip are fixed here.
    numbers in an addendum commit (still before holdout).
 3. `collect --window holdout`, `report`; results in `docs/research/PARTICIPATION_MINUTES_W2.md` and
    `docs/research/w2_nba_participation/*.json`, citing both commits.
+
+## Addendum A — DEV fit and DEV result (recorded before the holdout is collected)
+
+Frozen appearance rates (`docs/research/w2_nba_participation/pi_dev_fit.json`, sha256
+`2a5309b2…74b4e2`), fitted on the DEV pass with no PIT arm active (544 games, 15,729 eligible
+player-games, 534 games with a T-60 snapshot at PR #23 head `a3cf479`; 15,441 rows in those games):
+
+| T-60 status | DEV rows | appeared | champion mean P(appear) |
+|---|---:|---:|---:|
+| out | 2,135 | 0.0000 | 0.451 |
+| doubtful | 46 | 0.0000 | 0.529 |
+| questionable | 369 | 0.5881 | 0.690 |
+| probable | 208 | 0.9327 | 0.703 |
+| available | 572 | 0.8794 | 0.676 |
+| unlisted | 12,111 | 0.8480 | 0.762 |
+
+π_doubtful = 0.0, π_questionable = 0.5881, π_probable = 0.9327. No other value was tried.
+
+DEV with these rates applied (`dev_report.json`; 544 games, 541 with a T-60 snapshot after PR #23's
+2026-10-12 re-run located 7 Dec 25-26 games; in-sample for the three rates, so descriptive only):
+champion minutes CRPS 4.512; `pit_prop` 3.847 (Δ −0.665 [−0.720, −0.605]); `pit_lineup` 3.811
+(Δ vs champion −0.702 [−0.759, −0.638]; Δ vs `pit_prop` −0.037 [−0.054, −0.019]). MAE (median)
+6.282 / 5.522 / 5.466. Oracle attribution of the champion's CRPS: known appearance removes 41.0%;
+59.0% remains as minutes given play, of which 2.3 points are team-total error and 56.6 within-team
+allocation. The holdout command is run once, unchanged, after this addendum is committed:
+
+```
+python scripts/nba_participation_study.py collect --window holdout --out $OUT \
+    --pi docs/research/w2_nba_participation/pi_dev_fit.json
+python scripts/nba_participation_study.py report --window holdout --out $OUT \
+    --json docs/research/w2_nba_participation/holdout_report.json
+```
