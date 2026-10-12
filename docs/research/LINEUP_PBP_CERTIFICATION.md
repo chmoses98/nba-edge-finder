@@ -147,3 +147,8 @@ python scripts/pbp_backfill.py --seasons 2025-26,2024-25 --max-minutes 17   # Ac
 python scripts/lineup_certify.py --seasons 2025-26,2024-25                  # offline, deterministic
 pytest tests/test_pbp_lineups.py
 ```
+
+On pull requests the workflow re-runs on every push (the paths filter sees the whole PR diff): the
+backfill is idempotent, the certification deterministic, and the re-fetch spot-check runs each time;
+the job commits back only when games, stints, certification or the spot-check result change, so a
+no-op re-run leaves the branch alone.
