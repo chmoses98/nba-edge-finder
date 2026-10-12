@@ -17,6 +17,11 @@ Definitions
 * Reconciliation flags a listing whose recorded venue result (from the read-only capture archive,
   when present) disagrees with the sports outcome (``actual >= at_least``).
 
+Alongside these (``scorecards.py``): an ``accuracy_scorecard`` record (vendored accuracy_scorecard; V1 sim challenger
+vs EWM5 baseline, both populations, unconditional and conditional rows) and a DRY-RUN ``value_scorecard`` record under
+the committed preregistration, appended under ``scorecards/accuracy`` and ``scorecards/value`` whenever the
+evaluation itself is written.
+
 Descriptive only: no promotion, no authority, no staking.
 """
 
@@ -32,6 +37,7 @@ import pandas as pd
 
 from nba_edge.research import matched_decomposition as md
 from nba_edge.shadow import projections as pj
+from nba_edge.shadow import scorecards as SC
 from nba_edge.shadow.collect import load_gate
 from nba_edge.shadow.store import ShadowStore
 from nba_edge.timeutil import iso
@@ -210,11 +216,16 @@ def evaluate(store: ShadowStore, now: datetime, include_replay: bool = False, n_
     rep["fingerprint"] = fingerprint
     unchanged = bool(prev) and prev[-1].get("fingerprint") == fingerprint
     rep["written"] = bool(write and not unchanged and (len(long) or listing_rows))
+    missed = [r for _e, r in store.iter_rows("missed")]
+    acc, val = SC.build_safe(proj, gate, listing_rows, missed, now=now, run_id=store.run_id, n_boot=n_boot)
     if rep["written"]:
         at = now
         store.append_rows("evaluations", [rep], observed_at=at, meta={"include_replay": include_replay})
         if recon["rows"]:
             store.append_rows("reconciliation", recon["rows"], observed_at=at, meta={})
+        store.append_rows("scorecards/accuracy", [acc], observed_at=at, meta={"include_replay": include_replay})
+        store.append_rows("scorecards/value", [val], observed_at=at, meta={"include_replay": include_replay, "mode": SC.VALUE_MODE})
+    rep["scorecards"] = {"written": rep["written"], **SC.summary_safe(acc, val)}
     return rep
 
 

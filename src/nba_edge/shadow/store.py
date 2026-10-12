@@ -11,6 +11,8 @@ Layout (the store root is a checkout of the data branch, mounted at ``data/shado
     outcomes/gate/dt=.../               sports outcomes in the pure_gate outcome format
     reconciliation/dt=.../              projection <-> outcome join + listing-result vs box mismatch flags
     evaluations/dt=.../                 evaluation reports (append-only)
+    scorecards/accuracy/dt=.../         accuracy_scorecard records (vendored scorecard; descriptive only)
+    scorecards/value/dt=.../            value_scorecard records (DRY_RUN_DIAGNOSTIC under the committed preregistration)
 
 Files are named by capture time and run id and never rewritten (``Ledger`` refuses to overwrite).
 ``check_immutable`` compares the store against a git ref: every file that exists at the ref must be
