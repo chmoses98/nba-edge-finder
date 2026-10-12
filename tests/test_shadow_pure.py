@@ -226,3 +226,30 @@ def test_a_slot_window_that_closes_uncaptured_is_recorded_missed_once(tmp_path):
     assert again["missed"] == [] and len(_rows(store, "missed")) == 1                      # recorded once, never filled in
     morning = C.capture(store, DATA, "morning", FakeESPN(k2, eid="999002"), dates=[d2], now=later, n_sims=SIMS)
     assert morning["missed"] == []          # its morning window closed before collection started
+
+
+class FakePreseason(FakeESPN):
+    def __call__(self, url: str):
+        if "scoreboard" in url:
+            self.calls.append(url)
+            return {"events": [_event(self.eid, self.kickoff, self.completed, stype=1)]}, iso(utcnow() - timedelta(seconds=5))
+        return super().__call__(url)
+
+
+def test_preseason_is_opt_in_labelled_and_evaluated_separately(tmp_path):
+    kickoff, d = _game_soon(60)
+    off = ShadowStore(tmp_path / "off", run_id="t0")
+    skipped = C.capture(off, DATA, "pretip", FakePreseason(kickoff), dates=[d], n_sims=SIMS)
+    assert skipped["games"] == [] and skipped["skipped"][0]["reason"] == "season_type_preseason"
+    store = ShadowStore(tmp_path / "on", run_id="t1")
+    rec = C.capture(store, DATA, "pretip", FakePreseason(kickoff), dates=[d], n_sims=SIMS, include_preseason=True)
+    assert len(rec["games"]) == 1 and rec["mode"] == "LIVE"
+    rows = _rows(store, "projections/sim_rotation/unconditional")
+    assert rows and {r["x_season_phase"] for r in rows} == {"PRESEASON_RESEARCH"}
+    assert all(r["as_of"] < kickoff for r in rows)
+    assert not _rows(store, "market/listings")  # no markets exist: nothing is faked
+    C.collect_outcomes(store, [d], FakePreseason(kickoff, completed=True), include_preseason=True)
+    rep = E.evaluate(store, utcnow(), n_boot=50)
+    assert set(rep["by_slot"]) == {"PRESEASON_RESEARCH/pretip"}  # never pooled with the regular-season slot keys
+    assert rep["by_slot"]["PRESEASON_RESEARCH/pretip"]["phase"] == "PRESEASON_RESEARCH"
+    assert store.verify() == []

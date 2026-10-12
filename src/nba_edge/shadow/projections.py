@@ -249,7 +249,8 @@ def build_slate_projections(games: list[GameRef], as_of: datetime, tg: pd.DataFr
                             "projection_mode": "PURE_INDEPENDENT", "conditional_on_playing": cond == "conditional",
                             "participation_probability": _r(p_play), "projection": summarize(x, ladder),
                             "sources": [s.to_row() for s in sources], "feature_lineage": lineage,
-                            "x_team_id": int(m["team_id"]), "x_season_type": g.season_type, "x_t_ref": float(t_ref),
+                            "x_team_id": int(m["team_id"]), "x_season_type": g.season_type,
+                            "x_season_phase": "PRESEASON_RESEARCH" if g.season_type == "preseason" else "REGULAR_SEASON", "x_t_ref": float(t_ref),
                             "x_n_draws": int(x.size),
                         }
                         res.rows[(arm, cond)].append(row)

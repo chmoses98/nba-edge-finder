@@ -112,7 +112,7 @@ def _long_rows(proj: list[dict[str, Any]], gate: dict[tuple, dict[str, Any]], ar
                     "team_id": r.get("x_team_id"), "arm": arm_of[r["model_version"]], "cond": COND[cond], "stat": r["statistic"],
                     "mean": float(p["mean"]), "median": float(p["median"]), "p10": float(p["p10"]), "p90": float(p["p90"]),
                     "crps": crps_quantile(r, y), "t_ref": t_ref, "p_ref": _p_at(r, t_ref), "actual": y, "played": bool(o["played"]),
-                    "participation": r.get("participation_probability")})
+                    "participation": r.get("participation_probability"), "phase": phase_of(r)})
     return pd.DataFrame(out)
 
 
@@ -149,6 +149,11 @@ def _scorecards(long: pd.DataFrame, wide: pd.DataFrame, n_boot: int) -> dict[str
     return out
 
 
+def phase_of(r: dict[str, Any]) -> str:
+    """Preseason rows are research-only and never pooled with regular-season rows."""
+    return "PRESEASON_RESEARCH" if r.get("x_season_type") == "preseason" else "REGULAR_SEASON"
+
+
 def evaluate(store: ShadowStore, now: datetime, include_replay: bool = False, n_boot: int = 1000, archive_root: Path | None = None,
              write: bool = True) -> dict[str, Any]:
     gate_mod = load_gate()
@@ -180,9 +185,11 @@ def evaluate(store: ShadowStore, now: datetime, include_replay: bool = False, n_
                 p10[(r.get("x_slot"), r["game_id"], r["player_id"], arm_of[r["model_version"]])] = _p_at(r, 10.0)
         long["p10min"] = [p10.get((s, g, p, a), np.nan) for s, g, p, a in zip(long["slot"], long["game_id"], long["player_id"], long["arm"], strict=True)]
         long["listed"] = [(a, g, p, s) in listed for a, g, p, s in zip(long["as_of"], long["game_id"], long["player_id"], long["stat"], strict=True)]
-    for slot in sorted(set(long["slot"])) if len(long) else []:
-        L = long[long["slot"] == slot]
-        res: dict[str, Any] = {"matured_games": sorted(set(L["game_id"]))}
+    groups = sorted({(ph, sl) for ph, sl in zip(long["phase"], long["slot"], strict=True)}) if len(long) else []
+    for phase, slot in groups:
+        L = long[(long["slot"] == slot) & (long["phase"] == phase)]
+        key = slot if phase == "REGULAR_SEASON" else f"PRESEASON_RESEARCH/{slot}"
+        res: dict[str, Any] = {"phase": phase, "matured_games": sorted(set(L["game_id"]))}
         for cohort, mask in (("all_eligible", pd.Series(True, index=L.index)), ("pregame_market_listed", L["listed"])):
             sub = L[mask]
             res[cohort] = _scorecards(sub, _wide(sub, (pj.BASELINE, pj.CHAMPION)), n_boot)
@@ -190,8 +197,8 @@ def evaluate(store: ShadowStore, now: datetime, include_replay: bool = False, n_
             # shared gate compare (champion vs the simple baseline), per conditionality
             gc = {}
             for cond in (False, True):
-                ch = [r for r in proj if r.get("x_slot") == slot and r["model_version"] == pj.MODEL_VERSION[pj.CHAMPION] and r["conditional_on_playing"] == cond]
-                bl = [r for r in proj if r.get("x_slot") == slot and r["model_version"] == pj.MODEL_VERSION[pj.BASELINE] and r["conditional_on_playing"] == cond]
+                ch = [r for r in proj if r.get("x_slot") == slot and phase_of(r) == phase and r["model_version"] == pj.MODEL_VERSION[pj.CHAMPION] and r["conditional_on_playing"] == cond]
+                bl = [r for r in proj if r.get("x_slot") == slot and phase_of(r) == phase and r["model_version"] == pj.MODEL_VERSION[pj.BASELINE] and r["conditional_on_playing"] == cond]
                 if cohort == "pregame_market_listed":
                     ch = [r for r in ch if (r["as_of"], r["game_id"], r["player_id"], r["statistic"]) in listed]
                     bl = [r for r in bl if (r["as_of"], r["game_id"], r["player_id"], r["statistic"]) in listed]
@@ -208,7 +215,7 @@ def evaluate(store: ShadowStore, now: datetime, include_replay: bool = False, n_
             miss = b[[(g, str(p)) not in fc_keys for g, p in zip(b["game_id"], b["nba_id"], strict=True)]]
             res["non_eligible_participants"] = {"n": int(len(miss)), "minutes": float(miss["minutes"].sum()), "pts": float(miss["pts"].sum()),
                                                 "minutes_share": float(miss["minutes"].sum() / max(b["minutes"].sum(), 1e-9))}
-        rep["by_slot"][slot] = res
+        rep["by_slot"][key] = res
     recon = reconcile(long, listing_rows, gate, archive_root)
     rep["reconciliation_summary"] = recon["summary"]
     prev = [r for _e, r in store.iter_rows("evaluations")]
@@ -217,7 +224,7 @@ def evaluate(store: ShadowStore, now: datetime, include_replay: bool = False, n_
     unchanged = bool(prev) and prev[-1].get("fingerprint") == fingerprint
     rep["written"] = bool(write and not unchanged and (len(long) or listing_rows))
     missed = [r for _e, r in store.iter_rows("missed")]
-    acc, val = SC.build_safe(proj, gate, listing_rows, missed, now=now, run_id=store.run_id, n_boot=n_boot)
+    acc, val = SC.build_safe([r for r in proj if phase_of(r) == "REGULAR_SEASON"], gate, listing_rows, missed, now=now, run_id=store.run_id, n_boot=n_boot)
     if rep["written"]:
         at = now
         store.append_rows("evaluations", [rep], observed_at=at, meta={"include_replay": include_replay})
