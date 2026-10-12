@@ -82,8 +82,10 @@ identical under both rules (1,193 and 1,207 before and after).
 
 By season type (certified / games): 2025-26 regular 1,107/1,231 (0.899), playoffs 80/85, play-in 6/6;
 2024-25 regular 1,127/1,231 (0.916), playoffs 76/84, play-in 4/6.
-Holdout window used by the W1 matched scorecard (regular season 2026-02-01..2026-04-12): **444 of 498
-games certified** (387 strict) — versus 0 reconstructable in `LINEUP_FEASIBILITY_R1.md`.
+Holdout window used by the W1 matched scorecard (regular season, ET game dates 2026-02-01..2026-04-12,
+the W1 definition): **448 of 501 games certified** (390 strict) — versus 0 reconstructable in
+`LINEUP_FEASIBILITY_R1.md`. (Review correction: the first version counted 444 of 498 by UTC start
+date, which shifts evening games across the window edges.)
 
 Reconciliation detail:
 
