@@ -9,7 +9,10 @@ exactly: minutes CRPS 5.0591, MAE of the mean 7.3815, bias +0.428, RMSE 10.08.
 official injury-report snapshots, using only rows where `t_minus_60_pit_ok`. PR #22 certified
 stints from games dated strictly before the forecast game. No market file is read.
 **Data versions used:** PR #22 head `cac640c` (stints unchanged since `7e8d34c`) and PR #23 head
-`c2c1627`. The holdout games' T-60 snapshots are identical in every PR #23 version.
+`c2c1627`. The holdout games' T-60 snapshots are identical in every PR #23 version, including the
+later `0f2afa3` re-run. That re-run moved 20 *DEV* (December) games to a later, previously
+unreachable report. The DEV fit used the earlier version (534 DEV games with a snapshot), so
+re-fitting π on the final data could shift the DEV-only figures slightly. The holdout is unaffected.
 
 ## Verdicts (holdout 2026-02-01..2026-04-12: 501 games, 14,763 eligible player-games, all 501 with a T-60 snapshot)
 
