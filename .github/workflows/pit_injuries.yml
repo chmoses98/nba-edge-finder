@@ -82,7 +82,8 @@ jobs:
           # Commit only new reports / rows / snapshots / fixtures. A re-run that found nothing new changes
           # just the manifest, probe cache and spot-check record; those stay in this run's log, so a push
           # to the PR does not loop through bot commits.
-          if git diff --cached --quiet -- 'data/history/injury_reports/*.parquet' tests/fixtures/injury_reports; then
+          if git diff --cached --quiet -- 'data/history/injury_reports/*.parquet' tests/fixtures/injury_reports \
+               docs/research/pit_availability/refetch_spotcheck.json; then
             echo "no new reports and no snapshot change: not committing"; exit 0
           fi
           git commit -m "pit-availability: official injury-report backfill chunk (run ${{ github.run_id }})"
