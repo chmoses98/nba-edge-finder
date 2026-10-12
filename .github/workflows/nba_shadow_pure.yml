@@ -113,8 +113,8 @@ jobs:
         run: |
           set -uo pipefail
           A=(); [ -d data/archive ] && A=(--archive data/archive)
-          python scripts/nba_shadow_pure.py outcomes --store data/shadow_pure/nba --back 3
-          python scripts/nba_shadow_pure.py capture  --store data/shadow_pure/nba --slot auto "${A[@]}"
+          python scripts/nba_shadow_pure.py outcomes --store data/shadow_pure/nba --back 3 --include-preseason
+          python scripts/nba_shadow_pure.py capture  --store data/shadow_pure/nba --slot auto --include-preseason "${A[@]}"
           python scripts/nba_shadow_pure.py evaluate --store data/shadow_pure/nba "${A[@]}"
       - name: Verify immutability, hash chain and gate validity before pushing
         run: python scripts/nba_shadow_pure.py verify --store data/shadow_pure/nba --base-ref "origin/$SHADOW_BRANCH" --gate
@@ -123,8 +123,17 @@ jobs:
           set -uo pipefail
           cd data/shadow_pure/nba
           git add -A
-          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
-          git commit -qm "nba shadow pure: run ${{ github.run_id }}"
+          if git diff --cached --quiet; then
+            # An unpushed commit (the orphan init commit on the very first run) must still be published:
+            # until it is, the branch does not exist on origin and later runs re-create it.
+            if git rev-parse -q --verify "refs/remotes/origin/$SHADOW_BRANCH" >/dev/null \
+               && [ "$(git rev-parse HEAD)" = "$(git rev-parse "refs/remotes/origin/$SHADOW_BRANCH")" ] \
+               && git ls-remote --exit-code --heads origin "$SHADOW_BRANCH" >/dev/null 2>&1; then
+              echo "nothing to commit"; exit 0
+            fi
+          else
+            git commit -qm "nba shadow pure: run ${{ github.run_id }}"
+          fi
           for i in 1 2 3 4 5; do
             if git push -q origin "HEAD:$SHADOW_BRANCH"; then echo "pushed on attempt $i"; exit 0; fi
             git rebase --abort 2>/dev/null || true
