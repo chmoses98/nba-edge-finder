@@ -38,8 +38,13 @@ from nba_edge.timeutil import ET, iso, utcnow  # noqa: E402
 ROW_KEYS = ["game_date", "away_tricode", "home_tricode", "team_id", "player_name_raw", "status", "reason"]
 
 
+def _cell(v) -> str:
+    # stored parquet rows carry NaN where the parser emits None (e.g. NOT YET SUBMITTED rows)
+    return "" if v is None or (isinstance(v, float) and v != v) or v is pd.NA else str(v)
+
+
 def _rows_key(rows: list[dict]) -> list[tuple]:
-    return sorted((tuple("" if r.get(k) is None else str(r.get(k)) for k in ROW_KEYS) for r in rows), key=str)
+    return sorted((tuple(_cell(r.get(k)) for k in ROW_KEYS) for r in rows), key=str)
 
 
 def check_report(client: httpx.Client, rep: dict, stored_rows: pd.DataFrame) -> dict:
