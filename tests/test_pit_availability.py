@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 
 from nba_edge.availability import capture
-from nba_edge.availability.backfill import verify_snapshots
+from nba_edge.availability.backfill import fallback_to_fetched, verify_snapshots
 from nba_edge.availability.identity import PlayerIndex, report_name_to_display
 from nba_edge.availability.official_report import report_url, slot_floor
 from nba_edge.timeutil import ET
@@ -131,3 +131,20 @@ def test_legacy_line_parser_finds_nothing_in_current_layout():
 
     text = extract_pdf_text((FIX / "Injury-Report_2026-01-15_05_30PM.pdf").read_bytes())
     assert parse_injury_report_text(text, datetime(2026, 1, 15, 22, 30, tzinfo=UTC)) == []
+
+
+def test_unfetchable_located_report_falls_back_to_latest_fetched_before_cutoff():
+    snaps = pd.DataFrame([{"game_id": "g1", "game_date_et": "2026-01-15", "tip_utc": "2026-01-16T00:30:00Z",
+                           "last_pre_tip_slot_et": "2026-01-15T19:15", "t_minus_60_slot_et": "2026-01-15T18:15"}])
+    reports = pd.DataFrame([
+        {"slot_et": "2026-01-15T17:30", "report_time_utc": "2026-01-15T22:30:00Z", "last_modified_utc": "2026-01-15T22:30:05Z"},
+        {"slot_et": "2026-01-15T18:15", "report_time_utc": "2026-01-15T23:15:00Z", "last_modified_utc": "2026-01-15T23:15:05Z"},
+        {"slot_et": "2026-01-16T12:00", "report_time_utc": "2026-01-16T17:00:00Z", "last_modified_utc": "2026-01-16T17:00:05Z"},
+    ])
+    out = fallback_to_fetched(snaps, reports).iloc[0]
+    # 19:15 was located but never downloaded -> latest fetched report of that day uploaded before tip
+    assert out["last_pre_tip_slot_et"] == "2026-01-15T18:15" and out["last_pre_tip_fallback_fetched"]
+    assert out["t_minus_60_slot_et"] == "2026-01-15T18:15" and not out["t_minus_60_fallback_fetched"]
+    rows = pd.DataFrame([{"slot_et": "2026-01-15T18:15", "game_id": "g1", "team_id": 1}])
+    v = verify_snapshots(pd.DataFrame([out]), reports, rows).iloc[0]
+    assert v["last_pre_tip_pit_ok"] and v["t_minus_60_pit_ok"]

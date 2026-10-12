@@ -60,16 +60,18 @@ jobs:
               if [ "$code" = "200" ]; then echo "got $f"; break; else rm -f "$f"; echo "miss $f ($code)"; fi
             done
           done
-      - name: Backfill 2025-26 (time-budgeted chunk)
-        env:
-          NBA_EDGE_LOG_LEVEL: INFO
-        run: python scripts/pit_injury_backfill.py --season 2025-26 --max-minutes 18
+      # Few-request checks first: the report CDN throttles a runner after the backfill's thousands of
+      # HEAD probes (run 38194230872 got 403 on every GET afterwards, including the parser self-test).
       - name: Provenance spot-check (re-fetch a seeded sample of stored reports; sha256, Last-Modified, rows)
-        if: always()
         run: python scripts/pit_refetch_spotcheck.py --season 2025-26 --n 6
       - name: Prospective capture DRY-RUN (fetch live, parse, validate; commits nothing)
         if: always()
         run: python scripts/pit_capture.py --root "$RUNNER_TEMP/pit_dry" --dry-run
+      - name: Backfill 2025-26 (time-budgeted chunk)
+        if: always()
+        env:
+          NBA_EDGE_LOG_LEVEL: INFO
+        run: python scripts/pit_injury_backfill.py --season 2025-26 --max-minutes 18
       - name: Commit backfill + fixtures back to the PR branch
         if: always()
         run: |

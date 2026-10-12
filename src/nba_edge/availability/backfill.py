@@ -219,7 +219,7 @@ def run_backfill(out_root: Path, hist_root: Path, season: str, *, date_from: str
     if len(rows_df):
         rows_df = rows_df.sort_values(["slot_et"], kind="stable").reset_index(drop=True)
         rows_df.to_parquet(p["rows"], index=False, compression="zstd")
-    snap_df = verify_snapshots(pd.DataFrame(snaps), reports, rows_df)
+    snap_df = verify_snapshots(fallback_to_fetched(pd.DataFrame(snaps), reports), reports, rows_df)
     if len(snap_df):
         snap_df.to_parquet(p["games"], index=False, compression="zstd")
     man = {"season": season, "built_at": iso(utcnow()), "games": int(len(snap_df)), "reports": int(len(reports)),
@@ -228,6 +228,38 @@ def run_backfill(out_root: Path, hist_root: Path, season: str, *, date_from: str
            "n_errors": len(errors), "source": "ak-static.cms.nba.com/referee/injury (official NBA injury report PDFs)"}
     p["manifest"].write_text(json.dumps(man, indent=1))
     return man
+
+
+def fallback_to_fetched(snaps: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
+    """A located report that could not be downloaded (the CDN answers 403 transiently, and throttles
+    long runs) must not cost the game its snapshot: fall back to the latest report that WAS fetched,
+    is from the game's ET date and whose upload instant precedes the snapshot's cutoff. Marked in
+    ``<tag>_fallback_fetched``; still verified by :func:`verify_snapshots` like any other snapshot."""
+    if not len(snaps):
+        return snaps
+    have = set(reports["slot_et"]) if len(reports) else set()
+    if len(reports):
+        lm = pd.to_datetime(reports["last_modified_utc"], utc=True, errors="coerce")
+        rep = reports.assign(_lm=lm, _date=reports["slot_et"].str[:10]).sort_values("slot_et")
+    out = snaps.copy()
+    for tag, off in (("last_pre_tip", timedelta(0)), ("t_minus_60", T60)):
+        col = f"{tag}_slot_et"
+        flags = []
+        for i, s in out.iterrows():
+            key = s[col]
+            if key is None or (isinstance(key, float) and key != key) or key in have or not len(reports):
+                flags.append(False)
+                continue
+            cutoff = pd.Timestamp(parse_iso(s["tip_utc"]) - off)
+            c = rep[(rep["_date"] == str(s["game_date_et"])) & (rep["_lm"] < cutoff)]
+            if len(c):
+                out.at[i, col] = c["slot_et"].iloc[-1]
+                flags.append(True)
+            else:
+                out.at[i, col] = None
+                flags.append(False)
+        out[f"{tag}_fallback_fetched"] = flags
+    return out
 
 
 def verify_snapshots(snaps: pd.DataFrame, reports: pd.DataFrame, rows: pd.DataFrame) -> pd.DataFrame:

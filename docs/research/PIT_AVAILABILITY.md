@@ -1,8 +1,8 @@
 # Point-in-time availability: official NBA injury reports, 2025-26 — certified data
 
-**Status: 1,311 of 1,322 games (99.17%) have a certified point-in-time snapshot** — the latest
+**Status: 1,318 of 1,322 games (99.70%) have a certified point-in-time snapshot** — the latest
 official injury report uploaded before tip, whose printed report time and upload instant both precede
-the tip and which lists the game. Same coverage for a T-60 snapshot (1,310). No model was fitted.
+the tip and which lists the game. T-60 snapshot: 1,317 (99.62%). No model was fitted.
 
 ## Source and what was learned about it
 
@@ -16,7 +16,11 @@ the tip and which lists the game. Same coverage for a T-60 snapshot (1,310). No 
   The filename is therefore only a locator. **`report_time_utc` is the time printed in the PDF header**;
   the upload instant is the HTTP `Last-Modified`.
 * The CDN returns 403 transiently for files that exist (a first run "lost" Dec 25-31 that a later run
-  found), so misses are never cached; 9 games (Dec 25-26) were still unlocated in the final run.
+  found), so misses are never cached. A re-run on 2026-10-12 (Actions run 38194230872) located 7 of the 9
+  Dec 25-26 games left over by the first backfill; 2 (Dec 25) remain unlocated. That run was then
+  throttled by the CDN (every GET answered 403 after ~4,200 HEAD probes): one located report could not
+  be downloaded, and its game now falls back to the latest *fetched* report of that day uploaded before
+  the cutoff (`<tag>_fallback_fetched`, 1 game; verified like every other snapshot).
 * ESPN `/injuries` has no history (current statuses only, each with its own update `date` and the ESPN
   athlete id in the player-card link); it is captured prospectively, not backfilled.
 * The repo's existing official-report parser (`data/injuries.py`, used by the context refresh) returns
@@ -33,22 +37,24 @@ snapshot's own cutoff (`<tag>_cutoff_utc`: the tip, or tip − 60 min for `t_min
 `<tag>_before_cutoff`) AND the report lists the game. Nothing uploaded at/after a snapshot's cutoff is
 ever attached; no post-game source is an input to any status. (Review fix: the T-60 flag originally
 re-checked only "< tip"; the locator already selected by upload < tip − 60, and re-verification on the
-stored data found 0 of 1,312 located T-60 reports with header or upload ≥ tip − 60, so every count
-below is unchanged.)
+stored data found 0 of 1,312 located T-60 reports with header or upload ≥ tip − 60, so the tighter
+flag changed no count; after the 2026-10-12 re-run, 0 of 1,318 / 1,317 pit_ok snapshots have a
+header time or upload instant at or after their cutoff.)
 
 | | last_pre_tip | t_minus_60 |
 |---|---:|---:|
 | games | 1,322 | 1,322 |
-| report located | 1,313 | 1,312 |
-| header time < tip / upload < tip | 1,313 / 1,313 | 1,312 / 1,312 |
-| game listed in that report | 1,311 | 1,310 |
-| both teams listed | 1,270 | 1,267 |
-| **pit_ok** | **1,311 (99.17%)** | **1,310 (99.09%)** |
-| lead (tip − report time), q10 / q50 / q90 min | 15 / 15 / 45 | 75 / 75 / 105 |
+| report located | 1,320 | 1,319 |
+| header time and upload < cutoff | 1,320 / 1,320 | 1,319 / 1,319 |
+| game listed in that report | 1,318 | 1,317 |
+| both teams listed | 1,277 | 1,274 |
+| **pit_ok** | **1,318 (99.70%)** | **1,317 (99.62%)** |
+| lead (tip − report time), q10 / q50 / q90 / q99 min | 15 / 15 / 48 / 72 | 75 / 75 / 105 / 120 |
 | upload lag after report time, q50 / q99 s | 5 / 10 | 5 / 11 |
 
-* By month (last_pre_tip pit_ok): Oct–Nov 1.000, Dec 0.955 (9 unlocated Dec 25-26 games), Jan–Apr
-  1.000, May 0.947, Jun 1.000. W1 holdout window (2026-02-01..04-12, regular): **498 / 498**.
+* By month (last_pre_tip pit_ok): Oct–Nov 1.000, Dec 0.990 (2 unlocated Dec 25 games; 3 for T-60), Jan–Apr
+  1.000, May 0.947, Jun 1.000. W1 holdout window (ET game dates 2026-02-01..04-12, regular, W1's definition): **501 / 501**
+  (the first version said 498 / 498, counting by UTC date).
 * The 2 May failures (espn:401873342, espn:401873343) are playoff games absent from the last pre-tip
   report (7:45 PM listed only the next day's game); they are not filled from an earlier report.
 * "Both teams listed" < "game listed": a team with nothing to report can be absent from the report.
@@ -80,8 +86,8 @@ athlete id directly). Report rows link to their report's `url`, `fetched_at_utc`
 `last_modified_utc` and `sha256` through `slot_et`.
 
 Validation only (post-game box read to check the parser and mapping, never as an input): of matched
-players in the certified last-pre-tip report, **Out 11,017 → 0.0% played**, Doubtful 7 → 0%,
-Questionable 66 → 60.6%, Probable 25 → 96%, Available 2,619 → 86.7%.
+players in the certified last-pre-tip report, **Out 11,072 → 0.0% played**, Doubtful 8 → 0%,
+Questionable 75 → 60.0%, Probable 32 → 93.8%, Available 2,630 → 86.7%.
 
 ## Prospective capture (append-only)
 
