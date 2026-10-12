@@ -121,8 +121,13 @@ def main() -> int:
                "note": "raw payload sha is expected to differ (volatile non-pbp sections); parsed events and "
                        "box lines are compared", "games": results}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-    Path(a.out).write_text(json.dumps(summary, indent=1, default=str))
-    print(json.dumps({k: v for k, v in summary.items() if k != "games"}, indent=1))
+    print(json.dumps(summary, indent=1, default=str))  # full record, with timestamps, in the run log
+    # the committed file keeps only fields that are stable across identical re-runs (no timestamps, no
+    # volatile payload hash), so an unchanged result is not a new commit
+    volatile = {"checked_at_utc", "refetched_at_utc", "refetch_payload_sha256"}
+    stable = {k: v for k, v in summary.items() if k not in volatile}
+    stable["games"] = [{k: v for k, v in r.items() if k not in volatile} for r in summary["games"]]
+    Path(a.out).write_text(json.dumps(stable, indent=1, default=str) + "\n")
     return 0
 
 

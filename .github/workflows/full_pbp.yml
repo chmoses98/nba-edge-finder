@@ -85,7 +85,7 @@ jobs:
           # Only new data or a changed certification is worth a commit. A re-run that fetched nothing new
           # changes just timestamps (manifest, done-files) and the spot-check record; those stay in this
           # run's log + artifact, so a push to the PR does not loop through bot commits.
-          if git diff --cached --quiet -- 'data/history/espn_pbp/*.parquet' docs/research/lineup_pbp/summary.json \
+          if git diff --cached --quiet -- 'data/history/espn_pbp/*.parquet' docs/research/lineup_pbp/summary.json docs/research/lineup_pbp/refetch_spotcheck.json \
                'docs/research/lineup_pbp/certification_*.csv'; then
             echo "no new games and no certification change: not committing (see artifact)"; exit 0
           fi
