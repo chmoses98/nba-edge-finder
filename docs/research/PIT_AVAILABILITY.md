@@ -113,6 +113,10 @@ uploaded, nothing committed.
 `scripts/pit_refetch_spotcheck.py` (workflow step on pull requests) re-downloads a seeded sample of
 stored reports, including the T-60 reports of seeded games, and compares sha256, `Last-Modified`
 and the parsed rows with the stored records; results in `docs/research/pit_availability/refetch_spotcheck.json`.
+Runs 38195305077 and 38206776589 (2026-10-12; 9 reports each, the T-60 sample differing because the set
+of pit_ok games grew between them): **sha256, Last-Modified and parsed rows identical 9/9 in both**, and
+every re-fetched T-60 report's Last-Modified precedes its game's cutoff. (Run 38194230872 was throttled
+by the CDN, 0/9 fetched; see above.)
 
 ## Files
 
