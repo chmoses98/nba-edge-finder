@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-13T19:53:49Z",
+ "generated_at_utc": "2026-10-13T20:53:50Z",
  "date_et": "2026-10-13",
  "model_version": "nba-sim-0.1.0",
  "sim_version": "nba-sim-0.1.0",
@@ -11,17 +11,17 @@
   "other": 0.9
  },
  "authority_note": "All families are RESEARCH: no betting authority. Numbers are for prospective evaluation.",
- "market_snapshot": "kalshi/markets/dt=2026-10-13/kalshi_markets_20261013T173035Z_38428823763.jsonl.gz+14deltas#c9a7f2a80799",
- "market_snapshot_age_min": 3.24296355,
- "injury_snapshot": "context/injuries/dt=2026-10-13/context_injuries_20261013T191355Z_38428823763.jsonl.gz",
- "injury_snapshot_age_min": 39.90963021666666,
+ "market_snapshot": "kalshi/markets/dt=2026-10-13/kalshi_markets_20261013T173035Z_38428823763.jsonl.gz+20deltas#8a9352f43a8f",
+ "market_snapshot_age_min": 3.257752216666667,
+ "injury_snapshot": "context/injuries/dt=2026-10-13/context_injuries_20261013T201352Z_38428823763.jsonl.gz",
+ "injury_snapshot_age_min": 39.974418883333335,
  "injury_provenance": {
   "source": "espn",
-  "n": 139,
+  "n": 137,
   "unresolved": []
  },
  "coverage": {
-  "BUILDABLE": 10,
+  "BUILDABLE": 56,
   "UNRESOLVED": 5,
   "MODELABLE": 240
  },
@@ -65,7 +65,7 @@
     "games_used": 287
    },
    "ladder_violations": [],
-   "n_markets": 51
+   "n_markets": 74
   },
   {
    "game_id": "espn:401908944",
@@ -106,7 +106,7 @@
     "games_used": 299
    },
    "ladder_violations": [],
-   "n_markets": 51
+   "n_markets": 74
   },
   {
    "game_id": "espn:401908621",
@@ -195,18 +195,18 @@
    "tip_utc": "2026-10-14T02:00:00Z",
    "home": "SAC",
    "away": "POR",
-   "p_home_win": 0.22533333333333333,
-   "margin_mean": -12.25925,
-   "margin_sd": 16.258369314627878,
-   "total_mean": 225.57335,
-   "total_sd": 20.157009197237077,
-   "home_pts_mean": 106.65705,
-   "away_pts_mean": 118.9163,
-   "ot_rate": 0.048683333333333335,
-   "n_sims": 60000,
+   "p_home_win": 0.222025,
+   "margin_mean": -12.39955,
+   "margin_sd": 16.136034512776053,
+   "total_mean": 225.49555,
+   "total_sd": 20.24508533440894,
+   "home_pts_mean": 106.548,
+   "away_pts_mean": 118.94755,
+   "ot_rate": 0.046325,
+   "n_sims": 40000,
    "seed": 3266190693,
    "converged": true,
-   "max_mc_se": 0.002037840677040283,
+   "max_mc_se": 0.002494866726776202,
    "inputs_trusted": false,
    "input_reasons": [
     "injury source is espn not official report",
@@ -272,9 +272,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e3e3aa4641cbbd37583f31d15e1c4561"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "dbf17573c6dd830ba7e94667d3d191aa"
   },
   {
    "ticker": "KXNBA1H-26OCT13CLEORL-ORL",
@@ -315,9 +315,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "c95149f3fd7de14367386cf2aecd2eb3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "aa3298c5ec7886a0664cadf5766eded6"
   },
   {
    "ticker": "KXNBA1H-26OCT13CLEORL-TIE",
@@ -354,9 +354,998 @@
    "bet_up_to_no": null,
    "spread_cents": null,
    "flags": [],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "fa2d90ace25f32321ad2a338b5568c4b"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2a1b48bc56ebfbf19593b5ac31675305"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-CLE10",
+   "game_id": "espn:401898403",
+   "title": "Cleveland wins the 1H by over 9.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612739,
+   "nba_id": null,
+   "player": null,
+   "threshold": 9.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.290775,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002270599586975872,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 27,
+   "bet_up_to_no": 69,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "7682daeb26092101eeaa7a858ac4f9c8"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-CLE12",
+   "game_id": "espn:401898403",
+   "title": "Cleveland wins the 1H by over 11.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612739,
+   "nba_id": null,
+   "player": null,
+   "threshold": 11.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.247025,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0021564070196451782,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 23,
+   "bet_up_to_no": 73,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "875d19dcfbaa20c321a0c586bfb13582"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-CLE2",
+   "game_id": "espn:401898403",
+   "title": "Cleveland wins the 1H by over 1.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612739,
+   "nba_id": null,
+   "player": null,
+   "threshold": 1.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.495025,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002499876243811881,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 47,
+   "bet_up_to_no": 48,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6fa997a205485ed92d0c71ede56ed05c"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-CLE4",
+   "game_id": "espn:401898403",
+   "title": "Cleveland wins the 1H by over 3.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612739,
+   "nba_id": null,
+   "player": null,
+   "threshold": 3.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.439525,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002481646501694994,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 42,
+   "bet_up_to_no": 54,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "46754ad849a682471cfacb2a772840dd"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-CLE6",
+   "game_id": "espn:401898403",
+   "title": "Cleveland wins the 1H by over 5.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612739,
+   "nba_id": null,
+   "player": null,
+   "threshold": 5.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.387825,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002436271584691452,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 37,
+   "bet_up_to_no": 59,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "afc295bd06405f29312342eef8811750"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-CLE8",
+   "game_id": "espn:401898403",
+   "title": "Cleveland wins the 1H by over 7.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612739,
+   "nba_id": null,
+   "player": null,
+   "threshold": 7.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.3395,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0023676979853858053,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 32,
+   "bet_up_to_no": 64,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f85296593ceafd51bf0016ef4c4a397e"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-ORL10",
+   "game_id": "espn:401898403",
+   "title": "Orlando wins the 1H by over 9.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612753,
+   "nba_id": null,
+   "player": null,
+   "threshold": 9.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.228375,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0020989274604842826,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 21,
+   "bet_up_to_no": 75,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "0420217328dbd96bb4b187cd866637c2"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-ORL12",
+   "game_id": "espn:401898403",
+   "title": "Orlando wins the 1H by over 11.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612753,
+   "nba_id": null,
+   "player": null,
+   "threshold": 11.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.189775,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0019606150143194863,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 17,
+   "bet_up_to_no": 79,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "02dc6857271e25592ed77bd3bf6c7c24"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-ORL2",
+   "game_id": "espn:401898403",
+   "title": "Orlando wins the 1H by over 1.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612753,
+   "nba_id": null,
+   "player": null,
+   "threshold": 1.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.423475,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002470546115613914,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 40,
+   "bet_up_to_no": 55,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "dfdc272d7fe48a454376be5383b9490d"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-ORL4",
+   "game_id": "espn:401898403",
+   "title": "Orlando wins the 1H by over 3.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612753,
+   "nba_id": null,
+   "player": null,
+   "threshold": 3.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.3709,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024152287158776494,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 35,
+   "bet_up_to_no": 61,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e6f74fbee7ecd6702664c4a4de055699"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-ORL6",
+   "game_id": "espn:401898403",
+   "title": "Orlando wins the 1H by over 5.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612753,
+   "nba_id": null,
+   "player": null,
+   "threshold": 5.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.32095,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0023342080964429885,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 30,
+   "bet_up_to_no": 66,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "107b79a51b3fe9e0ae3a0e7b3d5c826b"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13CLEORL-ORL8",
+   "game_id": "espn:401898403",
+   "title": "Orlando wins the 1H by over 7.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612753,
+   "nba_id": null,
+   "player": null,
+   "threshold": 7.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.2737,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002229284133976645,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 26,
+   "bet_up_to_no": 71,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "abe47ff67a58236974159578e1f9b73f"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-100",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 99.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 99.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.75105,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002162023921583663,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 73,
+   "bet_up_to_no": 23,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b717feedec684aa4f4e70b113d8b0588"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-102",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 101.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 101.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.706525,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0022767708732709577,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 69,
+   "bet_up_to_no": 27,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b1be8bc46bdcedfa2734e12f6c3c919a"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-104",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 103.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 103.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.65935,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0023696390943559317,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 64,
+   "bet_up_to_no": 32,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "20f7c8c8bad95207cad7bcac5da325c9"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-106",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 105.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 105.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.611675,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024368457807943038,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 59,
+   "bet_up_to_no": 37,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "65357e326093c91531c7ce7f81f3c401"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-108",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 107.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 107.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.562475,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024804075994430833,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 54,
+   "bet_up_to_no": 42,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6c0bb2bcd9a1de660653ca94f37f7c20"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-110",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 109.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 109.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.512225,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024992526351641604,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 49,
+   "bet_up_to_no": 47,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "cfa00b7c7ed757cba21b721f27fb6e3a"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-112",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 111.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 111.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.462075,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002492798098397662,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 44,
+   "bet_up_to_no": 52,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c2eea4eadc0be8a0e315fd97fda0c202"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-114",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 113.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 113.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.4114,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024604371562793473,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 39,
+   "bet_up_to_no": 57,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d9e524a186778b91a5653e66865ea927"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-116",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 115.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 115.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.364525,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024064835568470026,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 34,
+   "bet_up_to_no": 61,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "7c89cd48b70461a6950fcb35e633d062"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-118",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 117.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 117.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.317975,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0023284485144350947,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 30,
+   "bet_up_to_no": 66,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "21b04f6b53f79557b1277e3353ce7ad3"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13CLEORL-98",
+   "game_id": "espn:401898403",
+   "title": "1st Half: Over 97.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 97.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.791775,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002030193028846026,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 77,
+   "bet_up_to_no": 19,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3f885a3f2d3c97550a8b453d30ac4106"
   },
   {
    "ticker": "KXNBAGAME-26OCT13CLEORL-CLE",
@@ -397,9 +1386,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ecf4fe163e5c7926287fe9843ed21559"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "147af9f02927ce71460d364eedcd1049"
   },
   {
    "ticker": "KXNBAGAME-26OCT13CLEORL-ORL",
@@ -440,9 +1429,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "9b144c1edd8d901f20cf9ecf8ac8d6ac"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ce4081a63902ddad8a06dec3200c4aeb"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE10",
@@ -483,9 +1472,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "867355f481a85ea439349d78154e0f99"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b33b1940fab67a55dd080491dd76ac07"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE12",
@@ -526,9 +1515,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "9f13f0df44bb974ac29a22e22207690b"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "81ed2b2105d4afae1c35c0be544866f7"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE14",
@@ -569,9 +1558,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "25f52825687ca439497e1004d457c956"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5c16ecb504e89d3a3d181600a3e795e3"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE16",
@@ -612,9 +1601,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a06121c05a314ce01861420e3133f0f3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "391cb90347c8ba7bf1f7a2c6eed542d7"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE18",
@@ -655,9 +1644,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "6e7988adb5b139835ee4b42d26b9ca68"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "234b3ed5ec87d461532f467a31c9ee75"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE2",
@@ -698,9 +1687,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "58531cae86ccc3c24136dde960251a00"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "609a23368f8fa6635972336d6c669ae4"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE20",
@@ -741,9 +1730,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ed6f6861d9843dea9afdd88587e112b5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9a7be568c3315fb846cc456bde1f1dc3"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE3",
@@ -784,9 +1773,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "5d9d1b8ca18338d83bf915f26e8a7c7c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3cce8a346cee2ac7ce5f380f584be827"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE4",
@@ -827,9 +1816,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "82b7e5ac4fbff093f27c8f521d95e2ac"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "dc82050bfce9985e7c0b4d5d1e1ff8ee"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE5",
@@ -870,9 +1859,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "3c54e492c7a7b8f67168e268a423e8ca"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "7dc9ca57da6445b82240f129e2757b1b"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE6",
@@ -913,9 +1902,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "7de8fd0526159968426186fb4146ceb6"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "baf7fedc5b71b53c9e5d8ec72f61235c"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE7",
@@ -956,9 +1945,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e7548b991e9ef4262ce0819f11d5daed"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c649a0ab820e37fc9e0e8e01a6c7dd7c"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-CLE8",
@@ -999,9 +1988,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "c21927ec5f93594285b2546904db9168"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "159f0b83e4e7fb5b0a7ace765fcdec01"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL11",
@@ -1042,9 +2031,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0f8febd3eca8588f11e6f51c0f3aaa82"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "07f6b3a6db16e95c32fa2dcb23b6173d"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL13",
@@ -1085,9 +2074,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "58a4e87391a45eb6676d1998ecf4bb47"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "945ebea45e0ccecbd39a7c65537453cd"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL15",
@@ -1128,9 +2117,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "7ba62f74507bfa7d7f36f72eb99e7e2b"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "30bd048476195532bb3f6c0b86b278c6"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL17",
@@ -1171,9 +2160,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d413d74544051ffddd7ebfc3ba6f4217"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f0afa01715fd475468de1c76eff9addd"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL19",
@@ -1214,9 +2203,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "4f23b51bdabe9d9e0bb9cbfe86089a7d"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b8c4715edc27a2047003dadbbecfa2b4"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL2",
@@ -1257,9 +2246,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a018d56876cd8b021dbe0f0edfeb0e56"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "8929c2ec2befee26101da29ba8d4435c"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL3",
@@ -1300,9 +2289,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "102c3821fe61d7366dd26d790e8224c6"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d3aa086e9a3e16342dc13c811d275a1b"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL4",
@@ -1343,9 +2332,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "da436ca0bb1ec70afa872c524bf92860"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f66798ad9bf6397ceff4e6d4b49e47f2"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL5",
@@ -1386,9 +2375,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "5573e0dc4a881378c2d5aa89ecc57d56"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "af388e5a9c4ab4e789aefb634e217a94"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL6",
@@ -1429,9 +2418,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "53acd5d89139003e5c0b278854e209ab"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "af0913d98548e60bb488b84787c7fb4f"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL7",
@@ -1472,9 +2461,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "62a5666967086baf812512383752f7ee"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9a7b43f57be191c76446c4624c44b364"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13CLEORL-ORL9",
@@ -1515,9 +2504,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ef66242cecab1750275bd0415cca53e0"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "0be143e216c20fe5265370b089125a44"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-212",
@@ -1558,9 +2547,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "3b84416fbf09cf58e727dbbd1d34653c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "81f133ca348e9b1a52c7a7808dca6e74"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-214",
@@ -1601,9 +2590,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f4e83c83b7e35cb4c424b8a49d1bef51"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ec94933c672fa934d12ac68150833dee"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-216",
@@ -1644,9 +2633,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "31673bd27bdceee292002ea54cabee6c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "8e92ef4ee3aa23e8370e950c99dc689e"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-218",
@@ -1687,9 +2676,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "6754302990b5d4d910cd4d7b6bb9e620"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "05cea601804d13f02757f473b6cac45a"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-220",
@@ -1730,9 +2719,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e234dc10cc4cb634660b6b255041e501"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "14b297b053ea1fcd7ed991ced94cb90b"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-222",
@@ -1773,9 +2762,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ede74c33b3dbe8fbb1e9356899a1a09a"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f32b9482053909d311ca3fb836205784"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-224",
@@ -1816,9 +2805,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "7268a7a56457542bdf6ebe271373ec74"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c2b1e22f16e4c7c0775c7f0c3c5d7c1f"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-226",
@@ -1859,9 +2848,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "5ec7f78259413aa0e178a1f152780f20"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a6c623fbed48b838e7a8a86b7e8d5483"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-228",
@@ -1902,9 +2891,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ee8011291cc196b6d81a1082f36e6a30"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3e38d74b32bada67bfc0b79cecc37e40"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-230",
@@ -1945,9 +2934,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "503f068277e047fdef5e6a476e72bdbb"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ee650993b9be6541346228db9c3b48bd"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-232",
@@ -1988,9 +2977,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "485f60eda58be0703963a7dde43903f3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f631653b18f3524cbe8960479db3c152"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-234",
@@ -2031,9 +3020,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "eaf6e7958165d7dd8d47a335eb31d79c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "7dfecacd5b4c1f927ac1ae579af4b0da"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-236",
@@ -2074,9 +3063,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "42b7ea4e953043fd8abbb80e975c6ee1"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2ffe8862a70111b25aad20b383d89020"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-238",
@@ -2117,9 +3106,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d695363d8916f4511c145a8b370f02a3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "96df998c6f29531d204407915e9179c6"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-240",
@@ -2160,9 +3149,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "cf1a056b9fea426c8a94697008df278c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "4860a5fe0b701e7a50dce958fe5d1225"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-242",
@@ -2203,9 +3192,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "84bd96ebd1a84cc20909972dd35ef944"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "67635e0800bb7dc17c2093ce8bb3c0f8"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-244",
@@ -2246,9 +3235,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a1fd2fd5caa90041e1c49b29302569f5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2c06e1e2c110bae7a79b567162874ccb"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-246",
@@ -2289,9 +3278,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "63d1b7580ffa0d7b155390adeed63d95"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6d80a3f6a3aef48a5c847d3d29ed9d48"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-248",
@@ -2332,9 +3321,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "978ba984f90c7aa0ff8f0701f1218859"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b91f262776f402161a090586e75cbc5b"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-250",
@@ -2375,9 +3364,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "c36eedfa51e7da490c0c100c580e8c6c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e2d0f1a89896f1bb994c3c58d2d16c75"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13CLEORL-252",
@@ -2418,9 +3407,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a6b6c179d281d93c7dd59af7b6029942"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e1ad61de9eee5b4df4f1c09d60998476"
   },
   {
    "ticker": "KXNBA1H-26OCT13NYKTOR-NYK",
@@ -2461,9 +3450,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "52e44fbf4d8f660bb3e2203df4423033"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e4c7bce8865f815661b5956e2db88670"
   },
   {
    "ticker": "KXNBA1H-26OCT13NYKTOR-TIE",
@@ -2500,9 +3489,9 @@
    "bet_up_to_no": null,
    "spread_cents": null,
    "flags": [],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "371d77065fbda2c74140c2de570ed60a"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "67dd9bab0c1abfa65350150c996d56d1"
   },
   {
    "ticker": "KXNBA1H-26OCT13NYKTOR-TOR",
@@ -2543,9 +3532,998 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ffd3bc80274cb7f1f890af840364025c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "786b7571feb7c7db346d48bda2c8ddd0"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-NYK10",
+   "game_id": "espn:401908944",
+   "title": "New York wins the 1H by over 9.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612752,
+   "nba_id": null,
+   "player": null,
+   "threshold": 9.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.3864,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024346202989378035,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 37,
+   "bet_up_to_no": 59,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ba1fe9a80a8a38cf17d1c777f713c906"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-NYK12",
+   "game_id": "espn:401908944",
+   "title": "New York wins the 1H by over 11.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612752,
+   "nba_id": null,
+   "player": null,
+   "threshold": 11.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.335025,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0023599960242286426,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 31,
+   "bet_up_to_no": 64,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "cb0b7640809a4949a570162683c6e098"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-NYK2",
+   "game_id": "espn:401908944",
+   "title": "New York wins the 1H by over 1.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612752,
+   "nba_id": null,
+   "player": null,
+   "threshold": 1.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.600825,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002448644111416561,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 58,
+   "bet_up_to_no": 38,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d29d99cc551fdaa567f07b87e210f1e5"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-NYK4",
+   "game_id": "espn:401908944",
+   "title": "New York wins the 1H by over 3.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612752,
+   "nba_id": null,
+   "player": null,
+   "threshold": 3.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.547275,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002488800285152467,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 52,
+   "bet_up_to_no": 43,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "1b3d5aaeab1015812b55b80262b75870"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-NYK6",
+   "game_id": "espn:401908944",
+   "title": "New York wins the 1H by over 5.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612752,
+   "nba_id": null,
+   "player": null,
+   "threshold": 5.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.493975,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024998184902858445,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 47,
+   "bet_up_to_no": 48,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "57eb942698637a1efca1ae5ede9409ef"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-NYK8",
+   "game_id": "espn:401908944",
+   "title": "New York wins the 1H by over 7.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612752,
+   "nba_id": null,
+   "player": null,
+   "threshold": 7.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.43935,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024815397311951305,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 42,
+   "bet_up_to_no": 54,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ee7041994d0c8026db04a08e1e7c0aed"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-TOR10",
+   "game_id": "espn:401908944",
+   "title": "Toronto wins the 1H by over 9.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612761,
+   "nba_id": null,
+   "player": null,
+   "threshold": 9.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.157225,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0018200638682131461,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 14,
+   "bet_up_to_no": 83,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c78a960250a90315a51374de5fcc65fc"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-TOR12",
+   "game_id": "espn:401908944",
+   "title": "Toronto wins the 1H by over 11.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612761,
+   "nba_id": null,
+   "player": null,
+   "threshold": 11.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.126075,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0016596693524238496,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 11,
+   "bet_up_to_no": 86,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "66ae402926cd91295d50075ca84a5730"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-TOR2",
+   "game_id": "espn:401908944",
+   "title": "Toronto wins the 1H by over 1.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612761,
+   "nba_id": null,
+   "player": null,
+   "threshold": 1.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.321825,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0023358813613655553,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 30,
+   "bet_up_to_no": 66,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "be17840016aec075a507eb5719534451"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-TOR4",
+   "game_id": "espn:401908944",
+   "title": "Toronto wins the 1H by over 3.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612761,
+   "nba_id": null,
+   "player": null,
+   "threshold": 3.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.275075,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0022327603116714077,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 26,
+   "bet_up_to_no": 71,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "686deaadc3696d9c68b298c2c3cdf671"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-TOR6",
+   "game_id": "espn:401908944",
+   "title": "Toronto wins the 1H by over 5.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612761,
+   "nba_id": null,
+   "player": null,
+   "threshold": 5.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.231525,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0021090351726263364,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 21,
+   "bet_up_to_no": 75,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "8cb423edcc7e447f83a1725f10fa6a23"
+  },
+  {
+   "ticker": "KXNBA1HSPREAD-26OCT13NYKTOR-TOR8",
+   "game_id": "espn:401908944",
+   "title": "Toronto wins the 1H by over 7.5 points",
+   "family": "period_spread",
+   "stat": "margin",
+   "period": "1H",
+   "team_id": 1610612761,
+   "nba_id": null,
+   "player": null,
+   "threshold": 7.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.1918,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0019685829929164786,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 18,
+   "bet_up_to_no": 79,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9b1a3559d8a5693c67c3c2f1449796b6"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-100",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 99.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 99.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.713225,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.00226127784325036,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 69,
+   "bet_up_to_no": 27,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e4dafcfdcad68d43975cae90574946d2"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-102",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 101.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 101.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.66595,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0023582864409354516,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 65,
+   "bet_up_to_no": 31,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2b5c1230876c6c9821417adca33f7afe"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-104",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 103.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 103.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.617825,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024295949733185982,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 60,
+   "bet_up_to_no": 36,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "68ba34656039977619c9c1afb89061bf"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-106",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 105.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 105.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.567625,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002477028761313643,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 55,
+   "bet_up_to_no": 41,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "faf116858752cfa3f2283e9c0476b2a0"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-108",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 107.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 107.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.51515,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002498852123976127,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 49,
+   "bet_up_to_no": 46,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "1dc6ba1cd6f2866c612b197f8bd86ddf"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-110",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 109.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 109.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.4603,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0024921070903955954,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 44,
+   "bet_up_to_no": 52,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "522cefde947f3b72383d5ea9bc24299f"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-112",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 111.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 111.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.41225,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002461198577421172,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 39,
+   "bet_up_to_no": 57,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d747dba99a3cb8e3843122344110eb5e"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-114",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 113.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 113.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.3649,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002407010542145588,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 34,
+   "bet_up_to_no": 61,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2105130468c399c1c31ab3fd9b78ce23"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-116",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 115.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 115.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.31915,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002330736350920026,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 30,
+   "bet_up_to_no": 66,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "683dde0b774eae3ac149cd3ae0b46f38"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-118",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 117.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 117.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.2748,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.002232067203289363,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 26,
+   "bet_up_to_no": 71,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "66b7fabf5b477cd454f26052aab946b8"
+  },
+  {
+   "ticker": "KXNBA1HTOTAL-26OCT13NYKTOR-98",
+   "game_id": "espn:401908944",
+   "title": "1st Half: Over 97.5 points scored",
+   "family": "period_total",
+   "stat": "total",
+   "period": "1H",
+   "team_id": null,
+   "nba_id": null,
+   "player": null,
+   "threshold": 97.5,
+   "comparator": "gt",
+   "support": "BUILDABLE",
+   "semantics": "high",
+   "yes_bid": null,
+   "yes_ask": null,
+   "no_bid": null,
+   "no_ask": null,
+   "p_market": null,
+   "p_data_only": 0.7584,
+   "p_hybrid": null,
+   "p_production": null,
+   "mc_se": 0.0021402654041029587,
+   "gate": "CANNOT_TRUST_INPUTS",
+   "gate_reasons": [
+    "injury source is espn not official report",
+    "preseason game: rotations/minutes are not representative (systems-validation only)"
+   ],
+   "authority": "RESEARCH",
+   "best_side": null,
+   "ev_yes": null,
+   "ev_no": null,
+   "bet_up_to_yes": 74,
+   "bet_up_to_no": 22,
+   "spread_cents": null,
+   "flags": [
+    "no_quote: missing yes_ask, no_ask",
+    "no_edge: no side has fee-adjusted EV above min_edge"
+   ],
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3440ff92fe1ab9a19bb0a2a1a54d9558"
   },
   {
    "ticker": "KXNBAGAME-26OCT13NYKTOR-NYK",
@@ -2586,9 +4564,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "634bcd644fd5a1d5aec216787dae2b23"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "8f3715d3022d0a8114a90c9ef96647eb"
   },
   {
    "ticker": "KXNBAGAME-26OCT13NYKTOR-TOR",
@@ -2629,9 +4607,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "133bb413c280689b99ae44bda4ef82a9"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "708a803aea407b45dc280b73788ae6f4"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-NYK2",
@@ -2672,9 +4650,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "31a444cec603f79bf589e1be86854a7a"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f668a7b1e0e1fab1951992e5d013c747"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-NYK4",
@@ -2715,9 +4693,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "8ecba11a285c458f8371474da4670612"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "116d6ab6d0b980bf5c19b283327fdeeb"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-NYK6",
@@ -2758,9 +4736,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "9ac5bd1354929f032fd61b48a1aee08c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e19469ae18207dcd9f0ab7c853588c6e"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-NYK8",
@@ -2801,9 +4779,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "aad51ebab1e438e62665bb236db37dd0"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a1a335d320e6e90deff6acdafd79d9b5"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR10",
@@ -2844,9 +4822,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "6e1e3be73e39e5a27b716e6099330e25"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e0134a6ff12f6c0d64827bb91279f6f2"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR11",
@@ -2887,9 +4865,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a7152207f2b8999606d4a5bf4256b5b4"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6e7709f46726a18758fc71ca4b844d39"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR12",
@@ -2930,9 +4908,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "4f7dfa00afebc4b1d7aeb75a185511ed"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9da953e11f610a70df765ff0e78433c9"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR13",
@@ -2973,9 +4951,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "b2694d15704584313cdfc4abb999441e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "4a53f3fd591de829d6a94bac9e60ae93"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR14",
@@ -3016,9 +4994,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "1320ed727aaf7636e6e20d2c96522eb9"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "827ca87f380472495f9720bd4b4e9481"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR15",
@@ -3059,9 +5037,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a3889561485fb2a2347da5ef718e7e65"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b028f37cd8a2fc70c70d0edc457925e1"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR16",
@@ -3102,9 +5080,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "4876e60631d8a599383bd633d8c49249"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f877dfc2260397dd3cbb11eb7496bc0a"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR17",
@@ -3145,9 +5123,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f99e95ea9366487672d8af3326a46116"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "cbb92e15ed510ae365036d41fb49b12d"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR19",
@@ -3188,9 +5166,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "93f097ba112ae9c60db0fcb527d6f513"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "91860c460e8c91c7bcecedbe94776676"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR2",
@@ -3231,9 +5209,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "882cd6b41a30256e100a4248bbeda080"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f72fa54455646ac0b116b0b26b9e9026"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR21",
@@ -3274,9 +5252,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "bfef0ce6bd6848465125b2d7d1ba731e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5bab167422d698e1fb8dc514dc6bd6cc"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR23",
@@ -3317,9 +5295,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0830a9bff6ad7de4ce78f9c0db1ddbea"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "7af8e71fe80cf8d782fc8e9e8e3da629"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR25",
@@ -3360,9 +5338,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ac66d69ed5c40326ac92ab47fc0359b0"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "61c787eef1595947ae58f7be221ea289"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR27",
@@ -3403,9 +5381,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "797866947dd71a475e3f1b12214668ce"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c6388f14e79658d19f8c99a386832788"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR29",
@@ -3446,9 +5424,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "dde7d001e6c23b879074e87bb792ccaa"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fd7d0c735a8e92cff341bb2811aea008"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR3",
@@ -3489,9 +5467,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f4bea659bf23581f02aed071bd3911cf"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5132c2e672689dcfd3e6736a557a07f3"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR5",
@@ -3532,9 +5510,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "9486bb5c270435c9de91c9fdab131db8"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "04174de838882178344066dffe960aa6"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR6",
@@ -3575,9 +5553,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "de8bd0ed79769e0c79a35f0843c7318f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "584d07893ccc414a253edc1e6e646e45"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR7",
@@ -3618,9 +5596,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "bd25fa5a096898c8387aec55be4509f5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5adf4e68bc25a15e6f9d424ba4c7f1d5"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR8",
@@ -3661,9 +5639,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "c999f99b2d20b0da0be53b26cbe0ab27"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "14a78ddeb9b8cb259405ac3ac2928cc0"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13NYKTOR-TOR9",
@@ -3704,9 +5682,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "fbf3ada15f6c409ea890ff620e69735c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "384ec756e94b43cf4b7a291c776d7b5f"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-199",
@@ -3747,9 +5725,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d1f8f3ecc988d109c50dc3d0fc3c16bf"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ebd2078f009464bdbbf18f0122e0fd0f"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-201",
@@ -3790,9 +5768,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f065b94e3d8a0a5b46cc9aabfafc9d99"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3796782fc3bb08a72940eb86627567dd"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-203",
@@ -3833,9 +5811,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f1e7282820f5cefd098f8d1097b8503f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e907a236897ad430cb981327fb34e764"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-205",
@@ -3876,9 +5854,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d27f1f396bb96746681a019e53ccd7f6"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3c9d1879a63a018b908890eb8707744a"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-207",
@@ -3919,9 +5897,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ec8c181f42410bdc96096d34c15bb90e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "515f9d21e27ca8349ac7407afac1370d"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-209",
@@ -3962,9 +5940,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a3f29645a249c6195f34011b6bffb995"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "07979ab24501537ab3d2e7e46afe62ba"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-211",
@@ -4005,9 +5983,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "5dc9a02853ec09851d1540c604854c96"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "79b6d6b0780434dbbc8f99ebb8722910"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-213",
@@ -4048,9 +6026,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "078fb3ed61da57616674e92d9e3f52e5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "03c4be7b1fd18f234067a63542f0b7b5"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-215",
@@ -4091,9 +6069,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "9682c3e71d0fb1cbf3808c83036ccf2c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "04f3ae2953cdd7a58d8a4479ae954ef5"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-217",
@@ -4134,9 +6112,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2fda5e0a4d118d39c530b111d1af0b7f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c274a86575d446f06ac3a3943c44cb26"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-219",
@@ -4177,9 +6155,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "515ba73e972075ef3499afa2a5391b41"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a680e2a2778e50ebda7341c44a9e12bb"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-221",
@@ -4220,9 +6198,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "9ff984df93608d593ca9d4c234896418"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "abfcf608eea87d6d99a6b54d9475126d"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-223",
@@ -4263,9 +6241,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "abc092b7af0cb35ffe3bf4b069e26c1f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d9766076e4d1e8913892176a20bb9998"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-225",
@@ -4306,9 +6284,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "06cc5d72bec26559fa3a7045dd19effe"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ee622e3d2cf4cd76e5fe46e4dd74c475"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-227",
@@ -4349,9 +6327,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "65322cec43b794922a19c58d24646f89"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "4d50704395414efec642f268db8e4dcc"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-229",
@@ -4392,9 +6370,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e1a009edafaf6841f93f46498ba4b579"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ddd737910bdf1b4934127444614f4f30"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-231",
@@ -4435,9 +6413,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "7504368bbbb36117fa348d2caf00e8f4"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "327cec4508a7e31d90919a80c6eb9913"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-233",
@@ -4478,9 +6456,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e54450f23643dbed9c136794a05fe503"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fd5808d99a052c7be0ee373ef458bb7a"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-235",
@@ -4521,9 +6499,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "acf55903c78c48da3b08df903c7fcdc4"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e675e3907592409db4b6cc7ee8ed9d10"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-237",
@@ -4564,9 +6542,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "8bdc85012b43f9ff0bcf889b9c3d8daa"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "766cddd56fded7ce2ee897ec534fed45"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13NYKTOR-239",
@@ -4607,9 +6585,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d416d6ee4ac0eabed1cc91fca5dd7a59"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9b2cab40c8a4aa5486b63f6f8f6a0889"
   },
   {
    "ticker": "KXNBA1H-26OCT13INDOKC-IND",
@@ -4650,9 +6628,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "3c2f4208d3fb37c9f4f0ba8ac5612b87"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b016a72287c9111b68733af60666222e"
   },
   {
    "ticker": "KXNBA1H-26OCT13INDOKC-OKC",
@@ -4693,9 +6671,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "1eb610ade7af3fc0569625920f7a94e3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5487d8092bdbe675629d5aaa8f2fe589"
   },
   {
    "ticker": "KXNBA1H-26OCT13INDOKC-TIE",
@@ -4732,9 +6710,9 @@
    "bet_up_to_no": null,
    "spread_cents": null,
    "flags": [],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "03100ff8d29a4e72a5571b9ccf3aed6e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fe0859e608a98511f3eadeb31a365b8d"
   },
   {
    "ticker": "KXNBAGAME-26OCT13INDOKC-IND",
@@ -4775,9 +6753,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "b767637e7c066b07b254af6ac29b9afb"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "8677024cd8da1eac6a1dd1bacd16779b"
   },
   {
    "ticker": "KXNBAGAME-26OCT13INDOKC-OKC",
@@ -4818,9 +6796,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f58bcca8c11691c3f10ce28e88855291"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "357dfc84ab9d15f41c9996f07400eff2"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-IND10",
@@ -4861,9 +6839,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "52eeac71519580599d46935917b46b48"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "736862a25c5d50d26b81693066281724"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-IND12",
@@ -4904,9 +6882,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a4920e3045d8a67917490c67968f182e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "28b140a5b14f068373fb10c1e08ae084"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-IND14",
@@ -4947,9 +6925,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "73cc91e4d00446666a3ecfce59d519fa"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "4ece2a85b5aabcbc3bba12d4363df3aa"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-IND2",
@@ -4990,9 +6968,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "000001ac73e973861d1f854d3d793d74"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5330c9f5d43cee07513ba0ca7565e47e"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-IND4",
@@ -5033,9 +7011,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0394c14ac3da5846422e9016d53b3a5c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "1f355feed804b62ce1752082254e57f7"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-IND6",
@@ -5076,9 +7054,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "33db86c04b5087faf64e40744f809a33"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "799644d219e611ce81dc6984ded6ca74"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-IND8",
@@ -5119,9 +7097,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2ba5ed81cce3b335f4ba6e5473a355ae"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "eab8a0b10eb59208387de33c96e9883b"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC10",
@@ -5162,9 +7140,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "b94058d950b03f34f37f724d06cb18ab"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "230557db6a1db19d300295e55c481f29"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC11",
@@ -5205,9 +7183,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "b30a28b09e35a7d20e0cd4fa81f8abd6"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2ec5051b81d066b293f20dbdf11b9688"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC12",
@@ -5248,9 +7226,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "7cd01ed3aafdcf0f80e16e81a780b4f3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9f4918b24f1c96d333de55ab795b1f43"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC13",
@@ -5291,9 +7269,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "25812ae1ae8b08bd90c117a53306eb04"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "772f10a2b5532d9df545ab9d9e5df6bc"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC15",
@@ -5334,9 +7312,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d3d8fd9fa958eddf1268992168569d4e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f20c77f36b54a41b54873fe8603c3444"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC17",
@@ -5377,9 +7355,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "fcdd6c2ff88d083ca051243d3a11ccba"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3bc6e1a674ee341e2778f6784d87ecc5"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC19",
@@ -5420,9 +7398,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a165af7ae417ffe24247dfaa64f59192"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "55ad1e613d845b42570916431c5d7883"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC2",
@@ -5463,9 +7441,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "1a6ab5ebeae75ed4af6be7e29f63ff69"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6f541300c40a6a6ccb9dbd0e9e1f5273"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC21",
@@ -5506,9 +7484,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "3304ce93e39c22a75dc6d001effd6c17"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "034fc55930ae7438ff9a5fe9615b7bbc"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC23",
@@ -5549,9 +7527,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a10e745eef638702c6f28dfbd86524c3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "cef18ad8a09271ac975782b6827a9189"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC25",
@@ -5592,9 +7570,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ab17fb31a46aa65415349a6fe6323faf"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a43bb2c0ee45de45710bd63db0076f4b"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC3",
@@ -5635,9 +7613,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ef6fac578f593dcd0797dfebd1c44d95"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "26e950b9e669a8a0bf439c481853df3b"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC4",
@@ -5678,9 +7656,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0298d5cced96eee0b40d865448c239c3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e2f7f7148c2a438203491296a91245ee"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC5",
@@ -5721,9 +7699,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "13089890654e3c1fa3cc6d94267bf278"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fc244ab4ab11b7a341f162c919f7eb89"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC6",
@@ -5764,9 +7742,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "16b451e5702c1471b7b7772feaa0738c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "10f06a745eb5932ef3963c553104a5a2"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC7",
@@ -5807,9 +7785,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "b59cc4eb8cc644f4f70dd0639a9fb48f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ba0abc066f27a8ac49e56df9212de9e1"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC8",
@@ -5850,9 +7828,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "563f15fd0e3afdfb8a1919368317458f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "381b87b6919b7817cbbca73507f0a142"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13INDOKC-OKC9",
@@ -5893,9 +7871,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "542f9624ceb8e551a55258c03dc065bb"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ef4a7cb653de62357642908b0927a13a"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-209",
@@ -5936,9 +7914,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "07a9b3cf8111ed7892a966b32565e15a"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5fdd11bff5d82095b798c346c368f4cb"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-211",
@@ -5979,9 +7957,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "088ca5b6febaf06c42a79e05e368f162"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2f08d1ca0604dd67a8bf462cbacb1d7c"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-213",
@@ -6022,9 +8000,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2f84a16113685c2b36965f0bc97468c2"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "220eefd460c4b07578ea6d2e42cd1cdd"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-215",
@@ -6065,9 +8043,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d4197cd37413963dfd77e5e4e7f0b274"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a4054a9bfa77a92e363b515b31c84cc2"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-217",
@@ -6108,9 +8086,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0646959f1a85e0beacfee4df1421fb53"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "53b01f8430842250c0f87496ae1c524b"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-219",
@@ -6151,9 +8129,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f980233170e5e7760f2ecdcccfe5b2a4"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "1540c83544c0747dbf200d6d17a10c28"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-221",
@@ -6194,9 +8172,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "15598438c01b0f90e3b66729ebdcff4d"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "25052bd8f71646c3f7b8dbecc02708c1"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-223",
@@ -6237,9 +8215,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "793c742991db30e2102ba1cf4700f386"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "eb510a56f93bb73a95dd7e0bee5051ed"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-225",
@@ -6280,9 +8258,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "54418510212d002699b93d0bb412b590"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e8e49308d65c76bfd146cb176e1643e6"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-227",
@@ -6323,9 +8301,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "5ed8142e63090a655fcefa3bd6098e29"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "85783b44eb1c7dbfc320e07228513d3f"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-229",
@@ -6366,9 +8344,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0e1a8309b4b248990338b015668dda52"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6758e59c980bb689ca2f3827a52eb6af"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-231",
@@ -6409,9 +8387,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "44fc39277a71e4f3b83f199774654834"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "dbec675ee24dd76c70fe1375e47eb897"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-233",
@@ -6452,9 +8430,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "b5e44ac84b138ca5e46cc6dd33d0a372"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ab38333a006deea0c17c94806010e784"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-235",
@@ -6495,9 +8473,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2babc80aef8a5863cffc196b3b5b84a4"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d2cd2f76eff6bf7a088829f715171908"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-237",
@@ -6538,9 +8516,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a8b243849d266b692b17fde93b37a87f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a3cc6c5ba36a0983016950bf03999630"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-239",
@@ -6581,9 +8559,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2f54730ead7c4b0e20f6eded1768b1a7"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ad34dee2113eb7f11ecad91ecdc6a23a"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-241",
@@ -6624,9 +8602,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "411671cbc62a4fa17693b6e68a565f25"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c9831b59ebaf9f52c2e44feb65d03de4"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-243",
@@ -6667,9 +8645,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "9fa8e92e25f387f29c0a43d57fde6776"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "7e3d885dfe1450c5ed1d62e47c7d7bba"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-245",
@@ -6710,9 +8688,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "90e38439296c56fb40f0fad0530b60f5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f2c2c29f92e2a207d6b3b83e610a3628"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-247",
@@ -6753,9 +8731,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "14d8aa1008a43ab3629d12cd1dd0f4f5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "62bbe3387d707d95bece9076d8f2163e"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13INDOKC-249",
@@ -6796,9 +8774,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2c48d55727be7ecc19526019594ff799"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c170a63eedf1cfb6bba28045fc89443d"
   },
   {
    "ticker": "KXNBA1H-26OCT13GSWLAL-GSW",
@@ -6839,9 +8817,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "4deb64833a94cd18248c807b0fc00104"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2cdef76bfb336e9c9c951a12fc1160d1"
   },
   {
    "ticker": "KXNBA1H-26OCT13GSWLAL-LAL",
@@ -6882,9 +8860,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "c1bdcfbd916402791ca15520f268ed34"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "1ccd1c4dd50969df6dd9c07e57329c6c"
   },
   {
    "ticker": "KXNBA1H-26OCT13GSWLAL-TIE",
@@ -6921,9 +8899,9 @@
    "bet_up_to_no": null,
    "spread_cents": null,
    "flags": [],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "84c87820c1448a468250bebe2b1e89a5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "463ddb881e77ca2c4fd9c59266be23b5"
   },
   {
    "ticker": "KXNBAGAME-26OCT13GSWLAL-GSW",
@@ -6964,9 +8942,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a70acfc9f62daaddaa8fc6a7d6b5a83c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f93c183f6925fa51d43ca432b23f4919"
   },
   {
    "ticker": "KXNBAGAME-26OCT13GSWLAL-LAL",
@@ -7007,9 +8985,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "969aa8ef7eaa25551abed83b4dc1c9be"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "74ed145a44ea3e0c7d68d54a4384620e"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW10",
@@ -7050,9 +9028,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ca88cab73dc195ba7b08fad2b7ea58b2"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "58a28e53d39a6c4b741ac72408a72221"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW12",
@@ -7093,9 +9071,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "279cc79ad4b0779e7862879de4297e6e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "4d6f9b835f6bb2e5a4ae40dee9f51684"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW14",
@@ -7136,9 +9114,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "5d8e8bc467c1afbeeb9ba90e2ae783ce"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "88183e654687c3c29e3e987ef8bce1fd"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW16",
@@ -7179,9 +9157,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "7dee6e153d7954529ef4ef4535480dac"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "86214c4db2294ad787be321361c0ca7a"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW18",
@@ -7222,9 +9200,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2eeebc1798fff692935313637a4578fb"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b9164a49ae30053ea72859f7a6021df2"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW2",
@@ -7265,9 +9243,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e37fcb28198d66dc468d13485cc44182"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c11416c5b164acc3250cae6651ef1031"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW3",
@@ -7308,9 +9286,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "bb100c0e2c3fec63c9524dd731c3673e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "21865e72315153aaf94188210418fb42"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW4",
@@ -7351,9 +9329,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "6bab1647a31eb391c85dd46a42b0195c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2ed36f9356c50e0ab45a940f1269be6c"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW5",
@@ -7394,9 +9372,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "591790769c05b9c39cb70447f8eda339"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b2854386d3e58329564b03bc40b0fcbe"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW6",
@@ -7437,9 +9415,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "fddb2924727de9e73c7e70b441a26c6c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f37c5b5dc92d4db4256037424979a422"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-GSW8",
@@ -7480,9 +9458,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ef7295c6ec3e39f3a44a084b711edfa2"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "043310cb07728b5901891e42d8054865"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL11",
@@ -7523,9 +9501,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "cc000b53a8280dd23e74584a51cc8636"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5d82370014cf2de88caac56f20ce92e0"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL13",
@@ -7566,9 +9544,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ab5926274937dc59d07f1ba5f3e71048"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6d081e523220d757d1e6a4dbd793330f"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL15",
@@ -7609,9 +9587,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "07fbca8203437e547703d4ff23595e69"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e150fe51ff7c3fc6f8bf80db5c1eab27"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL17",
@@ -7652,9 +9630,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a196da10784c9f4355a135610af4a610"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "0b7749b5da960c4d61e4ad34a4912782"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL19",
@@ -7695,9 +9673,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "5dadc8e46d862a71b4571c84152084d7"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f1f10fd99a94a29395c4d66b111605b9"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL2",
@@ -7738,9 +9716,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "77caa7d96d112bc7f1d3db3c979d6529"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "04b58d0c1e1e370ae071af1bdfad9054"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL21",
@@ -7781,9 +9759,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e32813ff5454590c0bf0d7a5a31ec98a"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3b5cf8f483e41c26e8e9376d20f82fac"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL3",
@@ -7824,9 +9802,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "7c910d17b89a9b41beaa3c187dc675b3"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6a8e2384cf0e478209d73b7d5ada163b"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL4",
@@ -7867,9 +9845,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d3c93084f9b53cc451897fce2d7b6db1"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9f61b063847951c58fade8fe8f995403"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL5",
@@ -7910,9 +9888,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d7a28ce5cb399b01a046e7e1ec4c6d30"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5c76573c399db8887dd054311b09b4ad"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL6",
@@ -7953,9 +9931,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ff7e17223105162f952d79878fddee32"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "169007ac6bf25988aef19f9f2e929326"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL7",
@@ -7996,9 +9974,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "916e8f81cc001ca95dc2740c38d265f7"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d218c68e00fc4e37c2c07c70c20048fd"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL8",
@@ -8039,9 +10017,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "8a90f88cb84fb521f2b00e99f2ef0ac9"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "357f94a0b2b39adc4c7792dbee210c15"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13GSWLAL-LAL9",
@@ -8082,9 +10060,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "b166a5f7ff1dd17ed834b2cd367e8e56"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b3ff315d373a6a79a41551c6e43079a5"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-208",
@@ -8125,9 +10103,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "1ab43cd495942d68f7a812fe2f83ac78"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d0a473465a4a6583469b69da06cdbefc"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-210",
@@ -8168,9 +10146,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d1d0cbe6f786215d5a343595ddced111"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "00a0ff9b4a816d0228fa6ce991c95401"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-212",
@@ -8211,9 +10189,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "6744109de7dc869972aa79bab81717a0"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "952cd4a7fcf38f00ed416abb41fa38d3"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-214",
@@ -8254,9 +10232,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "67927260c4b7e3480b78483c55d07c84"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "4ce699544d1965d5f9bf45ddc8fa2fe4"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-216",
@@ -8297,9 +10275,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "45a5b2610961450b0512d1371165d783"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "483f3e49f5ed0ed164a7a8397c27bef0"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-218",
@@ -8340,9 +10318,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "26b15679a1c6ecd4523b02d616240679"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2bee12fe3424bba0471ecfee981915eb"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-220",
@@ -8383,9 +10361,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "38460cb5f07394f04e8d3925a1640b9c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "1b5d14e74f0e9106ba6ad6a88ec61d7a"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-222",
@@ -8426,9 +10404,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "af69519cfc74fad3b7ec8673c9de2e6d"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "66200d28ea9e547a36bc7dd347c6e00d"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-224",
@@ -8469,9 +10447,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "fb3c1d22ecdaf998c808e6fbf6d3b35b"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "922ce20eaf5f3205cb76a218b167ca1d"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-226",
@@ -8512,9 +10490,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "71cebd447d932b67711c034a356e7989"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "41d1505dbf7c244a637606eeca8e9886"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-228",
@@ -8555,9 +10533,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0c73f16f8c8a77c74da5df85ddce9811"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "797c4618cf5f49049b1eb3b9776cb656"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-230",
@@ -8598,9 +10576,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "af356472510d55b65894ba72d9cc3ab7"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "0d40455c5b43ab981c45f35fc07f5d12"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-232",
@@ -8641,9 +10619,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "3045716fd85e0cdd6daec06e42b03256"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "cda6d7fe306999ec993d12101c26c54d"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-234",
@@ -8684,9 +10662,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "6fbf712c2d40565a0b5ff03d62bf6e19"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e313bb43d24d872ef4eec39cf3c59bbb"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-236",
@@ -8727,9 +10705,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a7b2743e61dc06743a010240e7c44038"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "f37d3c2c139e0dbeb5b04c1b6c688024"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-238",
@@ -8770,9 +10748,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "73e07bbfd830a89567842824241f7688"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "df316e92f5e54a549e67b05522cf337c"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-240",
@@ -8813,9 +10791,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "79417bef82dfb0d25186a86dc2f658c8"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "b68275ce63ec9363f51aad60db4ca573"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-242",
@@ -8856,9 +10834,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "87a2c77e19ccc7e98996350dc38ec336"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "783c05d9d966de48c22a9b5884e621d4"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-244",
@@ -8899,9 +10877,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "d0005433c799863694306ae01e094978"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fbac28433c0925253fc3baa23e6c0972"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-246",
@@ -8942,9 +10920,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "92e9d9d8103e44a29ed38baa04684aa0"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fabe9f09763e8fded90aee7557ff08a8"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13GSWLAL-248",
@@ -8985,9 +10963,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2b2bd7e3c8e451e0a35b9a43d1f5ebb8"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "0ec8901bf21f8b53df8e28055349ffbf"
   },
   {
    "ticker": "KXNBA1H-26OCT13PORSAC-POR",
@@ -9008,10 +10986,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.6478833333333334,
+   "p_data_only": 0.64655,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0019499167491725648,
+   "mc_se": 0.002390204476085676,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9028,9 +11006,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ca0838226c65bffa580ca6f25a1111fd"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ad6f6f8f7e8527be2d22d09545f3c7ef"
   },
   {
    "ticker": "KXNBA1H-26OCT13PORSAC-SAC",
@@ -9051,10 +11029,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.32708333333333334,
+   "p_data_only": 0.330125,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0019152886048360478,
+   "mc_se": 0.0023512894567396417,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9071,9 +11049,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "5bd651d11e8eebdd68c0046ccb43a410"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "33bf3fcc450f7dfcf7b687f98dbd93f2"
   },
   {
    "ticker": "KXNBA1H-26OCT13PORSAC-TIE",
@@ -9110,9 +11088,9 @@
    "bet_up_to_no": null,
    "spread_cents": null,
    "flags": [],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f5ab3014ea111bbd21e804e1bcdaf03b"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9e92209fd8431472db156647ac8ffd6f"
   },
   {
    "ticker": "KXNBAGAME-26OCT13PORSAC-POR",
@@ -9133,10 +11111,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.7746666666666666,
+   "p_data_only": 0.777975,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0017056681106545036,
+   "mc_se": 0.002078039336580278,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9153,9 +11131,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "03699095ba82cffbd26d8394f25ab6e6"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fe96e9cdf60af8465c14d18bb8a2beb9"
   },
   {
    "ticker": "KXNBAGAME-26OCT13PORSAC-SAC",
@@ -9176,10 +11154,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.22533333333333333,
+   "p_data_only": 0.222025,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0017056681106545034,
+   "mc_se": 0.0020780393365802774,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9196,9 +11174,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "444de38f30f8f1fca0839174d8c35e5b"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2bd340b66be03255dd419581ba4d59dc"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR10",
@@ -9219,10 +11197,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.5724,
+   "p_data_only": 0.576725,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0020197286946518336,
+   "mc_se": 0.0024703910336979044,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9233,15 +11211,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 55,
-   "bet_up_to_no": 41,
+   "bet_up_to_no": 40,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "7904acfcd5c558ac7a2e89049cfe2c73"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "623b759f94baca4296cb834420e0d935"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR12",
@@ -9262,10 +11240,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.52215,
+   "p_data_only": 0.529,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.002039237510688738,
+   "mc_se": 0.002495791457634231,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9275,16 +11253,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 50,
-   "bet_up_to_no": 46,
+   "bet_up_to_yes": 51,
+   "bet_up_to_no": 45,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "63e815b2371ffdcc266681557e78fd01"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "21e17a1c95396753bf5ef04287e79967"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR14",
@@ -9305,10 +11283,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.4730666666666667,
+   "p_data_only": 0.480375,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.002038277849703664,
+   "mc_se": 0.0024980735546366525,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9318,16 +11296,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 45,
+   "bet_up_to_yes": 46,
    "bet_up_to_no": 50,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2eaace057f67572b3a3d192f07e95381"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a5fc9d39f63e1e1ea852998965892cfe"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR16",
@@ -9348,10 +11326,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.42528333333333335,
+   "p_data_only": 0.431075,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0020183219916646198,
+   "mc_se": 0.002476132793162556,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9361,16 +11339,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 40,
+   "bet_up_to_yes": 41,
    "bet_up_to_no": 55,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e92887561f9aa35a992650488fa38392"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "75d749b82762e437a9a419e235115264"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR18",
@@ -9391,10 +11369,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.3781,
+   "p_data_only": 0.383625,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.001979648074785011,
+   "mc_se": 0.0024313414989209146,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9405,15 +11383,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 36,
-   "bet_up_to_no": 60,
+   "bet_up_to_no": 59,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f2bcd85f180b58664c95c09847926444"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "7b9296666e6809b1e3d120e0f736ae11"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR2",
@@ -9434,10 +11412,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.7600333333333333,
+   "p_data_only": 0.7628,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0017434767255666457,
+   "mc_se": 0.002126829565338981,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9454,9 +11432,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "460d39b3244ff36cb0b90d89a82a34e1"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "8ed7c0996bab3ba3c117d774bc858c82"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR20",
@@ -9477,10 +11455,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.33468333333333333,
+   "p_data_only": 0.33765,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0019264405853032954,
+   "mc_se": 0.0023645426486955147,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9490,16 +11468,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 31,
+   "bet_up_to_yes": 32,
    "bet_up_to_no": 64,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "3d975b72081f72b2c16ccbd084fd12e8"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "becb907d5a3505e7c5d91ba2b52ec1c7"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR22",
@@ -9520,10 +11498,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.29263333333333336,
+   "p_data_only": 0.293525,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0018574133696961283,
+   "mc_se": 0.002276884243736383,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9540,9 +11518,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "10a1c00d0a53b2d28422f4e9132b518f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "94f9087b9a19fa9463144100ca37fa2d"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR3",
@@ -9563,10 +11541,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.7449333333333333,
+   "p_data_only": 0.745875,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0017795489232865643,
+   "mc_se": 0.0021768410850071256,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9583,9 +11561,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "abef29f86e4578310a676b1df436ec73"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "c7f7060409e9411ca69574b152fb2cb4"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR4",
@@ -9606,10 +11584,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.7209833333333333,
+   "p_data_only": 0.722625,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0018310578290016261,
+   "mc_se": 0.0022385157436066875,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9626,9 +11604,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "68bd67314912fe1d36a20515751b14c2"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fc0934f05138ad03626b03e066ca6a1e"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR5",
@@ -9649,10 +11627,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.6964666666666667,
+   "p_data_only": 0.69895,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0018770581987465071,
+   "mc_se": 0.0022935719821928413,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9669,9 +11647,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "b8be84e38468e2ce093da29ddae48cd1"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5b5d4f8f6f2174dcc21f389b2b8c4fd1"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR6",
@@ -9692,10 +11670,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.6705166666666666,
+   "p_data_only": 0.675275,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0019188714842709369,
+   "mc_se": 0.0023413600447976814,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9706,15 +11684,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 65,
-   "bet_up_to_no": 31,
+   "bet_up_to_no": 30,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "4118cfb62c5e693d27a25620f5628a2d"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "7853c7b42daa1a713905ef9eb98b4dfd"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR7",
@@ -9735,10 +11713,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.6457833333333334,
+   "p_data_only": 0.6505,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0019525505530042075,
+   "mc_se": 0.002384060349487823,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9748,16 +11726,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 62,
+   "bet_up_to_yes": 63,
    "bet_up_to_no": 33,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "90c307ff293590c5d5fbd0240c4a3058"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "6d0c3ad4d8467a3a0d36b1df020eb23d"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR8",
@@ -9778,10 +11756,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.6208333333333333,
+   "p_data_only": 0.626125,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0019807376805774306,
+   "mc_se": 0.0024191552470593943,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9792,15 +11770,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 60,
-   "bet_up_to_no": 36,
+   "bet_up_to_no": 35,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "66454f59e8b067318a96d4b7d5523df0"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fa173bdcf1107146ea149c4921c4779a"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-POR9",
@@ -9821,10 +11799,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.5958166666666667,
+   "p_data_only": 0.601975,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0020034102857747708,
+   "mc_se": 0.002447453265003236,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9834,16 +11812,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 57,
+   "bet_up_to_yes": 58,
    "bet_up_to_no": 38,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "1e28d9d2c88b55c3010ec07aa7f50f93"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "eebf22b2ff8025603492e64251969033"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC11",
@@ -9864,10 +11842,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.0832,
+   "p_data_only": 0.082175,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0011275176273566636,
+   "mc_se": 0.0013731557575071373,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9884,9 +11862,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2cccd36be4dcf2c666b73bfa3a82f0b1"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "98e8660063c38ced4c2ae991f0e1a123"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC13",
@@ -9907,10 +11885,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.06586666666666667,
+   "p_data_only": 0.06385,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0010126553287347156,
+   "mc_se": 0.001222427681910059,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9920,16 +11898,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 6,
-   "bet_up_to_no": 92,
+   "bet_up_to_yes": 5,
+   "bet_up_to_no": 93,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "552ca396bba8d0c643b9686c0b083594"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "77c130fa74da296132ef1d18c23e1f9a"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC15",
@@ -9950,10 +11928,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.052283333333333334,
+   "p_data_only": 0.05045,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0009087517665172091,
+   "mc_se": 0.0010943582308823743,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -9970,9 +11948,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ff1d0a8a1bdf90ea36326c6d32c452d0"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "08c41ec206f78f4a97e058e6b087aa37"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC17",
@@ -9993,10 +11971,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.04041666666666666,
+   "p_data_only": 0.03865,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.000803981340187924,
+   "mc_se": 0.0009637968860190408,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10013,9 +11991,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "63c9ca48f940dee582a61b360fc10cb5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3901d34c5aa423811bcee94f5edbb9be"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC2",
@@ -10036,10 +12014,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.21168333333333333,
+   "p_data_only": 0.208125,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0016677005112940304,
+   "mc_se": 0.0020298336408127145,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10049,16 +12027,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 20,
+   "bet_up_to_yes": 19,
    "bet_up_to_no": 77,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "1d74b5570cbc2c88f0df9db69a034867"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "87cf3baeae282427f2566689bb1ff3b6"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC3",
@@ -10079,10 +12057,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.1979,
+   "p_data_only": 0.194125,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0016265279483201839,
+   "mc_se": 0.0019776278996249523,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10099,9 +12077,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "c3c5691857ed09a42e0bf3eb65e1839c"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "03db886c72dc91b84d2ba3855da8ab23"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC4",
@@ -10122,10 +12100,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.17881666666666668,
+   "p_data_only": 0.17585,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0015644022627875527,
+   "mc_se": 0.0019034624864966473,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10142,9 +12120,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "ba1ac0e1be44744c6bea0c0dc09bfe6f"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d7a272474ee675903bcf0eb9639c288b"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC5",
@@ -10165,10 +12143,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.16148333333333334,
+   "p_data_only": 0.158625,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0015022564494169479,
+   "mc_se": 0.0018266301580711405,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10178,16 +12156,16 @@
    "best_side": null,
    "ev_yes": null,
    "ev_no": null,
-   "bet_up_to_yes": 15,
-   "bet_up_to_no": 82,
+   "bet_up_to_yes": 14,
+   "bet_up_to_no": 83,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "fc3afffc7e2e1c8c7e0aecfca569f5f9"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a83feb7070c0725b94f778a5c8b40464"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC7",
@@ -10208,10 +12186,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.13115,
+   "p_data_only": 0.128775,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.001378100610139429,
+   "mc_se": 0.0016747537085718008,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10228,9 +12206,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "fb8dfe842e904e78aa86c49c39e96842"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "d313a0040d11c91e6eb057c5f8bec995"
   },
   {
    "ticker": "KXNBASPREAD-26OCT13PORSAC-SAC9",
@@ -10251,10 +12229,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.10556666666666667,
+   "p_data_only": 0.103325,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0012544742959739188,
+   "mc_se": 0.0015219144553407068,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10271,9 +12249,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "00bfe840ba3206e3d9bb3a26ea85601a"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "3bb2543fa91702bd5a4905dad90e5e12"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-208",
@@ -10294,10 +12272,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.8168,
+   "p_data_only": 0.814325,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0015792285036265862,
+   "mc_se": 0.0019442208874958114,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10314,9 +12292,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2cd3de7e518eba0c7b601ce5e0466d18"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e4cdb83cdb19715782763f33b7e44fef"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-210",
@@ -10337,10 +12315,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.7878833333333334,
+   "p_data_only": 0.78595,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0016689477043379203,
+   "mc_se": 0.0020508083619636425,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10357,9 +12335,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "c0e7560f4f72309b5624fd634011430d"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "78a7c4dfdc4eb265953b0dd1f9a99878"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-212",
@@ -10380,10 +12358,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.7566833333333334,
+   "p_data_only": 0.7551,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0017517308887159242,
+   "mc_se": 0.002150139472220349,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10400,9 +12378,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "bdc41963bb0e104e35879a69576ae1ca"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "36b329d55bd49bf2f42fb43a24ca935c"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-214",
@@ -10423,10 +12401,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.7219,
+   "p_data_only": 0.721025,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0018292092553887868,
+   "mc_se": 0.002242476027603194,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10443,9 +12421,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "c8d1965dcd40224cb4a5bc721063c1f1"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "753d929a32c652a892142cbe472fd578"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-216",
@@ -10466,10 +12444,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.6869833333333333,
+   "p_data_only": 0.6873,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0018931333508919175,
+   "mc_se": 0.002317966296131158,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10486,9 +12464,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a93a0f93beb7def99e7fa7409bbf3f0e"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "4e6bde0a0570711613fcfda6c09a72c3"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-218",
@@ -10509,10 +12487,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.6502166666666667,
+   "p_data_only": 0.64745,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0019469418457996957,
+   "mc_se": 0.0023888203024714943,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10529,9 +12507,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0f4c0ba4f26f5822737441672c1402a5"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fbb09e6bdc3b560955de3c08cfd168be"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-220",
@@ -10552,10 +12530,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.6127833333333333,
+   "p_data_only": 0.60905,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0019886340358908935,
+   "mc_se": 0.0024398160663254924,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10572,9 +12550,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "da826df49b0d6d3231b3be5878ccf8ad"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "282cdbb96f0c2960111cb9425579b434"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-222",
@@ -10595,10 +12573,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.57395,
+   "p_data_only": 0.569975,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0020187925330916665,
+   "mc_se": 0.0024753964297411033,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10609,15 +12587,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 55,
-   "bet_up_to_no": 40,
+   "bet_up_to_no": 41,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "de54f050e34bbf1b1e8371853059e2a2"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "5174d361d861f6cc89d2672f38639f2d"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-224",
@@ -10638,10 +12616,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.5343166666666667,
+   "p_data_only": 0.53055,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0020364281081871796,
+   "mc_se": 0.0024953291240836345,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10652,15 +12630,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 51,
-   "bet_up_to_no": 44,
+   "bet_up_to_no": 45,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "518a30bba6105dd0fcad629a48847074"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "ad30e08e0270ede9800bd9203186145e"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-226",
@@ -10681,10 +12659,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.49441666666666667,
+   "p_data_only": 0.491,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.002041114182617298,
+   "mc_se": 0.0024995949671896846,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10695,15 +12673,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 47,
-   "bet_up_to_no": 48,
+   "bet_up_to_no": 49,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "bcc40f20ac7fc9a949c8c4e8f9600e15"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "644bc2d45c219b4562f0ec2b61c2a9f8"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-228",
@@ -10724,10 +12702,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.45445,
+   "p_data_only": 0.452875,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.002032753458981192,
+   "mc_se": 0.002488871402739603,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10744,9 +12722,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "e0e4d9466dadbd466461cbb86b294858"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a633fe32183cb8d7b6b8e3afc35cc030"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-230",
@@ -10767,10 +12745,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.41418333333333335,
+   "p_data_only": 0.412975,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0020109512662842854,
+   "mc_se": 0.0024618420409065647,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10787,9 +12765,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "74f89495ec43ebd4d9d69df6e54ac24a"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "76e683401ad24300049e9c03d7f4672e"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-232",
@@ -10810,10 +12788,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.37578333333333336,
+   "p_data_only": 0.374275,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.001977246484896872,
+   "mc_se": 0.002419675724012414,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10830,9 +12808,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "8422fab0b6d068b7d08ae0f6ffeeb588"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "e2bb01b0eadc31b2beaedce4ab483bc9"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-234",
@@ -10853,10 +12831,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.33885,
+   "p_data_only": 0.336825,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.001932315870917589,
+   "mc_se": 0.0023631225072718934,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10873,9 +12851,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "96b1e9f362d1a6623a3f6d0a13117a81"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "93b819058243c6dcbee2bab2836722ae"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-236",
@@ -10896,10 +12874,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.3029833333333333,
+   "p_data_only": 0.302,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0018760971592446712,
+   "mc_se": 0.0022956262762043825,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10916,9 +12894,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "2d52c13b940ea0516715dafa69ab1525"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "fd041435c5200ea6b3b0b21281eaa277"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-238",
@@ -10939,10 +12917,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.26925,
+   "p_data_only": 0.269225,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0018108673681415765,
+   "mc_se": 0.0022177854910642282,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10959,9 +12937,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "f70cf97551c855b871dec5c71118e9ef"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "deaacbbe8a5df79c1387bc468a69a588"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-240",
@@ -10982,10 +12960,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.23816666666666667,
+   "p_data_only": 0.236575,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0017389810500958868,
+   "mc_se": 0.00212489569964622,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -10996,15 +12974,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 22,
-   "bet_up_to_no": 74,
+   "bet_up_to_no": 75,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "4a41e09606da354a990f6748ee5965c1"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "2cbfbdf7bdb22dde7551e6cceb2c6722"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-242",
@@ -11025,10 +13003,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.20878333333333332,
+   "p_data_only": 0.20755,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0016592812352318677,
+   "mc_se": 0.0020277635309621286,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -11039,15 +13017,15 @@
    "ev_yes": null,
    "ev_no": null,
    "bet_up_to_yes": 19,
-   "bet_up_to_no": 77,
+   "bet_up_to_no": 78,
    "spread_cents": null,
    "flags": [
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "0152f62624e25ca650dd6e2eb0c3cd59"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "9454702610ede978352c185b00d95153"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-244",
@@ -11068,10 +13046,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.18163333333333334,
+   "p_data_only": 0.181475,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0015739687923396891,
+   "mc_se": 0.0019270562029621763,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -11088,9 +13066,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "42585856242921c9cc8f2c8f0a8dffb4"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "a64070873fb784869df6244fc79927be"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-246",
@@ -11111,10 +13089,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.15731666666666666,
+   "p_data_only": 0.156325,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.0014864282304434544,
+   "mc_se": 0.0018158158935792472,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -11131,9 +13109,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "9d16a1e92eecb0a74b071c8fd6eb970b"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "64ee5ec6ef2f0ae40e29c516b59db177"
   },
   {
    "ticker": "KXNBATOTAL-26OCT13PORSAC-248",
@@ -11154,10 +13132,10 @@
    "no_bid": null,
    "no_ask": null,
    "p_market": null,
-   "p_data_only": 0.1344,
+   "p_data_only": 0.135825,
    "p_hybrid": null,
    "p_production": null,
-   "mc_se": 0.001392459694210213,
+   "mc_se": 0.0017130132032109385,
    "gate": "CANNOT_TRUST_INPUTS",
    "gate_reasons": [
     "injury source is espn not official report",
@@ -11174,9 +13152,9 @@
     "no_quote: missing yes_ask, no_ask",
     "no_edge: no side has fee-adjusted EV above min_edge"
    ],
-   "market_ts": "2026-10-13T19:50:35Z",
-   "model_ts": "2026-10-13T19:53:49Z",
-   "prediction_id": "a01d089b20e974b1d800228fe92d5905"
+   "market_ts": "2026-10-13T20:50:35Z",
+   "model_ts": "2026-10-13T20:53:50Z",
+   "prediction_id": "aa4d5116444028b8f5bbe184772dd3a4"
   }
  ],
  "theses": [],
