@@ -1,4 +1,4 @@
-# NBA slate 2026-10-13 — generated 2026-10-13T14:42:49Z — nba-sim-0.1.0
+# NBA slate 2026-10-13 — generated 2026-10-13T15:42:48Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
