@@ -1,33 +1,38 @@
 {
- "last_capture_utc": "2026-10-16T17:19:14Z",
- "n_markets": 5893,
+ "last_capture_utc": "2026-10-16T17:29:14Z",
+ "n_markets": 5894,
  "n_series": 288,
- "requests": 900,
+ "requests": 901,
  "run_id": "38933393080",
  "markets_written": {
-  "encoding": "checkpoint",
-  "reason": "chain reached 24 deltas (limit 24)",
-  "path": "kalshi/markets/dt=2026-10-16/kalshi_markets_20261016T171914Z_38933393080.jsonl.gz",
-  "bytes": 510047,
-  "n_markets": 5893,
-  "board_sha256": "98e520efb80a6736f1dce5c7fb49fda27d55c7deb4ae9a2b056d489574b7e607"
+  "encoding": "delta",
+  "seq": 1,
+  "path": "kalshi/markets_delta/dt=2026-10-16/kalshi_markets_delta_20261016T172914Z_38933393080.json.gz",
+  "bytes": 10010,
+  "n_markets": 5894,
+  "n_changed": 449,
+  "changed_pct": 7.618,
+  "board_sha256": "ea44a619bb46d25f19ae19f196827f83216389161c4375d39925189c9f584929"
  },
  "orderbooks_written": {
-  "encoding": "checkpoint",
-  "reason": "chain reached 24 deltas (limit 24)",
-  "path": "kalshi/orderbooks/dt=2026-10-16/kalshi_orderbooks_20261016T171914Z_38933393080.jsonl.gz",
-  "bytes": 43721,
+  "encoding": "delta",
+  "seq": 1,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-16/kalshi_orderbooks_delta_20261016T172914Z_38933393080.json.gz",
+  "bytes": 44135,
   "n_markets": 300,
-  "board_sha256": "57bd3c27520e53b1f57cec5413873b6b2cb9c612e5045caccf0a1038478b5949"
+  "n_changed": 300,
+  "changed_pct": 100.0,
+  "board_sha256": "5af9ca5ee1a9df69ffa40482c46393be703283734f5784a52ec0b9ff0bf660ec"
  },
  "by_status": {
-  "active": 5893
+  "active": 5893,
+  "initialized": 1
  },
  "by_support": {
   "BUILDABLE": 36,
   "MODELABLE": 608,
   "RESEARCH": 1605,
-  "UNMODELABLE": 2162,
+  "UNMODELABLE": 2163,
   "UNRESOLVED": 1482
  },
  "by_family": {
@@ -38,7 +43,7 @@
   "conference_champion": 30,
   "division_winner": 30,
   "draft": 15,
-  "franchise_business": 26,
+  "franchise_business": 27,
   "game_spread": 300,
   "game_total": 252,
   "game_unknown": 67,
