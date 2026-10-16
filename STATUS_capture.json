@@ -1,40 +1,43 @@
 {
- "last_capture_utc": "2026-10-16T09:13:12Z",
+ "last_capture_utc": "2026-10-16T09:28:12Z",
  "n_markets": 5883,
  "n_series": 284,
- "requests": 1005,
+ "requests": 915,
  "run_id": "38864092570",
  "markets_written": {
   "encoding": "delta",
-  "seq": 16,
-  "path": "kalshi/markets_delta/dt=2026-10-16/kalshi_markets_delta_20261016T091312Z_38864092570.json.gz",
-  "bytes": 19861,
+  "seq": 17,
+  "path": "kalshi/markets_delta/dt=2026-10-16/kalshi_markets_delta_20261016T092812Z_38864092570.json.gz",
+  "bytes": 15102,
   "n_markets": 5883,
-  "n_changed": 1810,
-  "changed_pct": 30.767,
-  "board_sha256": "c1598b8eacb3a3f0f5ecbbdaaf84a4ccaf0e50a0aef60b5cd0d9be0601a2e1f0"
+  "n_changed": 828,
+  "changed_pct": 14.074,
+  "board_sha256": "8d74402a3afd3e3c222310a9bcdcb8ce0b9fbee6058bc279af9c3a1fb702be1f"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 16,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-16/kalshi_orderbooks_delta_20261016T091312Z_38864092570.json.gz",
-  "bytes": 41059,
+  "seq": 17,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-16/kalshi_orderbooks_delta_20261016T092812Z_38864092570.json.gz",
+  "bytes": 37305,
   "n_markets": 300,
   "n_changed": 300,
   "changed_pct": 100.0,
-  "board_sha256": "96c8ab85f54522b85d584b94972b8ce3d2d671fd976bc9cd7019f1e431d0f22a"
+  "board_sha256": "402368b5f358b916925e743fe5de6518f04ea3c564391e0cd3e5fc2414dfe698"
  },
  "by_status": {
+  "None": 3,
   "active": 5883
  },
  "by_support": {
   "BUILDABLE": 36,
   "MODELABLE": 608,
+  "None": 3,
   "RESEARCH": 1605,
   "UNMODELABLE": 2162,
   "UNRESOLVED": 1472
  },
  "by_family": {
+  "None": 3,
   "all_nba_selections": 371,
   "awards": 678,
   "champion_special": 3,
@@ -65,6 +68,7 @@
  },
  "alarms": [
   "1472 market(s) classified UNRESOLVED across series ['KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+  "3 captured market(s) carry no family/support at all, e.g. [None, None, None]",
   "series on the board with no ontology entry: ['KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
