@@ -1,32 +1,31 @@
 {
- "last_capture_utc": "2026-10-16T23:04:00Z",
+ "last_capture_utc": "2026-10-16T23:11:00Z",
  "n_markets": 7897,
  "n_series": 290,
- "requests": 906,
+ "requests": 907,
  "run_id": "38969699770",
  "markets_written": {
   "encoding": "delta",
-  "seq": 15,
-  "path": "kalshi/markets_delta/dt=2026-10-16/kalshi_markets_delta_20261016T230400Z_38969699770.json.gz",
-  "bytes": 34778,
+  "seq": 16,
+  "path": "kalshi/markets_delta/dt=2026-10-16/kalshi_markets_delta_20261016T231100Z_38969699770.json.gz",
+  "bytes": 26518,
   "n_markets": 7897,
-  "n_changed": 1698,
-  "changed_pct": 21.502,
-  "board_sha256": "81efcc5fb7d16544934f04dcadd4c7a37231281346f1fe913fd5d013ed265130"
+  "n_changed": 1267,
+  "changed_pct": 16.044,
+  "board_sha256": "ac380b68937712174a25a22acf746a69d8fef6dfc00e587b20fe7d5f7529ef7c"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 15,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-16/kalshi_orderbooks_delta_20261016T230400Z_38969699770.json.gz",
-  "bytes": 47049,
+  "seq": 16,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-16/kalshi_orderbooks_delta_20261016T231100Z_38969699770.json.gz",
+  "bytes": 42119,
   "n_markets": 300,
-  "n_changed": 295,
-  "changed_pct": 98.333,
-  "board_sha256": "366f4df33ec49debb052d3b09fc05b2e72464a1e1bf3e724104624502d749424"
+  "n_changed": 294,
+  "changed_pct": 98.0,
+  "board_sha256": "85c77eb5737ef4239115ccc4d874d11991b2e9d0076f33b7c9f92da74fd762d9"
  },
  "by_status": {
-  "active": 7779,
-  "initialized": 118
+  "active": 7897
  },
  "by_support": {
   "BUILDABLE": 494,
@@ -84,7 +83,7 @@
   "series on the board with no ontology entry: ['KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 7779 live markets, cap 300"
+  "order books sampled by priority: 7897 live markets, cap 300"
  ],
  "alarm": true
 }
