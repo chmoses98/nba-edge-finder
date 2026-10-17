@@ -445,3 +445,29 @@ python -m nba.summarize                           # summary.json, frozen_params.
 python -m nba.project --archive <dir> --date YYYY-MM-DD
 python -m pytest tests/test_nba_pf.py tests/test_pf_core.py
 ```
+
+## 17. Live shadow operation (2026-27)
+
+`python -m nba.live.run --stage all --archive <projection-data checkout>` (workflow `.github/workflows/projection-foundation.yml`). Research only, authority `research_only`; the frozen models are unchanged.
+
+**Schedule (ET, DST-safe)**: pregame 11:20, 17:20, 21:20 (after the afternoon / evening official-report updates, before tip); settle 06:40; light incumbent sweep hourly 21:50-03:50 UTC. Pull requests and `dry_run` dispatches run the whole chain on a temporary copy of the archive with read-only permissions.
+
+**Availability sources and certainty** (`nba/live/availability.py`, `participation.py`):
+
+| Source | Observation | Certainty |
+|---|---|---|
+| Official NBA injury-report PDF (`ak-static.cms.nba.com`, parser of the 2025-26 archive) | Out / Doubtful / Questionable / Probable / Available -> OUT / DOUBTFUL / QUESTIONABLE / PROBABLE / ACTIVE, per game | REPORTED (an official designation, not a lineup) |
+| Same report, player not listed for a game it covers (team not "NOT YET SUBMITTED") | implicit ACTIVE (the study: unlisted played 82%) | PROJECTED |
+| ESPN `/injuries` (athlete ids) | Out -> OUT, Day-To-Day -> QUESTIONABLE | PROJECTED (an official OUT is CONFIRMED_OUT; an ESPN-only OUT is LIKELY_OUT) |
+| ESPN game summary starter flags, only within 150 min of tip | STARTING | PROJECTED (ESPN does not label them confirmed; CONFIRMED is reserved for a source that does) |
+| Stated minutes restriction in a reason / comment | `restriction` LIMITED (+ cap) | as its source |
+
+A player with no observation is UNVERIFIED (gate REVIEW). Precedence: official designation > newer ESPN OUT/DOUBTFUL > ESPN > implicit; an ESPN OUT the covering official report does not list becomes UNCERTAIN with the conflict spelled out. `data-injury-pit` (hourly official + ESPN captures) is the fallback when a live fetch fails.
+
+**P(play)** = the frozen LightGBM hurdle recalibrated with the designation exactly as in section 5 (`nba/live/fit_participation.py`, coefficients frozen in `participation_calibration.json`; the study split reproduces Brier 0.132 -> 0.0868). Published inside `participation` on every row with its basis. Minutes use the report-aware `E_inj` model where the official report covers the game (study: -0.20 min on players who play) and the frozen `E` elsewhere; stat families keep their frozen best models.
+
+**Team reconciliation gate** (`nba/live/reconcile.py`): per team-game, minutes are scaled to 241.5 when |sum p x E[min] / 241.5 - 1| > 12%, then scoring volume (points, FGA, threes; PRA by its points part) to the team projection when |sum / team - 1| > 15%; the result is graded by `gate.team_reconciliation`; what cannot be reconciled inside the scale limits stays BLOCK. On the real 2026-10-20 forward projection PHI (171 vs 112 points, 360 expected minutes) reconciles. Historical check on the study's out-of-sample predictions (`python -m nba.live.reconcile_eval`, 9,846 team-games): the gate acts on 4.8%; on those rows points MAE 4.774 -> 4.703 (paired CI -0.122..-0.019) but bias moves 0.00 -> -0.34 and minutes MAE 5.333 -> 5.381, i.e. it is a repair for incoherent rosters, not an accuracy gain on ordinary ones.
+
+**Incumbent**: the `sim_rotation` arm of the PURE shadow store (frozen NBA_BASELINE_2026_PRESEASON_V1 simulator), read-only, archived as `model_role: incumbent` with its own `as_of`; it publishes a mean, quantiles and a threshold ladder (no pmf), so it is scored on MAE; its P(appear) is the incumbent `participation` forecast. **Results**: ESPN final box scores through the repo's history ingestion; a forecast player missing from the box or DNP has `participated=False` (void); the `participation` family is scored on every player.
+
+**Kalshi regular-season player props** (reporting only): `python -m nba.live.kalshi_report`. Placeholder quotes (0.00 / 0.98-0.99 boundary quotes) are never executable prices (`executable_quote`).

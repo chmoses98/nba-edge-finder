@@ -92,8 +92,10 @@ def slate_rows(sl: dict, box: pd.DataFrame, availability: dict | None = None) ->
     ros["tri"] = ros["team_abbreviation"].map(ab2tri)
     ros["pid"] = ros["espn_athlete_id"].astype(np.int64)
     inj = sl["injuries"].copy()
-    inj["key"] = inj["team_id"].astype(str) + "|" + inj["player_name_raw"].map(_norm)
-    st = dict(zip(inj["key"], inj["status"].str.upper()))
+    st = {}
+    if availability is None and len(inj):
+        inj["key"] = inj["team_id"].astype(str) + "|" + inj["player_name_raw"].map(_norm)
+        st = dict(zip(inj["key"], inj["status"].str.upper()))
     rows, tgr = [], []
     for _, g in sl["schedule"].iterrows():
         gid = int(str(g["game_id"]).split(":")[-1])

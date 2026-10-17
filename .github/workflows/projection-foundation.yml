@@ -125,8 +125,9 @@ jobs:
           set -euo pipefail
           NOW="${{ github.event.inputs.now }}"
           SEASON="${{ github.event.inputs.season_types }}"; SEASON="${SEASON:-regular}"
-          WIN="${{ github.event.inputs.window_hours }}"; WIN="${WIN:-30}"
-          # the opening-night preview: before the regular season starts the window is widened so the dry run still has a slate
+          WIN="${{ github.event.inputs.window_hours }}"
+          # pull requests: a wide window so the dry run always has a real slate to project (before opening night: the 2026-10-20 games)
+          if [ -z "$WIN" ]; then if [ "${{ github.event_name }}" = pull_request ]; then WIN=96; else WIN=30; fi; fi
           python -m nba.live.run --stage all --dry-run --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" \
             --shadow "$RUNNER_TEMP/m/shadow" --pit "$RUNNER_TEMP/m/pit" --context "$RUNNER_TEMP/m/data-archive" \
             --season-types "$SEASON" --window-hours "$WIN" ${NOW:+--now "$NOW"}
