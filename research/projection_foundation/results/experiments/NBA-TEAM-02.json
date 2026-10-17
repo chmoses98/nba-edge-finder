@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "Validation and holdout team-games."
+  ],
+  "distribution": {},
+  "eval_period": "Validation and holdout team-games.",
+  "experiment_id": "NBA-TEAM-02",
+  "family": "team_points",
+  "features": [],
+  "fingerprint": "52607aaae409b4f0",
+  "hyperparameters": {
+    "method": "pf_core.gate.team_reconciliation per team-game (REVIEW > 15%, BLOCK > 35%)."
+  },
+  "hypothesis": "Sum over the candidate pool of P(play) x E[pts|play] matches the team model within 15%.",
+  "limitations": [
+    "Player and team projections are mutually consistent; the bottom-up sum carries extra information from player availability."
+  ],
+  "model": "NBA-TEAM-02",
+  "model_version": "pf-nba-1",
+  "n_clusters": 4922,
+  "n_independent": 4922,
+  "n_obs": 4922,
+  "point": {
+    "result": "Validation ratio mean 1.000 (5-95% [0.8827, 1.1183]), statuses {'PASS': 4730, 'REVIEW': 191, 'BLOCK': 1}; MAE player-sum 10.52 vs team model 9.41, 50/50 blend 9.43."
+  },
+  "python": "3.13.16",
+  "question": "Do player point projections reconcile with team points?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "investigate",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

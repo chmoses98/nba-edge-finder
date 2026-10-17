@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "Validation played rows (proxy = absence from the box; PIT version only for 2025-26)."
+  ],
+  "distribution": {},
+  "eval_period": "Validation played rows (proxy = absence from the box; PIT version only for 2025-26).",
+  "experiment_id": "NBA-REBOUNDS-INJ",
+  "family": "rebounds",
+  "features": [],
+  "fingerprint": "953bccfc73ecb55b",
+  "hyperparameters": {
+    "method": "E_inj (LightGBM + teammate absence proxy features) vs the best pregame model, validation CRPS."
+  },
+  "hypothesis": "Absent teammates' usage is redistributed to those who play.",
+  "limitations": [
+    "Injury-informed projections need the live report; the effect is measured with a retrospective proxy and confirmed for minutes on 2025-26 PIT reports."
+  ],
+  "model": "NBA-REBOUNDS-INJ",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "E_inj minus best: -0.0153 (95% CI -0.0175 to -0.0131) CRPS."
+  },
+  "python": "3.13.16",
+  "question": "Does teammate-absence information (usage freed) improve rebounds?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

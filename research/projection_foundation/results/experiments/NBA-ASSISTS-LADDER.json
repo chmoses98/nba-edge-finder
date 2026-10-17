@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "Played player-games; validation 2022-23..2023-24; holdout 2024-25..2025-26."
+  ],
+  "distribution": {},
+  "eval_period": "Played player-games; validation 2022-23..2023-24; holdout 2024-25..2025-26.",
+  "experiment_id": "NBA-ASSISTS-LADDER",
+  "family": "assists",
+  "features": [],
+  "fingerprint": "f269efe32aa3fe4c",
+  "hyperparameters": {
+    "method": "Ladder A-F, NB2 (dispersion binned by mean) for every rung; best rung by validation CRPS, then its distribution family chosen by validation log score."
+  },
+  "hypothesis": "Minutes x shrunk per-minute rate with opponent/pace adjustment and boosting beats averages and the incumbent simulator.",
+  "limitations": [
+    "See RESULTS_NBA.md per-family table."
+  ],
+  "model": "NBA-ASSISTS-LADDER",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "Validation CRPS A 0.921; B 0.908; C 0.887; D 0.885; E 0.881; F 0.882. Best E (mixture): CRPS 0.881, MAE 1.298, vs A -0.040 (95% CI -0.043 to -0.037), vs incumbent -0.071 (95% CI -0.075 to -0.067) (incumbent CRPS 0.964, bias -0.285). Holdout CRPS 0.899, vs A -0.037 (95% CI -0.040 to -0.035), vs incumbent -0.089 (95% CI -0.094 to -0.085)."
+  },
+  "python": "3.13.16",
+  "question": "Which model best projects assists (conditional on playing)?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

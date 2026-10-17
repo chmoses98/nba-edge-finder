@@ -1,0 +1,58 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.4982,
+    "cover_80": 0.7943,
+    "cover_90": 0.8959,
+    "crps": 0.557,
+    "log_score": 1.2543,
+    "pit_var_ratio": 1.0084
+  },
+  "eval_period": "2022-23 and 2023-24 regular seasons (model selection)",
+  "experiment_id": "nba_threes_F_stack_validation",
+  "family": "threes",
+  "features": [],
+  "fingerprint": "1cbf1b75545829fb",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "F_stack+mixture",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "bias": -0.0005,
+    "mae": 0.8502,
+    "rmse": 1.1971
+  },
+  "python": "3.13.16",
+  "question": "How accurate is F_stack+mixture for threes?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "best",
+  "vs_baseline": {
+    "ci95": [
+      -0.0145,
+      -0.0121
+    ],
+    "mean_diff": -0.0133
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -0.0328,
+      -0.0285
+    ],
+    "mean_diff": -0.0307
+  }
+}

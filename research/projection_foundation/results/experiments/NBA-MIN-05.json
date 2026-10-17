@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "Development and validation played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Development and validation played rows.",
+  "experiment_id": "NBA-MIN-05",
+  "family": "minutes",
+  "features": [],
+  "fingerprint": "ddc803be68958c49",
+  "hyperparameters": {
+    "method": "Scale E[min | play] so that sum(P(play) x E[min|play]) = 241.5 per team-game; paired MAE."
+  },
+  "hypothesis": "Team-level consistency (the incumbent's water-filling idea) removes errors.",
+  "limitations": [
+    "Hard budget constraints move minutes toward players whose uncertainty is not team-level."
+  ],
+  "model": "NBA-MIN-05",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "Development +0.004 (95% CI -0.001 to +0.011); validation +0.009 (95% CI -0.003 to +0.019) min MAE (normalised minus raw)."
+  },
+  "python": "3.13.16",
+  "question": "Does forcing each team's expected minutes to sum to 240 (+OT) improve player minutes?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "reject",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

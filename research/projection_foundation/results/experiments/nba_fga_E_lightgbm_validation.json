@@ -1,0 +1,58 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.506,
+    "cover_80": 0.8035,
+    "cover_90": 0.8975,
+    "crps": 1.904,
+    "log_score": 2.5677,
+    "pit_var_ratio": 0.9923
+  },
+  "eval_period": "2022-23 and 2023-24 regular seasons (model selection)",
+  "experiment_id": "nba_fga_E_lightgbm_validation",
+  "family": "fga",
+  "features": [],
+  "fingerprint": "d1a9f2af2a4f1231",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "E_lightgbm+mixture",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "bias": 0.0576,
+    "mae": 2.7198,
+    "rmse": 3.5439
+  },
+  "python": "3.13.16",
+  "question": "How accurate is E_lightgbm+mixture for fga?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "best",
+  "vs_baseline": {
+    "ci95": [
+      -0.1719,
+      -0.1539
+    ],
+    "mean_diff": -0.1631
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -0.3313,
+      -0.3066
+    ],
+    "mean_diff": -0.319
+  }
+}

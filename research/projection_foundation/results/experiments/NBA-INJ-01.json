@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "2025-26 T-60 official report snapshots (pit_ok)."
+  ],
+  "distribution": {},
+  "eval_period": "2025-26 T-60 official report snapshots (pit_ok).",
+  "experiment_id": "NBA-INJ-01",
+  "family": "minutes",
+  "features": [],
+  "fingerprint": "01d87ed40333de67",
+  "hyperparameters": {
+    "method": "Logistic recalibration of the hurdle logit + status dummies fitted on 2025-26 games before 2026-01-15, scored on later games (chronological, within the holdout season; nothing else tuned)."
+  },
+  "hypothesis": "Report status (OUT/DOUBTFUL/QUESTIONABLE) sharply separates who plays.",
+  "limitations": [
+    "The injury report is the decisive participation input; the forward projector uses it."
+  ],
+  "model": "NBA-INJ-01",
+  "model_version": "pf-nba-1",
+  "n_clusters": 0,
+  "n_independent": 20073,
+  "n_obs": 20073,
+  "point": {
+    "result": "Brier 0.1320 -> 0.0868 (-0.0452 (95% CI -0.0486 to -0.0416)); unconditional minutes MAE 6.271 -> 4.701 (-1.570 (95% CI -1.665 to -1.471)). OUT/DOUBTFUL precision for absence 0.816, recall 0.743."
+  },
+  "python": "3.13.16",
+  "question": "How much does the archived official injury report add to participation and unconditional minutes?",
+  "split": "holdout",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

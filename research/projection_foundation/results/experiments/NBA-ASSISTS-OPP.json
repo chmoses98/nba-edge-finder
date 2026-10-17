@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "Validation and holdout played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Validation and holdout played rows.",
+  "experiment_id": "NBA-ASSISTS-OPP",
+  "family": "assists",
+  "features": [],
+  "fingerprint": "1f796731bd4bf7d2",
+  "hyperparameters": {
+    "method": "D = C x factor^beta x pace^beta_pace; factor = shrunk EWMA of actual/expected allowed by the opponent to the position (k=5 games); beta=0.633, beta_pace=0.142 fitted on development."
+  },
+  "hypothesis": "Defences allow systematically different production to guards/forwards/centres than expected.",
+  "limitations": [
+    "Opponent effects are real but small relative to minutes and role."
+  ],
+  "model": "NBA-ASSISTS-OPP",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "D vs C CRPS: validation -0.0017 (95% CI -0.0024 to -0.0010), holdout -0.0035 (95% CI -0.0042 to -0.0027); factor sd 0.045."
+  },
+  "python": "3.13.16",
+  "question": "Does an opponent (position-specific, schedule-relative) and pace adjustment improve assists?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "Validation/holdout played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Validation/holdout played rows.",
+  "experiment_id": "NBA-MIN-04",
+  "family": "minutes",
+  "features": [],
+  "fingerprint": "2105a28d951a7474",
+  "hyperparameters": {
+    "method": "Oracle: E_inj + the actual starter flag (not pregame-knowable historically; lineups are announced ~30 min before tip and were never archived)."
+  },
+  "hypothesis": "Starter status explains a material share of remaining minutes error.",
+  "limitations": [
+    "Upper bound of a confirmed-lineup feed: worth capturing prospectively, smaller than the injury report."
+  ],
+  "model": "NBA-MIN-04",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "Oracle vs E_inj: validation -0.164 (95% CI -0.177 to -0.150), holdout -0.169 (95% CI -0.183 to -0.154) min MAE."
+  },
+  "python": "3.13.16",
+  "question": "How much would knowing the starting lineup add?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "investigate",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

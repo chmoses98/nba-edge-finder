@@ -1,0 +1,109 @@
+name: projection-foundation
+# NBA Projection Foundation (research/projection_foundation/nba): daily forward projections for the next slate in
+# sift.projections.v1, published with the sport summary to the orphan branch `projection-data`:
+#   projections/nba/latest.json, projections/nba/<YYYY-MM-DDTHHMMZ>.json, summary/nba/latest.json
+# RESEARCH ONLY (authority research_only): no staking, no secrets, no paid services. Inputs are public: the
+# sportsdataverse ESPN box-score mirror (GitHub release assets) and this repo's data-archive captures
+# (context/schedule, rosters, injuries). Idempotent: a run whose projections are unchanged (ignoring timestamps)
+# commits nothing. The schedule fires only from the default branch (inert until merged).
+on:
+  schedule:
+    - cron: "17 15 * 1-6,10-12 *"   # ~11:17 ET, in season (Oct-Jun)
+    - cron: "47 21 * 1-6,10-12 *"   # ~17:47 ET, refresh after afternoon injury news
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "first slate date to consider (YYYY-MM-DD, ET); default today"
+        default: ""
+permissions:
+  contents: write
+concurrency:
+  group: projection-foundation-nba
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash -eo pipefail {0}
+jobs:
+  project:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q numpy pandas pyarrow scipy scikit-learn lightgbm
+      - name: Cache ESPN box-score mirror
+        uses: actions/cache@v4
+        with:
+          path: research/projection_foundation/.cache/hoopr
+          key: pf-nba-hoopr-${{ github.run_id }}
+          restore-keys: pf-nba-hoopr-
+      - name: Sparse, blobless read-only view of the data-archive context captures
+        run: |
+          git fetch --depth=1 --filter=blob:none origin data-archive
+          rm -rf /tmp/archive && git worktree add --no-checkout -f /tmp/archive origin/data-archive
+          git -C /tmp/archive sparse-checkout init --no-cone
+          git -C /tmp/archive sparse-checkout set /context/schedule/ /context/rosters/ /context/injuries/
+          git -C /tmp/archive checkout -q
+          du -sh /tmp/archive
+      - name: Project next slate
+        working-directory: research/projection_foundation
+        run: |
+          D="${{ github.event.inputs.date }}"; [ -n "$D" ] || D=$(TZ=America/New_York date +%F)
+          python -m nba.project --archive /tmp/archive --date "$D" --out "$RUNNER_TEMP/out/projections.json"
+          cp results/summary.json "$RUNNER_TEMP/out/summary.json"
+          python - "$RUNNER_TEMP/out/projections.json" <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys, collections
+          p = json.load(open(sys.argv[1]))
+          print("### NBA projection foundation")
+          print(f"- mode: {p['mode']}, slate {p['slate_date']}, data as of {p['data_asof_utc']}")
+          print(f"- games {len(p['games'])}, player-family rows {len(p['players'])}")
+          print(f"- gate: {dict(collections.Counter(r['gate']['status'] for r in p['players']))}")
+          PY
+      - name: Publish to projection-data (orphan branch; commit only if content changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898732+github-actions[bot]@users.noreply.github.com"
+          rm -rf /tmp/pub
+          if git fetch --depth=1 origin projection-data 2>/dev/null; then
+            git worktree add -f /tmp/pub origin/projection-data
+            git -C /tmp/pub checkout -q -B projection-data
+          else
+            git worktree add --detach -f /tmp/pub
+            git -C /tmp/pub checkout -q --orphan projection-data
+            git -C /tmp/pub rm -rqf . || true
+          fi
+          mkdir -p /tmp/pub/projections/nba /tmp/pub/summary/nba
+          changed=$(python - "$RUNNER_TEMP/out/projections.json" /tmp/pub/projections/nba/latest.json <<'PY'
+          import json, sys, os
+          def core(p):
+              d = json.load(open(p))
+              for k in ("generated_utc", "runtime_s"):
+                  d.pop(k, None)
+              return json.dumps(d, sort_keys=True)
+          new, old = sys.argv[1], sys.argv[2]
+          print("yes" if not os.path.exists(old) or core(new) != core(old) else "no")
+          PY
+          )
+          if [ "$changed" = "no" ]; then echo "projections unchanged; nothing to publish"; exit 0; fi
+          ts=$(date -u +%Y-%m-%dT%H%MZ)
+          cp "$RUNNER_TEMP/out/projections.json" /tmp/pub/projections/nba/latest.json
+          cp "$RUNNER_TEMP/out/projections.json" "/tmp/pub/projections/nba/$ts.json"
+          cp "$RUNNER_TEMP/out/summary.json" /tmp/pub/summary/nba/latest.json
+          git -C /tmp/pub add projections/nba summary/nba
+          git -C /tmp/pub diff --cached --quiet && { echo "no diff"; exit 0; }
+          git -C /tmp/pub commit -q -m "nba projections $ts (research only)"
+          for i in 1 2 3 4; do
+            if git -C /tmp/pub push origin HEAD:projection-data; then exit 0; fi
+            sleep $((2 ** i))
+            git -C /tmp/pub fetch --depth=1 origin projection-data && git -C /tmp/pub rebase -q origin/projection-data || true
+          done
+          echo "push failed after retries"; exit 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-projection-foundation
+          path: ${{ runner.temp }}/out/
+          retention-days: 30
+          if-no-files-found: ignore

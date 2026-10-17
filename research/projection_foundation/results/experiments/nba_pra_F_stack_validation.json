@@ -1,0 +1,58 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.4757,
+    "cover_80": 0.7677,
+    "cover_90": 0.8739,
+    "crps": 4.1812,
+    "log_score": 3.3564,
+    "pit_var_ratio": 1.073
+  },
+  "eval_period": "2022-23 and 2023-24 regular seasons (model selection)",
+  "experiment_id": "nba_pra_F_stack_validation",
+  "family": "pra",
+  "features": [],
+  "fingerprint": "f54f6bc7ac3797ca",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "F_stack",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "bias": 0.0888,
+    "mae": 5.9488,
+    "rmse": 7.6563
+  },
+  "python": "3.13.16",
+  "question": "How accurate is F_stack for pra?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "competitive",
+  "vs_baseline": {
+    "ci95": [
+      -0.3125,
+      -0.2786
+    ],
+    "mean_diff": -0.2957
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -0.604,
+      -0.5525
+    ],
+    "mean_diff": -0.5783
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.485,
+    "cover_80": 0.7871,
+    "cover_90": 0.8905,
+    "crps": 4.7954,
+    "log_score": 3.5872,
+    "pit_var_ratio": 0.9857
+  },
+  "eval_period": "2022-23 and 2023-24 regular seasons (model selection)",
+  "experiment_id": "nba_pra_incumbent_sim_validation",
+  "family": "pra",
+  "features": [],
+  "fingerprint": "51268ab44948b3bd",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "incumbent_sim",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 50171,
+  "n_obs": 50171,
+  "point": {
+    "bias": -1.7807,
+    "mae": 6.5968,
+    "rmse": 8.7069
+  },
+  "python": "3.13.16",
+  "question": "How accurate is incumbent_sim for pra?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "incumbent",
+  "vs_baseline": {
+    "ci95": [
+      0.2906,
+      0.3467
+    ],
+    "mean_diff": 0.3191
+  },
+  "vs_incumbent": {}
+}

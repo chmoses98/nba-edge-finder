@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "Candidate pool, 2016-17..2025-26."
+  ],
+  "distribution": {},
+  "eval_period": "Candidate pool, 2016-17..2025-26.",
+  "experiment_id": "NBA-MIN-02",
+  "family": "minutes",
+  "features": [],
+  "fingerprint": "4fa2eba19009604c",
+  "hyperparameters": {
+    "method": "Candidate pool = players who played for the team in its previous 10 games (absent rows added); classifier walk-forward by season; unconditional minutes = P(play) x E[min | play]."
+  },
+  "hypothesis": "A LightGBM classifier on recent participation, days since last game and return-from-absence beats the EWMA participation rate and the incumbent's availability proxy.",
+  "limitations": [
+    "Most DNPs are predictable from recent participation patterns; the rest needs the injury report."
+  ],
+  "model": "NBA-MIN-02",
+  "model_version": "pf-nba-1",
+  "n_clusters": 0,
+  "n_independent": 76104,
+  "n_obs": 76104,
+  "point": {
+    "result": "Validation Brier 0.1207 vs EWMA rate 0.1604 (incumbent 0.1684 vs ours 0.1162 on its rows); ECE 0.0043. Unconditional minutes MAE 5.79 vs 7.28 (EWMA) and incumbent 6.77 vs ours 6.01 (-0.755 (95% CI -0.799 to -0.712)). Holdout: Brier 0.1252, MAE 5.97, incumbent diff -0.837 (95% CI -0.881 to -0.795); 80% coverage of the hurdle mixture 0.805."
+  },
+  "python": "3.13.16",
+  "question": "Can a participation hurdle predict who plays without an injury report?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

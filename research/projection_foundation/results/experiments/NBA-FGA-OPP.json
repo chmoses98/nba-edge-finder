@@ -1,0 +1,37 @@
+{
+  "code_sha": "3e4a1e2da2b39f1ded575ec07c545a73db6a85fc",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:53:42Z",
+  "data_provenance": [
+    "Validation and holdout played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Validation and holdout played rows.",
+  "experiment_id": "NBA-FGA-OPP",
+  "family": "fga",
+  "features": [],
+  "fingerprint": "059c4ce0d84e40ea",
+  "hyperparameters": {
+    "method": "D = C x factor^beta x pace^beta_pace; factor = shrunk EWMA of actual/expected allowed by the opponent to the position (k=5 games); beta=0.660, beta_pace=0.223 fitted on development."
+  },
+  "hypothesis": "Defences allow systematically different production to guards/forwards/centres than expected.",
+  "limitations": [
+    "Opponent effects are real but small relative to minutes and role."
+  ],
+  "model": "NBA-FGA-OPP",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "D vs C CRPS: validation -0.0042 (95% CI -0.0057 to -0.0026), holdout -0.0042 (95% CI -0.0056 to -0.0027); factor sd 0.028."
+  },
+  "python": "3.13.16",
+  "question": "Does an opponent (position-specific, schedule-relative) and pace adjustment improve fga?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}
