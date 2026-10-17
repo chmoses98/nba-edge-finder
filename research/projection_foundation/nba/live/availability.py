@@ -381,7 +381,7 @@ def capture(sources: Sources, now: datetime, root: str, *, window_hours: float =
     errors: list[str] = []
     pit = read_pit(pit_dir, now)
     try:
-        schedule = sources.scoreboard(now)
+        schedule = sources.scoreboard(now, days_ahead=int(window_hours // 24) + 2)
         sched_src = "espn_scoreboard_live"
     except Exception as e:  # noqa: BLE001
         errors.append(f"scoreboard: {type(e).__name__}: {e}"[:200])
