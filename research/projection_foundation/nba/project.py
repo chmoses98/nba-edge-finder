@@ -5,8 +5,12 @@ Inputs (all point-in-time; nothing after `data_asof_utc` is read):
   * slate: the newest `context/schedule` capture of the data-archive branch (ESPN scoreboard), first date
     >= --date with scheduled regular-season games;
   * rosters: newest `context/rosters` capture (ESPN team rosters, athlete ids);
-  * availability: newest `context/injuries` capture (ESPN injuries; Out -> treated as absent, which drives the
-    teammate-absence features; Questionable/Doubtful/Day-To-Day -> gate REVIEW).
+  * availability: LIVE operation passes the resolved participation of every roster player (official NBA injury report,
+    ESPN injuries, starters; `nba.live.participation`): OUT / DOUBTFUL players are treated as absent (drives the
+    teammate-absence features exactly like the study's point-in-time report), P(play) is the report-recalibrated
+    hurdle, minutes use the report-aware E_inj model where the official report covers the game, and the player/team
+    reconciliation gate normalises minutes / points to the team projection (`nba.live.reconcile`). Without it (legacy
+    `--archive` runs) the newest `context/injuries` capture is used as before (ESPN Out -> absent; others -> REVIEW).
 Models: the frozen parameters chosen in the walk-forward backtest (results/frozen_params.json); the LightGBM
 components are refit on the five seasons before the slate (same recipe as the backtest's final block).
 If no future slate exists the projector falls back to the most recent historical date using only prior data and
@@ -75,7 +79,13 @@ def load_slate(archive: str, date: str | None):
             "files": {"schedule": sp, "rosters": rp, "injuries": ip}}
 
 
-def slate_rows(sl: dict, box: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+def slate_rows(sl: dict, box: pd.DataFrame, availability: dict | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Slate player rows + team rows.
+
+    `availability` (live operation) maps (event id 'espn:<game>', entity id 'espn:<athlete>') to the resolved participation
+    (nba.live.participation): CONFIRMED_OUT / LIKELY_OUT players are absent exactly like OUT / DOUBTFUL on the study's
+    point-in-time report (`injury.pit_absence`), everyone else is present. Without it the newest ESPN `context/injuries`
+    capture is used (Out -> absent), as in the original forward projector."""
     ab2id, ab2tri = data.team_maps()
     tri2id = {v: ab2id[k] for k, v in ab2tri.items()}
     ros = sl["rosters"].copy()
@@ -92,12 +102,18 @@ def slate_rows(sl: dict, box: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]
             tgr.append({"game_id": gid, "team": team, "season": SLATE_SEASON, "date": pd.Timestamp(g["game_date_et"]),
                         "tip_utc": tip, "team_id": tri2id[team], "opp": opp, "home": side == "home"})
             for _, r in ros[ros["tri"] == team].iterrows():
-                status = st.get(f"{tri2id[team]}|{_norm(r['full_name'])}", "ACTIVE")
+                if availability is not None:
+                    a = availability.get((f"espn:{gid}", f"espn:{int(r['pid'])}")) or {}
+                    absent = a.get("status") in ("CONFIRMED_OUT", "LIKELY_OUT")
+                    status = a.get("designation") or ("OUT" if absent else "ACTIVE")
+                else:
+                    status = st.get(f"{tri2id[team]}|{_norm(r['full_name'])}", "ACTIVE")
+                    absent = status == "OUT"
                 rows.append({"game_id": gid, "season": SLATE_SEASON, "date": pd.Timestamp(g["game_date_et"]),
                              "tip_utc": tip, "team": team, "team_id": tri2id[team], "opp": opp, "home": side == "home",
                              "pid": int(r["pid"]), "name": r["full_name"], "pos": data.pos_group(r.get("position")),
-                             "started": False, "dnp": status == "OUT", "dnp_reason": "INJURY_REPORT_OUT" if status == "OUT" else None,
-                             "team_score": np.nan, "opp_score": np.nan, "in_box": status != "OUT",
+                             "started": False, "dnp": absent, "dnp_reason": "INJURY_REPORT_OUT" if absent else None,
+                             "team_score": np.nan, "opp_score": np.nan, "in_box": not absent,
                              "played": False, "inj_status": status})
     c = pd.DataFrame(rows)
     for col in data.STATS + ["pra"]:
@@ -112,14 +128,42 @@ def _git_sha() -> str:
         return "unknown"
 
 
+def _iso(ts) -> str:
+    return pd.Timestamp(ts).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _legacy_participation(status: str | None) -> dict:
+    """Participation block for runs without a live availability feed (ESPN context statuses only)."""
+    s = (status or "UNKNOWN").upper()
+    m = {"OUT": ("CONFIRMED_OUT", "OUT"), "DOUBTFUL": ("LIKELY_OUT", "DOUBTFUL"), "QUESTIONABLE": ("UNCERTAIN", "QUESTIONABLE"),
+         "DAY-TO-DAY": ("UNCERTAIN", "DAY-TO-DAY"), "ACTIVE": ("UNVERIFIED", "UNKNOWN")}.get(s, ("UNVERIFIED", "UNKNOWN"))
+    return {"status": m[0], "certainty": "UNKNOWN", "source": "espn_context_injuries", "captured_utc": None, "age_minutes": None,
+            "reasons": ["legacy run: ESPN context injury status only, no point-in-time observation"], "designation": s,
+            "implicit": False, "_class": None, "gate_injury_status": m[1]}
+
+
 def project(archive: str | None, date: str | None, out: str, max_hist_seasons: int = 7) -> dict:
+    """Legacy entry point (context archive, next regular-season date >= --date, or historical replay)."""
+    sl = load_slate(archive, date) if archive else None
+    return project_slate(sl, out, max_hist_seasons=max_hist_seasons)
+
+
+def project_slate(sl: dict | None, out: str | None, *, availability: dict | None = None, calib: dict | None = None,
+                  now_utc: str | None = None, reconcile_cfg=None, max_hist_seasons: int = 7) -> dict:
+    """Frozen-model forward projections for the games in `sl` (see load_slate; `sl["asof"]` = newest input captured).
+
+    Live arguments: `availability` (resolved participation per (event, entity), nba.live.participation), `calib` (frozen
+    report-aware P(play) coefficients) and `reconcile_cfg` (team reconciliation gate). Every player row carries
+    `participation{status,certainty,source,captured_utc,reasons,p_play,...}` and `role: "shadow"`; the authority is always
+    research_only."""
+    from .live import participation as PART, reconcile as REC
     t0 = time.time()
+    now_utc = now_utc or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     frozen = json.loads(FROZEN.read_text())
     data.ensure_hoopr(range(data.FIRST_SEASON, SLATE_SEASON + 1), refresh_current=True)
     seasons = list(range(SLATE_SEASON - max_hist_seasons, SLATE_SEASON + 1))
     box = data.load_box(seasons)
     hist_last = box["date"].max()
-    sl = load_slate(archive, date) if archive else None
     mode = "next_slate"
     if sl is None:
         # historical replay: newest date in history, using only earlier games
@@ -138,7 +182,7 @@ def project(archive: str | None, date: str | None, out: str, max_hist_seasons: i
         asof = (pd.Timestamp(day) - pd.Timedelta(hours=1)).tz_localize("UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
         files = {}
     else:
-        slate_c, tg_slate = slate_rows(sl, box)
+        slate_c, tg_slate = slate_rows(sl, box, availability)
         asof = sl["asof"].replace("+00:00", "Z")
         files = sl["files"]
     tg = data.team_games_from_box(box)
@@ -154,26 +198,145 @@ def project(archive: str | None, date: str | None, out: str, max_hist_seasons: i
     mp, _ = M.fit_ladder(f, frozen=frozen["minutes_params"], final_only=True, with_oracle=False)
     best_min = frozen["best_minutes_model"]
     f["min_best"] = mp[best_min]
-    f["p_play"] = M.fit_hurdle(f, final_only=True)
+    f["min_inj"] = mp["E_inj"]
+    f["p_hurdle"] = M.fit_hurdle(f, final_only=True)
     sl_idx = f.index[f["is_slate"]]
     F = f.loc[sl_idx].copy()
+    # ---- participation per slate row
+    keys = [(f"espn:{g}", f"espn:{p}") for g, p in zip(F["game_id"], F["pid"])]
+    if availability is None:
+        part = [_legacy_participation(s) for s in F["inj_status"]]
+    else:
+        part = [availability.get(k) or _legacy_participation(None) | {"reasons": ["no availability observation before the cut-off"]}
+                for k in keys]
+    classes = [p.get("_class") for p in part]
+    if calib is not None:
+        F["p_play"] = PART.calibrated_p_play(F["p_hurdle"].to_numpy(), classes, calib)
+        basis = ["report-recalibrated hurdle" if c else "hurdle (no availability observation)" for c in classes]
+        basis = ["confirmed starter" if c == "STARTER_CONFIRMED" else b for c, b in zip(classes, basis)]
+    else:
+        F["p_play"] = F["p_hurdle"]
+        basis = ["hurdle"] * len(F)
+    # minutes: report-aware E_inj where the official report covers the game, else the frozen best (E)
+    from .live.availability import SRC_OFFICIAL
+    report_cov = np.array([bool(p.get("source") == SRC_OFFICIAL) for p in part])
+    F["min_pub"] = np.where(report_cov, F["min_inj"], F["min_best"])
+    caps = np.array([((p.get("restriction") or {}).get("minutes_cap") or np.nan) for p in part], float)
+    F["min_cap"] = caps
+    capped = np.isfinite(caps) & (F["min_best"].to_numpy() > caps)
+    F["min_pub"] = np.where(capped, np.minimum(F["min_pub"], caps), F["min_pub"])
+    F["min_best"] = np.where(capped, np.minimum(F["min_best"], caps), F["min_best"])
     mres = frozen["minutes_dist"]
-    mdist = models.make_dist(mres, F["min_best"].to_numpy())
     # team
     tt, _ = T.fit_team(tctx)
     tt = tt[tt["game_id"].isin(set(F["game_id"]))]
     tbest = frozen["team"]["best"]
     tdist = models.make_dist(frozen["team"]["dist"], tt[tbest].to_numpy())
     tt = tt.assign(mean=tdist.mean, p10=tdist.quantile(0.1), p90=tdist.quantile(0.9))
-    fam_out = {}
-    player_rows = []
+    team_mean = {(g, t_): float(m) for g, t_, m in zip(tt["game_id"], tt["team"], tt["mean"])}
+    # ---- pass 1: family means (frozen best models), then the reconciliation gate
+    fam_state = {}
     for fam, (col, gkey, rungs) in FAMILIES.items():
         fz = frozen["families"][fam]
         sp, _ = S.fit_family(f, col, "min_best", M.INJ, frozen=fz["params"], final_only=True)
-        mu = sp.loc[sl_idx, fz["best"]].to_numpy()
-        rate = sp.loc[sl_idx, "rate"].to_numpy()
+        fam_state[fam] = {"sp": sp, "mu": sp.loc[sl_idx, fz["best"]].to_numpy().astype(float),
+                          "rate": sp.loc[sl_idx, "rate"].to_numpy(), "fz": fz}
+    rec_in = pd.DataFrame({"game_id": F["game_id"].to_numpy(), "team": F["team"].to_numpy(), "p_play": F["p_play"].to_numpy(),
+                           "minutes": F["min_pub"].to_numpy(), "pts": fam_state["points"]["mu"]}, index=F.index)
+    scales, recs = REC.reconcile(rec_in, team_mean, reconcile_cfg or REC.Config()) if mode == "next_slate" else \
+        (pd.DataFrame({"min_scale": 1.0, "usage_scale": 1.0}, index=F.index), [])
+    ms, us = scales["min_scale"].to_numpy(), scales["usage_scale"].to_numpy()
+    F["min_best_f"] = np.minimum(F["min_best"].to_numpy() * ms, 46.0)
+    F["min_pub_f"] = np.minimum(F["min_pub"].to_numpy() * ms, 46.0)
+    pts_min = fam_state["points"]["mu"] * ms
+    for fam in FAMILIES:
+        mu = fam_state[fam]["mu"] * ms
+        if fam in ("points", "fga", "threes"):
+            mu = mu * us
+        elif fam == "pra":
+            mu = mu + pts_min * us - pts_min
+        fam_state[fam]["mu_f"] = mu
+    rec_by_team = {(r["game_id"], r["team"]): r for r in recs}
+    mdist = models.make_dist(mres, F["min_pub_f"].to_numpy())
+    hist_all = f[f["played"] & ~f["is_slate"]].sort_values(["date", "game_id"])
+    hist = {pid: g.tail(10) for pid, g in hist_all[hist_all["pid"].isin(set(F["pid"]))].groupby("pid")}
+    empty_h = hist_all.iloc[:0]
+    fam_out = {}
+    player_rows = []
+    gate_now = now_utc
+
+    def add_row(i, ix, fam, gkey, d, rungs, mean_pub, fz_readiness, opp_f, opp_n, minutes_pub, adj_extra=None):
+        r = F.loc[ix]
+        pa = part[i]
+        h = hist.get(r["pid"], empty_h)
+        col = FAMILIES[fam][0] if fam in FAMILIES else "minutes"
+        th = {str(k): round(float(d.prob_ge(k)[i]), 4) for k in rungs}
+        rec = rec_by_team.get((r["game_id"], r["team"]))
+        gi = gate.GateInput(sport="NBA", family=gkey, entity_id=str(r["pid"]), entity_name=r["name"], team=r["team"],
+                            game_id=f"espn:{r['game_id']}", game_start_utc=_iso(r["tip_utc"]),
+                            mean=float(d.mean[i]), data_asof_utc=asof, injury_status=pa["gate_injury_status"],
+                            expected_opportunity=float(F.loc[ix, "min_best_f"]),
+                            opportunity_history=h["minutes_act"].tolist(),
+                            stat_history=h[f"{col}_act"].tolist() if f"{col}_act" in h else h["minutes_act"].tolist(),
+                            opponent_factor=opp_f, opponent_sample_games=opp_n,
+                            support_lo=int(d.lo), probs=d.P[i], thresholds={k: v for k, v in th.items()},
+                            sd=float(np.sqrt(max(d.var[i], 0))), model_n_obs=int(np.nan_to_num(r["minutes_p_n"])),
+                            participation=pa["status"], participation_reasons=pa["reasons"])
+        gres = gate.evaluate(gi, now_utc=gate_now)
+        pp = {k: v for k, v in pa.items() if not k.startswith("_")}
+        pp.pop("gate_injury_status", None)
+        pp["p_play"] = round(float(r["p_play"]), 4)
+        pp["p_play_basis"] = basis[i]
+        adj = [f"Participation: P(play) {r['p_play']:.2f} ({basis[i]}; availability {pa['status']}"
+               f"{', ' + pa['designation'].lower() if pa.get('designation') else ''}). Projections below are conditional on playing."]
+        if fam in FAMILIES and abs(opp_f - 1) >= 0.03:
+            adj.append(f"Opponent {r['opp']} allows {('more' if opp_f > 1 else 'less')} {fam} to {r['pos']}s than expected: "
+                       f"x{opp_f:.3f} ({opp_n} games).")
+        if r.get("out_min", 0) and r["out_min"] >= 20 and fam in FAMILIES:
+            adj.append(f"Teammates listed out account for ~{r['out_min']:.0f} recent minutes (minutes/usage redistributed).")
+        if r["team_changed"] == 1 or r["games_with_team"] < 5:
+            adj.append("New team: role estimated from prior-team history and position priors.")
+        if np.nan_to_num(r["minutes_p_n"]) < 3:
+            adj.append("Fewer than 3 career games in the data: projection is prior-driven.")
+        if np.isfinite(F.loc[ix, "min_cap"]):
+            adj.append(f"Minutes restriction reported (cap ~{F.loc[ix, 'min_cap']:.0f} min): minutes capped.")
+        if rec and rec["action"] != "none":
+            adj.append(f"Team reconciliation: {'; '.join(rec['reasons'])}.")
+        adj += adj_extra or []
+        findings = [{k: x[k] for k in ("check", "severity", "what", "category", "action")} for x in gres["findings"]]
+        status = gres["status"]
+        if rec and (fam in ("points", "pra", "minutes") or rec["action"] != "none") and rec["status"] != "PASS":
+            for fd in rec["findings"]:
+                findings.append({k: fd[k] for k in ("check", "severity", "what", "category", "action")})
+            if {"PASS": 0, "REVIEW": 1, "BLOCK": 2}[rec["status"]] > {"PASS": 0, "REVIEW": 1, "BLOCK": 2}[status]:
+                status = rec["status"]
+        if np.isfinite(F.loc[ix, "min_cap"]):
+            findings.append({"check": "restriction", "severity": "REVIEW", "what": "Minutes restriction reported",
+                             "category": "uncertainty", "action": "Treat as conditional on a limited role."})
+            status = status if status == "BLOCK" else "REVIEW"
+        row = {
+            "player_id": f"espn:{r['pid']}", "name": r["name"], "team": r["team"], "opponent": r["opp"],
+            "game_id": f"espn:{r['game_id']}", "family": fam, "mean": round(float(d.mean[i]), 2),
+            "median": int(d.median[i]), "p10": int(d.quantile(0.1)[i]), "p90": int(d.quantile(0.9)[i]),
+            "thresholds": th,
+            "opportunity": {"family": "minutes", "mean": round(float(mdist.mean[i]), 1),
+                            "p10": int(mdist.quantile(0.1)[i]), "p90": int(mdist.quantile(0.9)[i])},
+            "opponent_adjustment": {"factor": round(opp_f, 4), "sample_games": int(opp_n)},
+            "adjustments": adj, "readiness": fz_readiness,
+            "gate": {"status": status, "findings": findings},
+            "participation": pp, "role": "shadow", "data_asof_utc": asof,
+            "_pmf": {"lo": int(d.lo), "probs": d.P[i]},
+            "_tags": {"new_team": bool(r["team_changed"] == 1 or r["games_with_team"] < 5),
+                      "reconciled": (rec or {}).get("action", "none"), "minutes_model": "E_inj" if report_cov[i] else best_min,
+                      "n_own_games": int(np.nan_to_num(r["minutes_p_n"]))}}
+        player_rows.append(row)
+
+    # ---- pass 2: distributions, gate, rows
+    for fam, (col, gkey, rungs) in FAMILIES.items():
+        st_ = fam_state[fam]
+        fz, sp, mu, rate = st_["fz"], st_["sp"], st_["mu_f"], st_["rate"]
         if fz["dist"] == "mixture":
-            scen = D.minutes_scenarios(fz["min_res"], F["min_best"].to_numpy())
+            scen = D.minutes_scenarios(fz["min_res"], F["min_best_f"].to_numpy())
             scale = mu / np.maximum(rate * scen.mean(axis=1), 1e-6)
             d = D.mixture(rate, scen, fz["alpha_given_minutes"], SUPPORT_K[col], scale)
         elif fz["dist"] == "single_minutes_nb":
@@ -183,92 +346,47 @@ def project(archive: str | None, date: str | None, out: str, max_hist_seasons: i
         F[f"{col}_mean"] = d.mean
         fam_out[fam] = {"readiness": fz["readiness"], "model": fz["model_name"], "reason": fz["readiness_reason"]}
         for i, ix in enumerate(sl_idx):
-            r = F.loc[ix]
-            hist_min = f[(f["pid"] == r["pid"]) & f["played"] & ~f["is_slate"]].tail(10)
-            th = {str(k): round(float(d.prob_ge(k)[i]), 4) for k in rungs}
-            ist = r.get("inj_status") or "UNKNOWN"
-            gi = gate.GateInput(sport="NBA", family=gkey, entity_id=str(r["pid"]), entity_name=r["name"], team=r["team"],
-                                game_id=f"espn:{r['game_id']}", game_start_utc=pd.Timestamp(r["tip_utc"]).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                                mean=float(d.mean[i]), data_asof_utc=asof,
-                                injury_status={"ACTIVE": "ACTIVE", "DAY-TO-DAY": "DAY-TO-DAY"}.get(ist, ist),
-                                expected_opportunity=float(r["min_best"]),
-                                opportunity_history=hist_min["minutes_act"].tolist(),
-                                stat_history=hist_min[f"{col}_act"].tolist(),
-                                opponent_factor=float(sp.loc[ix, "opp_factor"]), opponent_sample_games=int(sp.loc[ix, "opp_n"]),
-                                support_lo=0, probs=d.P[i], thresholds={k: v for k, v in th.items()},
-                                sd=float(np.sqrt(max(d.var[i], 0))), model_n_obs=int(np.nan_to_num(r["minutes_p_n"])))
-            gres = gate.evaluate(gi, now_utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
-            adj = [f"Participation: P(play) {r['p_play']:.2f} (projections below are conditional on playing; "
-                   f"availability status {ist})."]
-            if abs(sp.loc[ix, "opp_factor"] - 1) >= 0.03:
-                adj.append(f"Opponent {r['opp']} allows {('more' if sp.loc[ix, 'opp_factor'] > 1 else 'less')} {fam} to "
-                           f"{r['pos']}s than expected: x{sp.loc[ix, 'opp_factor']:.3f} ({int(sp.loc[ix, 'opp_n'])} games).")
-            if abs(sp.loc[ix, "pace_adj"] - 1) >= 0.01:
-                adj.append(f"Expected pace adjustment x{sp.loc[ix, 'pace_adj']:.3f}.")
-            if r.get("out_min", 0) and r["out_min"] >= 20:
-                adj.append(f"Teammates listed out account for ~{r['out_min']:.0f} recent minutes (minutes/usage redistributed).")
-            if r["team_changed"] == 1 or r["games_with_team"] < 5:
-                adj.append("New team: role estimated from prior-team history and position priors.")
-            if np.nan_to_num(r["minutes_p_n"]) < 3:
-                adj.append("Fewer than 3 career games in the data: projection is prior-driven.")
-            player_rows.append({
-                "player_id": f"espn:{r['pid']}", "name": r["name"], "team": r["team"], "opponent": r["opp"],
-                "game_id": f"espn:{r['game_id']}", "family": fam, "mean": round(float(d.mean[i]), 2),
-                "median": int(d.median[i]), "p10": int(d.quantile(0.1)[i]), "p90": int(d.quantile(0.9)[i]),
-                "thresholds": th,
-                "opportunity": {"family": "minutes", "mean": round(float(mdist.mean[i]), 1),
-                                "p10": int(mdist.quantile(0.1)[i]), "p90": int(mdist.quantile(0.9)[i])},
-                "opponent_adjustment": {"factor": round(float(sp.loc[ix, "opp_factor"]), 4), "sample_games": int(sp.loc[ix, "opp_n"])},
-                "adjustments": adj, "readiness": fz["readiness"],
-                "gate": {"status": gres["status"], "findings": [{k: x[k] for k in ("check", "severity", "what", "category", "action")}
-                                                                for x in gres["findings"]]},
-                "data_asof_utc": asof})
-    # team reconciliation per team-game (points)
-    pts_rows = [p for p in player_rows if p["family"] == "points"]
-    pp = pd.DataFrame(pts_rows)
+            add_row(i, ix, fam, gkey, d, rungs, float(d.mean[i]), fz["readiness"], float(sp.loc[ix, "opp_factor"]),
+                    int(sp.loc[ix, "opp_n"]), float(F.loc[ix, "min_pub_f"]),
+                    [f"Expected pace adjustment x{sp.loc[ix, 'pace_adj']:.3f}."] if abs(sp.loc[ix, "pace_adj"] - 1) >= 0.01 else None)
+    for i, ix in enumerate(sl_idx):                       # minutes: the study's priority family (report-aware where covered)
+        add_row(i, ix, "minutes", "minutes", mdist, MINUTES_RUNGS, float(mdist.mean[i]),
+                frozen["minutes_readiness"]["readiness"], 1.0, 0, float(F.loc[ix, "min_pub_f"]),
+                ["Minutes model: " + ("E_inj (official report features)" if report_cov[i] else f"{best_min} (no official report for this game)") + "."])
+    # team block
     games = []
     for gid, g in tt.groupby("game_id"):
-        gg = {"game_id": f"espn:{gid}", "start_utc": pd.Timestamp(g["tip_utc"].iloc[0]).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        gg = {"game_id": f"espn:{gid}", "start_utc": _iso(g["tip_utc"].iloc[0]),
               "home": g.loc[g["home"], "team"].iloc[0], "away": g.loc[~g["home"], "team"].iloc[0], "teams": []}
         for _, r in g.iterrows():
+            rec = rec_by_team.get((gid, r["team"]))
             sub = F[(F["game_id"] == gid) & (F["team"] == r["team"])]
-            psum = float((sub["p_play"] * sub["pts_mean"]).sum())
-            rec = gate.team_reconciliation(psum, float(r["mean"]), f"{r['team']} player points vs team points")
-            gg["teams"].append({"team": r["team"], "family": "team_points", "mean": round(float(r["mean"]), 1),
-                                "p10": int(r["p10"]), "p90": int(r["p90"]),
-                                "player_points_sum": round(psum, 1), "reconciliation": rec["status"]})
+            raw_sum = float((sub["p_play"] * fam_state["points"]["mu"][[F.index.get_loc(i) for i in sub.index]]).sum())
+            t_ = {"team": r["team"], "family": "team_points", "mean": round(float(r["mean"]), 1), "p10": int(r["p10"]),
+                  "p90": int(r["p90"]), "player_points_sum": round(rec["points_sum_final"] if rec else raw_sum, 1),
+                  "player_points_sum_raw": round(raw_sum, 1),
+                  "reconciliation": rec["status"] if rec else gate.team_reconciliation(raw_sum, float(r["mean"]), r["team"])["status"]}
+            if rec:
+                t_["reconciliation_detail"] = {k: rec[k] for k in ("minutes_sum_raw", "minutes_sum_final", "minutes_scale", "usage_scale",
+                                                                   "points_sum_raw", "points_sum_final", "action", "reasons")}
+            gg["teams"].append(t_)
         games.append(gg)
-    # team reconciliation feeds the player gate: a team whose player points do not reconcile (e.g. a new roster whose
-    # players all carry their old-team roles) gets the finding on each of its players' points projections
-    sev = {"PASS": 0, "REVIEW": 1, "BLOCK": 2}
-    for gg in games:
-        for tm in gg["teams"]:
-            if tm["reconciliation"] == "PASS":
-                continue
-            for pr in player_rows:
-                if pr["family"] in ("points", "pra") and pr["team"] == tm["team"] and pr["game_id"] == gg["game_id"]:
-                    pr["gate"]["findings"].append({
-                        "check": "team_consistency", "severity": tm["reconciliation"],
-                        "what": f"{tm['team']} players sum to {tm['player_points_sum']:.1f} points vs team projection {tm['mean']:.1f}",
-                        "category": "model_assumption",
-                        "action": "Roles carried over from previous teams overlap; normalise usage to the team projection "
-                                  "or wait for this season's games."})
-                    if sev[tm["reconciliation"]] > sev[pr["gate"]["status"]]:
-                        pr["gate"]["status"] = tm["reconciliation"]
     fam_out["team_points"] = {"readiness": frozen["team"]["readiness"], "model": frozen["team"]["model_name"],
                               "reason": frozen["team"]["readiness_reason"]}
     fam_out["minutes"] = {"readiness": frozen["minutes_readiness"]["readiness"], "model": frozen["minutes_readiness"]["model_name"],
                           "reason": frozen["minutes_readiness"]["readiness_reason"]}
     res = {"schema": "sift.projections.v1", "sport": "NBA",
-           "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "data_asof_utc": asof,
+           "generated_utc": now_utc, "data_asof_utc": asof,
            "model": {"id": MODEL_ID, "version": f"pf-{PF_VERSION}+{_git_sha()}", "authority": "research_only"},
-           "mode": mode, "slate_date": str(pd.Timestamp(F["date"].iloc[0]).date()),
+           "mode": mode, "slate_date": str(pd.Timestamp(F["date"].iloc[0]).date()) if len(F) else None,
            "history_through": str(pd.Timestamp(hist_last).date()),
            "inputs": files, "families": fam_out, "games": games, "players": player_rows,
-           "runtime_s": round(time.time() - t0, 1)}
-    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
-    with open(out, "w") as fh:
-        json.dump(res, fh, indent=1, default=lambda o: o.item() if hasattr(o, "item") else str(o))
+           "reconciliation": recs, "runtime_s": round(time.time() - t0, 1)}
+    if out:
+        os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+        pub = dict(res, players=[{k: v for k, v in p.items() if not k.startswith("_")} for p in player_rows])
+        with open(out, "w") as fh:
+            json.dump(pub, fh, indent=1, default=lambda o: o.item() if hasattr(o, "item") else str(o))
     return res
 
 

@@ -62,13 +62,14 @@ def _download(url: str, dest: Path, tries: int = 4) -> bool:
 def ensure_hoopr(seasons=None, kinds=("player_box", "team_box"), refresh_current: bool = False) -> dict:
     """Download missing season files (idempotent). Returns {file: present?}."""
     seasons = seasons or range(FIRST_SEASON, LAST_SEASON + 1)
+    offline = os.environ.get("PF_NBA_OFFLINE") == "1"            # replays / tests: use the warm cache, never the network
     repo = {"player_box": "espn_nba_player_boxscores", "team_box": "espn_nba_team_boxscores",
             "nba_schedule": "espn_nba_schedules"}
     out = {}
     for y in seasons:
         for k in kinds:
             f = CACHE / f"{k}_{y}.parquet"
-            if not f.exists() or (refresh_current and y == max(seasons)):
+            if not offline and (not f.exists() or (refresh_current and y == max(seasons))):
                 _download(f"{RELEASE}/{repo[k]}/{k}_{y}.parquet", f)
             out[f.name] = f.exists()
     return out

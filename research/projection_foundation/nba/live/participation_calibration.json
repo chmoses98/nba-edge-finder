@@ -1,0 +1,44 @@
+{
+ "recipe": "nba.backtest.injury_pit_study (2): LogisticRegression(C=10) on logit(hurdle) + status dummies",
+ "fit_rows": "2025-26 candidate rows with a certified T-60 official-report snapshot (unlisted == AVAILABLE)",
+ "n_rows": 38525,
+ "intercept": -2.499353,
+ "coef": {
+  "logit": 1.0363,
+  "OUT": -9.027968,
+  "DOUBTFUL": -3.187399,
+  "QUESTIONABLE": 2.082757,
+  "PROBABLE": 4.551662,
+  "AVAILABLE": 3.111235
+ },
+ "study_split": {
+  "train_before": "2026-01-15",
+  "n_train": 18452,
+  "n_test": 20073,
+  "brier_hurdle": 0.132,
+  "brier_hurdle_plus_report": 0.0868
+ },
+ "played_rate_by_status": {
+  "AVAILABLE": {
+   "n": 31287,
+   "played": 0.8176
+  },
+  "DOUBTFUL": {
+   "n": 145,
+   "played": 0.0
+  },
+  "OUT": {
+   "n": 5626,
+   "played": 0.0004
+  },
+  "PROBABLE": {
+   "n": 426,
+   "played": 0.9225
+  },
+  "QUESTIONABLE": {
+   "n": 1041,
+   "played": 0.5677
+  }
+ },
+ "note": "frozen; refit only by an explicit decision, never from 2026-27 data without a new pre-registered study"
+}
