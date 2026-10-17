@@ -1,0 +1,58 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.4956,
+    "cover_80": 0.7913,
+    "cover_90": 0.8917,
+    "crps": 1.2899,
+    "log_score": 2.1413,
+    "pit_var_ratio": 1.018
+  },
+  "eval_period": "2022-23 and 2023-24 regular seasons (model selection)",
+  "experiment_id": "nba_rebounds_F_stack_validation",
+  "family": "rebounds",
+  "features": [],
+  "fingerprint": "37392d3254a6b3e2",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "F_stack+mixture",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "bias": 0.0189,
+    "mae": 1.8635,
+    "rmse": 2.4606
+  },
+  "python": "3.13.16",
+  "question": "How accurate is F_stack+mixture for rebounds?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "best",
+  "vs_baseline": {
+    "ci95": [
+      -0.064,
+      -0.0553
+    ],
+    "mean_diff": -0.0598
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -0.1335,
+      -0.1204
+    ],
+    "mean_diff": -0.127
+  }
+}

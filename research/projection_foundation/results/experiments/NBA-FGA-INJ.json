@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Validation played rows (proxy = absence from the box; PIT version only for 2025-26)."
+  ],
+  "distribution": {},
+  "eval_period": "Validation played rows (proxy = absence from the box; PIT version only for 2025-26).",
+  "experiment_id": "NBA-FGA-INJ",
+  "family": "fga",
+  "features": [],
+  "fingerprint": "33ee07382f4842d4",
+  "hyperparameters": {
+    "method": "E_inj (LightGBM + teammate absence proxy features) vs the best pregame model, validation CRPS."
+  },
+  "hypothesis": "Absent teammates' usage is redistributed to those who play.",
+  "limitations": [
+    "Injury-informed projections need the live report; the effect is measured with a retrospective proxy and confirmed for minutes on 2025-26 PIT reports."
+  ],
+  "model": "NBA-FGA-INJ",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "E_inj minus best: -0.0593 (95% CI -0.0650 to -0.0543) CRPS."
+  },
+  "python": "3.13.16",
+  "question": "Does teammate-absence information (usage freed) improve fga?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

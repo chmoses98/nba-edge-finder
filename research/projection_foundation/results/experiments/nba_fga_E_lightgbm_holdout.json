@@ -1,0 +1,58 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.5068,
+    "cover_80": 0.7995,
+    "cover_90": 0.8968,
+    "crps": 1.9143,
+    "log_score": 2.5755,
+    "pit_var_ratio": 0.9955
+  },
+  "eval_period": "2024-25 and 2025-26 regular seasons (evaluated once for frozen candidates; 2025-26 also has archived point-in-time injury reports)",
+  "experiment_id": "nba_fga_E_lightgbm_holdout",
+  "family": "fga",
+  "features": [],
+  "fingerprint": "f988afd36a270e9c",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "E_lightgbm+mixture",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2462,
+  "n_independent": 52796,
+  "n_obs": 52796,
+  "point": {
+    "bias": 0.0002,
+    "mae": 2.7234,
+    "rmse": 3.5543
+  },
+  "python": "3.13.16",
+  "question": "How accurate is E_lightgbm+mixture for fga?",
+  "split": "holdout",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "best",
+  "vs_baseline": {
+    "ci95": [
+      -0.1697,
+      -0.1518
+    ],
+    "mean_diff": -0.1605
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -0.3918,
+      -0.3659
+    ],
+    "mean_diff": -0.3784
+  }
+}

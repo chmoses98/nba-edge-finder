@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Played player-games; validation 2022-23..2023-24; holdout 2024-25..2025-26."
+  ],
+  "distribution": {},
+  "eval_period": "Played player-games; validation 2022-23..2023-24; holdout 2024-25..2025-26.",
+  "experiment_id": "NBA-THREES-LADDER",
+  "family": "threes",
+  "features": [],
+  "fingerprint": "a30a624e1747091a",
+  "hyperparameters": {
+    "method": "Ladder A-F, NB2 (dispersion binned by mean) for every rung; best rung by validation CRPS, then its distribution family chosen by validation log score."
+  },
+  "hypothesis": "Minutes x shrunk per-minute rate with opponent/pace adjustment and boosting beats averages and the incumbent simulator.",
+  "limitations": [
+    "See RESULTS_NBA.md per-family table."
+  ],
+  "model": "NBA-THREES-LADDER",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "Validation CRPS A 0.570; B 0.568; C 0.559; D 0.558; E 0.557; F 0.557. Best F (mixture): CRPS 0.557, MAE 0.850, vs A -0.013 (95% CI -0.015 to -0.012), vs incumbent -0.031 (95% CI -0.033 to -0.029) (incumbent CRPS 0.596, bias -0.134). Holdout CRPS 0.581, vs A -0.014 (95% CI -0.015 to -0.012), vs incumbent -0.036 (95% CI -0.038 to -0.034)."
+  },
+  "python": "3.13.16",
+  "question": "Which model best projects threes (conditional on playing)?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

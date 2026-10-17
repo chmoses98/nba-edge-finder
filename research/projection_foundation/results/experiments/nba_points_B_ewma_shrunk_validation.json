@@ -1,0 +1,58 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.4651,
+    "cover_80": 0.7544,
+    "cover_90": 0.858,
+    "crps": 3.2723,
+    "log_score": 3.0648,
+    "pit_var_ratio": 1.1072
+  },
+  "eval_period": "2022-23 and 2023-24 regular seasons (model selection)",
+  "experiment_id": "nba_points_B_ewma_shrunk_validation",
+  "family": "points",
+  "features": [],
+  "fingerprint": "efd99b97a9a2947d",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "B_ewma_shrunk",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "bias": 0.0949,
+    "mae": 4.6919,
+    "rmse": 6.0741
+  },
+  "python": "3.13.16",
+  "question": "How accurate is B_ewma_shrunk for points?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "competitive",
+  "vs_baseline": {
+    "ci95": [
+      -0.0588,
+      -0.0461
+    ],
+    "mean_diff": -0.0522
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -0.2551,
+      -0.2233
+    ],
+    "mean_diff": -0.2392
+  }
+}

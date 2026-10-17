@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Validation played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Validation played rows.",
+  "experiment_id": "NBA-ASSISTS-DIST",
+  "family": "assists",
+  "features": [],
+  "fingerprint": "64879107b0010b71",
+  "hyperparameters": {
+    "method": "Poisson / NB2 binned / discretised normal / empirical ratio (quantile mapping) / minutes mixture / single-minutes NB; parameters from development; validation log score, CRPS, PIT, rungs."
+  },
+  "hypothesis": "A mixture over minutes scenarios of NB(rate x minutes) is better calibrated than a single NB at the mean minutes (which ignores minutes risk).",
+  "limitations": [
+    "Chosen: mixture. The single-minutes NB is the overconfident case (PIT variance > 1); minutes uncertainty must be propagated."
+  ],
+  "model": "NBA-ASSISTS-DIST",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "poisson: logS 1.7346, CRPS 0.8851, cover80 0.758, PITvar 1.095, rung Brier 0.09533; nb: logS 1.7167, CRPS 0.8816, cover80 0.800, PITvar 0.996, rung Brier 0.09504; normal: logS 1.7727, CRPS 0.8935, cover80 0.793, PITvar 1.003, rung Brier 0.09604; empirical: logS 1.7391, CRPS 0.8858, cover80 0.804, PITvar 0.985, rung Brier 0.09549; mixture: logS 1.7143, CRPS 0.8808, cover80 0.797, PITvar 1.004, rung Brier 0.09498; single_minutes_nb: logS 1.7272, CRPS 0.8835, cover80 0.773, PITvar 1.061, rung Brier 0.09517"
+  },
+  "python": "3.13.16",
+  "question": "Which outcome distribution is best calibrated for assists, and does propagating minutes uncertainty help?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

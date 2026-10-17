@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "All regular-season team-games."
+  ],
+  "distribution": {},
+  "eval_period": "All regular-season team-games.",
+  "experiment_id": "NBA-TEAM-01",
+  "family": "team_points",
+  "features": [],
+  "fingerprint": "6e5a20bac9137377",
+  "hyperparameters": {
+    "method": "Ridge off/def ratings for pace and points per 100 (refit weekly on earlier blocks, prior-season decay 0.35, 120-day half-life); D adds rest/back-to-back terms fitted on development."
+  },
+  "hypothesis": "Opponent defence and pace explain team points beyond the team's own average.",
+  "limitations": [
+    "Opponent strength and pace matter for team totals far more than for individual props."
+  ],
+  "model": "NBA-TEAM-01",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 4922,
+  "n_obs": 4922,
+  "point": {
+    "result": "Validation MAE/CRPS: A 9.67/6.844; B 9.59/6.790; C 9.44/6.664; D 9.41/6.641. Holdout best D_ratings_plus_rest: MAE 9.46, CRPS 6.698, vs A -0.339 (95% CI -0.420 to -0.251)."
+  },
+  "python": "3.13.16",
+  "question": "Does a pace x efficiency model with schedule-adjusted ratings beat team scoring averages?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

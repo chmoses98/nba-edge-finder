@@ -1,0 +1,58 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.5031,
+    "cover_80": 0.7985,
+    "cover_90": 0.8976,
+    "crps": 1.2942,
+    "log_score": 2.1506,
+    "pit_var_ratio": 1.0001
+  },
+  "eval_period": "2022-23 and 2023-24 regular seasons (model selection)",
+  "experiment_id": "nba_rebounds_E_lightgbm_validation",
+  "family": "rebounds",
+  "features": [],
+  "fingerprint": "28fd0b4671779408",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "E_lightgbm",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "bias": 0.0253,
+    "mae": 1.8655,
+    "rmse": 2.4623
+  },
+  "python": "3.13.16",
+  "question": "How accurate is E_lightgbm for rebounds?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "competitive",
+  "vs_baseline": {
+    "ci95": [
+      -0.0595,
+      -0.0512
+    ],
+    "mean_diff": -0.0556
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -0.1295,
+      -0.1161
+    ],
+    "mean_diff": -0.1229
+  }
+}
