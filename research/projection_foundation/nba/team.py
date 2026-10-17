@@ -22,7 +22,9 @@ def fit_team(t: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     t = pit.sort_chrono(t.copy(), "team", "date", "game_id")
     t = pit.lagged_features(t, "team", ["pts"], halflives=(10,), season_col="season")
     t["_all"] = "league"
-    t["prior_pts"] = models.group_prior_pit(t, ["_all"], "date", "pts")
+    burn = t["season"] == t["season"].min()
+    # explicit burn-in fallback (pf_core 1.0.0 default = whole-sample mean, a look-ahead); first date only
+    t["prior_pts"] = models.group_prior_pit(t, ["_all"], "date", "pts", fallback=float(t.loc[burn, "pts"].mean()))
     dev = t["season"].isin(DEV).to_numpy()
     y = t["pts"].to_numpy(float)
     best = None

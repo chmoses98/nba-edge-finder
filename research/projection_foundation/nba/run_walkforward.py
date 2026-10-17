@@ -68,6 +68,19 @@ def gate_family(f, fam_res, fam, best_min_col, inj_status, n_max=15000, seed=0):
     return out
 
 
+def run_gate_all(f, ctx, best_min, fam_res=None):
+    from . import injury
+    st, games = injury.snapshot_status("t_minus_60")
+    inj = {(g, p): s for g, p, s in zip(st["game_id"], st["pid"], st["inj_status"])}
+    inj["_games"] = set(games["game_id"])
+    out = {}
+    for fam in FAMILIES:
+        r = fam_res[fam] if fam_res else B.eval_family(f, fam, ctx["stats"][FAMILIES[fam][0]][0], None, best_min)
+        out[fam] = gate_family(f, r, fam, "min_best", inj)
+        pipeline.log(f"  gate {fam}")
+    return out
+
+
 def main(argv=None) -> int:
     argv = argv or sys.argv[1:]
     t0 = time.time()
@@ -75,6 +88,12 @@ def main(argv=None) -> int:
     f, mp, best_min = ctx["f"], ctx["mp"], ctx["best_min"]
     inc = B.load_incumbent()
     f = B.attach(f, inc)
+    if "--gate-only" in argv:          # recompute the gate section of an existing backtest_raw.json
+        raw = json.loads((RESULTS / "backtest_raw.json").read_text())
+        raw["gate"] = run_gate_all(f, ctx, best_min)
+        (RESULTS / "backtest_raw.json").write_text(json.dumps(_jsonable(raw), indent=1))
+        pipeline.log("gate recomputed")
+        return 0
     raw = {"best_minutes_model": best_min, "minutes_params": ctx["mprm"], "team_params": ctx["tprm"]}
     pipeline.log("eval minutes")
     mres = B.eval_minutes(f, mp, best_min)
@@ -125,11 +144,7 @@ def main(argv=None) -> int:
                      "share_rows_not_played": round(float(1 - pl.mean()), 4)}
     raw["conditioning_effect_points"] = pc
     pipeline.log("gate")
-    from . import injury
-    st, games = injury.snapshot_status("t_minus_60")
-    inj = {(g, p): s for g, p, s in zip(st["game_id"], st["pid"], st["inj_status"])}
-    inj["_games"] = set(games["game_id"])
-    raw["gate"] = {fam: gate_family(f, fam_res[fam], fam, "min_best", inj) for fam in FAMILIES}
+    raw["gate"] = run_gate_all(f, ctx, best_min, fam_res)
     raw["frozen"] = {
         "best_minutes_model": best_min, "minutes_params": ctx["mprm"], "minutes_dist": mres["dist_params"][best_min],
         "team": {"best": tres["best"], "dist": tres["prm"][tres["best"]], "params": ctx["tprm"]},

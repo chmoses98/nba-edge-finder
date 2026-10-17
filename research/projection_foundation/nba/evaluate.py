@@ -19,7 +19,7 @@ def model_row(name: str, split: str, y, mean, clusters, dist: DistBatch | None =
     pm = metrics.point_metrics(y, mean)
     row = {"model": name, "split": split, "n_obs": int(len(y)), "n_clusters": int(pd.Series(clusters).nunique()),
            "mae": round(pm["mae"], 4), "rmse": round(pm["rmse"], 4), "bias": round(pm["bias"], 4),
-           "crps": None, "log_score": None, "cover_50": None, "cover_80": None, "cover_90": None,
+           "mean_actual": round(pm["mean_actual"], 4), "crps": None, "log_score": None, "cover_50": None, "cover_80": None, "cover_90": None,
            "pit_var_ratio": None}
     if dist is not None:
         dm = metrics.dist_metrics(y, dist, thresholds=thresholds)

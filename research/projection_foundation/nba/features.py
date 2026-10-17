@@ -127,8 +127,11 @@ def teammate_absence(c: pd.DataFrame) -> pd.DataFrame:
 
 def position_priors(c: pd.DataFrame) -> pd.DataFrame:
     """PIT position-group priors (earlier dates only) for per-game stats and per-minute rates."""
+    burn = c["season"] == c["season"].min()
     for s in ["minutes", "pts", "reb", "ast", "fg3m", "fga", "pra", "usage"]:
-        c[f"prior_{s}"] = group_prior_pit(c, ["pos"], "date", f"{s}_p")
+        # explicit fallback from the first (burn-in, never scored) season: pf_core 1.0.0's default fallback is the
+        # whole-sample mean (look-ahead). Only rows on a group's first date use it (see prior_fallback_rows()).
+        c[f"prior_{s}"] = group_prior_pit(c, ["pos"], "date", f"{s}_p", fallback=float(c.loc[burn, f"{s}_p"].mean()))
     for s in ["pts", "reb", "ast", "fg3m", "fga", "pra"]:
         c[f"prior_rate_{s}"] = c[f"prior_{s}"] / c["prior_minutes"]
     return c
@@ -144,3 +147,9 @@ def build(cand: pd.DataFrame, tg: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFr
             "team_pace_ewm", "pace_factor", "rating_n", "block"]
     c = c.merge(t[keep], on=["game_id", "team"], how="left")
     return c.sort_values(["date", "game_id", "team", "pid"]).reset_index(drop=True), t
+
+
+def prior_fallback_rows(c: pd.DataFrame, group_cols=("pos",)) -> pd.Series:
+    """Rows whose group has no earlier date (they receive the explicit fallback prior)."""
+    first = c.groupby(list(group_cols))["date"].transform("min")
+    return c["date"] == first

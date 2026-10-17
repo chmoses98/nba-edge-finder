@@ -26,11 +26,12 @@ LGB = dict(n_estimators=300, learning_rate=0.05, num_leaves=31, min_child_sample
 def opponent_factor(p: pd.DataFrame, stat: str, pred_col: str, halflife: float = 20.0) -> pd.DataFrame:
     """PIT ratio for (opponent, position): returns columns r (raw EWMA ratio) and n (games) per row,
     using only the defence's games on strictly earlier dates."""
-    obs = p[stat].notna()
+    obs = p[stat].notna() & p[pred_col].notna()     # rows with both an outcome and an expectation
     q = p.assign(_a=p[stat].where(obs), _e=p[pred_col].where(obs))
     g = (q.groupby(["opp", "pos", "date"], sort=True)
          .agg(a=("_a", "sum"), e=("_e", "sum"), k=("_a", "count")).reset_index())
-    g.loc[g["k"] == 0, ["a", "e"]] = np.nan          # dates with no observed player-games (e.g. the slate)
+    # dates with no usable rows (the slate, or seasons before the expectation exists): NaN, not a 0 sum
+    g.loc[g["k"] == 0, ["a", "e"]] = np.nan
     g = g.sort_values(["opp", "pos", "date"])
     grp = g.groupby(["opp", "pos"], sort=False)
     ea = grp["a"].transform(lambda s: s.ewm(halflife=halflife, ignore_na=True).mean().shift(1))
@@ -54,7 +55,10 @@ def fit_family(p: pd.DataFrame, stat: str, min_col: str, inj_feats: list[str], f
     """p: played rows with features and a pregame minutes forecast `min_col`. Returns columns A..F, E_inj and the
     components (rate, opp_factor, pace_adj). Tuned values go to `prm` and can be passed back as `frozen`."""
     y = p[stat].to_numpy(float)
-    dev = p["season"].isin(DEV).to_numpy() & np.isfinite(y)
+    # development rows usable by every rung: outcome observed AND a pregame minutes forecast exists (the LightGBM
+    # minutes model starts in 2016-17). A NaN row would make pf_core.models.fit_opponent_beta return its first
+    # golden-section probe (0.4549) silently and the grid searches fall back to their first element.
+    dev = p["season"].isin(DEV).to_numpy() & np.isfinite(y) & np.isfinite(p[min_col].to_numpy(float))
     col = f"{stat}_p"
     prior = p[f"prior_{stat}"]
     prm: dict = dict(frozen or {})
@@ -111,6 +115,7 @@ def fit_family(p: pd.DataFrame, stat: str, min_col: str, inj_feats: list[str], f
              "minutes_p_ewm8", "start_p_ewm8", "usage_p_ewm8", "fga_p_ewm8", "fg3a_p_ewm8", "fta_p_ewm8",
              "b2b", "rest_days", "exp_pace", "exp_pts", "exp_margin", "exp_abs_margin", "home_f", "pos_c", "pos_g",
              "days_since_played", "missed_streak", "games_with_team_c"]
+    feats = list(dict.fromkeys(feats))
     e = p[feats].copy()
     e["min_hat"] = mins
     e["rate_hat"] = rate.to_numpy()
@@ -126,7 +131,7 @@ def fit_family(p: pd.DataFrame, stat: str, min_col: str, inj_feats: list[str], f
     out["E"] = lgb_walkforward(e, ef, stat, objective="poisson", params=LGB, final_only=final_only)
     out["E_inj"] = lgb_walkforward(e, ef + inj_feats, stat, objective="poisson", params=LGB, final_only=final_only)
     if "F_weights" not in prm:
-        m = dev & out["E"].notna().to_numpy()
+        m = dev & np.isfinite(out[["A", "B", "C", "D", "E"]].to_numpy()).all(axis=1)
         w = models.fit_stack_weights(y[m], out.loc[m, ["A", "B", "C", "D", "E"]].to_numpy())
         prm["F_weights"] = dict(zip("ABCDE", w.tolist()))
     w = np.array([prm["F_weights"][k] for k in "ABCDE"])

@@ -89,7 +89,7 @@ def fit_ladder(p: pd.DataFrame, frozen: dict | None = None, final_only: bool = F
         out["oracle_start"] = np.clip(lgb_walkforward(e, feats + INJ + ["started_f"], "minutes", params=LGB_PARAMS,
                                                       final_only=final_only), 0.5, 48.0)
     if "F_weights" not in prm:
-        m = dev & out["E"].notna().to_numpy()
+        m = dev & np.isfinite(out[["B", "D", "E"]].to_numpy()).all(axis=1)
         w = models.fit_stack_weights(y[m], out.loc[m, ["B", "D", "E"]].to_numpy())
         prm["F_weights"] = dict(zip(["B", "D", "E"], w.tolist()))
     w = np.array([prm["F_weights"][k] for k in ("B", "D", "E")])

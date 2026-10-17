@@ -238,6 +238,23 @@ def project(archive: str | None, date: str | None, out: str, max_hist_seasons: i
                                 "p10": int(r["p10"]), "p90": int(r["p90"]),
                                 "player_points_sum": round(psum, 1), "reconciliation": rec["status"]})
         games.append(gg)
+    # team reconciliation feeds the player gate: a team whose player points do not reconcile (e.g. a new roster whose
+    # players all carry their old-team roles) gets the finding on each of its players' points projections
+    sev = {"PASS": 0, "REVIEW": 1, "BLOCK": 2}
+    for gg in games:
+        for tm in gg["teams"]:
+            if tm["reconciliation"] == "PASS":
+                continue
+            for pr in player_rows:
+                if pr["family"] in ("points", "pra") and pr["team"] == tm["team"] and pr["game_id"] == gg["game_id"]:
+                    pr["gate"]["findings"].append({
+                        "check": "team_consistency", "severity": tm["reconciliation"],
+                        "what": f"{tm['team']} players sum to {tm['player_points_sum']:.1f} points vs team projection {tm['mean']:.1f}",
+                        "category": "model_assumption",
+                        "action": "Roles carried over from previous teams overlap; normalise usage to the team projection "
+                                  "or wait for this season's games."})
+                    if sev[tm["reconciliation"]] > sev[pr["gate"]["status"]]:
+                        pr["gate"]["status"] = tm["reconciliation"]
     fam_out["team_points"] = {"readiness": frozen["team"]["readiness"], "model": frozen["team"]["model_name"],
                               "reason": frozen["team"]["readiness_reason"]}
     fam_out["minutes"] = {"readiness": frozen["minutes_readiness"]["readiness"], "model": frozen["minutes_readiness"]["model_name"],

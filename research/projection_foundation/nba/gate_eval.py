@@ -22,12 +22,11 @@ def history_matrix(p: pd.DataFrame, col: str, n: int = 10) -> np.ndarray:
 
 def run_gate(p: pd.DataFrame, family_key: str, mean, dist: DistBatch, rungs, min_hat, min_hist: np.ndarray,
              stat_hist: np.ndarray, opp_factor=None, opp_n=None, injury_status=None, model_n=None) -> pd.DataFrame:
-    """Returns per-row status and finding checks. Backtest freshness: newest input is the previous game
-    (time-stamped at the player's previous tip + 3h) and `now` is 1h before tip."""
+    """Returns per-row status and finding checks. Backtest timestamps mimic the daily pipeline: the newest input is
+    the previous night's league-wide box scores, refreshed at 10:00 UTC on game day; `now` is 1h before tip."""
     tip = pd.to_datetime(p["tip_utc"], utc=True)
-    asof = (tip - pd.to_timedelta(np.clip(p["days_since_played"].fillna(3).to_numpy(), 1, 400), unit="D")
-            + pd.Timedelta(hours=3))
-    asof = asof.where(asof < tip, tip - pd.Timedelta(hours=20))
+    asof = tip.dt.normalize() + pd.Timedelta(hours=10)
+    asof = asof.where(asof < tip, tip - pd.Timedelta(hours=2))
     now = tip - pd.Timedelta(hours=1)
     mean = np.asarray(mean, float)
     th = {k: dist.prob_ge(k) for k in rungs}
