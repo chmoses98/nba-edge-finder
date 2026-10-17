@@ -1,0 +1,68 @@
+name: projection-intelligence
+# Daily, read-only evaluation of the frozen PURE shadow forecasts against the contemporaneous Kalshi prop quotes and their
+# settlements (chmoses98/sift-sports-intelligence research/intelligence). RESEARCH ONLY: no authority, no staking, nothing is
+# pushed to any data branch (single-writer groups stay untouched); the result is a job summary + a retained artifact.
+# It accumulates real prospective evidence automatically once regular-season prop markets, forecasts and settlements exist, and
+# until then it reports the funnel (where each forecast/quote was lost) and INSUFFICIENT_EVIDENCE, never a reconstruction.
+# schedule fires only from the default branch (inert until merged). A run that errors FAILS the job (observable).
+on:
+  schedule:
+    - cron: "41 9 * * *"
+  workflow_dispatch:
+    inputs:
+      intelligence_ref:
+        description: "ref of chmoses98/sift-sports-intelligence holding research/intelligence"
+        default: "main"
+permissions:
+  contents: read
+concurrency:
+  group: projection-intelligence
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash -eo pipefail {0}
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/checkout@v4
+        with:
+          repository: chmoses98/sift-sports-intelligence
+          ref: ${{ github.event.inputs.intelligence_ref || 'main' }}
+          path: sift
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q numpy pandas pyarrow
+      - name: Sparse, blobless read-only views of the two data branches
+        run: |
+          git fetch --depth=1 --filter=blob:none origin nba-shadow-pure data-archive
+          for spec in "nba-shadow-pure:/tmp/shadow:/projections/ /market/listings/ /outcomes/gate/ /chain.jsonl" \
+                      "data-archive:/tmp/archive:/kalshi/markets/ /kalshi/markets_delta/ /settlements/"; do
+            br=${spec%%:*}; rest=${spec#*:}; dir=${rest%%:*}; paths=${rest#*:}
+            rm -rf "$dir" && git worktree add --no-checkout -f "$dir" "origin/$br"
+            git -C "$dir" sparse-checkout init --no-cone
+            git -C "$dir" sparse-checkout set $paths
+            git -C "$dir" checkout -q
+          done
+          du -sh /tmp/shadow /tmp/archive
+      - name: Evaluate
+        run: |
+          mkdir -p out
+          (cd sift && python3 -m research.intelligence.adapters.nba /tmp/shadow /tmp/archive ../out/nba_evaluation.json)
+          python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json
+          r = json.load(open("out/nba_evaluation.json"))
+          print("### NBA projection intelligence")
+          print("status:", r.get("status"))
+          for k in ("funnel", "accounting", "status_counts", "note"):
+              if k in r: print(f"- {k}: {json.dumps(r[k])[:600]}")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-projection-intelligence
+          path: out/nba_evaluation.json
+          retention-days: 90
