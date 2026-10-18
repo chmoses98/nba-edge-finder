@@ -1,0 +1,58 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.4998,
+    "cover_80": 0.7971,
+    "cover_90": 0.8967,
+    "crps": 0.8808,
+    "log_score": 1.7143,
+    "pit_var_ratio": 1.004
+  },
+  "eval_period": "2022-23 and 2023-24 regular seasons (model selection)",
+  "experiment_id": "nba_assists_E_lightgbm_validation",
+  "family": "assists",
+  "features": [],
+  "fingerprint": "05d060b8ca6ac0c5",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "E_lightgbm+mixture",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "bias": 0.0033,
+    "mae": 1.298,
+    "rmse": 1.7703
+  },
+  "python": "3.13.16",
+  "question": "How accurate is E_lightgbm+mixture for assists?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "best",
+  "vs_baseline": {
+    "ci95": [
+      -0.0428,
+      -0.0374
+    ],
+    "mean_diff": -0.04
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -0.0755,
+      -0.0674
+    ],
+    "mean_diff": -0.0715
+  }
+}

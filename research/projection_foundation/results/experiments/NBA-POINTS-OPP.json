@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Validation and holdout played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Validation and holdout played rows.",
+  "experiment_id": "NBA-POINTS-OPP",
+  "family": "points",
+  "features": [],
+  "fingerprint": "d9cf3e0b7abb99d3",
+  "hyperparameters": {
+    "method": "D = C x factor^beta x pace^beta_pace; factor = shrunk EWMA of actual/expected allowed by the opponent to the position (k=10 games); beta=0.663, beta_pace=0.257 fitted on development."
+  },
+  "hypothesis": "Defences allow systematically different production to guards/forwards/centres than expected.",
+  "limitations": [
+    "Opponent effects are real but small relative to minutes and role."
+  ],
+  "model": "NBA-POINTS-OPP",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "D vs C CRPS: validation -0.0052 (95% CI -0.0072 to -0.0030), holdout -0.0084 (95% CI -0.0105 to -0.0064); factor sd 0.031."
+  },
+  "python": "3.13.16",
+  "question": "Does an opponent (position-specific, schedule-relative) and pace adjustment improve points?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

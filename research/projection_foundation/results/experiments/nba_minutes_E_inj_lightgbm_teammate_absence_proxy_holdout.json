@@ -1,0 +1,58 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.5123,
+    "cover_80": 0.8075,
+    "cover_90": 0.9046,
+    "crps": 3.2382,
+    "log_score": 3.1988,
+    "pit_var_ratio": 0.9751
+  },
+  "eval_period": "2024-25 and 2025-26 regular seasons (evaluated once for frozen candidates; 2025-26 also has archived point-in-time injury reports)",
+  "experiment_id": "nba_minutes_E_inj_lightgbm_teammate_absence_proxy_holdout",
+  "family": "minutes",
+  "features": [],
+  "fingerprint": "73502271ed870957",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "E_inj_lightgbm_teammate_absence_proxy",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2462,
+  "n_independent": 52796,
+  "n_obs": 52796,
+  "point": {
+    "bias": 0.3052,
+    "mae": 4.5472,
+    "rmse": 5.9179
+  },
+  "python": "3.13.16",
+  "question": "How accurate is E_inj_lightgbm_teammate_absence_proxy for minutes?",
+  "split": "holdout",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "competitive",
+  "vs_baseline": {
+    "ci95": [
+      -0.6875,
+      -0.6278
+    ],
+    "mean_diff": -0.6585
+  },
+  "vs_incumbent": {
+    "ci95": [
+      -1.3323,
+      -1.2548
+    ],
+    "mean_diff": -1.2933
+  }
+}

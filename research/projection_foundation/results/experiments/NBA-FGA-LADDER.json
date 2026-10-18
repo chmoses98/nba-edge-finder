@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Played player-games; validation 2022-23..2023-24; holdout 2024-25..2025-26."
+  ],
+  "distribution": {},
+  "eval_period": "Played player-games; validation 2022-23..2023-24; holdout 2024-25..2025-26.",
+  "experiment_id": "NBA-FGA-LADDER",
+  "family": "fga",
+  "features": [],
+  "fingerprint": "9f5b5e494f25c710",
+  "hyperparameters": {
+    "method": "Ladder A-F, NB2 (dispersion binned by mean) for every rung; best rung by validation CRPS, then its distribution family chosen by validation log score."
+  },
+  "hypothesis": "Minutes x shrunk per-minute rate with opponent/pace adjustment and boosting beats averages and the incumbent simulator.",
+  "limitations": [
+    "See RESULTS_NBA.md per-family table."
+  ],
+  "model": "NBA-FGA-LADDER",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "Validation CRPS A 2.067; B 2.013; C 1.915; D 1.911; E 1.904; F 1.908. Best E (mixture): CRPS 1.904, MAE 2.720, vs A -0.163 (95% CI -0.172 to -0.154), vs incumbent -0.319 (95% CI -0.331 to -0.307) (incumbent CRPS 2.237, bias -1.011). Holdout CRPS 1.914, vs A -0.161 (95% CI -0.170 to -0.152), vs incumbent -0.378 (95% CI -0.392 to -0.366)."
+  },
+  "python": "3.13.16",
+  "question": "Which model best projects fga (conditional on playing)?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

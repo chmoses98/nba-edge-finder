@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Validation and holdout played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Validation and holdout played rows.",
+  "experiment_id": "NBA-REBOUNDS-OPP",
+  "family": "rebounds",
+  "features": [],
+  "fingerprint": "64b30d71afb37f46",
+  "hyperparameters": {
+    "method": "D = C x factor^beta x pace^beta_pace; factor = shrunk EWMA of actual/expected allowed by the opponent to the position (k=5 games); beta=0.604, beta_pace=0.246 fitted on development."
+  },
+  "hypothesis": "Defences allow systematically different production to guards/forwards/centres than expected.",
+  "limitations": [
+    "Opponent effects are real but small relative to minutes and role."
+  ],
+  "model": "NBA-REBOUNDS-OPP",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "D vs C CRPS: validation -0.0019 (95% CI -0.0027 to -0.0010), holdout -0.0033 (95% CI -0.0042 to -0.0025); factor sd 0.031."
+  },
+  "python": "3.13.16",
+  "question": "Does an opponent (position-specific, schedule-relative) and pace adjustment improve rebounds?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

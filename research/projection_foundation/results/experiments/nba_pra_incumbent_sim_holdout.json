@@ -1,0 +1,52 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "ESPN box scores via sportsdataverse mirror (hoopR) 2014-15..2025-26",
+    "data/history/espn (repo) 2023-24..2025-26"
+  ],
+  "distribution": {
+    "cover_50": 0.4869,
+    "cover_80": 0.7924,
+    "cover_90": 0.8929,
+    "crps": 4.917,
+    "log_score": 3.6213,
+    "pit_var_ratio": 0.9696
+  },
+  "eval_period": "2024-25 and 2025-26 regular seasons (evaluated once for frozen candidates; 2025-26 also has archived point-in-time injury reports)",
+  "experiment_id": "nba_pra_incumbent_sim_holdout",
+  "family": "pra",
+  "features": [],
+  "fingerprint": "b2e2bdefd60da954",
+  "hyperparameters": {},
+  "hypothesis": "ladder rung improves on the season-average baseline",
+  "limitations": [
+    "regular season only",
+    "conditional on playing (player families)"
+  ],
+  "model": "incumbent_sim",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2462,
+  "n_independent": 50615,
+  "n_obs": 50615,
+  "point": {
+    "bias": -1.9417,
+    "mae": 6.7128,
+    "rmse": 8.8481
+  },
+  "python": "3.13.16",
+  "question": "How accurate is incumbent_sim for pra?",
+  "split": "holdout",
+  "sport": "NBA",
+  "train_period": "walk-forward: all seasons before the scored season (LightGBM: previous 5 seasons)",
+  "verdict": "incumbent",
+  "vs_baseline": {
+    "ci95": [
+      0.4005,
+      0.4595
+    ],
+    "mean_diff": 0.4284
+  },
+  "vs_incumbent": {}
+}

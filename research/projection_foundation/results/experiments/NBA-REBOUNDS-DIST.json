@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Validation played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Validation played rows.",
+  "experiment_id": "NBA-REBOUNDS-DIST",
+  "family": "rebounds",
+  "features": [],
+  "fingerprint": "5375009ab13623fd",
+  "hyperparameters": {
+    "method": "Poisson / NB2 binned / discretised normal / empirical ratio (quantile mapping) / minutes mixture / single-minutes NB; parameters from development; validation log score, CRPS, PIT, rungs."
+  },
+  "hypothesis": "A mixture over minutes scenarios of NB(rate x minutes) is better calibrated than a single NB at the mean minutes (which ignores minutes risk).",
+  "limitations": [
+    "Chosen: mixture. The single-minutes NB is the overconfident case (PIT variance > 1); minutes uncertainty must be propagated."
+  ],
+  "model": "NBA-REBOUNDS-DIST",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "poisson: logS 2.1967, CRPS 1.3053, cover80 0.720, PITvar 1.189, rung Brier 0.11060; nb: logS 2.1494, CRPS 1.2930, cover80 0.797, PITvar 1.003, rung Brier 0.10998; normal: logS 2.1949, CRPS 1.3051, cover80 0.807, PITvar 0.980, rung Brier 0.11061; empirical: logS 2.1700, CRPS 1.2966, cover80 0.801, PITvar 0.992, rung Brier 0.11011; mixture: logS 2.1413, CRPS 1.2899, cover80 0.791, PITvar 1.018, rung Brier 0.10984; single_minutes_nb: logS 2.1850, CRPS 1.3022, cover80 0.732, PITvar 1.160, rung Brier 0.11038"
+  },
+  "python": "3.13.16",
+  "question": "Which outcome distribution is best calibrated for rebounds, and does propagating minutes uncertainty help?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

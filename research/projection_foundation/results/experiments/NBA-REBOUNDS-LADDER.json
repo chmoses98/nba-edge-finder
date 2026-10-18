@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Played player-games; validation 2022-23..2023-24; holdout 2024-25..2025-26."
+  ],
+  "distribution": {},
+  "eval_period": "Played player-games; validation 2022-23..2023-24; holdout 2024-25..2025-26.",
+  "experiment_id": "NBA-REBOUNDS-LADDER",
+  "family": "rebounds",
+  "features": [],
+  "fingerprint": "965433649934e375",
+  "hyperparameters": {
+    "method": "Ladder A-F, NB2 (dispersion binned by mean) for every rung; best rung by validation CRPS, then its distribution family chosen by validation log score."
+  },
+  "hypothesis": "Minutes x shrunk per-minute rate with opponent/pace adjustment and boosting beats averages and the incumbent simulator.",
+  "limitations": [
+    "See RESULTS_NBA.md per-family table."
+  ],
+  "model": "NBA-REBOUNDS-LADDER",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "Validation CRPS A 1.350; B 1.334; C 1.296; D 1.294; E 1.294; F 1.290. Best F (mixture): CRPS 1.290, MAE 1.863, vs A -0.060 (95% CI -0.064 to -0.055), vs incumbent -0.127 (95% CI -0.134 to -0.120) (incumbent CRPS 1.428, bias -0.252). Holdout CRPS 1.295, vs A -0.058 (95% CI -0.063 to -0.054), vs incumbent -0.159 (95% CI -0.166 to -0.152)."
+  },
+  "python": "3.13.16",
+  "question": "Which model best projects rebounds (conditional on playing)?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

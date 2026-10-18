@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Validation played rows."
+  ],
+  "distribution": {},
+  "eval_period": "Validation played rows.",
+  "experiment_id": "NBA-FGA-DIST",
+  "family": "fga",
+  "features": [],
+  "fingerprint": "10cbb9cdb4d3e016",
+  "hyperparameters": {
+    "method": "Poisson / NB2 binned / discretised normal / empirical ratio (quantile mapping) / minutes mixture / single-minutes NB; parameters from development; validation log score, CRPS, PIT, rungs."
+  },
+  "hypothesis": "A mixture over minutes scenarios of NB(rate x minutes) is better calibrated than a single NB at the mean minutes (which ignores minutes risk).",
+  "limitations": [
+    "Chosen: mixture. The single-minutes NB is the overconfident case (PIT variance > 1); minutes uncertainty must be propagated."
+  ],
+  "model": "NBA-FGA-DIST",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "poisson: logS 2.6605, CRPS 1.9325, cover80 0.694, PITvar 1.248, rung Brier 0.08784; nb: logS 2.5745, CRPS 1.9068, cover80 0.795, PITvar 1.014, rung Brier 0.08713; normal: logS 2.6037, CRPS 1.9185, cover80 0.805, PITvar 0.991, rung Brier 0.08762; empirical: logS 2.6041, CRPS 1.9093, cover80 0.798, PITvar 1.007, rung Brier 0.08720; mixture: logS 2.5677, CRPS 1.9040, cover80 0.803, PITvar 0.992, rung Brier 0.08706; single_minutes_nb: logS 2.6605, CRPS 1.9325, cover80 0.694, PITvar 1.248, rung Brier 0.08784"
+  },
+  "python": "3.13.16",
+  "question": "Which outcome distribution is best calibrated for fga, and does propagating minutes uncertainty help?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

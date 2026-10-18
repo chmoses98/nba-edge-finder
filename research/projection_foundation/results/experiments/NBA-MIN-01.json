@@ -1,0 +1,37 @@
+{
+  "code_sha": "78af92a34e434803b86ab7fa3fb722cd6e215438",
+  "compute_seconds": 0.0,
+  "created_utc": "2026-10-17T07:54:41Z",
+  "data_provenance": [
+    "Played player-games, regular season; validation 2022-23..2023-24, holdout 2024-25..2025-26."
+  ],
+  "distribution": {},
+  "eval_period": "Played player-games, regular season; validation 2022-23..2023-24, holdout 2024-25..2025-26.",
+  "experiment_id": "NBA-MIN-01",
+  "family": "minutes",
+  "features": [],
+  "fingerprint": "d3d9f7c1e7bd7fef",
+  "hyperparameters": {
+    "method": "Ladder A-F walk-forward by season; OLS/stack weights fitted on 2016-17..2021-22 only; LightGBM refit each season on the previous five; empirical residual distribution fitted on development."
+  },
+  "hypothesis": "Role/rotation features and gradient boosting beat a shrunk EWMA (the incumbent's EWM-5 analogue).",
+  "limitations": [
+    "Each rung adds real accuracy; the incumbent's rotation simulator under-projects minutes for players who play by more than 2 minutes, which propagates into every counting stat."
+  ],
+  "model": "NBA-MIN-01",
+  "model_version": "pf-nba-1",
+  "n_clusters": 2461,
+  "n_independent": 52127,
+  "n_obs": 52127,
+  "point": {
+    "result": "Validation MAE: A 5.61, B 5.20, C 5.02, D 4.99, E 4.84, F 4.85; E vs B -0.355 (95% CI -0.382 to -0.327) min. Holdout E MAE 4.76 (vs B -0.332 (95% CI -0.357 to -0.305)); incumbent sim MAE 6.17, bias -2.42 (E vs incumbent -1.427 (95% CI -1.482 to -1.377))."
+  },
+  "python": "3.13.16",
+  "question": "Which pregame minutes forecast (conditional on playing) is most accurate?",
+  "split": "validation",
+  "sport": "NBA",
+  "train_period": "walk-forward",
+  "verdict": "adopt",
+  "vs_baseline": {},
+  "vs_incumbent": {}
+}

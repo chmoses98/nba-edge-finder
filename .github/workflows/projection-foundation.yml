@@ -1,0 +1,254 @@
+name: projection-foundation
+# NBA Projection Foundation, LIVE shadow operation (research/projection_foundation/nba/live). RESEARCH ONLY: authority research_only,
+# no staking, no secrets, no paid services, nothing here is read by production. Everything is written to the append-only orphan
+# branch `projection-data` (the only branch this workflow writes; see research/projection_foundation/CONTRACT.md section 3).
+#
+#   pregame  (11:20, 17:20, 21:20 ET)  capture (official injury-report PDF + ESPN injuries + starters) -> frozen-model projections
+#            -> incumbent forecasts -> publish -> results/settle/score of finished games -> archive guard -> commit
+#   settle   (06:40 ET)                finals -> outcomes -> settlement -> scorecards (daily / weekly / season) -> Kalshi listing audit
+#   sweep    (hourly 21:50-03:50 UTC)  light: archives the incumbent's T-60 pregame capture before tip (nothing is projected)
+#   dry run  (pull_request, dispatch dry_run) the whole chain on a temporary COPY of the archive: live fetches, real projections,
+#            gate, settle and score; nothing is pushed and no write permission is requested.
+# The schedule fires only from the default branch (inert until merged). Cron is UTC: every ET target is listed for EDT and EST and
+# the `plan` job lets exactly one of the pair through, so the runs stay at the same clock time all season.
+on:
+  schedule:
+    - cron: "20 15,16 * 1-6,10-12 *"      # 11:20 ET early slate (weekend / holiday afternoon tips)
+    - cron: "20 21,22 * 1-6,10-12 *"      # 17:20 ET after the afternoon injury-report updates
+    - cron: "20 1,2 * 1-6,10-12 *"        # 21:20 ET late slate
+    - cron: "40 10,11 * 1-6,10-12 *"      # 06:40 ET morning settle
+    - cron: "50 21-23,0-3 * 1-6,10-12 *"  # incumbent sweep
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "dry run on a temporary copy of the archive (nothing pushed)"
+        type: boolean
+        default: false
+      stage:
+        description: "stages (comma separated) or all"
+        default: "all"
+      season_types:
+        description: "regular | preseason | playoffs (comma separated)"
+        default: "regular"
+      window_hours:
+        description: "projection window in hours after now"
+        default: "30"
+      now:
+        description: "dry run only: replay clock (ISO, UTC); blank = wall clock"
+        default: ""
+  pull_request:
+    paths:
+      - "research/projection_foundation/**"
+      - ".github/workflows/projection-foundation.yml"
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash -eo pipefail {0}
+
+env:
+  PF_DIR: research/projection_foundation
+  PY: "3.13"
+  PIP_PINS: "numpy==2.5.3 pandas==3.0.5 scipy==1.18.1 scikit-learn==1.9.1 lightgbm==4.7.0 pyarrow==26.0.0 pytest==9.1.1 pyyaml==6.0.1 httpx==0.28.1 pypdf==6.17.0 pydantic==2.13.5 orjson==3.13.0"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      mode: ${{ steps.p.outputs.mode }}
+      stage: ${{ steps.p.outputs.stage }}
+    steps:
+      - id: p
+        env:
+          EVENT: ${{ github.event_name }}
+          CRON: ${{ github.event.schedule }}
+          DRY: ${{ github.event.inputs.dry_run }}
+          STAGE_IN: ${{ github.event.inputs.stage }}
+        run: |
+          set -euo pipefail
+          h=$(TZ=America/New_York date +%H); h=$((10#$h))
+          mode=skip; stage=all
+          case "$EVENT" in
+            pull_request) mode=dry ;;
+            workflow_dispatch) if [ "$DRY" = "true" ]; then mode=dry; else mode=pregame; fi; stage="${STAGE_IN:-all}" ;;
+            schedule)
+              case "$CRON" in
+                "50 21-23,0-3 "*) mode=sweep ;;
+                "40 10,11 "*) if [ "$h" -eq 6 ]; then mode=settle; fi ;;
+                *) if [ "$h" -eq 11 ] || [ "$h" -eq 17 ] || [ "$h" -eq 21 ]; then mode=pregame; fi ;;
+              esac ;;
+          esac
+          if [ "$mode" = settle ]; then stage="results,settle,score,guard"; fi
+          echo "event=$EVENT cron='$CRON' ET hour=$h -> mode=$mode stage=$stage"
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "stage=$stage" >> "$GITHUB_OUTPUT"
+
+  # ---------------------------------------------------------------------------------------------------- dry run (no write permission)
+  dry-run:
+    needs: plan
+    if: needs.plan.outputs.mode == 'dry'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    concurrency:
+      group: projection-foundation-nba-dry-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ env.PY }}" }
+      - name: Install (pinned to the versions the study and these tests ran on)
+        run: |
+          set -euo pipefail
+          pip install -q $PIP_PINS
+          pip install -q -e . --no-deps
+      - name: Cache the ESPN box-score mirror
+        uses: actions/cache@v4
+        with:
+          path: research/projection_foundation/.cache/hoopr
+          key: pf-nba-hoopr-${{ github.run_id }}
+          restore-keys: pf-nba-hoopr-
+      - name: Mount the data branches (read-only; projection-data becomes a throwaway copy)
+        run: |
+          set -euo pipefail
+          bash $PF_DIR/scripts/nba_live_ci.sh mount "$RUNNER_TEMP/m" dry
+      - name: Full chain, dry run (live fetches, real projections, archive into a temp copy, settle and score)
+        working-directory: research/projection_foundation
+        env:
+          PF_WORK: ${{ runner.temp }}/pf_work
+        run: |
+          set -euo pipefail
+          NOW="${{ github.event.inputs.now }}"
+          SEASON="${{ github.event.inputs.season_types }}"; SEASON="${SEASON:-regular}"
+          WIN="${{ github.event.inputs.window_hours }}"
+          # pull requests: a wide window so the dry run always has a real slate to project (before opening night: the 2026-10-20 games)
+          if [ -z "$WIN" ]; then if [ "${{ github.event_name }}" = pull_request ]; then WIN=96; else WIN=30; fi; fi
+          python -m nba.live.run --stage all --dry-run --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" \
+            --shadow "$RUNNER_TEMP/m/shadow" --pit "$RUNNER_TEMP/m/pit" --context "$RUNNER_TEMP/m/data-archive" \
+            --season-types "$SEASON" --window-hours "$WIN" ${NOW:+--now "$NOW"}
+      - name: PF unit tests (recorded real fixtures; includes the hoopR agreement checks now that the cache is warm)
+        working-directory: research/projection_foundation
+        run: |
+          set -euo pipefail
+          python -m pytest tests -q -p no:warnings -x
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-live-dry-run
+          path: ${{ runner.temp }}/pf_work
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------------------------------- scheduled pregame / settle
+  live:
+    needs: plan
+    if: needs.plan.outputs.mode == 'pregame' || needs.plan.outputs.mode == 'settle'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    concurrency:
+      group: projection-foundation-nba
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ env.PY }}" }
+      - name: Install
+        run: |
+          set -euo pipefail
+          pip install -q $PIP_PINS
+          pip install -q -e . --no-deps
+      - name: Cache the ESPN box-score mirror
+        uses: actions/cache@v4
+        with:
+          path: research/projection_foundation/.cache/hoopr
+          key: pf-nba-hoopr-${{ github.run_id }}
+          restore-keys: pf-nba-hoopr-
+      - name: Mount the data branches (creates projection-data as an orphan branch on the first run)
+        run: |
+          set -euo pipefail
+          bash $PF_DIR/scripts/nba_live_ci.sh mount "$RUNNER_TEMP/m" live
+      - name: Pipeline (a failing stage fails the job; nothing is committed after a failure)
+        working-directory: research/projection_foundation
+        env:
+          PF_WORK: ${{ runner.temp }}/pf_work
+        run: |
+          set -euo pipefail
+          python -m nba.live.run --stage "${{ needs.plan.outputs.stage }}" --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" \
+            --shadow "$RUNNER_TEMP/m/shadow" --pit "$RUNNER_TEMP/m/pit" --context "$RUNNER_TEMP/m/data-archive" \
+            --season-types "${{ github.event.inputs.season_types || 'regular' }}" --window-hours "${{ github.event.inputs.window_hours || '30' }}"
+      - name: Kalshi listing audit (reporting only; placeholders are never prices)
+        if: needs.plan.outputs.mode == 'settle'
+        continue-on-error: true
+        working-directory: research/projection_foundation
+        env:
+          PF_WORK: ${{ runner.temp }}/pf_work
+        run: |
+          set -euo pipefail
+          git -C "$GITHUB_WORKSPACE" fetch --depth=1 --filter=blob:none origin data-archive
+          rm -rf "$RUNNER_TEMP/kalshi"; git -C "$GITHUB_WORKSPACE" worktree add --no-checkout -f "$RUNNER_TEMP/kalshi" origin/data-archive
+          git -C "$RUNNER_TEMP/kalshi" sparse-checkout init --no-cone
+          D0=$(date -u +%Y-%m-%d); D1=$(date -u -d "1 day ago" +%Y-%m-%d); D2=$(date -u -d "2 days ago" +%Y-%m-%d)
+          git -C "$RUNNER_TEMP/kalshi" sparse-checkout set /kalshi/markets/ "/kalshi/markets_delta/dt=$D0/" "/kalshi/markets_delta/dt=$D1/" "/kalshi/markets_delta/dt=$D2/"
+          git -C "$RUNNER_TEMP/kalshi" checkout -q
+          python -m nba.live.kalshi_report --archive "$RUNNER_TEMP/kalshi" --out "$PF_WORK/kalshi_listing_report.json" > /dev/null
+          echo "### Kalshi NBA player-prop listings (reporting only)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          python -c "import json,sys; r=json.load(open(sys.argv[1])); print(json.dumps({k: r[k] for k in ('latest_board','first_board_with_regular_season_props','settlement_rule')}, indent=1)); print(json.dumps(r['latest']['regular_season_total'], indent=1)); print(json.dumps({k: {'markets': v['regular_season_markets'], 'classes': v['regular_season_quote_classes']} for k, v in r['latest']['series'].items()}, indent=1))" "$PF_WORK/kalshi_listing_report.json" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Archive guard on the working tree (additions only), then commit and push with retries
+        run: |
+          set -euo pipefail
+          (cd $PF_DIR && python -m pf_core.archive_guard "$RUNNER_TEMP/m/projection-data")
+          bash $PF_DIR/scripts/nba_live_ci.sh commit_push "$RUNNER_TEMP/m/projection-data"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-live-${{ needs.plan.outputs.mode }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/pf_work
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------------------------------- incumbent pregame sweep (light)
+  sweep:
+    needs: plan
+    if: needs.plan.outputs.mode == 'sweep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    concurrency:
+      group: projection-foundation-nba-sweep
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ env.PY }}" }
+      - name: Install (compute stack only)
+        run: |
+          set -euo pipefail
+          pip install -q numpy==2.5.3 pandas==3.0.5 scipy==1.18.1 pyarrow==26.0.0 pydantic==2.13.5 httpx==0.28.1 pyyaml==6.0.1 orjson==3.13.0
+          pip install -q -e . --no-deps
+      - name: Mount the data branches
+        run: |
+          set -euo pipefail
+          bash $PF_DIR/scripts/nba_live_ci.sh mount "$RUNNER_TEMP/m" live
+      - name: Archive the incumbent's pregame forecasts that exist now (unchanged, before tip)
+        working-directory: research/projection_foundation
+        env:
+          PF_WORK: ${{ runner.temp }}/pf_work
+        run: |
+          set -euo pipefail
+          python -m nba.live.run --stage incumbent,guard --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" --shadow "$RUNNER_TEMP/m/shadow"
+      - name: Commit and push with retries
+        run: |
+          set -euo pipefail
+          bash $PF_DIR/scripts/nba_live_ci.sh commit_push "$RUNNER_TEMP/m/projection-data"
