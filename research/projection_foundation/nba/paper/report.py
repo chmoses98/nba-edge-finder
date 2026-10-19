@@ -53,39 +53,190 @@ def _section(name: str, fn: Callable[[], Any]) -> Any:
         return {"status": "SECTION_ERROR", "section": name, "error": f"{type(e).__name__}: {e}"[:300]}
 
 
+_VOLATILE = {"generated_utc", "runtime_s", "report_version", "content_digest", "card_markdown", "markdown", "updated_utc"}
+
+
+def _strip(o: Any) -> Any:
+    if isinstance(o, dict):
+        return {k: _strip(v) for k, v in o.items() if k not in _VOLATILE}
+    if isinstance(o, list):
+        return [_strip(v) for v in o]
+    return o
+
+
 def _digest(rep: dict) -> str:
-    d = json.loads(json.dumps(rep, default=str))
-    for k in ("generated_utc", "report_version", "runtime_s"):
-        d.pop(k, None)
-    return hashlib.sha256(json.dumps(d, sort_keys=True).encode()).hexdigest()
+    """Content digest ignoring timestamps and rendered text: a re-run on unchanged evidence must not create a new version."""
+    return hashlib.sha256(json.dumps(_strip(json.loads(json.dumps(rep, default=str))), sort_keys=True).encode()).hexdigest()
+
+
+# ------------------------------------------------------------------------------------------------------------------------ evaluation adapter
+def _r(x, nd=3):
+    return "n/a" if x is None else (f"{x:+.{nd}f}" if isinstance(x, float) else str(x))
+
+
+def _ci(d: Any, nd: int = 3) -> str:
+    if not isinstance(d, dict) or d.get("mean") is None:
+        return "n/a"
+    lo, hi = (d.get("ci95") or [None, None])
+    ci = f" [{lo:+.{nd}f}, {hi:+.{nd}f}]" if lo is not None and hi is not None else f" (CI withheld: {d.get('ci_status', 'n/a')})"
+    return f"{d['mean']:+.{nd}f}{ci}"
+
+
+def week_scorecard(archive: str, start_et: str, end_et: str, now: datetime) -> dict[str, Any]:
+    """One evaluation of the week's evidence (window = the exact ET dates) re-shaped into the report's sections."""
+    from . import evaluate as EV
+    card = EV.scorecard(archive, now, window=(start_et, end_et))
+    smp = card.get("sample") or {}
+    fs, pdn = smp.get("forecast_settlements") or {}, smp.get("paper_decisions") or {}
+    counts = {"n_games": max(fs.get("n_games") or 0, pdn.get("n_games") or 0),
+              "n_player_games": max(fs.get("n_player_games") or 0, pdn.get("n_player_games") or 0),
+              "n_theses": pdn.get("n_theses") or 0, "n_decisions": pdn.get("n_decisions") or 0, "n_contracts": pdn.get("n_contracts") or 0}
+    mkt = card.get("market") or {}
+    seg = card.get("segments") or {}
+    return {"status": "OK", "counts": counts, "insufficient_sample": card.get("insufficient_sample"),
+            "projection": {**(card.get("projection") or {}), "markdown": _md_projection(card.get("projection") or {})},
+            "market_comparison": {**(mkt.get("model_vs_market") or {}), "markdown": _md_market(mkt.get("model_vs_market") or {})},
+            "paper": {**(mkt.get("paper") or {}), "markdown": _md_paper(mkt.get("paper") or {})},
+            "families": {"hit_rates": mkt.get("hit_rates"), "selected_by_family": ((seg.get("market") or {}).get("selected_trades") or {}).get("family"),
+                         "all_candidates_by_family": ((seg.get("market") or {}).get("all_candidates") or {}).get("family"),
+                         "markdown": _md_families(mkt.get("hit_rates") or {})},
+            "timing": {"price_discovery": mkt.get("price_discovery"), "by_horizon": (mkt.get("model_vs_market") or {}).get("by_horizon"),
+                       "markdown": _md_timing(mkt.get("price_discovery") or {}, (mkt.get("model_vs_market") or {}).get("by_horizon") or {})},
+            "segments": {**seg, "markdown": "Segment tables (player, team, stat family, minutes bucket, starter proxy, injury status, opponent, home/away, "
+                                            "price range, side, threshold, window, confidence/freshness) are in `report.json` under "
+                                            "`sections.7_player_matchup_diagnostics`; cells below the minimum counts are suppressed."},
+            "liquidity": mkt.get("liquidity"), "card_markdown": EV.markdown(card)}
+
+
+def _with_expr(paper: Any, expr: Any) -> Any:
+    if not isinstance(paper, dict):
+        return paper
+    return {**paper, "expression_ranking": expr,
+            "markdown": (paper.get("markdown") or "") + "\n\n**Expression ranking** (which market best expresses a basketball thesis; research only): "
+                        + (f"{expr.get('n_theses_scored')} theses scored, {expr.get('n_no_trade')} NO_TRADE, status {expr.get('status')}"
+                           if isinstance(expr, dict) else str(expr))}
+
+
+def _with_md(d: dict, fn) -> dict:
+    return {**d, "markdown": fn(d)}
+
+
+def _md_patterns(h: dict) -> str:
+    L = [f"> {h.get('banner', '')}", "", "Leads are classified, never promoted. `p_holm` is Holm-adjusted over the declared family; exploratory screens use Benjamini-Hochberg (q=0.10).", "",
+         "| id | claim | class | effect | 95% CI | p (Holm) | games needed (observed effect) | note |", "|---|---|---|---|---|---|---|---|"]
+    for r in h.get("hypotheses") or []:
+        ci = r.get("ci95") or [None, None]
+        cis = f"[{ci[0]:+.3f}, {ci[1]:+.3f}]" if ci and ci[0] is not None else "n/a"
+        L.append(f"| {r.get('id')} | {r.get('claim')} | {r.get('classification')} | {_r(r.get('effect'))} | {cis} | {_r(r.get('p_holm'))} | "
+                 f"{_r(r.get('required_games_for_observed_effect'))} | {r.get('classification_reason') or r.get('reason') or ''} |")
+    es = h.get("exploratory_screens") or {}
+    L += ["", f"Exploratory screen: {es.get('status')} {es.get('reason', '')}".strip()]
+    return "\n".join(L)
+
+
+def _md_root_cause(r: dict) -> str:
+    L = [f"> {r.get('banner', '')}", "", f"Minutes under-prediction verdict: **{r.get('minutes_underprediction_verdict')}**", "",
+         "| # | class | status | statistic | value | games | repeatability | reading |", "|---|---|---|---|---|---|---|---|"]
+    for c in r.get("classes") or []:
+        v = c.get("value")
+        vs = _ci(v) if isinstance(v, dict) else _r(v)
+        L.append(f"| {c.get('class_id')} | {c.get('class')} | {c.get('status')} | {c.get('statistic')} | {vs} | {_r(c.get('n_games'))} | {_r(c.get('repeatability'))} | {c.get('reading')} |")
+    return "\n".join(L)
+
+
+def _md_projection(p: dict) -> str:
+    L = []
+    mn = p.get("minutes") or {}
+    if mn.get("status") == "NO_DATA" or not mn:
+        L.append(f"- minutes: {mn.get('reason', 'no data')}")
+    else:
+        for role in ("challenger", "incumbent", "naive_prior_mean"):
+            r = mn.get(role)
+            if isinstance(r, dict):
+                L.append(f"- minutes {role}: n={r.get('n')} MAE {_r(r.get('mae'))} bias {_ci(r.get('bias'))}")
+    pt = (p.get("participation") or {}).get("challenger")
+    if isinstance(pt, dict):
+        L.append(f"- participation Brier: {_ci(pt.get('brier'))} (n={pt.get('n')}, games={pt.get('n_games')}); mean P(play) {_r(pt.get('mean_p'))} vs played rate {_r(pt.get('played_rate'))}")
+    for fam, r in (p.get("player_stats_conditional") or {}).items():
+        if isinstance(r, dict) and "mae" in r:
+            L.append(f"- {fam} (conditional on playing): n={r.get('n')} games={r.get('n_games')} MAE {_r(r.get('mae'))} bias {_ci(r.get('bias'))} CRPS {_ci(r.get('crps'))}")
+    tm = p.get("team") or {}
+    if tm.get("status") == "OK":
+        L.append(f"- team points: MAE {_r((tm.get('team_points') or {}).get('mae'))}, margin MAE {_r((tm.get('margin_home') or {}).get('mae'))}, total MAE {_r((tm.get('total') or {}).get('mae'))}")
+    return "\n".join(L) or "No settled projection data yet."
+
+
+def _md_market(m: dict) -> str:
+    if m.get("status") != "OK":
+        return f"{m.get('status', 'NO_DATA')}: {m.get('reason', '')}"
+    L = [m.get("unit_note", ""), "", "| horizon | contracts | games | Brier model | Brier market mid | diff (model - market) |", "|---|---|---|---|---|---|"]
+    for h, r in (m.get("by_horizon") or {}).items():
+        L.append(f"| {h} | {r.get('n_contracts')} | {r.get('n_games')} | {_r(r.get('brier_model'))} | {_r(r.get('brier_market_mid'))} | {_ci(r.get('brier_diff_model_minus_market'))} |")
+    return "\n".join(L)
+
+
+def _md_paper(p: dict) -> str:
+    if p.get("status") != "OK":
+        return f"{p.get('status', 'NO_DATA')}: {p.get('reason', '')}"
+    L = ["Hypothetical net ROI after fees and slippage (paper only). `selected` = one contract per thesis per horizon; `all candidates` rows are not independent.", "",
+         "| strategy | view | decisions | contracts | theses | games | ROI | ROI CI | hit rate |", "|---|---|---|---|---|---|---|---|---|"]
+    for sid, v in (p.get("strategies") or {}).items():
+        sel = ((v.get("selected") or {}).get("overall_one_per_thesis")) or {}
+        ac = v.get("all_candidates") or {}
+        for view, r in (("selected", sel), ("all candidates", ac)):
+            if r.get("n_decisions"):
+                ci = r.get("roi_ci95") or [None, None]
+                cis = f"[{ci[0]:+.3f}, {ci[1]:+.3f}]" if ci[0] is not None else "withheld (few games)"
+                L.append(f"| {sid} | {view} | {r.get('n_decisions')} | {r.get('n_contracts')} | {r.get('n_theses')} | {r.get('n_games')} | {_r(r.get('roi'))} | {cis} | {_r(r.get('hit_rate'))} |")
+    L += ["", "Baselines: NO_BET_V1 = 0 by definition; MARKET_ONLY_V1 = quote mid (see section 3); control SHADOW_PURE_PREREG_V1 is read from the shadow branch (see Control)."]
+    return "\n".join(L)
+
+
+def _md_families(h: dict) -> str:
+    if not h or h.get("status") != "OK":
+        return f"{(h or {}).get('status', 'NO_DATA')}"
+    L = ["Hit rate of the side actually evaluated, by family (descriptive; sample sizes shown).", "", "| family | contracts | games | hit rate |", "|---|---|---|---|"]
+    for fam, r in (h.get("by_family") or {}).items():
+        L.append(f"| {fam} | {r.get('n_contracts')} | {r.get('n_games')} | {_r(r.get('hit_rate'))} |")
+    return "\n".join(L)
+
+
+def _md_timing(pd_: dict, by_h: dict) -> str:
+    if not pd_ or pd_.get("status") != "OK":
+        return f"{(pd_ or {}).get('status', 'NO_DATA')}"
+    L = [pd_.get("definition", ""), "", "| horizon | contracts | games | share of open->close improvement | mean abs move to close |", "|---|---|---|---|---|"]
+    for h, r in (pd_.get("horizons") or {}).items():
+        L.append(f"| {h} | {r.get('n_contracts')} | {r.get('n_games')} | {_r(r.get('share_of_ref_to_close_improvement'))} | {_r(r.get('mean_abs_move_to_close'))} |")
+    return "\n".join(L)
 
 
 def build_week(archive: str, ctx: str, n: int, now: datetime, shadow_dir: str | None = None, season_types=("regular",)) -> dict[str, Any]:
-    from . import diagnostics as DG, evaluate as EV        # imported lazily: a missing optional module degrades one section
+    from . import diagnostics as DG                        # imported lazily: a missing optional module degrades one section
     start, end = week_window(n)
     integrity = _section("data_integrity", lambda: IG.build(archive, ctx, start, end, now, season_types))
-    ev = _section("evaluation", lambda: EV.week_scorecard(archive, start, end, now))
+    ev = _section("evaluation", lambda: week_scorecard(archive, start, end, now))
     complete = (isinstance(integrity, dict) and integrity.get("n_games")
                 and integrity["n_started"] == integrity["n_games"] and integrity["n_complete"] == integrity["n_games"])
     over = now.astimezone(IG_ET()).date() > date.fromisoformat(end)
     status = "FINAL" if (complete and over) else "PRELIMINARY"
+    expr = _section("expressions", lambda: __import__("nba.paper.expression", fromlist=["x"]).evaluate_expressions(archive))
     sections = {
         "1_data_integrity": integrity,
         "2_projection_performance": _pick(ev, "projection"),
         "3_market_comparison": _pick(ev, "market_comparison"),
-        "4_paper_trading": _pick(ev, "paper"),
+        "4_paper_trading": _with_expr(_pick(ev, "paper"), expr),
         "5_market_families": _pick(ev, "families"),
         "6_timing": _pick(ev, "timing"),
         "7_player_matchup_diagnostics": _pick(ev, "segments"),
-        "8_patterns": _section("patterns", lambda: DG.ranked_hypotheses(archive, now, window=(start, end))),
-        "9_root_cause": _section("root_cause", lambda: DG.root_cause(archive, now, window=(start, end))),
+        "8_patterns": _section("patterns", lambda: _with_md(DG.ranked_hypotheses(archive, now, window=(start, end)), _md_patterns)),
+        "9_root_cause": _section("root_cause", lambda: _with_md(DG.root_cause(archive, now, window=(start, end)), _md_root_cause)),
     }
     counts = (ev or {}).get("counts") if isinstance(ev, dict) else None
     rep = {"schema": S.REPORT_SCHEMA, "authority": "research_only", "paper": True, "sport": "NBA", "report_id": f"nba_week{n}",
            "week": {"n": n, "start_et": start, "end_et": end}, "status": status, "generated_utc": iso(now),
            "prospective_only": True, "prospective_start_utc": SEASON_OPENER_UTC, "counts": counts,
            "sections": sections, "control": CTL.latest(shadow_dir),
-           "gates": _section("gates", lambda: _gates(ev, n, integrity)),
+           "gates": _section("gates", lambda: _gates(archive, n, now)),
            "banners": _banners(integrity, counts, status), "methods": _methods()}
     sections["10_next_week_plan"] = _section("next_week_plan", lambda: _plan(rep))
     return rep
@@ -100,7 +251,8 @@ def _pick(ev: Any, key: str) -> Any:
     if isinstance(ev, dict) and ev.get("status") == "SECTION_ERROR":
         return ev
     if isinstance(ev, dict) and key in ev:
-        return ev[key]
+        v = ev[key]
+        return {**v, "insufficient_sample": ev.get("insufficient_sample")} if isinstance(v, dict) and key == "projection" else v
     return {"status": "NO_DATA", "reason": f"evaluation produced no `{key}` block"}
 
 
@@ -116,16 +268,18 @@ def _banners(integrity: Any, counts: Any, status: str) -> list[str]:
     return b
 
 
-def _gates(ev: Any, n: int, integrity: Any) -> dict:
-    cand = {}
-    if isinstance(ev, dict) and isinstance(ev.get("paper"), dict):
-        cand = ev["paper"].get("by_strategy") or {}
-    days = 7 if n >= 1 else 0
+def _gates(archive: str, n: int, now: datetime) -> dict:
+    """Promotion gate per candidate strategy on SEASON-TO-DATE evidence (one-per-thesis selected trades). Week 1 can only ever say NONE."""
+    from . import evaluate as EV
+    cum = EV.scorecard(archive, now, window=(week_window(1)[0], week_window(n)[1]))
+    strategies = ((cum.get("market") or {}).get("paper") or {}).get("strategies") or {}
     out = {}
-    for sid, summ in cand.items():
-        if sid in ("NO_BET_V1", "MARKET_ONLY_V1"):
-            continue
-        out[sid] = PR.weekly_gate({**(summ if isinstance(summ, dict) else {}), "strategy_id": sid, "days_of_evidence": days if n > 1 else 0})
+    for sid, v in strategies.items():
+        sel = ((v.get("selected") or {}).get("overall_one_per_thesis")) or {}
+        lo = (sel.get("roi_ci95") or [None])[0]
+        out[sid] = PR.weekly_gate({"strategy_id": sid, "n_decisions": sel.get("n_decisions") or 0, "n_games": sel.get("n_games") or 0,
+                                   "roi": sel.get("roi"), "ci_lower_by_cluster": {"game": lo} if lo is not None else None,
+                                   "days_of_evidence": 7 * (n - 1)})
     return out
 
 
@@ -135,24 +289,29 @@ def _plan(rep: dict) -> dict:
     sec = rep["sections"]
     integ = sec["1_data_integrity"] if isinstance(sec["1_data_integrity"], dict) else {}
     miss = integ.get("missing_counts") or {}
-    if miss:
-        items.append({"priority": 1, "class": "OPERATIONAL_DEFECT", "item": "close evidence gaps found in the data-integrity table",
-                      "detail": miss, "acceptance": "next week: every started game has forecast, availability, game forecast, T-60 snapshot, "
-                                                     "decisions, outcome, team outcome and paper settlement (0 missing)"})
+    if miss or integ.get("slots", {}).get("missed"):
+        items.append({"class": "OPERATIONAL_DEFECT", "item": "close the evidence gaps found in the data-integrity table",
+                      "detail": {"missing_counts": miss, "missed_slots": integ.get("slots", {}).get("missed")},
+                      "acceptance": "next week: every started game has forecast, availability observations, game forecast, T-60 snapshot, decisions, "
+                                    "outcome, team outcome and paper settlement (0 missing) and no missed pregame slot"})
     hyp = sec.get("8_patterns")
-    for h in (hyp.get("ranked") or []) if isinstance(hyp, dict) else []:
-        items.append({"priority": 2, "class": h.get("finding_class", "INCONCLUSIVE"), "item": h.get("hypothesis"),
-                      "required_prospective_sample": h.get("required_prospective_sample"), "acceptance": h.get("acceptance")})
+    for h in (hyp.get("hypotheses") or []) if isinstance(hyp, dict) else []:
+        if h.get("classification") in ("ELIGIBLE_FOR_PROSPECTIVE_VALIDATION", "EXPLORATORY_MARKET_HYPOTHESIS", "PROJECTION_CALIBRATION_ISSUE", "OPERATIONAL_DEFECT"):
+            items.append({"class": h["classification"], "item": h.get("claim"), "hypothesis_id": h.get("id"),
+                          "required_prospective_sample": h.get("required_games_for_observed_effect"),
+                          "acceptance": "effect keeps its sign over the next prospective sample and the Holm-adjusted p < 0.05 over the declared family"})
     rc = sec.get("9_root_cause")
-    for r in (rc.get("ranked_causes") or [])[:3] if isinstance(rc, dict) else []:
-        items.append({"priority": 3, "class": "PROJECTION_CALIBRATION_ISSUE", "item": r.get("cause"), "acceptance": r.get("acceptance")})
+    for c in (rc.get("classes") or []) if isinstance(rc, dict) else []:
+        if c.get("status") not in (None, "NO_DATA") and (c.get("reading") or "").upper().startswith(("DEFECT", "BIAS", "MISS")):
+            items.append({"class": "PROJECTION_CALIBRATION_ISSUE", "item": f"{c.get('class')}: {c.get('reading')}",
+                          "acceptance": "bias CI covers 0 on the next prospective sample, or the cause is isolated by a paired comparison"})
     if not items:
-        items.append({"priority": 1, "class": "INCONCLUSIVE", "item": "keep collecting; no testable lead survived the sample-size floor",
-                      "acceptance": "n_games >= 40 and >= 200 independent decisions per candidate strategy"})
+        items.append({"class": "INCONCLUSIVE", "item": "keep collecting: no lead survives the sample-size floors",
+                      "acceptance": "n_games >= 40 and >= 200 independent decisions per candidate strategy before any validated-value language"})
     for i, it in enumerate(items, 1):
         it["rank"] = i
-    return {"items": items, "rule": "ranked by class (operational defects first), then magnitude x repeatability / uncertainty; no parameter change "
-                                    "is proposed from one week of data"}
+    return {"items": items, "markdown": "\n".join(f"{it['rank']}. **{it['class']}**: {it['item']}. Acceptance: {it['acceptance']}" for it in items),
+            "rule": "operational defects first, then ranked leads; no parameter change is proposed from one week of data"}
 
 
 def _methods() -> dict:

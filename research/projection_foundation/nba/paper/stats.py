@@ -56,6 +56,9 @@ def counts(df: pd.DataFrame) -> dict[str, int]:
 
 
 # ------------------------------------------------------------------------------------------------ cluster bootstrap
+MIN_CLUSTERS = 5
+
+
 def cluster_mean(values, clusters, n_boot: int = N_BOOT, seed: int = SEED) -> dict[str, Any]:
     """Mean with a game-cluster bootstrap 95% CI, SE and z. NaN values are dropped (with their cluster ids)."""
     v = np.asarray(values, float)
@@ -65,8 +68,11 @@ def cluster_mean(values, clusters, n_boot: int = N_BOOT, seed: int = SEED) -> di
     if len(v) == 0:
         return {"mean": None, "ci95": [None, None], "se": None, "z": None, "n_obs": 0, "n_clusters": 0}
     r = pfm.cluster_bootstrap_diff(v, np.zeros_like(v), cl, n_boot=n_boot, seed=seed)
-    return {"mean": _f(r["mean_diff"]), "ci95": [_f(x) for x in r["ci95"]], "se": _f(r["se"]), "z": _f(r["z"]),
-            "n_obs": int(r["n_obs"]), "n_clusters": int(r["n_clusters"])}
+    out = {"mean": _f(r["mean_diff"]), "ci95": [_f(x) for x in r["ci95"]], "se": _f(r["se"]), "z": _f(r["z"]),
+           "n_obs": int(r["n_obs"]), "n_clusters": int(r["n_clusters"])}
+    if out["n_clusters"] < MIN_CLUSTERS:        # a bootstrap over a handful of games is not an interval: never print one
+        out.update({"ci95": [None, None], "se": None, "z": None, "ci_status": f"TOO_FEW_CLUSTERS (<{MIN_CLUSTERS} games)"})
+    return out
 
 
 def cluster_diff(a, b, clusters, n_boot: int = N_BOOT, seed: int = SEED) -> dict[str, Any]:
@@ -83,6 +89,9 @@ def cluster_ratio(num, den, clusters, n_boot: int = N_BOOT, seed: int = SEED) ->
     if len(num) == 0 or den.sum() <= 0:
         return {"ratio": None, "ci95": [None, None], "n_obs": int(len(num)), "n_clusters": 0}
     k = cl.max() + 1
+    if k < MIN_CLUSTERS:
+        return {"ratio": float(num.sum() / den.sum()), "ci95": [None, None], "n_obs": int(len(num)), "n_clusters": int(k),
+                "ci_status": f"TOO_FEW_CLUSTERS (<{MIN_CLUSTERS} games)"}
     sn, sd = np.bincount(cl, weights=num, minlength=k), np.bincount(cl, weights=den, minlength=k)
     idx = np.random.default_rng(seed).integers(0, k, size=(n_boot, k))
     d = sd[idx].sum(axis=1)

@@ -69,6 +69,11 @@ def verify_run(kind: str, st: dict[str, Any]) -> tuple[str, list[str], list[str]
     if present < 1:
         bad.append(f"{n_games} games in the window but no challenger forecast was archived or already present "
                    f"(late_rejected={arch.get('late_rejected')}, invalid={arch.get('invalid')})")
+    gfc = pj.get("game_forecasts") or {}
+    if gfc.get("status") == "ERROR":
+        warn.append(f"game forecast archive failed: {gfc.get('error')}")
+    elif gfc and not gfc.get("written") and not gfc.get("duplicates"):
+        warn.append("no game-level (team points) forecast was archived for the games in the window")
     if arch.get("invalid"):
         warn.append(f"{arch['invalid']} forecast records were invalid and not archived")
     off = ((cap.get("sources") or {}).get("official") or {})

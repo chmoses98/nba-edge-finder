@@ -971,14 +971,14 @@ def markdown(card: dict[str, Any]) -> str:
     return "\n".join(L) + "\n"
 
 
-def write(archive: str, card: dict[str, Any]) -> list[str]:
+def write(archive: str, card: dict[str, Any], daily: bool = True) -> list[str]:
     """Rewritable views: paper/nba/scorecards/daily/<ET date>.{json,md} and latest.{json,md}. Files with identical content are not rewritten."""
     base = os.path.join(archive, "paper", "nba", "scorecards")
     day = card["window"].get("day_et") or pd.Timestamp(card["generated_utc"]).tz_convert(ET).strftime("%Y-%m-%d")
     txt_json = json.dumps(card, indent=1, sort_keys=True)
     txt_md = markdown(card)
     paths = []
-    for d, name in ((os.path.join(base, "daily"), day), (base, "latest")):
+    for d, name in (((os.path.join(base, "daily"), day),) if daily else ()) + ((base, "latest"),):
         os.makedirs(d, exist_ok=True)
         for ext, txt in (("json", txt_json), ("md", txt_md)):
             p = os.path.join(d, f"{name}.{ext}")

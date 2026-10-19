@@ -641,3 +641,22 @@ def test_new_forecast_on_an_unchanged_board_is_a_new_decision_not_a_duplicate(tm
     assert second["snapshots"]["written"] == 0 and second["decisions"]["written"] > 0                  # same board, newer forecast
     assert RUN.stage_paper(str(root), str(FIXARCH), now)["decisions"]["written"] == 0                  # and now idempotent again
     assert first["decisions"]["written"] > 0
+
+
+def test_game_markets_settle_from_team_outcomes_and_authoritative_result_supersedes(tmp_path):
+    base = _decision(side="YES", eff=0.41, price=0.40)
+    for fam, thr, team_row, yes in (("game_winner", None, {"pts": 110, "opp_pts": 104}, True),
+                                    ("game_spread", 5.5, {"pts": 110, "opp_pts": 104}, True),
+                                    ("game_spread", 6.5, {"pts": 110, "opp_pts": 104}, False),
+                                    ("game_total", 215.5, {"pts": 110, "opp_pts": 104}, False),
+                                    ("game_total", 213.5, {"pts": 110, "opp_pts": 104}, True),
+                                    ("team_total", 109.5, {"pts": 110, "opp_pts": 104}, True)):
+        d = dict(base, family=fam, threshold=thr, k=None, entity_id=None)
+        assert ST.game_yes(d, team_row) is yes
+        row, why = ST.build_settlement(d, auth=None, outcome=None, closing=CLOSING_OK, now=utc("2026-10-21T11:00:00Z"), team=team_row)
+        assert why is None and row["outcome_source"] == "box_score_derived" and row["won"] is yes
+        assert row["net_pnl"] == pytest.approx((1.0 if yes else 0.0) - 0.41 - row["fee_paid"])
+    # without team facts the market waits for the authoritative result
+    d = dict(base, family="game_total", threshold=213.5, k=None)
+    assert ST.build_settlement(d, auth=None, outcome=None, closing=CLOSING_OK, now=utc("2026-10-21T11:00:00Z"))[1] == "NO_AUTHORITATIVE_RESULT"
+    assert ST.game_yes(d, {"pts": None, "opp_pts": 1}) is None

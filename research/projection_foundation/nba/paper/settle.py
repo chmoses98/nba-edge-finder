@@ -8,7 +8,8 @@ Authority order for one decision (docs/research/PAPER_ENGINE_SPEC.md sections 4-
      `void` has not been observed; if it appears the position is refunded at the entry price and the fee is NOT refunded (conservative).
   2. `box_score_derived`  player props only, from archived outcomes (`outcomes/nba`): played => YES iff actual >= k; did not play => the DNP
      leg is valued at the LAST_VALID mid of the ticker (`dnp_value_source: modeled_last_valid_mid`), pending when no valid closing quote
-     was archived. Game markets are never box-derived (no authoritative team-points table is archived): they wait for the Kalshi result.
+     was archived. Game markets (winner, spread, total, team total) are box-derived from the archived `team_outcomes` (final team points
+     incl. overtime) when the Kalshi result is not in the archive yet; the authoritative result later supersedes via a correction row.
 A settlement is written ONCE per decision_id. When a later authoritative result differs from a box-derived / modeled settlement, an
 append-only `sift.paper_correction.v1` row is written; the original is never touched.
 
@@ -30,6 +31,28 @@ from . import store
 
 PROP_FAMILY = {"player_points": "points", "player_rebounds": "rebounds", "player_assists": "assists", "player_threes": "threes",
                "player_pra": "pra"}
+
+
+GAME_FAMILY = {"game_winner", "game_spread", "game_total", "team_total"}
+
+
+def game_yes(d: dict, team: dict | None) -> bool | None:
+    """YES truth of a game-level contract from the subject team's final facts `team` = {pts, opp_pts} (None when not derivable)."""
+    if team is None or team.get("pts") is None or team.get("opp_pts") is None:
+        return None
+    pts, opp = float(team["pts"]), float(team["opp_pts"])
+    fam, thr = d["family"], d.get("threshold")
+    if fam == "game_winner":
+        return pts > opp
+    if thr is None:
+        return None
+    if fam == "game_spread":
+        return (pts - opp) > float(thr)
+    if fam == "game_total":
+        return (pts + opp) > float(thr)
+    if fam == "team_total":
+        return pts > float(thr)
+    return None
 
 
 def fee_paid(eff: float, contracts: int, mult: float) -> float:
@@ -56,7 +79,8 @@ def closing_for(snap: dict | None, tip: datetime) -> dict[str, Any]:
             "yes_bid": snap.get("yes_bid"), "yes_ask": snap.get("yes_ask"), "mid_yes": mid, "age_s": age}
 
 
-def build_settlement(d: dict, *, auth: dict | None, outcome: dict | None, closing: dict, now: datetime) -> tuple[dict | None, str | None]:
+def build_settlement(d: dict, *, auth: dict | None, outcome: dict | None, closing: dict, now: datetime,
+                     team: dict | None = None) -> tuple[dict | None, str | None]:
     """(settlement row | None, pending reason). `auth` = {result, value, observed_utc}; `outcome` = {actual, participated, observed_utc}."""
     side = d["side"]
     eff = d["effective_entry"]
@@ -107,6 +131,15 @@ def build_settlement(d: dict, *, auth: dict | None, outcome: dict | None, closin
             gross = payoff_for_side(side, closing["mid_yes"])
             row["settlement_note"] = ("player did not play: valued at the LAST_VALID mid (Kalshi settles such markets to the last fair price); "
                                       "authoritative value pending -> a correction is appended if it differs")
+    elif d["family"] in GAME_FAMILY and game_yes(d, team) is not None:
+        yes = game_yes(d, team)
+        row["outcome_source"] = "box_score_derived"
+        pts, opp = float(team["pts"]), float(team["opp_pts"])
+        row["actual"] = {"game_total": pts + opp, "team_total": pts}.get(d["family"], pts - opp)      # the contract's own quantity
+        row["team_pts"], row["opp_pts"] = pts, opp
+        gross = payoff_for_side(side, 1.0 if yes else 0.0)
+        row["won"] = (yes if side == "YES" else not yes)
+        row["settlement_note"] = "derived from the archived final team points (overtime included); the authoritative Kalshi result supersedes via a correction"
     else:
         return None, "NO_AUTHORITATIVE_RESULT" if not prop else "NO_OUTCOME"
     row["gross_payoff"] = round(gross, 6)
@@ -184,6 +217,9 @@ def settle_paper(archive: str, market_archive: str | None, now: datetime, *, min
         tips = {d["ticker"]: MK.parse_ts(d["game_start_utc"]) for d in todo}
         auth = authoritative_results(reader, tips, now)
     outs = _latest_outcomes(archive)
+    teams: dict[tuple[str, str], dict] = {}
+    for r in sorted(store.read(archive, "team_outcomes"), key=lambda x: x.get("observed_utc") or ""):
+        teams[(r["game_id"], r["team"])] = r
     new_rows, corr_rows = [], []
     for d in todo:
         tip = MK.parse_ts(d["game_start_utc"])
@@ -197,7 +233,8 @@ def settle_paper(archive: str, market_archive: str | None, now: datetime, *, min
             o = {"actual": o["actual"], "participated": True, "observed_utc": o.get("observed_utc")}
         # a player who did not play has participated=False on every stat family of the outcome archive (results.outcome_rows)
         closing = closing_for(snaps.get(d["ticker"]), tip)
-        row, why = build_settlement(d, auth=auth.get(d["ticker"]), outcome=o, closing=closing, now=now)
+        row, why = build_settlement(d, auth=auth.get(d["ticker"]), outcome=o, closing=closing, now=now,
+                                    team=teams.get((d["game_id"], d.get("team"))) if d["family"] in GAME_FAMILY else None)
         if row is None:
             st["pending"][why] += 1
             continue

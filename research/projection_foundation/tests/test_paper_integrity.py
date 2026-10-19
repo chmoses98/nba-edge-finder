@@ -2,7 +2,7 @@
 import gzip
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
