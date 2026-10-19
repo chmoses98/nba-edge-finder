@@ -255,3 +255,12 @@ def test_ops_guard_protects_ledger_and_new_immutable_dirs(tmp_path):
     (tmp_path / "ops/nba/slots/2026-10-20/1120_pregame.json").write_text("v2")      # ledger rewrite: forbidden
     (tmp_path / "paper/nba/decisions/2026-10-20/a.jsonl.gz").write_text("v2")
     assert len(ops_guard.violations(str(tmp_path))) == 2
+    sh("checkout", "--", ".")
+    v = tmp_path / "reports/nba/week1/versions/v001.json"
+    v.parent.mkdir(parents=True)
+    v.write_text("v1")
+    sh("add", "-A")
+    sh("commit", "-q", "-m", "versions")
+    assert ops_guard.violations(str(tmp_path)) == []
+    v.write_text("v2")                                                                       # a published report version is write-once
+    assert len(ops_guard.violations(str(tmp_path))) == 1

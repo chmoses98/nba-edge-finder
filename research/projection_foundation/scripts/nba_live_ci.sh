@@ -48,7 +48,7 @@ cmd_mount() {
 
 guard_diff() {   # the commit about to be pushed may only ADD files under the immutable directories
   local bad
-  bad=$(git diff --name-status origin/projection-data HEAD 2>/dev/null | grep -E '^(M|D|R)' | grep -E '[[:space:]](forecasts|outcomes|settlements|corrections|availability|game_forecasts|market_snapshots|team_outcomes|ops/nba/slots|paper/nba/(decisions|settlements|corrections|expressions))/' || true)
+  bad=$(git diff --name-status origin/projection-data HEAD 2>/dev/null | grep -E '^(M|D|R)' | grep -E '[[:space:]](forecasts|outcomes|settlements|corrections|availability|game_forecasts|market_snapshots|team_outcomes|ops/nba/slots|paper/nba/(decisions|settlements|corrections|expressions)|reports/nba/week[0-9]+/versions)/' || true)
   if [ -n "$bad" ]; then echo "::error::archive guard: immutable files changed"; echo "$bad"; return 1; fi
 }
 
