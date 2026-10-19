@@ -48,7 +48,7 @@ cmd_mount() {
 
 guard_diff() {   # the commit about to be pushed may only ADD files under the immutable directories
   local bad
-  bad=$(git diff --name-status origin/projection-data HEAD 2>/dev/null | grep -E '^(M|D|R)' | grep -E '[[:space:]](forecasts|outcomes|settlements|corrections|availability)/' || true)
+  bad=$(git diff --name-status origin/projection-data HEAD 2>/dev/null | grep -E '^(M|D|R)' | grep -E '[[:space:]](forecasts|outcomes|settlements|corrections|availability|game_forecasts|market_snapshots|ops/nba/slots|paper/nba/(decisions|settlements|corrections))/' || true)
   if [ -n "$bad" ]; then echo "::error::archive guard: immutable files changed"; echo "$bad"; return 1; fi
 }
 
@@ -74,7 +74,19 @@ cmd_commit_push() {
   return 1
 }
 
+cmd_mount_ro() {   # read-only mount for the watchdog: projection-data + the market-capture status / schedule context
+  local base="$1"
+  mkdir -p "$base"; rm -rf "$base/projection-data"; git worktree prune
+  if git fetch origin projection-data 2>/dev/null; then
+    git worktree add --detach -f "$base/projection-data" origin/projection-data
+  else
+    mkdir -p "$base/projection-data"; echo "::warning::projection-data does not exist yet"
+  fi
+  mount_sparse data-archive "$base/data-archive" /context/schedule/ /STATUS_capture.json
+}
+
 case "${1:-}" in
+  mount_ro) shift; cmd_mount_ro "$@" ;;
   mount) shift; cmd_mount "$@" ;;
   commit_push) shift; cmd_commit_push "$@" ;;
   *) echo "usage: $0 mount <dir> [live|dry] | commit_push <dir>" >&2; exit 2 ;;

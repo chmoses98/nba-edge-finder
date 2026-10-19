@@ -359,18 +359,19 @@ def test_workflow_shape():
     paths = on["pull_request"]["paths"]
     assert any(p.startswith("research/projection_foundation") for p in paths) and ".github/workflows/projection-foundation.yml" in paths
     text = (REPO / ".github" / "workflows" / "projection-foundation.yml").read_text()
-    assert "set -euo pipefail" in text and "archive_guard" in text and "--dry-run" in text
+    assert "set -euo pipefail" in text and "ops_guard" in text and "--dry-run" in text
     for j in wf["jobs"].values():
         assert "timeout-minutes" in j
     jobs = wf["jobs"]
-    assert all("group" in (j.get("concurrency") or {}) for n, j in jobs.items() if n != "plan")
+    assert all("group" in (j.get("concurrency") or {}) for n, j in jobs.items() if n not in ("plan", "outcome"))
     dry = jobs["dry-run"]
     dry_text = yaml.safe_dump(dry)
     assert dry["permissions"] == {"contents": "read"} and "commit_push" not in dry_text and "git push" not in dry_text
     assert "--dry-run" in dry_text and "--stage all" in dry_text
     assert jobs["live"]["permissions"] == {"contents": "write"} and "commit_push" in yaml.safe_dump(jobs["live"])
     assert jobs["live"]["concurrency"]["group"] == "projection-foundation-nba" and not jobs["live"]["concurrency"]["cancel-in-progress"]
-    assert "pull_request" in jobs["plan"]["steps"][0]["run"]
+    plan_run = " ".join(st.get("run", "") for st in jobs["plan"]["steps"])
+    assert "nba.live.schedule_plan" in plan_run and "date +%H" not in plan_run   # no wall-clock-hour decision (the delayed-run skip bug)
 
 
 def test_dry_run_never_touches_the_archive(pre, tmp_path):

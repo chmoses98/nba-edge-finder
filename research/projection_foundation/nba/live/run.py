@@ -8,6 +8,8 @@
   results   FINAL ESPN box scores of finished games -> outcomes/ (participated=False for DNP / inactive)
   settle    prospective.settle (settle-once, corrections appended)
   score     scorecards daily (7 d) / weekly (28 d) / season + NBA segment checks; markdown to $GITHUB_STEP_SUMMARY
+  ledger    verify the run did what its slot promises (games in the window => forecasts archived) and write the write-once
+            ops/nba/slots/<ET date>/<HHMM>_<kind>.json record; a failed verification fails the run (nothing is committed)
   guard     pf_core.archive_guard (additions only) -- must pass before any commit
 
 `--archive` is a checkout of the `projection-data` branch. `--dry-run` runs everything on a temporary COPY of it and writes
@@ -31,10 +33,10 @@ import pandas as pd
 from pf_core import archive_guard, prospective as pr
 
 from .. import data
-from . import availability as AV, forecasts as FC, incumbent as INC, participation as PART, results as RES
+from . import availability as AV, forecasts as FC, incumbent as INC, ledger as LED, ops_guard, participation as PART, results as RES
 from .sources import Sources, iso, parse_ts
 
-STAGES = ["capture", "project", "publish", "results", "settle", "score", "guard"]
+STAGES = ["capture", "project", "publish", "results", "settle", "score", "ledger", "guard"]
 EXTRA_STAGES = ["incumbent"]       # not part of `all` (project already archives the incumbent); the light pregame sweep uses it
 SUMMARY_JSON = data.PF_DIR / "results" / "summary.json"
 
@@ -213,8 +215,21 @@ def stage_score(a, now: datetime, work: str) -> dict:
     return out
 
 
+def stage_ledger(a, st: dict, now: datetime) -> dict:
+    kind = a.slot_kind or ("settle" if "project" not in st and "capture" not in st else "pregame")
+    sid = a.slot_id or ("manual-" + now.strftime("%Y%m%dT%H%M%SZ"))
+    meta = {"slot_id": sid, "slot_utc": a.slot_utc, "lateness_min": a.lateness_min, "trigger": a.trigger, "cron": a.cron,
+            "started_utc": iso(parse_ts(a.started_utc)) if a.started_utc else None, "github_run_id": os.environ.get("GITHUB_RUN_ID"),
+            "github_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"), "code_sha": os.environ.get("GITHUB_SHA"),
+            "stages": [s for s in STAGES if s in st], "dry_run": bool(a.dry_run)}
+    rec = LED.build_record(kind, st, meta, now)        # raises RunVerificationError: the job fails, the slot stays open
+    path = LED.write(a.archive, rec)
+    print(f"ledger: {rec['outcome']} -> {os.path.relpath(path, a.archive)}" + (f" warnings={rec['warnings']}" if rec["warnings"] else ""))
+    return {"outcome": rec["outcome"], "path": os.path.relpath(path, a.archive), "warnings": rec["warnings"]}
+
+
 def stage_guard(a) -> dict:
-    bad = archive_guard.violations(a.archive)
+    bad = ops_guard.violations(a.archive)              # pf_core's immutable set plus ledger / game forecasts / paper records
     if bad:
         raise SystemExit("archive_guard: immutable archive files changed: " + ", ".join(bad))
     print("archive_guard: OK (additions only)")
@@ -281,6 +296,13 @@ def run(argv=None, sources: Sources | None = None) -> int:
     ap.add_argument("--dry-run", action="store_true", help="work on a temporary copy of the archive; write nothing else")
     ap.add_argument("--window-hours", type=float, default=30.0)
     ap.add_argument("--season-types", default="regular", help="comma separated: regular,preseason,playoffs")
+    ap.add_argument("--slot-id", default=None, help="schedule slot this run serves (nba.live.schedule_plan); ledger key")
+    ap.add_argument("--slot-kind", default=None, choices=["pregame", "settle"])
+    ap.add_argument("--slot-utc", default=None)
+    ap.add_argument("--lateness-min", type=int, default=None)
+    ap.add_argument("--trigger", default=None, help="github event name")
+    ap.add_argument("--cron", default=None)
+    ap.add_argument("--started-utc", default=None)
     a = ap.parse_args(argv)
     sources = sources or Sources()
     stages = STAGES if a.stage == "all" else a.stage.split(",")
@@ -311,10 +333,12 @@ def run(argv=None, sources: Sources | None = None) -> int:
             elif s == "incumbent":
                 st["incumbent"] = INC.archive(a.shadow, a.archive, now, season_types=tuple(a.season_types.split(",")))
                 print(f"incumbent: {st['incumbent']}")
+            elif s == "ledger":
+                st["ledger"] = stage_ledger(a, st, now)
             elif s == "guard":
                 st["guard"] = stage_guard(a)
             _save_state(a.workdir, st)
-        print(json.dumps({k: (v if k in ("guard", "publish", "settle") else "ok") for k, v in st.items()}, default=str))
+        print(json.dumps({k: (v if k in ("guard", "publish", "settle", "ledger") else "ok") for k, v in st.items()}, default=str))
         if a.dry_run:
             print(f"dry-run archive copy (discarded): {a.archive}")
     finally:
