@@ -90,10 +90,14 @@ def outcome_rows(game: dict, box: pd.DataFrame, entities: list[str], source: str
                  "threes": float(b["fg3m"]) if played else 0.0, "fga": float(b["fga"]) if played else 0.0}
         stats["pra"] = stats["points"] + stats["rebounds"] + stats["assists"]
         base = {"game_id": game["game_id"], "entity_id": ent, "game_date": day, "game_date_et": game.get("game_date_et"),
-                "final": True, "source": source, "in_box": b is not None, "dnp_reason": (b or {}).get("dnp_reason")}
+                "final": True, "source": source, "in_box": b is not None, "dnp_reason": (b or {}).get("dnp_reason"),
+                "started": bool(b and b.get("started"))}
         for fam, v in stats.items():
             rows.append({**base, "family": fam, "actual": v, "participated": played})
-        rows.append({**base, "family": "participation", "actual": 1.0 if played else 0.0, "participated": True})
+        # compact box facts beyond the forecast families (usage / per-minute / role diagnostics), only what the ESPN summary carries
+        box = {k: (float(b[k]) if b is not None and played and b.get(k) is not None and b[k] == b[k] else None)
+               for k in ("fgm", "fga", "fta", "ftm", "fg3a", "tov", "oreb", "dreb", "stl", "blk", "pf", "plus_minus")}
+        rows.append({**base, "family": "participation", "actual": 1.0 if played else 0.0, "participated": True, "box": box})
     return rows
 
 
