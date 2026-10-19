@@ -12,7 +12,7 @@ import sys
 from pf_core import archive_guard as AG
 
 EXTRA_IMMUTABLE = ("ops/nba/slots/", "game_forecasts/", "market_snapshots/", "paper/nba/decisions/", "paper/nba/settlements/",
-                   "paper/nba/corrections/")
+                   "paper/nba/corrections/", "paper/nba/expressions/")
 
 
 def _patched(fn, *a):
