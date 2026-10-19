@@ -26,9 +26,10 @@ from zoneinfo import ZoneInfo
 ET = ZoneInfo("America/New_York")
 UTC = timezone.utc
 
-# kind -> ET (hour, minute) slots. 13:50 ET covers the afternoon tips (the 2026 opener has a 15:00 ET game).
+# kind -> ET (hour, minute) slots. 13:50 ET covers the afternoon tips (the 2026 opener has a 15:00 ET game); 17:20 follows the 17:00 official
+# injury-report update; 18:20 / 19:50 / 21:20 put a fresh forecast roughly 40-100 min before the 19:00 / 20:30-21:30 / 22:00+ ET tips.
 SLOTS: dict[str, list[tuple[int, int]]] = {
-    "pregame": [(11, 20), (13, 50), (17, 20), (21, 20)],
+    "pregame": [(11, 20), (13, 50), (17, 20), (18, 20), (19, 50), (21, 20)],
     "settle": [(6, 40)],
 }
 BACKUP_DELAY_MIN = 25          # every slot also has a backup cron this many minutes later
@@ -118,6 +119,12 @@ def make_plan(event: str, cron: str | None, now: datetime, dry_run: bool = False
         return Plan("skip", "", None, None, None, None, event, cron, f"unknown cron {cron!r}: not in schedule_plan.cron_table()",
                     skip_valid=False)
     if kind == "sweep":
+        # the hourly sweep is also a heartbeat: when a pregame slot is due and not in the ledger (its own crons were late or lost), run it
+        inst, sid = due_slot("pregame", now)
+        late = int((now - inst).total_seconds() // 60)
+        if late <= 360 and not ledger_has(sid, "pregame"):
+            return Plan("pregame", slot_stages("pregame"), "pregame", sid, inst.isoformat(), late, event, cron,
+                        f"sweep heartbeat: pregame slot {sid} is due and not in the ledger ({late} min after the slot)")
         return Plan("sweep", "incumbent,guard", None, None, None, None, event, cron, "hourly incumbent sweep")
     inst, sid = due_slot(kind, now)
     late = int((now - inst).total_seconds() // 60)
