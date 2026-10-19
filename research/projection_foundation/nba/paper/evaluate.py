@@ -93,6 +93,8 @@ def load(archive: str, now: datetime, window: int | None = None, day_et: str | N
     lo_utc = None
     if day_et:
         lo_utc = (pd.Timestamp(day_et) - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+    elif isinstance(window, tuple):               # (start_et, end_et) inclusive ET dates: the weekly report's exact week
+        lo_utc = (pd.Timestamp(window[0]) - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     elif window:
         lo_utc = (now - timedelta(days=window + 1)).strftime("%Y-%m-%d")
     floor = pd.Timestamp(S.PROSPECTIVE_START_UTC) if prospective_only else None
@@ -100,6 +102,9 @@ def load(archive: str, now: datetime, window: int | None = None, day_et: str | N
     if day_et:
         d0 = pd.Timestamp(day_et, tz=ET).tz_convert("UTC")
         start_lo, start_hi = d0, d0 + pd.Timedelta(days=1)
+    elif isinstance(window, tuple):
+        start_lo = pd.Timestamp(window[0], tz=ET).tz_convert("UTC")
+        start_hi = pd.Timestamp(window[1], tz=ET).tz_convert("UTC") + pd.Timedelta(days=1)
     elif window:
         start_lo = pd.Timestamp(now) - pd.Timedelta(days=window)
 
