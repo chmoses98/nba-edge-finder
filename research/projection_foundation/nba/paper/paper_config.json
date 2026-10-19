@@ -1,0 +1,116 @@
+{
+  "config_id": "nba_paper_config",
+  "version": "1.0.0",
+  "declared_utc": "2026-10-19T00:00:00Z",
+  "authority": "research_only",
+  "notes": "Protocol for the PAPER system (no orders). Fixed before any prospective record is scored; changing any value means a new version, a new config_sha and a new evaluation window. The preregistered shadow control SHADOW_PURE_PREREG_V1 is not configured here.",
+  "prospective_start_utc": "2026-10-20T00:00:00Z",
+  "primary_horizon": "T-60",
+  "execution": {
+    "side_price_basis": "ask",
+    "slippage": 0.01,
+    "order_contracts": 1,
+    "fee_taker_multiplier": 0.07,
+    "fee_use_series_multiplier": true,
+    "fee_model": "kalshi_quadratic_taker: ev uses the continuous multiplier*P*(1-P); settled P&L uses the whole-order cent-rounded fee"
+  },
+  "quality": {
+    "max_board_age_s": 1800,
+    "max_spread": 0.15,
+    "min_top_size": 1.0,
+    "min_entry_price": 0.03,
+    "max_entry_price": 0.97,
+    "block_gate_status": ["BLOCK"],
+    "require_status": ["active"]
+  },
+  "uncertainty": {
+    "method": "mean_scale_sensitivity",
+    "mean_scale": 0.10,
+    "game_mean_scale": 0.03,
+    "band_z": 1.2816,
+    "note": "p_model_sd = (P at mean*(1+s) - P at mean*(1-s)) / (2*1.2816), reading +-s as an ~80% band (s = 10% for player stats, 3% of team points for game markets), scaled by p_play, combined in quadrature with the participation term p_play*(1-p_play)*(p_cond - m_side) for DNP-exposed props"
+  },
+  "game_model": {
+    "rho": 0.20,
+    "rho_source": "estimated 2026-10-19 from data/history/espn/team_games_2025-26.parquet: correlation of the two teams' points residuals (points minus the team's own prior-games mean, min 10 games) within a game; raw 0.225 on 1,227 games, rounded down to 0.20. Not a fitted parameter of the pf-nba team model; treat game-market probabilities as approximate",
+    "n_sim": 200000,
+    "seed": 20261020,
+    "tie_rule": "half to each team (NBA games cannot end level; ties of the discretised pmf are split)"
+  },
+  "strategies": {
+    "PF_ALL_CANDIDATES_V1": {
+      "role": "descriptive", "version": "1.0.0",
+      "rule": "every eligible contract, both sides, hypothetical P&L; no selection; rows are NOT independent observations"
+    },
+    "PF_EDGE_V1": {
+      "role": "candidate", "version": "1.0.0",
+      "min_ev_net": 0.03,
+      "quality_required": true,
+      "gate_statuses": ["PASS", "REVIEW"],
+      "horizons": ["OPEN", "T-90", "T-60", "T-30", "T-10", "LIVE"],
+      "one_per_thesis": true,
+      "protocol": "Primary unit = game; primary horizon T-60; after >=200 independent decisions across >=40 games report ROI after fees with a game-clustered bootstrap CI; verdict language limited by docs/research/PAPER_ENGINE_SPEC.md section 8"
+    },
+    "PF_EDGE_STRICT_V1": {
+      "role": "candidate", "version": "1.0.0",
+      "min_ev_net": 0.06,
+      "quality_required": true,
+      "gate_statuses": ["PASS"],
+      "min_p_play": 0.85,
+      "max_spread": 0.06,
+      "horizons": ["T-90", "T-60", "T-30", "LIVE"],
+      "live_minutes_to_tip": [30, 90],
+      "one_per_thesis": true,
+      "protocol": "as PF_EDGE_V1; the stricter filters were fixed in advance, not tuned"
+    },
+    "MARKET_ONLY_V1": {"role": "benchmark", "version": "1.0.0", "rule": "probability = quote mid; never trades; evaluated from the candidates' p_market"},
+    "NO_BET_V1": {"role": "baseline", "version": "1.0.0", "rule": "zero P&L by definition"}
+  },
+  "exposure": {
+    "max_trades_per_thesis": 1,
+    "max_trades_per_player_game": 2,
+    "max_trades_per_team_game": 3,
+    "max_trades_per_game": 8,
+    "max_notional_per_game": 100.0,
+    "max_notional_per_day": 300.0,
+    "scope": "applied independently inside each (strategy, horizon, decision instant): every horizon is an alternative simulated run of the strategy, never a stack of positions"
+  },
+  "thesis": {
+    "player_prop": "game|player|<entity>|<stat>",
+    "game_margin": "winner and spread contracts of both teams express one margin thesis: game|game|-|margin",
+    "game_total": "game|game|-|total",
+    "team_total": "game|team|<tri>|team_points"
+  },
+  "hypotheses": [
+    {
+      "id": "H_PROP_NO_LOW_RUNGS",
+      "family": "player_points|player_rebounds|player_assists|player_threes",
+      "statement": "Buying NO on low-threshold ladder rungs (model P(X>=k|plays) below the market-implied probability) earns positive net P&L after fees",
+      "strategy": "PF_EDGE_V1", "side": "NO", "min_independent_units": 200, "unit": "player-game",
+      "declared_utc": "2026-10-19T00:00:00Z", "status": "EXPLORATORY_MARKET_HYPOTHESIS"
+    },
+    {
+      "id": "H_TOTAL_UNDER_LOW_PACE",
+      "family": "game_total",
+      "statement": "Buying UNDER on the game total when the modelled team points sum is below the market-implied total earns positive net P&L after fees",
+      "strategy": "PF_EDGE_V1", "side": "NO", "min_independent_units": 150, "unit": "game",
+      "declared_utc": "2026-10-19T00:00:00Z", "status": "EXPLORATORY_MARKET_HYPOTHESIS"
+    },
+    {
+      "id": "H_POINTS_VS_PRA",
+      "family": "player_points|player_pra",
+      "statement": "For the same player-game, the expression (points rung vs PRA rung) with the higher net EV has higher realised net P&L than the lower-EV expression",
+      "strategy": "PF_ALL_CANDIDATES_V1", "min_independent_units": 200, "unit": "player-game",
+      "declared_utc": "2026-10-19T00:00:00Z", "status": "EXPLORATORY_MARKET_HYPOTHESIS"
+    },
+    {
+      "id": "H_PARTICIPATION_RISK",
+      "family": "all player props",
+      "statement": "Participation-aware EV (DNP leg valued at the pre-game fair price) predicts realised P&L better than conditional-only EV",
+      "strategy": "PF_ALL_CANDIDATES_V1", "min_independent_units": 200, "unit": "player-game",
+      "declared_utc": "2026-10-19T00:00:00Z", "status": "EXPLORATORY_MARKET_HYPOTHESIS"
+    }
+  ],
+  "multiple_testing": {"declared_family": "hypotheses", "confirmatory": "Holm over the declared hypotheses", "exploratory_screens": "Benjamini-Hochberg q=0.10, always labelled exploratory"},
+  "control": {"id": "SHADOW_PURE_PREREG_V1", "min_decisions": 200, "min_games": 40, "note": "read from nba-shadow-pure value scorecards; never re-run or modified here"}
+}
