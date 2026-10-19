@@ -387,13 +387,16 @@ def prepare_archive(archive: str, dry_run: bool) -> tuple[str, str | None]:
         dst = os.path.join(tmp, "archive")
         if os.path.isdir(archive) and os.listdir(archive):
             shutil.copytree(archive, dst, symlinks=True)
+            gf = os.path.join(dst, ".git")
+            if os.path.isfile(gf):                 # the copy of a worktree must not stay linked to the real checkout: it becomes its own repo below
+                os.remove(gf)
         else:
             os.makedirs(dst)
         archive, cleanup = dst, tmp
     else:
         os.makedirs(archive, exist_ok=True)
         cleanup = None
-    if not os.path.isdir(os.path.join(archive, ".git")):
+    if not os.path.exists(os.path.join(archive, ".git")):        # a worktree checkout has a .git FILE; only a bare directory needs an init
         subprocess.run(["git", "init", "-q", archive], check=True)
         subprocess.run(["git", "-C", archive, "-c", "user.email=pf@local", "-c", "user.name=pf", "commit", "-q", "--allow-empty",
                         "-m", "init"], check=True)
