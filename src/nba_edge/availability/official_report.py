@@ -178,7 +178,7 @@ def parse_words(words: list[Word], slot_et: datetime) -> tuple[list[dict[str, An
     teams = _team_index()
     rows: list[dict[str, Any]] = []
     meta: dict[str, Any] = {"pages_parsed": 0, "pages_without_header": 0, "header_time_et": None,
-                            "unresolved_team_text": []}
+                            "unresolved_team_text": [], "unrecognized_status_rows": []}
     ctx: dict[str, Any] = {"game_date": None, "game_time": None, "away": None, "home": None, "team_id": None,
                            "team_text": None}
     cols_prev: dict[str, float] | None = None
@@ -241,6 +241,12 @@ def parse_words(words: list[Word], slot_et: datetime) -> tuple[list[dict[str, An
                 row = {**base, "player_name_raw": None, "status": "not_yet_submitted", "_reason": [], "page": pg}
                 anchors.append((ln[0].top, row))
             else:
+                if text["player"] and status_tok and ctx["team_id"] is not None:
+                    # a player line whose status word is not one of the five the league prints: never dropped silently (the
+                    # capture treats the player as uncertain rather than as unlisted-and-therefore-available)
+                    meta["unrecognized_status_rows"].append({
+                        "game_date": ctx["game_date"], "away_tricode": ctx["away"], "home_tricode": ctx["home"], "team_id": ctx["team_id"],
+                        "player_name_raw": " ".join(text["player"].split()), "status_text": " ".join(text["status"].split())[:40]})
                 loose_reason.extend(cells["reason"])
         # wrapped reason fragments -> nearest player row on this page
         for w in loose_reason:

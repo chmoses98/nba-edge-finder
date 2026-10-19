@@ -384,3 +384,108 @@ def test_dry_run_never_touches_the_archive(pre, tmp_path):
     rc = RUN.run(["--stage", "capture", "--archive", str(arch), "--dry-run", "--now", "2026-10-17T21:00:00Z", "--season-types", "preseason",
                   "--workdir", str(tmp_path / "w")], sources=src)
     assert rc == 0 and sorted(p.name for p in arch.rglob("*")) == before
+
+
+# ------------------------------------------------------------------------------------------------ activation-verification fixes
+class _FrozenDT(datetime):
+    _now = None
+
+    @classmethod
+    def now(cls, tz=None):
+        return cls._now
+
+
+def test_wall_clock_rounds_up_so_a_stage_sees_what_the_previous_stage_stamped(monkeypatch):
+    for raw, want in (("2026-10-19T18:52:42.400000+00:00", "2026-10-19T18:52:43Z"), ("2026-10-19T18:52:42.999999+00:00", "2026-10-19T18:52:43Z"),
+                      ("2026-10-19T18:52:42.000000+00:00", "2026-10-19T18:52:42Z")):
+        _FrozenDT._now = datetime.fromisoformat(raw)
+        monkeypatch.setattr(RUN, "datetime", _FrozenDT)
+        assert iso(RUN.wall_clock()) == want
+
+
+def test_a_just_captured_espn_out_reaches_the_projection_of_the_same_run(pre, tmp_path):
+    """2026-10-19T18:52Z: the ESPN capture was stamped 18:52:42 and the project stage's truncated clock read 18:52:42, so the
+    strictly-before cut-off hid it and Devin Carter (ESPN OUT) was published UNVERIFIED with no gate BLOCK. The capture stamp is
+    reproduced here with a recorded schedule / roster and a recorded ESPN row."""
+    sched = [dict(x, status="scheduled") for x in pre["schedule"]]
+    g = min(sched, key=lambda x: x["start_time_utc"])
+    start = utc(g["start_time_utc"])
+    team = g["home_tricode"]
+    from nba import data as D
+    ab2id, ab2tri = D.team_maps()
+    ro = next(r for r in pre["rosters"] if ab2tri.get(r["team_abbreviation"]) == team and r.get("espn_athlete_id"))
+    capture_clock = start - timedelta(hours=3)
+    fetched = capture_clock + timedelta(seconds=4)                      # the ESPN request finished after the stage's clock was read
+    er = [{"nba_id": -int(ro["espn_athlete_id"]), "player_name": ro["full_name"], "status": "Out", "type": "Knee",
+           "short_comment": "ruled out", "entry_date_utc": iso(capture_clock - timedelta(hours=20)), "fetched_at_utc": iso(fetched)}]
+    src = RecordedSources(scoreboard=sched, rosters=pre["rosters"], espn_injuries=er, official=None)
+    root = str(tmp_path)
+    s = AV.capture(src, capture_clock, root, window_hours=6, season_types=("regular", "preseason"), workdir=str(tmp_path / "w"))
+    assert s["sources"]["espn_injuries"]["status_OUT"] == 1
+    rows = AV.load_observations(root, capture_clock)
+    ent = f"espn:{int(ro['espn_athlete_id'])}"
+    gid = next(x["game_id"] for x in AV.select_games(sched, capture_clock, 6, ("regular", "preseason")) if team == x["home"])
+    truncated = fetched                                                  # what the old clock read: the same whole second
+    old = PART.resolve_event(rows, gid, iso(start), [ent], truncated)[ent]
+    assert old["status"] == "UNVERIFIED"                                 # the defect, documented
+    new = PART.resolve_event(rows, gid, iso(start), [ent], fetched + timedelta(seconds=1))[ent]
+    assert new["status"] == "LIKELY_OUT" and new["certainty"] == "PROJECTED"      # what wall_clock() now guarantees
+
+
+def test_an_unrecognised_official_status_is_uncertain_never_unlisted_and_available():
+    pytest.importorskip("pypdf")
+    from nba_edge.availability.official_report import extract_words, parse_words
+    from nba_edge.timeutil import ET
+    pdf = (REPO / "tests" / "fixtures" / "injury_reports" / "Injury-Report_2026-01-15_05_30PM.pdf").read_bytes()
+    words, _ = extract_words(pdf)
+    slot = datetime(2026, 1, 15, 17, 30, tzinfo=ET)
+    base_rows, base_meta = parse_words(words, slot)
+    assert base_meta["unrecognized_status_rows"] == []
+    q = next(w for w in words if w.text == "Questionable")
+    q.text = "Suspended"                                                # a status word the league has not printed before
+    try:
+        rows, meta = parse_words(words, slot)
+    finally:
+        q.text = "Questionable"
+    assert len(rows) == len(base_rows) - 1
+    un = meta["unrecognized_status_rows"]
+    assert len(un) == 1 and un[0]["status_text"].startswith("Suspended") and un[0]["player_name_raw"] and un[0]["team_id"]
+
+
+def test_unknown_status_row_becomes_questionable_and_blocks_the_implicit_available_default():
+    from nba.live import availability as A
+    games = [{"game_id": "espn:1", "start_utc": "2026-10-20T23:00:00Z", "home": "PHI", "away": "NYK", "game_date_et": "2026-10-20", "season_type": "regular"}]
+    rosters = [{"team_abbreviation": "PHI", "espn_athlete_id": "7", "full_name": "Joel Embiid", "position": "C"},
+               {"team_abbreviation": "PHI", "espn_athlete_id": "8", "full_name": "Tyrese Maxey", "position": "G"},
+               {"team_abbreviation": "NYK", "espn_athlete_id": "9", "full_name": "Jalen Brunson", "position": "G"}]
+    ro = A.RosterIndex(rosters)
+    from nba import data as D
+    ab2id, _ = D.team_maps()
+    rep = {"rows": [], "url": "u", "report_time_utc": "2026-10-20T21:30:00Z", "last_modified_utc": "2026-10-20T21:30:05Z",
+           "meta": {"unrecognized_status_rows": [{"game_date": "2026-10-20", "away_tricode": "NYK", "home_tricode": "PHI",
+                                                  "team_id": ab2id["PHI"], "player_name_raw": "Embiid, Joel", "status_text": "Suspended"}]}}
+    obs, st = A.official_observations(rep, games, ro, "2026-10-20T21:31:00Z")
+    by = {o.entity_id: o for o in obs}
+    assert st["rows_unknown_status"] == 1
+    e = by["espn:7"]
+    assert (e.status, e.certainty) == ("QUESTIONABLE", "REPORTED") and e.detail["unknown_status"] == "Suspended" and not e.detail.get("implicit")
+    assert by["espn:8"].status == "ACTIVE" and by["espn:8"].detail["implicit"]       # an unlisted teammate is still implicit-available
+    res = PART.resolve_event([o.__dict__ for o in obs], "espn:1", "2026-10-20T23:00:00Z", ["espn:7", "espn:8"], utc("2026-10-20T21:40:00Z"))
+    assert res["espn:7"]["status"] == "UNCERTAIN" and res["espn:8"]["status"] == "LIKELY_ACTIVE"
+
+
+def test_an_unmatched_official_row_with_a_rostered_namesake_is_reported_not_guessed():
+    from nba.live import availability as A
+    from nba import data as D
+    ab2id, _ = D.team_maps()
+    games = [{"game_id": "espn:1", "start_utc": "2026-10-20T23:00:00Z", "home": "PHI", "away": "NYK", "game_date_et": "2026-10-20", "season_type": "regular"}]
+    ro = A.RosterIndex([{"team_abbreviation": "PHI", "espn_athlete_id": "8", "full_name": "Tyrese Maxey", "position": "G"},
+                        {"team_abbreviation": "NYK", "espn_athlete_id": "9", "full_name": "Jalen Brunson", "position": "G"}])
+    row = {"game_date": "2026-10-20", "away_tricode": "NYK", "home_tricode": "PHI", "team_id": ab2id["PHI"], "player_name_raw": "Maxey, Marcus",
+           "status": "out", "reason": "Knee", "game_time_et": "07:00"}
+    obs, st = A.official_observations({"rows": [row], "url": "u", "report_time_utc": "2026-10-20T21:30:00Z", "last_modified_utc": None, "meta": {}},
+                                      games, ro, "2026-10-20T21:31:00Z")
+    assert st["rows_unmatched_player"] == 1 and st["possible_identity_misses"] == 1
+    assert st["possible_identity_miss_names"] == ["PHI: Maxey, Marcus (OUT)"]
+    unmatched = [o for o in obs if o.entity_id.startswith("unmatched:")]
+    assert len(unmatched) == 1 and unmatched[0].status == "OUT"
