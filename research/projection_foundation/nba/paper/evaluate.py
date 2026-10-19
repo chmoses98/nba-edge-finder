@@ -237,6 +237,17 @@ def _load_decisions(archive, lo_utc, in_window, prospective_only, q) -> pd.DataF
             dec[c] = np.nan
         return dec
     st = st.drop_duplicates("decision_id", keep="first")
+    cor = pd.DataFrame(store.read(archive, "corrections", _days(archive, "corrections", lo_utc)))
+    q["paper_corrections_applied"] = 0
+    if not cor.empty and "new" in cor.columns:
+        cor = cor.sort_values("corrected_utc").drop_duplicates("decision_id", keep="last")      # latest authoritative value per decision
+        newv = {r["decision_id"]: r["new"] for r in cor.to_dict("records") if isinstance(r.get("new"), dict)}
+        idx = st["decision_id"].map(newv)
+        for col in ("won", "dnp", "net_pnl", "net_pnl_if_conditional_void", "clv_cents", "kalshi_result", "dnp_value_source", "fee_paid",
+                    "gross_payoff", "actual", "participated"):
+            if col in st.columns:
+                st[col] = [(n.get(col) if isinstance(n, dict) and col in n else old) for n, old in zip(idx, st[col])]
+        q["paper_corrections_applied"] = int(idx.map(lambda x: isinstance(x, dict)).sum())
     q["paper_settlements_orphaned"] = int((~st["decision_id"].isin(dec["decision_id"])).sum())
     keep = [c for c in ("decision_id", "strategy_id", "won", "dnp", "net_pnl", "net_pnl_if_conditional_void", "clv_cents", "closing_line", "kalshi_result",
                         "dnp_value_source", "fee_paid", "gross_payoff", "participated", "actual") if c in st.columns]
@@ -248,7 +259,9 @@ def _load_decisions(archive, lo_utc, in_window, prospective_only, q) -> pd.DataF
         if c in m.columns:
             m.loc[mis, c] = np.nan
             m[c] = pd.to_numeric(m[c], errors="coerce")
-    m.loc[mis, "won"] = None
+    if "won" in m.columns:
+        m["won"] = m["won"].astype(object)             # an all-bool column cannot take None (pandas 3)
+        m.loc[mis, "won"] = None
     m["won"] = pd.to_numeric(m["won"].map(lambda v: np.nan if v is None or (isinstance(v, float) and np.isnan(v)) else float(bool(v))), errors="coerce") \
         if "won" in m.columns else np.nan
     m["dnp"] = m["dnp"].fillna(False).astype(bool) if "dnp" in m.columns else False

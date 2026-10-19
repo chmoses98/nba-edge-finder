@@ -217,6 +217,8 @@ def contract_probability(c: dict, fc: Forecasts, gfc: GameForecasts, players: MK
         p = js.p_winner(c["side_team"])
         sd = band_sd(js.p_winner(c["side_team"], 1 - s_game, 1 + s_game), js.p_winner(c["side_team"], 1 + s_game, 1 - s_game), z)
         return {**base, "p_yes_cond": p, "p_yes_sd": sd}
+    if c["stat"] in ("spread", "total") and c.get("comparator") not in (None, "gt"):
+        return {"ok": False, "reason": "UNRESOLVED_SEMANTICS"}         # only strict `greater` strikes are modelled for spread / total
     if c["stat"] == "spread":
         if c["side_team"] not in (gf["home"], gf["away"]) or c["threshold"] is None:
             return {"ok": False, "reason": "UNRESOLVED_TEAM"}

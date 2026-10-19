@@ -71,9 +71,10 @@ def parse_ts(x: str) -> datetime:
 
 def _f(x: Any) -> float | None:
     try:
-        return None if x in (None, "") else float(x)
+        v = None if x in (None, "") else float(x)
     except (TypeError, ValueError):
         return None
+    return v if v is None or math.isfinite(v) else None          # NaN / inf are missing data, never a price or a size
 
 
 # ------------------------------------------------------------------------------------------------------------------ chain reader

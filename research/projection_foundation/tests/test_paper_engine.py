@@ -502,7 +502,7 @@ def test_settlement_yes_no_scalar_dnp_void_and_fee():
     row, _ = ST.build_settlement(d, auth=None, outcome={"actual": 0.0, "participated": False}, closing=CLOSING_OK, now=now)
     assert row["dnp"] and row["dnp_value_source"] == "modeled_last_valid_mid" and abs(row["gross_payoff"] - 0.45) < 1e-9
     none, why = ST.build_settlement(d, auth=None, outcome={"actual": 0.0, "participated": False}, closing=ST.closing_for(None, utc("2026-10-20T19:00:00Z")), now=now)
-    assert none is None and why == "DNP_NO_LAST_VALID_MID"
+    assert none is None and why == "DNP_NO_VALID_LAST_VALID_MID"
     none, why = ST.build_settlement(_decision(family="game_total"), auth=None, outcome=None, closing=CLOSING_OK, now=now)
     assert none is None and why == "NO_AUTHORITATIVE_RESULT"                # game markets are never box-derived
     none, why = ST.build_settlement(d, auth={"result": "weird", "value": None}, outcome=None, closing=CLOSING_OK, now=now)
@@ -567,27 +567,31 @@ def test_end_to_end_settlement_correction_and_idempotence(tmp_path, cfg):
     n_before = len(sett)
     st3 = ST.settle_paper(str(root), str(mk), utc("2026-10-21T06:00:00Z"))               # idempotent
     assert st3["settled_written"] == 0 and st3["corrections_written"] == 0 and len(store.read(str(root), "settlements")) == n_before
-    # a DNP settled from the box score (modeled at the closing mid) and later contradicted by the authoritative scalar -> a correction row
+    # a DNP with only a STALE LAST_VALID quote (36 min before tip: not a closing line) stays pending: no fair-price estimate is invented
     lv = {r["ticker"]: r for r in store.read(str(root), "market_snapshots") if r["horizon"] == "LAST_VALID" and r["quote_class"] == "TWO_SIDED"}
     other = next(d for d in props if d["entity_id"] != ent and d["side"] == "YES" and d["ticker"] in lv)
     pr.archive_outcomes([{"game_id": GAME["game_id"], "entity_id": other["entity_id"], "family": "points", "actual": 0.0, "participated": False,
                           "final": True, "game_date": "2026-10-20", "source": "t"}], str(root), "NBA", "2026-10-21T05:00:00Z")
+    st4 = ST.settle_paper(str(root), str(mk), utc("2026-10-21T06:00:00Z"))
+    assert st4["pending"].get("DNP_NO_VALID_LAST_VALID_MID", 0) > 0
+    assert other["decision_id"] not in {r["decision_id"] for r in store.read(str(root), "settlements")}
+    # a played prop settled from the box (value 0 < k: NO wins), later contradicted by the authoritative result -> an append-only correction
+    third = next(d for d in props if d["entity_id"] not in (ent, other["entity_id"]) and d["side"] == "YES")
+    pr.archive_outcomes([{"game_id": GAME["game_id"], "entity_id": third["entity_id"], "family": "points", "actual": 0.0, "participated": True,
+                          "final": True, "game_date": "2026-10-20", "source": "t"}], str(root), "NBA", "2026-10-21T05:00:00Z")
     ST.settle_paper(str(root), str(mk), utc("2026-10-21T06:00:00Z"))
-    sett = {r["decision_id"]: r for r in store.read(str(root), "settlements")}
-    so = sett[other["decision_id"]]
-    assert so["dnp"] and so["dnp_value_source"] == "modeled_last_valid_mid" and so["closing_line"]["valid"] is False     # 35 min before tip: not a closing line
-    mid = (lv[other["ticker"]]["yes_bid"] + lv[other["ticker"]]["yes_ask"]) / 2
-    assert abs(so["dnp_value"] - mid) < 1e-9 and abs(so["gross_payoff"] - mid) < 1e-9 and so["net_pnl"] < 0 and so["clv_cents"] is None
+    so = {r["decision_id"]: r for r in store.read(str(root), "settlements")}[third["decision_id"]]
+    assert so["outcome_source"] == "box_score_derived" and so["won"] is False
     mk2 = tmp_path / "mk2"
     shutil.copytree(mk, mk2)
-    write_chain(mk2, [(utc("2026-10-21T05:00:00Z"), _board_with_results(board, {other["ticker"]: ("scalar", 0.05)}))], run_id="post2")
+    write_chain(mk2, [(utc("2026-10-21T05:00:00Z"), _board_with_results(board, {third["ticker"]: ("yes", 1.0)}))], run_id="post2")
     st5 = ST.settle_paper(str(root), str(mk2), utc("2026-10-21T07:00:00Z"))
     assert st5["corrections_written"] >= 1
     corr = store.read(str(root), "corrections")
-    c = next(x for x in corr if x["decision_id"] == other["decision_id"])
-    assert c["previous"]["outcome_source"] == "box_score_derived" and c["new"]["outcome_source"] == "kalshi_result" and c["new"]["dnp_value"] == 0.05
+    c = next(x for x in corr if x["decision_id"] == third["decision_id"])
+    assert c["previous"]["outcome_source"] == "box_score_derived" and c["new"]["outcome_source"] == "kalshi_result" and c["new"]["won"] is True
     after = {r["decision_id"]: r for r in store.read(str(root), "settlements")}
-    assert after[other["decision_id"]] == so                                       # the original settlement is never rewritten
+    assert after[third["decision_id"]] == so                                       # the original settlement is never rewritten
     assert ST.settle_paper(str(root), str(mk2), utc("2026-10-21T07:00:00Z"))["corrections_written"] == 0
 
 
@@ -660,3 +664,48 @@ def test_game_markets_settle_from_team_outcomes_and_authoritative_result_superse
     d = dict(base, family="game_total", threshold=213.5, k=None)
     assert ST.build_settlement(d, auth=None, outcome=None, closing=CLOSING_OK, now=utc("2026-10-21T11:00:00Z"))[1] == "NO_AUTHORITATIVE_RESULT"
     assert ST.game_yes(d, {"pts": None, "opp_pts": 1}) is None
+
+
+# ------------------------------------------------------------------------------------------------------------------ review regressions
+def test_nan_numbers_are_missing_data_never_prices_or_sizes():
+    assert MK._f(float("nan")) is None and MK._f("nan") is None and MK._f(float("inf")) is None and MK._f("0.41") == 0.41
+    q = EN.quality_failures({"quote_class": "TWO_SIDED", "status": "active", "board_observed_utc": "2026-10-20T18:00:00Z", "yes_bid": 0.4, "yes_ask": 0.45,
+                             "snapshot_gap_s": 0}, "YES", utc("2026-10-20T18:05:00Z"), CFG.load(), 0.45, float("nan"), "PASS")
+    assert "NO_SIZE" in q
+
+
+def test_replay_gap_makes_a_trade_stale_even_though_as_of_is_the_board_time():
+    cfg = CFG.load()
+    snap = {"quote_class": "TWO_SIDED", "status": "active", "board_observed_utc": "2026-10-20T17:55:00Z", "yes_bid": 0.4, "yes_ask": 0.45,
+            "snapshot_gap_s": 2400.0}
+    assert "STALE_QUOTE" in EN.quality_failures(snap, "YES", utc("2026-10-20T17:55:00Z"), cfg, 0.45, 5.0, "PASS")
+
+
+def test_game_total_settles_from_any_team_outcome_row_of_the_game(tmp_path):
+    root = tmp_path / "a"
+    seed_archive(root)
+    now = utc("2026-10-20T19:10:00Z")
+    RUN.stage_paper_replay(str(root), str(FIXARCH), now)
+    store.write_new(str(root), "team_outcomes", "2026-10-20", [
+        {"schema": "sift.team_outcome.v1", "game_id": GAME["game_id"], "team": t, "pts": p, "opp_pts": q, "final": True, "observed_utc": "2026-10-21T04:00:00Z",
+         "outcome_key": t} for t, p, q in (("DET", 112, 106), ("BOS", 106, 112))], "outcome_key", utc("2026-10-21T04:00:00Z"))
+    ST.settle_paper(str(root), None, utc("2026-10-21T06:00:00Z"))
+    tot = [r for r in store.read(str(root), "settlements") if r["family"] == "game_total"]
+    assert tot and all(r["outcome_source"] == "box_score_derived" and r["actual"] == 218.0 for r in tot)
+
+
+def test_evaluation_applies_the_latest_correction_over_the_original_settlement(tmp_path):
+    from nba.paper import evaluate as EV
+    root = tmp_path / "a"
+    root.mkdir()
+    base = {"strategy_id": "PF_EDGE_V1", "game_id": "g", "game_start_utc": "2026-10-20T19:00:00Z", "side": "YES", "ticker": "t", "stat": "points",
+            "family": "player_points", "horizon": "T-60", "decision": "TRADE", "price": 0.4, "as_of_utc": "2026-10-20T18:00:00Z", "decision_id": "d1",
+            "thesis_id": "x", "ev_net": 0.05, "p_model": 0.6, "bid": 0.39, "ask": 0.4, "replay": False}
+    store.write_once(str(root), "decisions", "2026-10-20", [base], utc("2026-10-20T18:00:00Z"))
+    first = {"decision_id": "d1", "strategy_id": "PF_EDGE_V1", "won": False, "dnp": False, "net_pnl": -0.41}
+    store.write_once(str(root), "settlements", "2026-10-20", [first], utc("2026-10-21T06:00:00Z"))
+    store.write_once(str(root), "corrections", "2026-10-20", [{"correction_id": "c", "decision_id": "d1", "corrected_utc": "2026-10-21T08:00:00Z",
+                                                                  "new": {**first, "won": True, "net_pnl": 0.55}}], utc("2026-10-21T08:00:00Z"))
+    q: dict = {}
+    d = EV._load_decisions(str(root), None, lambda s: s.notna(), False, q)
+    assert float(d["net_pnl"].iloc[0]) == 0.55 and q["paper_corrections_applied"] == 1

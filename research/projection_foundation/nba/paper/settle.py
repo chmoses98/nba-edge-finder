@@ -46,12 +46,14 @@ def game_yes(d: dict, team: dict | None) -> bool | None:
         return pts > opp
     if thr is None:
         return None
+    ge = d.get("comparator") == "ge"
+    cmp = (lambda x: x >= float(thr)) if ge else (lambda x: x > float(thr))
     if fam == "game_spread":
-        return (pts - opp) > float(thr)
+        return cmp(pts - opp)
     if fam == "game_total":
-        return (pts + opp) > float(thr)
+        return cmp(pts + opp)
     if fam == "team_total":
-        return pts > float(thr)
+        return cmp(pts)
     return None
 
 
@@ -106,6 +108,8 @@ def build_settlement(d: dict, *, auth: dict | None, outcome: dict | None, closin
             gross = payoff_for_side(side, 1.0 if yes else 0.0)
             row["won"] = (yes if side == "YES" else not yes)
         elif auth["result"] == "scalar":
+            if auth.get("value") is None:
+                return None, "SCALAR_WITHOUT_VALUE"
             v = float(auth["value"])
             gross = payoff_for_side(side, v)
             row["dnp"] = bool(prop and (played is False or played is None))
@@ -118,13 +122,15 @@ def build_settlement(d: dict, *, auth: dict | None, outcome: dict | None, closin
             return None, "UNKNOWN_RESULT:" + str(auth["result"])
     elif prop and outcome is not None:
         row["outcome_source"] = "box_score_derived"
+        if played and outcome.get("actual") is None:
+            return None, "NO_OUTCOME"
         if played:
             yes = float(outcome["actual"]) >= d["k"]
             gross = payoff_for_side(side, 1.0 if yes else 0.0)
             row["won"] = (yes if side == "YES" else not yes)
         else:
-            if closing.get("mid_yes") is None:
-                return None, "DNP_NO_LAST_VALID_MID"
+            if closing.get("mid_yes") is None or not closing.get("valid"):
+                return None, "DNP_NO_VALID_LAST_VALID_MID"           # a stale / one-sided closing quote is not a fair-price estimate
             row["dnp"] = True
             row["dnp_value"] = closing["mid_yes"]                      # the YES-side fair value; the side payoff is derived from it
             row["dnp_value_source"] = "modeled_last_valid_mid"
@@ -220,6 +226,7 @@ def settle_paper(archive: str, market_archive: str | None, now: datetime, *, min
     teams: dict[tuple[str, str], dict] = {}
     for r in sorted(store.read(archive, "team_outcomes"), key=lambda x: x.get("observed_utc") or ""):
         teams[(r["game_id"], r["team"])] = r
+        teams[(r["game_id"], None)] = r                # any one team row fixes a full-game total (pts + opp_pts)
     new_rows, corr_rows = [], []
     for d in todo:
         tip = MK.parse_ts(d["game_start_utc"])

@@ -54,7 +54,8 @@ def _base(snap: dict, ctx: dict, strategy: str) -> dict[str, Any]:
     et = tip.astimezone(MK.ET).strftime("%Y-%m-%d")
     return {"schema": S.DECISION_SCHEMA, "strategy_id": strategy, "strategy_version": cfg["strategies"][strategy]["version"],
             "config_sha": ctx["config_sha"], "decision_mode": ctx["mode"], "decided_utc": MK.iso(ctx["decided"]), "as_of_utc": MK.iso(as_of),
-            "horizon": snap["horizon"], "minutes_to_tip": round((tip - as_of).total_seconds() / 60.0, 1),
+            "horizon": snap["horizon"], "horizon_target_utc": snap.get("horizon_target_utc"), "snapshot_gap_s": snap.get("snapshot_gap_s"),
+            "minutes_to_tip": round((tip - as_of).total_seconds() / 60.0, 1),
             "replay": bool(ctx["replay"] or tip < MK.parse_ts(cfg["prospective_start_utc"])), "game_id": snap["game_id"],
             "game_start_utc": snap["game_start_utc"], "game_date_et": et, "cluster_id": snap["game_id"], "snapshot_id": snap["snapshot_id"],
             "board_observed_utc": snap["board_observed_utc"], "ticker": snap["ticker"], "event_ticker": snap["event_ticker"],
@@ -71,9 +72,10 @@ def quality_failures(snap: dict, side: str, as_of: datetime, cfg: dict, price: f
         out.append(_QCLASS_CODE.get(cls, "NOT_TWO_SIDED"))
     if snap.get("status") not in q["require_status"]:
         out.append("STATUS_NOT_ACTIVE")
-    if price is not None and (size is None or size < q["min_top_size"]):
+    if price is not None and not (size is not None and size >= q["min_top_size"]):      # NaN-safe: a missing size never passes
         out.append("NO_SIZE")
     age = (as_of - MK.parse_ts(snap["board_observed_utc"])).total_seconds()
+    age = max(age, float(snap.get("snapshot_gap_s") or 0.0))        # replay: staleness is the board's distance from the horizon target
     if age > q["max_board_age_s"]:
         out.append("STALE_QUOTE")
     if snap["yes_bid"] is not None and snap["yes_ask"] is not None and snap["yes_ask"] - snap["yes_bid"] > q["max_spread"] + 1e-9:
@@ -182,7 +184,7 @@ def _qualify(r: dict, scfg: dict) -> str | None:
         fails.append("SPREAD_WIDE")
     if scfg.get("quality_required", True) and fails:
         return "QUALITY_GATE:" + fails[0]
-    if r["ev_net"] is None or r["ev_net"] < scfg["min_ev_net"] - 1e-12:
+    if r["ev_net"] is None or not math.isfinite(r["ev_net"]) or r["ev_net"] < scfg["min_ev_net"] - 1e-12:
         return "EV_BELOW_THRESHOLD"
     return None
 
@@ -200,7 +202,7 @@ def apply_strategies(cands: list[dict], cfg: dict) -> list[dict]:
         scfg = cfg["strategies"][strat]
         groups: dict[tuple, list[dict]] = defaultdict(list)
         for r in sides:
-            gk = (r["decision_mode"], r["horizon"], r["decided_utc"] if r["decision_mode"] == "contemporaneous" else "-")
+            gk = (r["decision_mode"], r["horizon"], r["decided_utc"] if r["decision_mode"] == "contemporaneous" else r["as_of_utc"])
             groups[gk].append(r)
         for gk, rows in sorted(groups.items(), key=lambda x: str(x[0])):
             reason_of: dict[str, tuple[str, str | None]] = {}

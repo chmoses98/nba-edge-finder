@@ -120,14 +120,16 @@ def _write_snapshots(archive: str, rows: list[dict], now: datetime) -> dict[str,
 
 
 def _write_decisions(archive: str, rows: list[dict], now: datetime) -> dict[str, int]:
+    good, invalid = [], []
     for r in rows:
-        bad = EN.validate_row(r)
-        if bad:
-            raise ValueError(f"invalid decision row {r.get('decision_id')}: {bad}")
+        (invalid if EN.validate_row(r) else good).append(r)          # quarantine a bad row; one bad row must not lose a whole batch
+    rows = good
     by_day: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
         by_day[MK.parse_ts(r["game_start_utc"]).strftime("%Y-%m-%d")].append(r)
-    st = {"written": 0, "duplicates": 0}
+    st = {"written": 0, "duplicates": 0, "invalid_quarantined": len(invalid)}
+    if invalid:
+        st["invalid_examples"] = [{"decision_id": r.get("decision_id"), "problems": EN.validate_row(r)} for r in invalid[:3]]
     for day, rs in sorted(by_day.items()):
         w = store.write_new(archive, "decisions", day, rs, "decision_id", now)
         st["written"] += w["written"]
@@ -274,8 +276,8 @@ def stage_paper_replay(archive: str, market_archive: str, now: datetime, *, look
             if r["decision"] == "PASS":
                 st["pass_reasons"][f"{r['strategy_id']}|{r['reason']}"] += 1
         st[f"trades:{h}"] = sum(1 for r in strat if r["decision"] == "TRADE")
-    ws = _write_snapshots(archive, snaps_all, now)
-    wd = _write_decisions(archive, all_dec, now)
+    wd = _write_decisions(archive, all_dec, now)               # decisions first: a horizon is "archived" only when its snapshot exists, so a
+    ws = _write_snapshots(archive, snaps_all, now)            # failure between the two writes makes the next run redo the horizon (ids dedupe)
     st["snapshots"], st["decisions"] = ws, wd
     st["status"] = "ok"
     _fin(st)
