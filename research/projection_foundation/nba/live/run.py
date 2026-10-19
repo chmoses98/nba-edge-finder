@@ -387,6 +387,9 @@ def prepare_archive(archive: str, dry_run: bool) -> tuple[str, str | None]:
         dst = os.path.join(tmp, "archive")
         if os.path.isdir(archive) and os.listdir(archive):
             shutil.copytree(archive, dst, symlinks=True)
+            gf = os.path.join(dst, ".git")
+            if os.path.isfile(gf):                 # the copy of a worktree must not stay linked to the real checkout: it becomes its own repo below
+                os.remove(gf)
         else:
             os.makedirs(dst)
         archive, cleanup = dst, tmp

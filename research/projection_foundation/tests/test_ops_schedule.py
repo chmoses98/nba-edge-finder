@@ -294,3 +294,23 @@ def test_prepare_archive_does_not_add_an_empty_init_commit_to_a_worktree_checkou
     fresh = tmp_path / "fresh"
     arch, _ = RUN.prepare_archive(str(fresh), dry_run=False)         # a plain directory still becomes a repo with one init commit
     assert g("rev-list", "--count", "HEAD", cwd=fresh).stdout.strip() == "1"
+
+
+def test_dry_run_copy_of_a_worktree_is_detached_from_the_real_checkout(tmp_path):
+    import subprocess
+    from nba.live import run as RUN
+    main = tmp_path / "main"
+    main.mkdir()
+    g = lambda *a, cwd=main: subprocess.run(["git", "-C", str(cwd), "-c", "user.email=a@b", "-c", "user.name=n", *a], check=True, capture_output=True, text=True)  # noqa: E731
+    g("init", "-q")
+    g("commit", "-q", "--allow-empty", "-m", "base")
+    wt = tmp_path / "wt"
+    g("worktree", "add", "-q", "--detach", str(wt))
+    (wt / "f.txt").write_text("x")
+    head = g("rev-parse", "HEAD", cwd=wt).stdout
+    copy, cleanup = RUN.prepare_archive(str(wt), dry_run=True)
+    try:
+        assert (Path(copy) / ".git").is_dir() and g("rev-parse", "HEAD", cwd=wt).stdout == head          # the real checkout is untouched
+    finally:
+        import shutil
+        shutil.rmtree(cleanup, ignore_errors=True)
