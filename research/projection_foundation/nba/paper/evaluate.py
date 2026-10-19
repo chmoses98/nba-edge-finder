@@ -230,8 +230,11 @@ def _load_decisions(archive, lo_utc, in_window, prospective_only, q) -> pd.DataF
         dec["thesis_id"] = dec["game_id"].astype(str) + "|" + dec.get("entity_id", pd.Series("-", index=dec.index)).astype(str) + "|" + dec["stat"].astype(str)
     dec["cluster"] = dec["game_id"].astype(str)
     dec["day_et"] = dec["start"].dt.tz_convert(ET).dt.strftime("%Y-%m-%d")
-    if st.empty:
+    if st.empty:                       # decisions exist but nothing is settled yet (the normal state before the first game ends)
         q["paper_settlements_orphaned"] = 0
+        dec["won"], dec["dnp"], dec["settled"] = np.nan, False, False
+        for c in ("net_pnl", "net_pnl_if_conditional_void", "clv_cents"):
+            dec[c] = np.nan
         return dec
     st = st.drop_duplicates("decision_id", keep="first")
     q["paper_settlements_orphaned"] = int((~st["decision_id"].isin(dec["decision_id"])).sum())

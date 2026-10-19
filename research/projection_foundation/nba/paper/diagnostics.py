@@ -189,7 +189,8 @@ def _c6(D: E.Data) -> dict[str, Any]:
     tot = t.get("total")
     if not tot or tot.get("status") == "NO_DATA":
         return _nd(6, "no two-team games with both forecasts and outcomes", "game total error")
-    j = D.settle[(D.settle["model_role"] == "challenger") & (D.settle["family"] == "points") & ~D.settle["void"] & D.settle["actual"].notna()]
+    j = (D.settle[(D.settle["model_role"] == "challenger") & (D.settle["family"] == "points") & ~D.settle["void"] & D.settle["actual"].notna()]
+         if len(D.settle) else D.settle)
     corr = None
     if len(j):
         pe = (j["mean"] - j["actual"]).groupby(j["game_id"]).mean()

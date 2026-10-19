@@ -15,7 +15,7 @@ sys.path.insert(0, str(PF))
 sys.path.insert(0, str(HERE))
 import test_paper_engine as TE  # noqa: E402
 from nba.live import ops_guard, run as RUN  # noqa: E402
-from nba.paper import store  # noqa: E402
+from nba.paper import report as REP, store  # noqa: E402
 from pf_core import prospective as pr  # noqa: E402
 
 FIXARCH = TE.FIXARCH
@@ -73,6 +73,24 @@ def world(tmp_path_factory):
         datetime(2026, 10, 21, 10, tzinfo=timezone.utc))
     _commit(root, "outcomes")
     return {"root": root, "ctx": ctx, "tmp": tmp}
+
+
+def test_scorecard_and_report_work_with_decisions_but_no_settlements(world, tmp_path):
+    """Found by the CI dry run on the real board: decisions archived, nothing settled yet (every game still ahead)."""
+    from datetime import datetime, timezone
+    from nba.paper import evaluate as EV, diagnostics as DG
+    import shutil
+    root = tmp_path / "pre"
+    shutil.copytree(world["root"], root)
+    shutil.rmtree(root / "paper/nba/settlements", ignore_errors=True)
+    now = datetime(2026, 10, 20, 17, tzinfo=timezone.utc)
+    card = EV.scorecard(str(root), now, window=7)
+    assert card["sample"]["paper_decisions"]["n_decisions"] > 0 and card["sample"]["paper_settled"] == 0
+    assert DG.root_cause(str(root), now, window=7)["authority"] == "research_only"
+    assert DG.ranked_hypotheses(str(root), now, window=7)["authority"] == "research_only"
+    rep = REP.build_week(str(root), str(world["ctx"]), 1, now)
+    assert rep["status"] == "PRELIMINARY"
+    assert not {k for k, v in rep["sections"].items() if isinstance(v, dict) and v.get("status") == "SECTION_ERROR"}
 
 
 def test_settle_daily_report_run_and_are_idempotent(world):
