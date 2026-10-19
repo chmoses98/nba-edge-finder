@@ -37,6 +37,9 @@ python -m nba_edge.research.walk_forward    # research scripts write to docs/res
 ```
 No credentials are needed for anything in this repository; see `.env.example`.
 
+## NBA research automation (paper only)
+Slot-scheduled forecasting, paper trading, daily scorecards and a weekly report run on `projection-foundation` and write the append-only `projection-data` branch; `nba-watchdog` alerts on missing work. See `docs/ops/NBA_AUTOMATION.md`, `docs/ops/NBA_OPENING_WEEK_AUDIT.md` and `docs/research/PAPER_ENGINE_SPEC.md`. No orders are ever placed.
+
 ## Docs
 - `docs/HANDOFF.md` — overnight handoff: what exists, evidence, risks, next tasks
 - `docs/ARCHITECTURE.md` — modules, point-in-time discipline, storage, scheduling
