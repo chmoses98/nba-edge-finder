@@ -1,8 +1,8 @@
 ## NBA projection scorecard — last 7 days
 
-Generated 2026-10-19T18:53:53Z. Research only; nothing here is a betting signal.
+Generated 2026-10-19T20:10:40Z. Research only; nothing here is a betting signal.
 
-Archived pregame forecasts: 824 across 3 games. Settled: 0 (void/DNP 0, stat corrections 0).
+Archived pregame forecasts: 1648 across 3 games. Settled: 0 (void/DNP 0, stat corrections 0).
 
 _No settled forecasts yet: accuracy will appear once archived games finish._
 
