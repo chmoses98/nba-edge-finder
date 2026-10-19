@@ -63,8 +63,10 @@ for `greater` strikes, `k = floor_strike` for `greater_or_equal`. `p_cond = P(X 
 the pregame version available at `t`). `p_play` from the archived `participation` forecast. **DNP**: Kalshi settles a player prop whose
 player never enters at the pre-game fair price (scalar), not as NO and not as a fee-free void. Paper settlement therefore uses the
 authoritative market result/settlement value when the archive has it; until then (and for the model's expected value) the DNP leg is
-valued at the entry-time fair value `m` = the mid of the `LAST_VALID` quote of that contract (flagged `dnp_value_source:
-"modeled_last_valid_mid"` vs `"authoritative"`). Entry fee is **not** refunded. Participation-aware EV for buying side S at price `a`:
+valued, **in the decision-time EV**, at the contract's mid at the decision instant (`m`, no look-ahead). At **settlement** the DNP value is the authoritative
+Kalshi value when archived (`dnp_value_source: "authoritative"`), else the `LAST_VALID` mid **only if that snapshot is a valid closing line** (two-sided and
+within 15 min of tip; `"modeled_last_valid_mid"`), otherwise the settlement stays pending (no fair-price estimate is invented). Later authoritative values
+supersede through append-only correction rows, which evaluation applies. Entry fee is **not** refunded. Participation-aware EV for buying side S at price `a`:
 `EV = p_play * (p_S_cond - a) + (1 - p_play) * (m_S - a) - fee - slippage`, where `m_S` is `m` (YES) or `1 - m` (NO). Conditional-only EV
 (`ev_conditional`) is also stored (it is what the preregistered control reports as `void`).
 
@@ -83,7 +85,7 @@ no_bid, no_ask, yes_bid_size, yes_ask_size, depth_yes_ask, depth_no_ask, volume,
 (TWO_SIDED|ONE_SIDED|PLACEHOLDER|NO_QUOTE|INVALID|MISSING), missing_cause, replay, source_run_id, captured_utc`.
 
 ### 5.2 `sift.paper_decision.v1` (one row per candidate contract-side per decision instant, trade AND pass)
-`decision_id` (sha of strategy_id|snapshot_id|ticker|side), `schema, strategy_id, strategy_version, config_sha, decision_mode,
+`decision_id` (sha of strategy_id|snapshot_id:forecast_generated_utc|ticker|side: a newer forecast on an unchanged board is a new decision), `schema, strategy_id, strategy_version, config_sha, decision_mode,
 decided_utc, as_of_utc, horizon, replay, game_id, game_start_utc, game_date_et, thesis_id, unit_id, cluster_id (= game_id),
 entity_id (player), team, opponent, ticker, event_ticker, family, stat, period, threshold, side (YES|NO), price (executable entry),
 price_basis (ask), bid, ask, spread, depth_at_entry, quote_age_s, slippage, fee_assumption {multiplier, source, taker}, fee_per_contract,
@@ -128,7 +130,7 @@ inputs_asof`. Only the model's own numbers; never invented.
 | `NO_BET_V1` | baseline | zero P&L by definition |
 
 Exposure constraints (configurable): one paper contract per decision; max 1 trade per `thesis_id`; max 2 trades per player-game across stats;
-max 3 per team-game; max 8 per game; max $100 notional per game and $300 per day. Candidates dropped by a cap are stored as PASS with
+max 3 per team-game; max 8 per game; max $100 notional per game and $300 per day. Caps apply inside each (strategy, horizon, decision instant): LIVE by run time, replay by board time. Candidates dropped by a cap are stored as PASS with
 `EXPOSURE_CAP:*`. Trades on the same game share one cluster, which inference respects.
 
 ## 8. Promotion discipline (week 1 and beyond)
