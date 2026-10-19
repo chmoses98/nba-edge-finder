@@ -76,6 +76,7 @@ class Plan:
     cron: str | None
     reason: str                # why this mode (explicit for skips)
     skip_valid: bool = True
+    research_stage: str = ""   # comma separated research stages (run after the critical commit)
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -100,7 +101,18 @@ def due_slot(kind: str, now: datetime) -> tuple[datetime, str]:
 
 
 def slot_stages(kind: str) -> str:
+    """Critical stages: forecast archiving, results, settlement, ledger. Committed on their own, before any research stage runs."""
     return "capture,project,publish,results,settle,score,ledger,guard" if kind == "pregame" else "results,settle,score,ledger,guard"
+
+
+def research_stages(kind: str | None) -> str:
+    """Paper trading, scorecards and the weekly report: separate step, so a research bug can never block or lose the critical evidence
+    (the job still goes red and the problem is named)."""
+    if kind == "pregame":
+        return "paper,paper_replay,expressions,paper_settle,guard"
+    if kind == "settle":
+        return "paper_replay,expressions,paper_settle,daily,report,guard"
+    return ""
 
 
 def make_plan(event: str, cron: str | None, now: datetime, dry_run: bool = False, stage_in: str = "all",
@@ -111,7 +123,10 @@ def make_plan(event: str, cron: str | None, now: datetime, dry_run: bool = False
         return Plan("dry", "all", None, None, None, None, event, cron, "dry run on a copy of the archive")
     if event == "workflow_dispatch":
         sid = "manual-" + now.strftime("%Y%m%dT%H%M%SZ")
-        return Plan("pregame", stage_in or "all", "pregame", sid, now.isoformat(), 0, event, cron, "manual dispatch always runs")
+        if (stage_in or "all") == "all":
+            return Plan("pregame", slot_stages("pregame"), "pregame", sid, now.isoformat(), 0, event, cron, "manual dispatch always runs",
+                        research_stage=research_stages("pregame"))
+        return Plan("pregame", stage_in, "pregame", sid, now.isoformat(), 0, event, cron, "manual dispatch (explicit stages)")
     if event != "schedule":
         return Plan("skip", "", None, None, None, None, event, cron, f"unsupported event {event!r}", skip_valid=False)
     kind = cron_table().get(cron or "")
@@ -124,7 +139,8 @@ def make_plan(event: str, cron: str | None, now: datetime, dry_run: bool = False
         late = int((now - inst).total_seconds() // 60)
         if late <= 360 and not ledger_has(sid, "pregame"):
             return Plan("pregame", slot_stages("pregame"), "pregame", sid, inst.isoformat(), late, event, cron,
-                        f"sweep heartbeat: pregame slot {sid} is due and not in the ledger ({late} min after the slot)")
+                        f"sweep heartbeat: pregame slot {sid} is due and not in the ledger ({late} min after the slot)",
+                        research_stage=research_stages("pregame"))
         return Plan("sweep", "incumbent,guard", None, None, None, None, event, cron, "hourly incumbent sweep")
     inst, sid = due_slot(kind, now)
     late = int((now - inst).total_seconds() // 60)
@@ -132,7 +148,7 @@ def make_plan(event: str, cron: str | None, now: datetime, dry_run: bool = False
         return Plan("skip", "", kind, sid, inst.isoformat(), late, event, cron,
                     f"already_done: slot {sid} is in the run ledger (duplicate, backup or DST-alternate firing)")
     why = f"slot {sid} due; event arrived {late} min after the slot" + (" (late delivery: executed anyway)" if late > 45 else "")
-    return Plan(kind, slot_stages(kind), kind, sid, inst.isoformat(), late, event, cron, why)
+    return Plan(kind, slot_stages(kind), kind, sid, inst.isoformat(), late, event, cron, why, research_stage=research_stages(kind))
 
 
 def skip_is_valid(reason: str) -> bool:
@@ -170,7 +186,7 @@ def main(argv=None) -> int:
     p = make_plan(a.event, a.cron or None, now, a.dry_run == "true", a.stage, _ledger_lookup(a.ledger_ref))
     d = p.as_dict()
     print(json.dumps(d), file=sys.stderr)
-    for k in ("mode", "stage", "kind", "slot_id", "slot_utc", "lateness_min", "reason", "skip_valid"):
+    for k in ("mode", "stage", "research_stage", "kind", "slot_id", "slot_utc", "lateness_min", "reason", "skip_valid"):
         v = str(d[k] if d[k] is not None else "").replace("\n", " ")
         if not re.fullmatch(r"[\w@:+.\- ,()/'=]*", v):
             v = re.sub(r"[^\w@:+.\- ,()/'=]", "_", v)

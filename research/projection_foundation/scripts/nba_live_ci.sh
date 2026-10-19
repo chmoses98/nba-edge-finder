@@ -41,14 +41,22 @@ cmd_mount() {
       mkdir -p "$base/projection-data"   # dry run: run.py makes a throwaway git repo from this
     fi
   fi
-  mount_sparse data-archive "$base/data-archive" /context/schedule/ /context/rosters/
-  mount_sparse nba-shadow-pure "$base/shadow" /projections/sim_rotation/conditional/
+  # data-archive: context (fallbacks, schedule for the integrity/report sections) + the last three UTC days of Kalshi boards, deltas and
+  # order books, which the paper engine reads to rebuild boards as of any pre-tip instant (point-in-time, read-only)
+  local d0 d1 d2
+  d0=$(date -u +%Y-%m-%d); d1=$(date -u -d "1 day ago" +%Y-%m-%d); d2=$(date -u -d "2 days ago" +%Y-%m-%d)
+  local kp=()
+  for d in "$d0" "$d1" "$d2"; do
+    kp+=("/kalshi/markets/dt=$d/" "/kalshi/markets_delta/dt=$d/" "/kalshi/orderbooks/dt=$d/" "/kalshi/orderbooks_delta/dt=$d/")
+  done
+  mount_sparse data-archive "$base/data-archive" /context/schedule/ /context/rosters/ /STATUS_capture.json /EVIDENCE_HEALTH.json "${kp[@]}"
+  mount_sparse nba-shadow-pure "$base/shadow" /projections/sim_rotation/conditional/ /scorecards/value/
   mount_sparse data-injury-pit "$base/pit" /injury_pit/
 }
 
 guard_diff() {   # the commit about to be pushed may only ADD files under the immutable directories
   local bad
-  bad=$(git diff --name-status origin/projection-data HEAD 2>/dev/null | grep -E '^(M|D|R)' | grep -E '[[:space:]](forecasts|outcomes|settlements|corrections|availability|game_forecasts|market_snapshots|ops/nba/slots|paper/nba/(decisions|settlements|corrections))/' || true)
+  bad=$(git diff --name-status origin/projection-data HEAD 2>/dev/null | grep -E '^(M|D|R)' | grep -E '[[:space:]](forecasts|outcomes|settlements|corrections|availability|game_forecasts|market_snapshots|team_outcomes|ops/nba/slots|paper/nba/(decisions|settlements|corrections|expressions)|reports/nba/week[0-9]+/versions)/' || true)
   if [ -n "$bad" ]; then echo "::error::archive guard: immutable files changed"; echo "$bad"; return 1; fi
 }
 
