@@ -83,6 +83,7 @@ jobs:
     outputs:
       mode: ${{ steps.p.outputs.mode }}
       stage: ${{ steps.p.outputs.stage }}
+      research_stage: ${{ steps.p.outputs.research_stage }}
       kind: ${{ steps.p.outputs.kind }}
       slot_id: ${{ steps.p.outputs.slot_id }}
       slot_utc: ${{ steps.p.outputs.slot_utc }}
@@ -181,6 +182,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: write
+      issues: write
     outputs:
       executed: ${{ steps.guard.outputs.proceed }}
       detail: ${{ steps.guard.outputs.detail }}
@@ -256,12 +258,62 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           python -c "import json,sys; r=json.load(open(sys.argv[1])); print(json.dumps({k: r[k] for k in ('latest_board','first_board_with_regular_season_props','settlement_rule')}, indent=1)); print(json.dumps(r['latest']['regular_season_total'], indent=1)); print(json.dumps({k: {'markets': v['regular_season_markets'], 'classes': v['regular_season_quote_classes']} for k, v in r['latest']['series'].items()}, indent=1))" "$PF_WORK/kalshi_listing_report.json" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-      - name: Archive guard on the working tree (additions only), then commit and push with retries
+      - name: "Archive guard on the working tree (additions only), then commit and push the CRITICAL evidence first"
         if: steps.guard.outputs.proceed == 'true'
         run: |
           set -euo pipefail
           (cd $PF_DIR && python -m nba.live.ops_guard "$RUNNER_TEMP/m/projection-data")
           bash $PF_DIR/scripts/nba_live_ci.sh commit_push "$RUNNER_TEMP/m/projection-data"
+      - name: "Research stages (paper trading, scorecards, weekly report); a failure fails the job but never touches the committed critical evidence"
+        id: research
+        if: steps.guard.outputs.proceed == 'true' && needs.plan.outputs.research_stage != ''
+        working-directory: research/projection_foundation
+        env:
+          PF_WORK: ${{ runner.temp }}/pf_work
+        run: |
+          set -uo pipefail
+          python -m nba.live.run --stage "${{ needs.plan.outputs.research_stage }}" --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" \
+            --shadow "$RUNNER_TEMP/m/shadow" --context "$RUNNER_TEMP/m/data-archive" \
+            --window-hours "${{ github.event.inputs.window_hours || '30' }}"
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Commit and push the research outputs (additions only)
+        if: always() && steps.guard.outputs.proceed == 'true' && steps.research.outputs.rc != ''
+        run: |
+          set -euo pipefail
+          (cd $PF_DIR && python -m nba.live.ops_guard "$RUNNER_TEMP/m/projection-data")
+          bash $PF_DIR/scripts/nba_live_ci.sh commit_push "$RUNNER_TEMP/m/projection-data"
+      - name: Publish the weekly report(s) to a retrievable issue (one issue per week, updated in place)
+        if: always() && steps.guard.outputs.proceed == 'true' && needs.plan.outputs.mode == 'settle'
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          REPORTS: ${{ runner.temp }}/m/projection-data/reports/nba
+        with:
+          script: |
+            const fs = require('fs');
+            const dir = process.env.REPORTS;
+            if (!fs.existsSync(dir + '/latest.json')) { core.info('no reports yet'); return; }
+            const idx = JSON.parse(fs.readFileSync(dir + '/latest.json', 'utf8'));
+            const label = 'nba-report';
+            try { await github.rest.issues.getLabel({...context.repo, name: label}); }
+            catch (e) { await github.rest.issues.createLabel({...context.repo, name: label, color: '0e8a16', description: 'NBA research weekly report (paper only)'}); }
+            for (const [n, w] of Object.entries(idx.weeks)) {
+              const md = fs.readFileSync(`${dir}/week${n}/report.md`, 'utf8');
+              const head = `**${w.status}** v${w.version} - generated ${w.generated_utc}. Source of truth: branch \`projection-data\`, \`reports/nba/week${n}/\` (report.json, report.md, tables/*.csv, versions/).\n\n`;
+              const body = (head + md).slice(0, 60000);
+              const title = `NBA research report: week ${n}`;
+              const found = await github.rest.issues.listForRepo({...context.repo, state: 'all', labels: label, per_page: 50});
+              const cur = found.data.find(i => i.title === title);
+              if (cur) { await github.rest.issues.update({...context.repo, issue_number: cur.number, body}); }
+              else { await github.rest.issues.create({...context.repo, title, body, labels: [label]}); }
+            }
+      - name: Fail loudly if a research stage reported a problem
+        if: steps.guard.outputs.proceed == 'true' && steps.research.outputs.rc != '' && steps.research.outputs.rc != '0'
+        run: |
+          echo "::error::research stages exited with code ${{ steps.research.outputs.rc }}: see the pipeline log (the critical evidence was committed first)"
+          exit 1
       - uses: actions/upload-artifact@v4
         if: always()
         with:

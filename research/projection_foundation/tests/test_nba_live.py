@@ -368,7 +368,7 @@ def test_workflow_shape():
     dry_text = yaml.safe_dump(dry)
     assert dry["permissions"] == {"contents": "read"} and "commit_push" not in dry_text and "git push" not in dry_text
     assert "--dry-run" in dry_text and "--stage all" in dry_text
-    assert jobs["live"]["permissions"] == {"contents": "write"} and "commit_push" in yaml.safe_dump(jobs["live"])
+    assert jobs["live"]["permissions"] == {"contents": "write", "issues": "write"} and "commit_push" in yaml.safe_dump(jobs["live"])
     assert jobs["live"]["concurrency"]["group"] == "projection-foundation-nba" and not jobs["live"]["concurrency"]["cancel-in-progress"]
     plan_run = " ".join(st.get("run", "") for st in jobs["plan"]["steps"])
     assert "nba.live.schedule_plan" in plan_run and "date +%H" not in plan_run   # no wall-clock-hour decision (the delayed-run skip bug)

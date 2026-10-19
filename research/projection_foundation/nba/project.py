@@ -150,6 +150,25 @@ def project(archive: str | None, date: str | None, out: str, max_hist_seasons: i
     return project_slate(sl, out, max_hist_seasons=max_hist_seasons)
 
 
+def _game_forecast(gg: dict, g: pd.DataFrame, tdist, now_utc: str, asof: str) -> dict:
+    """Team-points pmfs of one game (the model's own `tdist`) + context columns the team model already has. Nothing invented: a context
+    field the model does not have for the game is simply absent."""
+    from .live.forecasts import trim_pmf
+    from .paper import config as PCFG
+    gm = PCFG.load()["game_model"]
+    teams, ctx = [], {}
+    for _, r in g.iterrows():
+        lo, probs = trim_pmf(int(tdist.lo), tdist.P[int(r["_tpos"])])
+        teams.append({"team": r["team"], "mean": round(float(r["mean"]), 2), "lo": lo, "probs": probs})
+        side = "home" if bool(r["home"]) else "away"
+        for col in ("rest_days", "b2b", "three_in_four", "exp_pace", "exp_ortg", "exp_margin", "pace_off", "pace_def", "ortg_off", "drtg_def"):
+            if col in r.index and pd.notna(r[col]):
+                ctx[f"{side}_{col}"] = round(float(r[col]), 3)
+    return {"game_id": gg["game_id"], "game_start_utc": gg["start_utc"], "home": gg["home"], "away": gg["away"], "generated_utc": now_utc,
+            "data_asof_utc": asof, "model_id": f"{MODEL_ID}-team_points", "model_version": f"pf-{PF_VERSION}+{_git_sha()}", "teams": teams,
+            "rho": gm["rho"], "rho_source": gm["rho_source"], "context": ctx, "inputs_asof": asof}
+
+
 def project_slate(sl: dict | None, out: str | None, *, availability: dict | None = None, calib: dict | None = None,
                   now_utc: str | None = None, reconcile_cfg=None, max_hist_seasons: int = 7) -> dict:
     """Frozen-model forward projections for the games in `sl` (see load_slate; `sl["asof"]` = newest input captured).
@@ -234,7 +253,7 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     tt = tt[tt["game_id"].isin(set(F["game_id"]))]
     tbest = frozen["team"]["best"]
     tdist = models.make_dist(frozen["team"]["dist"], tt[tbest].to_numpy())
-    tt = tt.assign(mean=tdist.mean, p10=tdist.quantile(0.1), p90=tdist.quantile(0.9))
+    tt = tt.assign(mean=tdist.mean, p10=tdist.quantile(0.1), p90=tdist.quantile(0.9), _tpos=np.arange(len(tt)))
     team_mean = {(g, t_): float(m) for g, t_, m in zip(tt["game_id"], tt["team"], tt["mean"])}
     # ---- pass 1: family means (frozen best models), then the reconciliation gate
     fam_state = {}
@@ -357,6 +376,8 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
                 ["Minutes model: " + ("E_inj (official report features)" if report_cov[i] else f"{best_min} (no official report for this game)") + "."])
     # team block
     games = []
+    game_forecast_errors: list[str] = []
+    game_forecasts = []                      # sift.game_forecast.v1 (archived by nba.paper.run; additive, not part of the published projections)
     for gid, g in tt.groupby("game_id"):
         gg = {"game_id": f"espn:{gid}", "start_utc": _iso(g["tip_utc"].iloc[0]),
               "home": g.loc[g["home"], "team"].iloc[0], "away": g.loc[~g["home"], "team"].iloc[0], "teams": []}
@@ -373,6 +394,10 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
                                                                    "points_sum_raw", "points_sum_final", "action", "reasons")}
             gg["teams"].append(t_)
         games.append(gg)
+        try:
+            game_forecasts.append(_game_forecast(gg, g, tdist, now_utc, asof))
+        except Exception as e:  # noqa: BLE001  additive output: it must never take down the published player projections
+            game_forecast_errors.append(f"{gid}: {type(e).__name__}: {e}"[:200])
     fam_out["team_points"] = {"readiness": frozen["team"]["readiness"], "model": frozen["team"]["model_name"],
                               "reason": frozen["team"]["readiness_reason"]}
     fam_out["minutes"] = {"readiness": frozen["minutes_readiness"]["readiness"], "model": frozen["minutes_readiness"]["model_name"],
@@ -383,10 +408,13 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
            "mode": mode, "slate_date": str(pd.Timestamp(F["date"].iloc[0]).date()) if len(F) else None,
            "history_through": str(pd.Timestamp(hist_last).date()),
            "inputs": files, "families": fam_out, "games": games, "players": player_rows,
-           "reconciliation": recs, "runtime_s": round(time.time() - t0, 1)}
+           "reconciliation": recs, "runtime_s": round(time.time() - t0, 1), "game_forecasts": game_forecasts,
+           "game_forecast_errors": game_forecast_errors}
     if out:
         os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
         pub = dict(res, players=[{k: v for k, v in p.items() if not k.startswith("_")} for p in player_rows])
+        pub.pop("game_forecasts", None)
+        pub.pop("game_forecast_errors", None)                       # archived separately (nba.paper.run); the published view is unchanged
         with open(out, "w") as fh:
             json.dump(pub, fh, indent=1, default=lambda o: o.item() if hasattr(o, "item") else str(o))
     return res

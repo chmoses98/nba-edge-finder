@@ -8,6 +8,12 @@
   results   FINAL ESPN box scores of finished games -> outcomes/ (participated=False for DNP / inactive)
   settle    prospective.settle (settle-once, corrections appended)
   score     scorecards daily (7 d) / weekly (28 d) / season + NBA segment checks; markdown to $GITHUB_STEP_SUMMARY
+  paper         contemporaneous paper-trading decisions on the newest Kalshi board (nba.paper.run; offline, research only)
+  paper_replay  as-of rebuilds of the T-90/T-60/T-30/T-10/LAST_VALID horizons that have passed (labelled asof_replay)
+  expressions   research-only thesis-level ranking of the betting expressions (which market expresses a basketball thesis best, or NO_TRADE)
+  paper_settle  settle paper decisions (authoritative Kalshi result when archived, else box score; DNP scalar semantics)
+  daily         daily scorecards (ET yesterday + day before, rolling 7 days) and root-cause diagnostics
+  report        weekly report(s): PRELIMINARY until complete, FINAL after; versioned, never rewritten
   ledger    verify the run did what its slot promises (games in the window => forecasts archived) and write the write-once
             ops/nba/slots/<ET date>/<HHMM>_<kind>.json record; a failed verification fails the run (nothing is committed)
   guard     pf_core.archive_guard (additions only) -- must pass before any commit
@@ -30,13 +36,18 @@ from typing import Any
 
 import pandas as pd
 
-from pf_core import archive_guard, prospective as pr
+from pf_core import prospective as pr
 
 from .. import data
 from . import availability as AV, forecasts as FC, incumbent as INC, ledger as LED, ops_guard, participation as PART, results as RES
 from .sources import Sources, iso, parse_ts
 
-STAGES = ["capture", "project", "publish", "results", "settle", "score", "ledger", "guard"]
+# critical stages (forecast archiving, results, settlement, ledger) come first and are committed on their own; the research stages (paper
+# trading, scorecards, weekly report) follow and may fail without ever blocking or losing the critical evidence
+CRITICAL_STAGES = ["capture", "project", "publish", "results", "settle", "score", "ledger", "guard"]
+RESEARCH_STAGES = ["paper", "paper_replay", "expressions", "paper_settle", "daily", "report"]
+STAGES = ["capture", "project", "publish", "paper", "results", "settle", "paper_replay", "expressions", "paper_settle", "score", "daily", "report",
+          "ledger", "guard"]
 EXTRA_STAGES = ["incumbent"]       # not part of `all` (project already archives the incumbent); the light pregame sweep uses it
 SUMMARY_JSON = data.PF_DIR / "results" / "summary.json"
 
@@ -133,6 +144,14 @@ def stage_project(a, now: datetime, work: str) -> dict:
     res = project_slate(sl, out, availability=avail, calib=calib, now_utc=iso(now))
     recs = FC.challenger_records(res)
     ar = pr.archive_forecasts(recs, a.archive, iso(now))
+    try:                                      # team-points pmfs (game markets need them); a failure here is a warning, never a lost projection
+        from ..paper import run as PRUN
+        st["game_forecasts"] = PRUN.stage_game_forecasts(res, a.archive, now)
+        for e in res.get("game_forecast_errors") or []:
+            warn(f"game forecast: {e}")
+    except Exception as e:  # noqa: BLE001
+        st["game_forecasts"] = {"status": "ERROR", "error": f"{type(e).__name__}: {e}"[:200]}
+        warn(f"game forecast archive failed: {st['game_forecasts']['error']}")
     gate_counts = Counter(p["gate"]["status"] for p in res["players"])
     part_counts = Counter(p["participation"]["status"] for p in res["players"] if p["family"] == "points")
     st.update({"status": "ok", "mode": res["mode"], "slate_date": res["slate_date"], "players": len({p["player_id"] for p in res["players"]}),
@@ -235,6 +254,103 @@ def stage_score(a, now: datetime, work: str) -> dict:
     return out
 
 
+def _market_dir(a) -> str:
+    return a.market or a.context or ""
+
+
+def stage_paper(a, now: datetime) -> dict:
+    from ..paper import run as PRUN
+    s = PRUN.stage_paper(a.archive, _market_dir(a), now, window_hours=a.window_hours)
+    print(f"paper: {s.get('status')} games={s.get('games')} decisions={s.get('decisions')} snapshots={s.get('snapshots')}")
+    if s.get("games") and s.get("status") in ("NO_BOARD", "CHAIN_BROKEN"):
+        s["problem"] = f"paper: games with forecasts are in the window but the market board is unavailable ({s['status']})"
+    return s
+
+
+def stage_paper_replay(a, now: datetime) -> dict:
+    from ..paper import run as PRUN
+    s = PRUN.stage_paper_replay(a.archive, _market_dir(a), now)
+    print(f"paper_replay: games_due={s.get('games_due')} horizons={s.get('horizons_archived')} missing={s.get('missing')} decisions={s.get('decisions')}")
+    return s
+
+
+def stage_expressions(a, now: datetime) -> dict:
+    """Rank the expressions of every thesis from the all-candidates pool at the LIVE and T-60 decision instants of games that are not final
+    yet or finished within 4 days. Idempotent (record ids), research only: nothing here selects a trade."""
+    from datetime import timedelta
+    from ..paper import expression as EX, store as PS
+    lo = (now - timedelta(days=4)).strftime("%Y-%m-%d")
+    days = [d for d in PS.days(a.archive, "decisions") if d >= lo]
+    by: dict[tuple, list] = {}
+    for r in PS.read(a.archive, "decisions", days):
+        if r.get("strategy_id") == "PF_ALL_CANDIDATES_V1" and r.get("horizon") in ("LIVE", "T-60") and r.get("side") in ("YES", "NO"):
+            by.setdefault((r["game_id"], r["horizon"], r["as_of_utc"]), []).append(r)
+    out = {"groups": len(by), "theses": 0, "written": 0, "duplicates": 0, "no_trade": 0}
+    for key, rows in sorted(by.items()):
+        res = EX.rank_theses(rows)
+        w = EX.write_expression_records(a.archive, res, now)
+        out["theses"] += len(res["theses"])
+        out["written"] += w["written"]
+        out["duplicates"] += w["duplicates"]
+        out["no_trade"] += sum(1 for t in res["theses"] if t["decision"] == "NO_TRADE")
+    print(f"expressions: {out}")
+    return out
+
+
+def stage_paper_settle(a, now: datetime) -> dict:
+    from ..paper import run as PRUN
+    s = PRUN.stage_paper_settle(a.archive, _market_dir(a), now)
+    print(f"paper_settle: {s}")
+    return s
+
+
+def stage_daily(a, now: datetime) -> dict:
+    from datetime import timedelta
+    from zoneinfo import ZoneInfo
+    from ..paper import diagnostics as DG, evaluate as EV
+    et = now.astimezone(ZoneInfo("America/New_York")).date()
+    out: dict[str, Any] = {"days": []}
+    for k in (1, 2):                                   # yesterday and the day before (late settlements / corrections refresh the card)
+        day = (et - timedelta(days=k)).isoformat()
+        card = EV.scorecard(a.archive, now, window=None, day_et=day)
+        EV.write(a.archive, card)
+        out["days"].append({"day_et": day, "n_games": (card.get("sample") or {}).get("forecast_settlements", {}).get("n_games"),
+                            "flags": card.get("insufficient_sample")})
+    roll = EV.scorecard(a.archive, now, window=7)
+    EV.write(a.archive, roll, daily=False)
+    out["rolling7"] = {"n_games": (roll.get("sample") or {}).get("forecast_settlements", {}).get("n_games"), "flags": roll.get("insufficient_sample")}
+    base = os.path.join(a.archive, "paper", "nba", "scorecards")
+    for name, fn in (("root_cause", DG.root_cause), ("hypotheses", DG.ranked_hypotheses)):
+        d = fn(a.archive, now, window=None)
+        _write_json(os.path.join(base, f"{name}_latest.json"), d)
+    from ..paper import expression as EX
+    _write_json(os.path.join(base, "expressions_latest.json"), EX.evaluate_expressions(a.archive))
+    summ = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summ:
+        with open(summ, "a") as f:
+            f.write(EV.markdown(roll) + "\n")
+    print(f"daily: {out}")
+    return out
+
+
+def stage_report(a, now: datetime) -> dict:
+    from ..paper import report as REP
+    res = REP.run_due(a.archive, a.context or "", now, a.shadow)
+    probs = []
+    for n in REP.weeks_started(now):
+        p = os.path.join(a.archive, "reports", "nba", f"week{n}", "report.json")
+        if os.path.exists(p):
+            rep = json.load(open(p))
+            bad = [k for k, v in rep["sections"].items() if isinstance(v, dict) and v.get("status") == "SECTION_ERROR"]
+            if bad:
+                probs.append(f"week {n} report sections failed: {bad}")
+    print(f"report: {res}")
+    out = {"published": res}
+    if probs:
+        out["problem"] = "; ".join(probs)
+    return out
+
+
 def stage_ledger(a, st: dict, now: datetime) -> dict:
     kind = a.slot_kind or ("settle" if "project" not in st and "capture" not in st else "pregame")
     sid = a.slot_id or ("manual-" + now.strftime("%Y%m%dT%H%M%SZ"))
@@ -291,13 +407,16 @@ def prepare_archive(archive: str, dry_run: bool) -> tuple[str, str | None]:
         dst = os.path.join(tmp, "archive")
         if os.path.isdir(archive) and os.listdir(archive):
             shutil.copytree(archive, dst, symlinks=True)
+            gf = os.path.join(dst, ".git")
+            if os.path.isfile(gf):                 # the copy of a worktree must not stay linked to the real checkout: it becomes its own repo below
+                os.remove(gf)
         else:
             os.makedirs(dst)
         archive, cleanup = dst, tmp
     else:
         os.makedirs(archive, exist_ok=True)
         cleanup = None
-    if not os.path.isdir(os.path.join(archive, ".git")):
+    if not os.path.exists(os.path.join(archive, ".git")):        # a worktree checkout has a .git FILE; only a bare directory needs an init
         subprocess.run(["git", "init", "-q", archive], check=True)
         subprocess.run(["git", "-C", archive, "-c", "user.email=pf@local", "-c", "user.name=pf", "commit", "-q", "--allow-empty",
                         "-m", "init"], check=True)
@@ -323,6 +442,7 @@ def run(argv=None, sources: Sources | None = None) -> int:
     ap.add_argument("--trigger", default=None, help="github event name")
     ap.add_argument("--cron", default=None)
     ap.add_argument("--started-utc", default=None)
+    ap.add_argument("--market", default=None, help="data-archive checkout with kalshi/markets*, kalshi/orderbooks* (default: --context)")
     a = ap.parse_args(argv)
     sources = sources or Sources()
     stages = STAGES if a.stage == "all" else a.stage.split(",")
@@ -353,12 +473,30 @@ def run(argv=None, sources: Sources | None = None) -> int:
             elif s == "incumbent":
                 st["incumbent"] = INC.archive(a.shadow, a.archive, now, season_types=tuple(a.season_types.split(",")))
                 print(f"incumbent: {st['incumbent']}")
+            elif s == "paper":
+                st["paper"] = stage_paper(a, now)
+            elif s == "paper_replay":
+                st["paper_replay"] = stage_paper_replay(a, now)
+            elif s == "expressions":
+                st["expressions"] = stage_expressions(a, now)
+            elif s == "paper_settle":
+                st["paper_settle"] = stage_paper_settle(a, now)
+            elif s == "daily":
+                st["daily"] = stage_daily(a, now)
+            elif s == "report":
+                st["report"] = stage_report(a, now)
             elif s == "ledger":
                 st["ledger"] = stage_ledger(a, st, now)
             elif s == "guard":
                 st["guard"] = stage_guard(a)
             _save_state(a.workdir, st)
         print(json.dumps({k: (v if k in ("guard", "publish", "settle", "ledger") else "ok") for k, v in st.items()}, default=str))
+        problems = [v["problem"] for v in st.values() if isinstance(v, dict) and v.get("problem")]
+        if problems:                           # research stages never raise for a bad status; they are made loud here, after everything ran
+            for pm in problems:
+                print(f"::error::{pm}", flush=True)
+            _write_json(os.path.join(a.workdir, "research_problems.json"), problems)
+            return 3
         if a.dry_run:
             print(f"dry-run archive copy (discarded): {a.archive}")
     finally:
