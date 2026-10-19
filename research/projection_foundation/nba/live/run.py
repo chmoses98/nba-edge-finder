@@ -31,7 +31,7 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import pandas as pd
@@ -50,6 +50,16 @@ STAGES = ["capture", "project", "publish", "paper", "results", "settle", "paper_
           "ledger", "guard"]
 EXTRA_STAGES = ["incumbent"]       # not part of `all` (project already archives the incumbent); the light pregame sweep uses it
 SUMMARY_JSON = data.PF_DIR / "results" / "summary.json"
+
+
+def wall_clock() -> datetime:
+    """The wall clock rounded UP to a whole second. Stage timestamps are whole seconds and `pf_core.availability.asof` takes only
+    observations captured STRICTLY before the cut-off: with the clock truncated, a capture that finished at 18:52:42.4 was stamped
+    18:52:42 and the project stage that started at 18:52:42.9 (also 18:52:42) could not see it, so every run published its own
+    just-captured OUT / QUESTIONABLE players as UNVERIFIED (2026-10-19T18:52Z). Rounding up makes every stage's clock later than
+    anything an earlier stage of the same run stamped; it never exceeds the real time by a full second."""
+    n = datetime.now(timezone.utc)
+    return n.replace(microsecond=0) + (timedelta(seconds=1) if n.microsecond else timedelta(0))
 
 
 def _write_json(path: str, obj: Any) -> None:
@@ -226,6 +236,16 @@ def stage_score(a, now: datetime, work: str) -> dict:
             f.write(text)
         md.append(text)
         out[tag] = {"settled": card["settlement"]["settled"], "alerts": [(x["family"], x["status"]) for x in card["alerts"]]}
+    # activation readiness of the NBA families, judged from the archive as it now stands (read-only report; it never fails a run and
+    # never promotes anything: the promotion is a decision in SIFT, see nba/live/activation_check.py)
+    try:
+        from . import activation_check as AC
+        rep = AC.evaluate(a.archive, now)
+        _write_json(os.path.join(work, "activation_readiness.json"), rep)
+        out["activation"] = {"verdict": rep["verdict"], "remaining": len(rep["remaining"])}
+        md.append(AC.markdown(rep))
+    except Exception as e:  # noqa: BLE001
+        warn(f"activation readiness report failed: {type(e).__name__}: {e}")
     summ = os.environ.get("GITHUB_STEP_SUMMARY")
     if summ:
         with open(summ, "a") as f:
@@ -432,7 +452,7 @@ def run(argv=None, sources: Sources | None = None) -> int:
     a.archive, cleanup = prepare_archive(a.archive, a.dry_run)
     os.makedirs(a.workdir, exist_ok=True)
     st = _state(a.workdir) if a.stage != "all" else {}
-    clock = (lambda: parse_ts(a.now)) if a.now else (lambda: datetime.now(timezone.utc).replace(microsecond=0))
+    clock = (lambda: parse_ts(a.now)) if a.now else wall_clock
     try:
         for s in stages:
             now = clock()

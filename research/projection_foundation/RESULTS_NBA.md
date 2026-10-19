@@ -471,3 +471,43 @@ A player with no observation is UNVERIFIED (gate REVIEW). Precedence: official d
 **Incumbent**: the `sim_rotation` arm of the PURE shadow store (frozen NBA_BASELINE_2026_PRESEASON_V1 simulator), read-only, archived as `model_role: incumbent` with its own `as_of`; it publishes a mean, quantiles and a threshold ladder (no pmf), so it is scored on MAE; its P(appear) is the incumbent `participation` forecast. **Results**: ESPN final box scores through the repo's history ingestion; a forecast player missing from the box or DNP has `participated=False` (void); the `participation` family is scored on every player.
 
 **Kalshi regular-season player props** (reporting only): `python -m nba.live.kalshi_report`. Placeholder quotes (0.00 / 0.98-0.99 boundary quotes) are never executable prices (`executable_quote`).
+
+
+## 18. Activation verification (2026-10-19): what the live evidence shows, and what is still missing
+
+SIFT keeps the seven approved NBA families (minutes, points, rebounds, assists, threes, PRA, FGA) on the established engine until the official injury
+report has been verified on a real slate. `python -m nba.live.activation_check --archive <projection-data checkout>` turns that requirement into checks over
+the archive (and runs inside the `score` stage of every run, as a read-only report in the job summary). Verdicts: READY, PENDING (waiting on data),
+BLOCKED (evidence present and wrong). It never promotes anything.
+
+**Result on the first live run (projection-data, 2026-10-19T18:52Z, slate 2026-10-20 BOS@DET, PHI@NYK, OKC@SAS): BLOCKED by a defect, and PENDING on the league.**
+
+| Requirement | Evidence on the live archive | Result |
+|---|---|---|
+| Official report fetched live, with provenance | `https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-10-19_02_45PM.pdf`, last-modified 18:45:05Z, report time 18:45Z, sha256 recorded; captured by the run at 18:52Z | PASS |
+| Fresh, and covering the three games | published 0.1 h before the capture; all 3 games appear on it | PASS |
+| **Player-level designations for games that have not started** | **all 6 teams "NOT YET SUBMITTED" (6 such rows, 0 designations), on every capture so far (01:30, 07:15, 13:45 ET, and the run's own)** | **PENDING: the remaining requirement** |
+| Statuses, identity, report-aware minutes, ruled-out withheld on live rows | nothing to evaluate until the league publishes player rows | PENDING |
+| Projection archived before the start, after the availability it used | 3 games archived, none late | PASS |
+| **Every archived availability observation reaches the projection** | **16 ESPN observations (5 OUT, 11 QUESTIONABLE) were archived at 18:52:42Z and every one of those players was published UNVERIFIED, including Devin Carter (OUT), with no gate BLOCK** | **FAIL (defect, fixed here)** |
+
+**The defect.** Stage timestamps are whole seconds and `pf_core.availability.asof` takes only observations captured *strictly before* the cut-off. The
+project stage read its clock truncated to the second (18:52:42) while the ESPN capture had just been stamped 18:52:42, so a run never saw its own
+capture: ruled-out players were projected (P(play) 0.75 for a player out indefinitely) until a later run. `nba.live.run.wall_clock()` now rounds the
+stage clock *up* to the next whole second (never more than one second ahead of real time), so every stage's clock is later than anything an earlier
+stage stamped. `test_a_just_captured_espn_out_reaches_the_projection_of_the_same_run` reproduces the stamp with recorded rows. The next scheduled run
+publishes the corrected rows; `activation_check` then moves from BLOCKED to PENDING.
+
+**Unreadable statuses.** The report parser only produced rows for the five status words the league prints; a player line with any other word was
+dropped, which left the player "unlisted" and therefore implicitly available. The parser now records those lines (`unrecognized_status_rows`) and the
+capture reads each as an uncertain QUESTIONABLE REPORTED designation (never available), counted as `rows_unknown_status`.
+
+**Identity.** Report names that do not match the ESPN roster are counted; those that share a surname with a rostered teammate are flagged
+`possible_identity_misses` (never guessed), and a non-zero count fails check B1.
+
+**What activation needs, exactly.** (1) At least one capture in which teams have submitted player-level rows for games that have not started, normally the
+first report the league posts for the next day's games. (2) That capture parsed with no possible identity miss and with every status classified.
+(3) The next run publishes rows whose OUT players are BLOCK, whose uncertain players are REVIEW and whose available players are not blocked, with minutes on the
+report-aware model. (4) `activation_check` reads READY on the real archive and SIFT's `scripts/verify-nba-activation.ts` agrees on the published feed. Then a
+person changes the seven rows of SIFT's `projectionApprovals.ts` from APPROVED_PENDING_LIVE_INPUTS to PROMOTED. No correction for the historical minutes
+bias is applied or needed: the challenger's holdout bias is +0.09 minutes.

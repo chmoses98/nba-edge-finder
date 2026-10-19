@@ -39,6 +39,8 @@ SPORT = "NBA"
 SRC_OFFICIAL = "nba_official_injury_report"
 SRC_ESPN_INJ = "espn_injuries"
 SRC_STARTERS = "espn_summary_starters"
+UNRECOGNIZED = "unrecognized"
+UNKNOWN_DESIGNATION = "QUESTIONABLE"
 OFFICIAL_STATUS = {"out": "OUT", "doubtful": "DOUBTFUL", "questionable": "QUESTIONABLE", "probable": "PROBABLE",
                    "available": "ACTIVE"}
 ESPN_STATUS = {"out": "OUT", "day-to-day": "QUESTIONABLE", "questionable": "QUESTIONABLE", "doubtful": "DOUBTFUL",
@@ -95,6 +97,14 @@ class RosterIndex:
             parts = k.split()
             if len(parts) >= 2:
                 self._initial.setdefault((tri, f"{parts[0][0]} {parts[-1]}"), set()).add(pid)
+
+    def shares_surname(self, tri: str, raw: str) -> bool:
+        """Whether a rostered player of `tri` has the same last name as the report's (unmatched) name."""
+        from nba_edge.availability.identity import report_name_to_display
+        parts = self._norm(report_name_to_display(raw)).split()
+        if not parts:
+            return False
+        return any(self._norm(r["name"]).split()[-1:] == parts[-1:] for r in self.by_team.get(tri, []))
 
     def resolve_report_name(self, tri: str, raw: str) -> tuple[int | None, str]:
         from nba_edge.availability.identity import report_name_to_display
@@ -154,7 +164,12 @@ def official_observations(rep: dict, games: list[dict], roster: RosterIndex, cap
     listed: dict[str, set[str]] = {}          # game -> team tricodes with at least one player row
     submitted_missing: dict[str, set[str]] = {}   # game -> teams whose report is NOT YET SUBMITTED
     covered: set[str] = set()
-    for r in rep["rows"]:
+    misses: list[str] = []
+    # a player line whose status word is not one of the five the league prints (parser meta) is never dropped: it is read as an
+    # uncertain designation below, so the player is neither "unlisted" (implicitly available) nor silently ignored
+    unrecognized = [{**u, "status": UNRECOGNIZED, "reason": None, "game_time_et": None}
+                    for u in ((rep.get("meta") or {}).get("unrecognized_status_rows") or [])]
+    for r in list(rep["rows"]) + unrecognized:
         home, away = _canon(r.get("home_tricode")), _canon(r.get("away_tricode"))
         g = key.get((r.get("game_date"), home, away))
         if g is None:
@@ -174,14 +189,21 @@ def official_observations(rep: dict, games: list[dict], roster: RosterIndex, cap
             continue
         pid, method = roster.resolve_report_name(team, r["player_name_raw"])
         status = OFFICIAL_STATUS.get(r["status"])
-        if status is None:
-            st["rows_unknown_status"] += 1
-            continue
         detail = {"reason": r.get("reason"), "report_time_utc": rep.get("report_time_utc"), "match": method,
                   "player_name_raw": r["player_name_raw"], "game_time_et": r.get("game_time_et")}
+        if status is None:
+            # an official designation we cannot read is UNCERTAIN (REPORTED, so it outranks aggregator news): never available
+            status = UNKNOWN_DESIGNATION
+            detail["unknown_status"] = r.get("status_text") or r["status"]
+            st["rows_unknown_status"] += 1
         if pid is None:
             st["rows_unmatched_player"] += 1
             st["unmatched:" + team] += 1
+            if roster.shares_surname(team, r["player_name_raw"]):
+                # unmatched, yet a rostered teammate has the same surname: possibly the same person under a different
+                # spelling. Reported (and checked by activation_check); never guessed.
+                st["possible_identity_misses"] += 1
+                misses.append(f"{team}: {r['player_name_raw']} ({status})")
             norm = re.sub(r"[^a-z]+", "_", r["player_name_raw"].lower()).strip("_")
             obs.append(_obs(g, team, 0, r["player_name_raw"], "injury", status, "REPORTED", SRC_OFFICIAL, captured, updated, url,
                             {**detail, "unmatched": True}))
@@ -215,7 +237,10 @@ def official_observations(rep: dict, games: list[dict], roster: RosterIndex, cap
                                       "report_time_utc": rep.get("report_time_utc")}))
                 st["official_implicit"] += 1
     st["games_covered"] = len(covered)
-    return obs, dict(st)
+    out = dict(st)
+    if misses:
+        out["possible_identity_miss_names"] = misses[:20]
+    return obs, out
 
 
 def espn_injury_observations(rows: list[dict], games: list[dict], roster: RosterIndex, captured: str) -> tuple[list[av.Observation], dict]:
