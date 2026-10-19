@@ -10,7 +10,7 @@ name: projection-foundation
 #   firing is an explicit `already_done` skip; a run that fails verification writes no ledger record, so the next backup cron retries
 #   the slot. The final `outcome` job fails the workflow on any skip that is not one of the valid reasons, and on any failed job.
 #
-#   pregame slots 11:20, 13:50, 17:20, 21:20 ET   capture (official injury-report PDF + ESPN injuries + starters) -> frozen-model
+#   pregame slots 11:20, 13:50, 17:20, 18:20, 19:50, 21:20 ET   capture (official injury-report PDF + ESPN injuries + starters) -> frozen-model
 #            projections -> incumbent forecasts -> publish -> results/settle/score of finished games -> ledger -> archive guard -> commit
 #   settle slot  06:40 ET                          finals -> outcomes -> settlement -> scorecards -> ledger
 #   every slot also has a backup cron 25 minutes later; both UTC hours of every ET target are listed (EDT and EST), the ledger
@@ -21,19 +21,23 @@ name: projection-foundation
 # The schedule fires only from the default branch. A manual dispatch is never required: it exists for dry runs and recovery.
 on:
   schedule:
-    # pregame slots (primary + backup), both UTC hours of each ET target
-    - cron: "20 15,16 * 1-6,10-12 *"      # 11:20 ET
-    - cron: "45 15,16 * 1-6,10-12 *"      # 11:45 ET backup
-    - cron: "50 17,18 * 1-6,10-12 *"      # 13:50 ET (afternoon tips)
-    - cron: "15 18,19 * 1-6,10-12 *"      # 14:15 ET backup
-    - cron: "20 21,22 * 1-6,10-12 *"      # 17:20 ET after the injury-report updates
-    - cron: "45 21,22 * 1-6,10-12 *"      # 17:45 ET backup
-    - cron: "20 1,2 * 1-6,10-12 *"        # 21:20 ET late slate
-    - cron: "45 1,2 * 1-6,10-12 *"        # 21:45 ET backup
-    # settle slot (primary + backup)
-    - cron: "40 10,11 * 1-6,10-12 *"      # 06:40 ET
-    - cron: "5 11,12 * 1-6,10-12 *"       # 07:05 ET backup
-    # incumbent sweep
+    # generated from nba/live/schedule_plan.cron_table() (tests/test_ops_schedule.py fails if this list and the table diverge):
+    #   pregame slots 11:20 13:50 17:20 18:20 19:50 21:20 ET, each with a backup cron 25 min later; settle 06:40 ET (+25 min backup);
+    #   both UTC hours (EDT, EST) of every ET target are listed; the hourly sweep doubles as a heartbeat for any pregame slot not in the ledger.
+    - cron: "15 0,1 * 1-6,10-12 *"
+    - cron: "15 18,19 * 1-6,10-12 *"
+    - cron: "20 1,2 * 1-6,10-12 *"
+    - cron: "20 15,16 * 1-6,10-12 *"
+    - cron: "20 21,22 * 1-6,10-12 *"
+    - cron: "20 22,23 * 1-6,10-12 *"
+    - cron: "45 1,2 * 1-6,10-12 *"
+    - cron: "45 15,16 * 1-6,10-12 *"
+    - cron: "45 21,22 * 1-6,10-12 *"
+    - cron: "45 22,23 * 1-6,10-12 *"
+    - cron: "50 0,23 * 1-6,10-12 *"
+    - cron: "50 17,18 * 1-6,10-12 *"
+    - cron: "40 10,11 * 1-6,10-12 *"
+    - cron: "5 11,12 * 1-6,10-12 *"
     - cron: "50 15-23,0-3 * 1-6,10-12 *"
   workflow_dispatch:
     inputs:

@@ -44,7 +44,8 @@ def test_every_slot_has_edt_and_est_hours_and_a_backup():
     assert "50 17,18 * 1-6,10-12 *" in t                                                       # 13:50 ET (the 15:00 ET opener)
     assert "20 21,22 * 1-6,10-12 *" in t and "20 1,2 * 1-6,10-12 *" in t
     assert "40 10,11 * 1-6,10-12 *" in t and t["40 10,11 * 1-6,10-12 *"] == "settle"
-    assert sum(1 for k in t.values() if k == "pregame") == 8 and sum(1 for k in t.values() if k == "settle") == 2
+    assert sum(1 for k in t.values() if k == "pregame") == 12 and sum(1 for k in t.values() if k == "settle") == 2
+    assert "50 0,23 * 1-6,10-12 *" in t and "20 22,23 * 1-6,10-12 *" in t                       # 19:50 and 18:20 ET slots
 
 
 # ------------------------------------------------------------------------------------------------ late delivery is never a skip
@@ -89,8 +90,19 @@ def test_unknown_cron_or_event_is_never_a_silent_success():
     assert p.mode == "skip" and not p.skip_valid
 
 
-def test_sweep_and_dispatch_and_pr_modes():
-    assert plan("schedule", SP.SWEEP_CRON, "2026-10-20T18:05:00Z").mode == "sweep"
+def test_sweep_is_a_heartbeat_for_a_pregame_slot_that_is_due_and_not_in_the_ledger():
+    # 14:05 ET on the opening day: the 13:50 slot is due; if the ledger has it the sweep stays a sweep, otherwise it runs the slot
+    p = plan("schedule", SP.SWEEP_CRON, "2026-10-20T18:05:00Z")
+    assert p.mode == "pregame" and p.slot_id == "2026-10-20@1350" and "heartbeat" in p.reason
+    done = {("2026-10-20@1350", "pregame")}
+    p = plan("schedule", SP.SWEEP_CRON, "2026-10-20T18:05:00Z", has=lambda s, k: (s, k) in done)
+    assert p.mode == "sweep" and p.stage == "incumbent,guard"
+    # a slot that is more than 6 h old is not resurrected by a sweep (its own crons and later slots own it)
+    p = plan("schedule", SP.SWEEP_CRON, "2026-10-20T08:50:00Z")
+    assert p.mode == "sweep"
+
+
+def test_sweep_dispatch_and_pr_modes():
     d = plan("workflow_dispatch", None, "2026-10-20T18:05:00Z", stage_in="all")
     assert d.mode == "pregame" and d.slot_id.startswith("manual-")
     assert plan("workflow_dispatch", None, "2026-10-20T18:05:00Z", dry_run=True).mode == "dry"
