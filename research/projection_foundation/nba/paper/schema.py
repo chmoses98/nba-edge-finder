@@ -12,6 +12,7 @@ CORRECTION_SCHEMA = "sift.paper_correction.v1"
 GAME_FORECAST_SCHEMA = "sift.game_forecast.v1"
 SCORECARD_SCHEMA = "sift.paper_scorecard.v1"
 REPORT_SCHEMA = "sift.weekly_report.v1"
+TEAM_OUTCOME_SCHEMA = "sift.team_outcome.v1"
 
 # kind -> directory under the projection-data root (immutable kinds; additions only)
 KIND_DIR = {
@@ -20,6 +21,7 @@ KIND_DIR = {
     "decisions": "paper/nba/decisions",
     "settlements": "paper/nba/settlements",
     "corrections": "paper/nba/corrections",
+    "team_outcomes": "team_outcomes/nba",          # final team box facts (points, quarter scores, possessions); written by the results stage
 }
 
 HORIZONS = ("OPEN", "T-90", "T-60", "T-30", "T-10", "LAST_VALID", "LIVE")
