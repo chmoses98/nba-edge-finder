@@ -44,7 +44,7 @@ def _manual_after_lookup(ref: str | None):
         for k in (0, 1):
             day = (inst + timedelta(days=k)).strftime("%Y-%m-%d")
             try:
-                out = subprocess.check_output(["git", "ls-tree", "--name-only", ref, f"ops/nba/slots/{day}/"], text=True, stderr=subprocess.DEVNULL)
+                out = subprocess.check_output(["git", "ls-tree", "--full-tree", "--name-only", ref, f"ops/nba/slots/{day}/"], text=True, stderr=subprocess.DEVNULL)
             except subprocess.CalledProcessError:
                 continue
             for name in out.split():
