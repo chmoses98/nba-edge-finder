@@ -547,12 +547,12 @@ Subgroups (holdout, ΔCRPS JRM vs frozen E, n player-games): established starter
 [-0.0315, -0.0076] (30,184), **deep rotation (15+ eligible) -0.1004 [-0.1250, -0.0761]** (6,678), **full health -0.0757 [-0.0947, -0.0586]** (8,281), **teams the frozen gate
 must normalise by >12% -0.1898 [-0.3244, -0.0483]** (1,188; the gate itself worsens MAE there by +0.17), opening game -0.1350 [-0.2486, -0.0269] (683), first five games
 -0.0428 [-0.0711, -0.0145] (3,346), new-to-team -0.0281 [-0.0758, +0.0176] (2,135), fewer than 3 career games -0.0327 [-0.1114, +0.0552] (617), 4+ new teammates -0.0269
-[-0.0591, +0.0065] (2,576), returning from absence +0.0052 [-0.0317, +0.0422] (2,633). Validation (2022-23/2023-24) agrees in direction everywhere except thin-history
-players, where v1 was worse and v2 is not (+0.0 to -0.05, n.s.). **No subgroup is significantly worse; the groups with no significant gain are small.**
+[-0.0591, +0.0065] (2,576), returning from absence +0.0052 [-0.0317, +0.0422] (2,633). Validation (2022-23/2023-24) agrees: all 13 subgroup point estimates are negative and 11 have a CI
+excluding 0 (the exceptions are fewer than 3 career games, -0.0643 [-0.1358, +0.0122], and returning from absence, -0.0098 [-0.0492, +0.0277]). **No subgroup is significantly worse in either split; the groups with no significant gain are small.** (v1, which ranked players by the linear role blend, was significantly worse on thin-history players in validation, +0.129; that is what v2 fixed.)
 
 **Downstream** (six stat families, same frozen hyper-parameters, no retuning; `artifacts/DOWNSTREAM_COMPARISON_v2.md`): ΔCRPS of JRM minutes vs frozen minutes is negative in all 12
-family x split cells (10 with the CI excluding 0; holdout: points -0.0039 [-0.0065, -0.0012], rebounds -0.0017, assists -0.0011, threes -0.0001 (n.s.), PRA -0.0093 [-0.0139, -0.0050],
-FGA -0.0054 [-0.0074, -0.0033]); established starters never degrade; deep rotations and full-health teams gain most (PRA -0.044 and -0.025). **All seven families still pass the
+family x split cells (at least 9 with the CI excluding 0; the two threes cells are marginal; holdout: points -0.0039 [-0.0065, -0.0012], rebounds -0.0017, assists -0.0011, threes -0.0001 (n.s.), PRA -0.0093 [-0.0139, -0.0050],
+FGA -0.0054 [-0.0074, -0.0033]); established starters never degrade; deep rotations and full-health teams gain most (holdout PRA -0.045 and -0.031, points -0.021 and -0.015). **All seven families still pass the
 original READY rules** with JRM minutes (`artifacts/READINESS_CHECK.md`: minutes beat baseline -0.518 [-0.542, -0.493] and incumbent -1.156 [-1.192, -1.122], cover_80 0.802,
 PIT variance 0.985, bias -0.33%; the harness reproduces the frozen engine's published readiness numbers).
 
@@ -560,14 +560,14 @@ PIT variance 0.985, bias -0.33%; the harness reproduces the frozen engine's publ
 live recipe on conditional MAE (4.540 vs 4.598, -0.057 [-0.085, -0.031]; starters 4.156 vs 4.162), on P(play) Brier (0.0790 vs 0.0868) and on unconditional MAE (4.270 vs 4.480); team
 sums are 1.003 (SD 0.020, 0.5% of team-games outside +-12%) vs 0.963 (SD 0.063, 9.5%).
 
-**Live slate** (`artifacts/LIVE_SLATE_AUDIT_v2.md`, 26 teams): frozen raw 267 -> gated 245 (x0.71-1.47 on 15 teams); JRM raw 255 (SD 10 vs 17 at historical openers) -> 241.5 with a per-team
+**Live slate** (`artifacts/LIVE_SLATE_AUDIT_v2.md`, 26 teams): frozen raw 267 -> gated 245 (13 teams normalised, x0.71-1.37); JRM raw 255 (SD 10 vs 17 at historical openers) -> 241.5 with a per-team
 correction of 3-36 minutes shown in the audit, not hidden in a scale. Established rotation players (>= 20 career games, rank <= 8) average 25.98 minutes raw, 23.95 after the frozen
 gate, **25.75 under JRM**. Through the publisher (`project_slate(..., minutes_engine="jrm")`): zero teams need minutes normalisation, 1,388 rows PASS vs 433, BLOCK rows unchanged
 (259), activation check F1 PASS (worst team within 1.3%); SIFT's S10 PASS on all 26 team-games.
 
 **Limitations.** (1) The final model's holdout was scored twice (v1 once; v2 selected on development/validation, re-scored); the prospective archive is the independent test.
 (2) The training pool cannot show never-dressed roster members, so p(play) of two-way / rookie players is the least reliable number; they stay at Low reliability and move inside the exact
-budget. (3) JRM runs +0.35 minutes high on the 2025-26 second half (+0.49 for starters) even though MAE is better. (4) With no injury report (`UNVERIFIED`, 55% of rows tonight)
+budget. (3) JRM runs +0.35 minutes high on the 2025-26 second half (+0.49 for starters) even though MAE is better. (4) With no injury report (`UNVERIFIED`; 17% of rows in tonight's feed, 53% in the 18:18Z feed)
 eligibility is history-only (Brier 0.079 vs 0.038 with the report). (5) Usage (points) reconciliation to the team projection is separate and unchanged. (6) Overtime is the expected
 1.5 minutes, not modelled per game. (7) Minutes are not modelled below the player level (no lineup/foul-trouble dynamics).
 
