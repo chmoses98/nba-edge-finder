@@ -78,6 +78,8 @@ def table(mask, title, models_=("A", "B", "E", "E_recon", "m_jrm", "E_inj", "m_j
         fmt = lambda r: "—" if r is None else f"{r['mean_diff']:+.4f} [{r['ci95'][0]:+.4f}, {r['ci95'][1]:+.4f}]"
         out(f"| {MODELS[k]} | {ae.mean():.3f} | {np.sqrt(np.mean((m - y[s]) ** 2)):.3f} | {np.mean(m - y[s]):+.3f} | {crps[k][s].mean():.4f} | "
             f"{cov(pit[k][s], .8):.3f} | {np.var(pit[k][s]) * 12:.3f} | {fmt(dc)} | {fmt(da)} |")
+    dc2 = diff_ci(crps["m_jrm_or"][s], crps["E_inj"][s], P.game_id.to_numpy()[s]); da2 = diff_ci(np.abs(P["m_jrm_or"].to_numpy()[s] - y[s]), np.abs(P["E_inj"].to_numpy()[s] - y[s]), P.game_id.to_numpy()[s])
+    out(f"| JRM given eligible set vs Frozen E_inj (direct) | | | | | | | {fmt(dc2)} | {fmt(da2)} |")
     mi = s & P.inc.notna().to_numpy()
     if mi.sum() > 500:
         ae_i = np.abs(P.inc.to_numpy()[mi] - y[mi])

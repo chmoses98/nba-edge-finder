@@ -9,7 +9,7 @@ from nba import injury
 from nba import minutes_jrm as jrm
 f = pd.read_parquet("../.cache/features.parquet", columns=["game_id","team","season","date","pid","played","in_box","dnp","dnp_reason","usage_p_ewm8","minutes_p_ewm8","missed_streak","last_min","pos"])
 f["elig"] = jrm.eligible_flag(f)
-f = f.join(pd.read_parquet("../.cache/jrm_q.parquet"))
+f = f.join(pd.read_parquet(f"../.cache/jrm_q_{jrm.LEVEL}.parquet"))
 H = f[f.season == 2026].copy()
 st, games = injury.snapshot_status("t_minus_60")
 H2 = injury.pit_absence(H, st, games); H2.index = H.index

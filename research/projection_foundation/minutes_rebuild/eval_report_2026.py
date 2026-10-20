@@ -10,8 +10,8 @@ from pf_core import models
 from nba import minutes_jrm as jrm
 f, _ = pipeline.stage_features(); f = pipeline.with_targets(f)
 mp = pd.read_parquet("../.cache/minutes_preds.parquet"); f = jrm.prepare(f, mp)
-f["q"] = pd.read_parquet("../.cache/jrm_q.parquet")["q"]
-sets = pd.read_parquet("../.cache/jrm_train_sets.parquet"); ft = f.join(sets)
+f["q"] = pd.read_parquet(f"../.cache/jrm_q_{jrm.LEVEL}.parquet")["q"]
+sets = pd.read_parquet(f"../.cache/jrm_train_sets_{jrm.LEVEL}.parquet"); ft = f.join(sets)
 s = 2026
 H0 = ft[ft.season == s].copy()
 st, games = injury.snapshot_status("t_minus_60")
