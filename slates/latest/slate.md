@@ -1,29 +1,30 @@
-# NBA slate 2026-10-16 — generated 2026-10-17T00:05:20Z — nba-sim-0.1.0
+# NBA slate 2026-10-20 — generated 2026-10-20T04:25:21Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
-Market snapshot age: 3 min · injury snapshot age: 44 min (espn)
+Market snapshot age: 3 min · injury snapshot age: 0 min (official)
 
 ## Coverage
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 75 |
-| MODELABLE | 144 |
-| UNRESOLVED | 3 |
+| BUILDABLE | 750 |
+| MODELABLE | 584 |
+| RESEARCH | 6 |
+| UNRESOLVED | 97 |
 
 ## Games
 
 | game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |
 |---|---|---:|---|---|---:|---:|---|
-| POR @ GSW | 2026-10-17T02:00:00Z | 0.445 | -2.3±16.4 | 220.3±20.1 | 0.049 | 40000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
-| UTA @ PHX | 2026-10-17T02:00:00Z | 0.812 | +14.5±16.4 | 235.2±20.6 | 0.048 | 60000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
-| DEN @ LAL | 2026-10-17T02:30:00Z | 0.424 | -3.1±16.3 | 238.3±20.4 | 0.046 | 40000 | CANNOT_TRUST: injury source is espn not official report; preseason game: rotations/minutes are not representative (systems-validation only) |
+| BOS @ DET | 2026-10-20T19:00:00Z | 0.504 | +0.2±16.3 | 214.9±19.9 | 0.049 | 40000 | ok |
+| PHI @ NYK | 2026-10-20T23:00:00Z | 0.892 | +19.5±15.8 | 222.2±20.0 | 0.048 | 40000 | ok |
+| OKC @ SAS | 2026-10-21T01:30:00Z | 0.519 | +0.7±16.3 | 221.0±20.1 | 0.049 | 40000 | ok |
 
 ## Contracts (OK gate, sorted by best EV)
 
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'UNSUPPORTED': 3, 'CANNOT_TRUST_INPUTS': 219}
+Other gates: {'NO_EDGE': 1334, 'UNSUPPORTED': 103}
 
