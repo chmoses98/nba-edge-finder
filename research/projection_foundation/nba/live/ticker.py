@@ -18,15 +18,47 @@ GRACE_MIN = {"pregame": 12, "settle": 12}              # give the cron/backup/he
 MAX_LATE_MIN = {"pregame": 8 * 60, "settle": 30 * 60}  # a slot older than this is not resurrected (later slots/runs own the data)
 
 
-def due(now: datetime, ledger_has) -> list[dict]:
+def due(now: datetime, ledger_has, manual_after=lambda inst: False) -> list[dict]:
+    """Slots that are due, past their grace, not too old and not covered. `manual_after(inst)` says whether a manual (unnamed) pregame run
+    started at or after the slot instant: such a run produced fresher forecasts than the slot would have, so the slot is covered."""
     out = []
     for kind in ("pregame", "settle"):
         inst, sid = SP.due_slot(kind, now)
         late = int((now - inst).total_seconds() // 60)
         if late < GRACE_MIN[kind] or late > MAX_LATE_MIN[kind] or ledger_has(sid, kind):
             continue
+        if kind == "pregame" and manual_after(inst):
+            continue
         out.append({"kind": kind, "slot_id": sid, "lateness_min": late})
     return out
+
+
+def _manual_after_lookup(ref: str | None):
+    """Read-only: does the ledger on `ref` hold a manual run record whose start time is at or after the slot instant?"""
+    if not ref:
+        return lambda inst: False
+    import subprocess
+    from datetime import timedelta
+
+    def has(inst: datetime) -> bool:
+        for k in (0, 1):
+            day = (inst + timedelta(days=k)).strftime("%Y-%m-%d")
+            try:
+                out = subprocess.check_output(["git", "ls-tree", "--name-only", ref, f"ops/nba/slots/{day}/"], text=True, stderr=subprocess.DEVNULL)
+            except subprocess.CalledProcessError:
+                continue
+            for name in out.split():
+                base = name.rsplit("/", 1)[-1]
+                if base.startswith("manual_") and base.endswith(".json"):
+                    hms = base[len("manual_"):-len(".json")]
+                    try:
+                        t = datetime(int(day[:4]), int(day[5:7]), int(day[8:10]), int(hms[:2]), int(hms[2:4]), int(hms[4:6]), tzinfo=timezone.utc)
+                    except ValueError:
+                        continue
+                    if t >= inst:
+                        return True
+        return False
+    return has
 
 
 def main(argv=None) -> int:
@@ -35,7 +67,7 @@ def main(argv=None) -> int:
     ap.add_argument("--ledger-ref", default=None)
     a = ap.parse_args(argv)
     now = datetime.fromisoformat(a.now.replace("Z", "+00:00")) if a.now else datetime.now(timezone.utc)
-    for d in due(now, SP._ledger_lookup(a.ledger_ref)):
+    for d in due(now, SP._ledger_lookup(a.ledger_ref), _manual_after_lookup(a.ledger_ref)):
         print(f"{d['kind']} {d['slot_id']} {d['lateness_min']}")
     return 0
 

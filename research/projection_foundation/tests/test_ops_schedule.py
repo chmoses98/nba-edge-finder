@@ -348,3 +348,27 @@ def test_ticker_workflow_shape():
     assert "nba.live.ticker" in text and "-f slot=" in text and "git push" not in text
     inputs = yaml.safe_load(WF.read_text()).get(True)["workflow_dispatch"]["inputs"]
     assert "slot" in inputs and "slot_kind" in inputs
+
+
+def test_ticker_treats_a_later_manual_pregame_run_as_covering_the_slot(tmp_path):
+    import os
+    import subprocess
+    from nba.live import ticker as TK
+    r = tmp_path / "r"
+    r.mkdir()
+    sh = lambda *a: subprocess.run(["git", "-C", str(r), "-c", "user.email=a@b", "-c", "user.name=n", *a], check=True, capture_output=True)  # noqa: E731
+    sh("init", "-q")
+    (r / "ops/nba/slots/2026-10-20").mkdir(parents=True)
+    (r / "ops/nba/slots/2026-10-20/manual_181700.json").write_text("{}")
+    sh("add", "-A")
+    sh("commit", "-q", "-m", "x")
+    cwd = os.getcwd()
+    os.chdir(r)
+    try:
+        has = TK._manual_after_lookup("HEAD")
+        assert has(utc("2026-10-20T17:50:00Z")) and not has(utc("2026-10-20T18:20:00Z"))
+        now = utc("2026-10-20T18:30:00Z")
+        d = TK.due(now, lambda s, k: k == "settle", has)
+        assert not [x for x in d if x["kind"] == "pregame"]                     # slot 13:50 ET (17:50Z) is covered by the 18:17Z manual run
+    finally:
+        os.chdir(cwd)
