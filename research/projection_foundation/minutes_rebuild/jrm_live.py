@@ -79,7 +79,7 @@ f = f.join(mp[["A", "B", "D", "E", "E_inj", "F"]])
 f["p_hurdle"] = M.fit_hurdle(f, final_only=True)
 log("frozen ladder + hurdle done")
 f["elig"] = jrm.eligible_flag(f).astype(float).where(~f["is_slate"], np.nan)
-f["lvl"] = f["D"].clip(2.0, 40.0)
+f["lvl"] = (f["E"].fillna(f["D"]) if jrm.LEVEL == "E" else f["D"]).clip(2.0, 40.0)
 f["y_play"] = f["played"].astype(float)
 # ---- eligibility head (final window) and its report calibration
 qf = f[M.HURDLE + ["lvl", "season"]].copy()

@@ -11,6 +11,7 @@ from nba.evaluate import diff_ci
 import jrm
 
 out_path = sys.argv[1]
+SUF = sys.argv[2] if len(sys.argv) > 2 else ""
 f = pd.read_parquet("../.cache/features.parquet", columns=["game_id", "team", "season", "pid", "played", "minutes", "in_box", "dnp", "dnp_reason", "pts", "reb", "ast", "fg3m",
                     "fga", "pra", "start_p_ewm8", "games_in_season", "team_changed", "games_with_team", "minutes_p_n", "missed_streak", "minutes_p_ewm8"])
 mp = pd.read_parquet("../.cache/minutes_preds.parquet")
@@ -52,8 +53,8 @@ summary = []
 for fam, (col, gkey, rungs) in FAMILIES.items():
     K = SUPPORT_K[col]
     fr = pd.read_parquet(f"../.cache/stats_{col}.parquet")
-    V = {"frozen": fr["E"], "frozen_inj": pd.read_parquet(f"../.cache/ds_frozen_inj_{col}.parquet")["E_inj"],
-         "jrm": pd.read_parquet(f"../.cache/ds_jrm_{col}.parquet")["E"], "jrm_set": pd.read_parquet(f"../.cache/ds_jrm_set_{col}.parquet")["E"]}
+    V = {"frozen": fr["E"], "frozen_inj": pd.read_parquet(f"../.cache/ds_frozen_inj_{col}{SUF}.parquet")["E_inj"],
+         "jrm": pd.read_parquet(f"../.cache/ds_jrm_{col}{SUF}.parquet")["E"], "jrm_set": pd.read_parquet(f"../.cache/ds_jrm_set_{col}{SUF}.parquet")["E"]}
     P = f.join(pd.DataFrame(V), how="inner")
     P = P[P.played & P[col].notna()].copy()
     P["frozen_gate"] = P["frozen"] * P["recon_scale"]

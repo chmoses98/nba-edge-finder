@@ -9,13 +9,15 @@ def log(m): print(f"[{time.strftime('%H:%M:%S')}] {m}", flush=True)
 frozen = json.load(open("../results/frozen_params.json"))
 f, _ = pipeline.stage_features(); f = pipeline.with_targets(f)
 mp = pd.read_parquet("../.cache/minutes_preds.parquet")
-R = pd.concat([pd.read_parquet("../.cache/jrm_pred_u3.parquet"), pd.read_parquet("../.cache/jrm_pred_holdout.parquet")])
+DEVTAG = sys.argv[2] if len(sys.argv) > 2 else "u3"; HOLDTAG = sys.argv[3] if len(sys.argv) > 3 else "holdout"; SUF = sys.argv[4] if len(sys.argv) > 4 else ""
+R = pd.concat([pd.read_parquet(f"../.cache/jrm_pred_{DEVTAG}.parquet"), pd.read_parquet(f"../.cache/jrm_pred_{HOLDTAG}.parquet")])
 f = f.join(mp[["E", "E_inj"]]).join(R[["m_jrm", "m_jrm_or"]])
 variants = sys.argv[1].split(",") if len(sys.argv) > 1 else ["jrm", "frozen_inj", "jrm_set"]
+DEVTAG = sys.argv[2] if len(sys.argv) > 2 else "u3"; HOLDTAG = sys.argv[3] if len(sys.argv) > 3 else "holdout"; SUF = sys.argv[4] if len(sys.argv) > 4 else ""
 colmap = {"jrm": "m_jrm", "frozen_inj": "E_inj", "jrm_set": "m_jrm_or"}
 for v in variants:
     f["_min"] = f[colmap[v]].astype(float)
     for fam, (col, gkey, rungs) in FAMILIES.items():
         out, _ = S.fit_family(f, col, "_min", M.INJ, frozen=frozen["families"][fam]["params"])
-        out.to_parquet(f"../.cache/ds_{v}_{col}.parquet")
+        out.to_parquet(f"../.cache/ds_{v}_{col}{SUF}.parquet")
         log(f"{v} {col} done")
