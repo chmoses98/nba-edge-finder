@@ -3,7 +3,7 @@ import numpy as np, pandas as pd
 sys.path.insert(0, ".."); sys.path.insert(0, ".")
 tag = sys.argv[1]; seasons = [int(x) for x in sys.argv[2].split(",")]
 f = pd.read_parquet("../.cache/features.parquet", columns=["game_id","team","season","pid","played","minutes","in_box","dnp","dnp_reason","start_p_ewm8","games_in_season","team_changed","games_with_team","minutes_p_n","minutes_p_ewm8"])
-import jrm
+from nba import minutes_jrm as jrm
 f["elig"] = jrm.eligible_flag(f)
 mp = pd.read_parquet("../.cache/minutes_preds.parquet")
 R = pd.read_parquet(f"../.cache/jrm_pred_{tag}.parquet")

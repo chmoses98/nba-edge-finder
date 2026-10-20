@@ -13,7 +13,7 @@ from pf_core import models
 from nba import data, features, minutes as M, pipeline, distributions as D
 from nba.common import lgb_walkforward
 from nba.project import SLATE_SEASON, FROZEN
-import jrm
+from nba import minutes_jrm as jrm
 
 def log(m): print(f"[{time.strftime('%H:%M:%S')}] {m}", flush=True)
 
@@ -21,7 +21,6 @@ feed_path, out_prefix = sys.argv[1], sys.argv[2]
 S = int(sys.argv[sys.argv.index("--S") + 1]) if "--S" in sys.argv else 400
 feed = json.load(open(feed_path))
 frozen = json.loads(FROZEN.read_text())
-CALIB = json.load(open("jrm_q_calibration.json")) if os.path.exists("jrm_q_calibration.json") else None
 
 # ---- slate rows from the feed
 ab2id, ab2tri = data.team_maps()
@@ -78,52 +77,26 @@ mp, _ = M.fit_ladder(f, frozen=frozen["minutes_params"], final_only=True, with_o
 f = f.join(mp[["A", "B", "D", "E", "E_inj", "F"]])
 f["p_hurdle"] = M.fit_hurdle(f, final_only=True)
 log("frozen ladder + hurdle done")
-f["elig"] = jrm.eligible_flag(f).astype(float).where(~f["is_slate"], np.nan)
-f["lvl"] = (f["E"].fillna(f["D"]) if jrm.LEVEL == "E" else f["D"]).clip(2.0, 40.0)
-f["y_play"] = f["played"].astype(float)
-# ---- eligibility head (final window) and its report calibration
-qf = f[M.HURDLE + ["lvl", "season"]].copy()
-qf["y"] = f["elig"]
-f["q_head"] = lgb_walkforward(qf, M.HURDLE + ["lvl"], "y", objective="binary", params=dict(n_estimators=250), final_only=True).clip(0.005, 0.995)
+f["lvl"] = jrm.role_level(f)
+# participation classes exactly as nba.live.participation labels them
+classes = []
+for st, des in zip(f.loc[f["is_slate"], "_status"], f.loc[f["is_slate"], "_designation"]):
+    c = None
+    if st == "CONFIRMED_ACTIVE":
+        c = "STARTER_CONFIRMED"
+    elif isinstance(des, str):
+        c = {"ACTIVE": "AVAILABLE"}.get(des, des)
+        if c not in ("OUT", "DOUBTFUL", "QUESTIONABLE", "PROBABLE", "AVAILABLE"):
+            c = None
+    classes.append(c)
 slate = f["is_slate"]
-def q_live(df):
-    q = df["q_head"].to_numpy(float).copy()
-    if CALIB is None:
-        return q
-    cls = []
-    for st, des, imp in zip(df["_status"], df["_designation"], df["_implicit"]):
-        c = None
-        if st == "CONFIRMED_ACTIVE":
-            c = "STARTER_CONFIRMED"
-        elif des:
-            c = {"ACTIVE": "AVAILABLE"}.get(des, des)
-            if c not in CALIB["coef"] and c not in CALIB["fixed"]:
-                c = None
-        cls.append(c)
-    z = np.log(q / (1 - q)) * CALIB["coef"]["logit"] + CALIB["intercept"]
-    for k in ("QUESTIONABLE", "PROBABLE", "AVAILABLE"):
-        z = z + CALIB["coef"][k] * np.array([c == k for c in cls], float)
-    out = 1 / (1 + np.exp(-z))
-    none = np.array([c is None for c in cls])
-    out[none] = q[none]
-    out[np.array([c == "STARTER_CONFIRMED" for c in cls])] = 0.995
-    for k, v in CALIB["fixed"].items():                  # official OUT / DOUBTFUL are near-deterministic: their empirical eligibility rate
-        out[np.array([c == k for c in cls])] = v
-    return out
-f.loc[slate, "q"] = q_live(f[slate])
-# ---- rotation heads on realised eligible sets of the last five seasons, scenario inference
-hist = f[~slate & (f["season"] >= SLATE_SEASON - 5) & (f["season"] < SLATE_SEASON)]
-sets = jrm.build_training(hist)
-tr = hist.join(sets, how="inner")
-tr = tr[tr["elig"] == 1]
-heads = jrm.fit_heads(tr)
-log(f"heads fitted on {len(tr)} eligible rows")
-F = f[slate].copy()
-out = jrm.predict_season(F, F["q"].to_numpy(), heads, S=S, alloc="var", seed=7)
-F = F.join(out)
+out = jrm.slate_minutes(f, classes, SLATE_SEASON, S=S)
+F = f[slate].copy().join(out[["p_jrm", "u_jrm", "u_raw_jrm", "m_jrm", "m_raw_jrm", "q"]])
+F["q_head"] = F["q"]
+log("JRM done")
 # distribution of minutes given play: empirical residual around the JRM forecast, DEV-fitted (jrm_minutes_dist.json)
-if os.path.exists("jrm_minutes_dist.json"):
-    mdist = models.make_dist(json.load(open("jrm_minutes_dist.json")), np.clip(F["m_jrm"].fillna(0).to_numpy(), 0.5, 46))
+if True:
+    mdist = models.make_dist(jrm.minutes_dist_params(), np.clip(F["m_jrm"].fillna(0).to_numpy(), 0.5, 46))
     F["m_p10"], F["m_p90"] = mdist.quantile(0.1), mdist.quantile(0.9)
 F["m_pub_pre"] = [pub_min.get((g, p), np.nan) / scale.get((g, t), 1.0) for g, p, t in zip(F["game_id"], F["pid"], F["team"])]
 F["m_pub"] = [pub_min.get((g, p), np.nan) for g, p in zip(F["game_id"], F["pid"])]

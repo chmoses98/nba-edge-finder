@@ -7,7 +7,7 @@ from nba import pipeline, minutes as M, injury
 from nba.live import participation as PART
 from nba.evaluate import diff_ci
 from pf_core import models
-import jrm
+from nba import minutes_jrm as jrm
 f, _ = pipeline.stage_features(); f = pipeline.with_targets(f)
 mp = pd.read_parquet("../.cache/minutes_preds.parquet"); f = jrm.prepare(f, mp)
 f["q"] = pd.read_parquet("../.cache/jrm_q.parquet")["q"]

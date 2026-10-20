@@ -8,7 +8,7 @@ import numpy as np, pandas as pd
 from pf_core import models
 from nba.common import FAMILIES, SUPPORT_K, VAL, HOLDOUT, DEV
 from nba.evaluate import diff_ci
-import jrm
+from nba import minutes_jrm as jrm
 
 out_path = sys.argv[1]
 SUF = sys.argv[2] if len(sys.argv) > 2 else ""

@@ -4,7 +4,7 @@ sys.path.insert(0, ".."); sys.path.insert(0, ".")
 import numpy as np, pandas as pd
 from nba import pipeline, minutes as M
 from nba.common import lgb_walkforward
-import jrm
+from nba import minutes_jrm as jrm
 
 args = sys.argv[1:]
 seasons = [int(x) for x in args[0].split(",")]

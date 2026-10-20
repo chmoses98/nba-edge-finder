@@ -51,8 +51,13 @@ out(f"\nEstablished rotation (≥ 20 career games, JRM rank ≤ 8, p ≥ 0.5; n 
 nh = d[(d.minutes_p_n < 3) & (d.p_jrm >= .05)]
 out(f"No/thin-history players (n = {len(nh)}): JRM {nh.m_jrm.mean():.2f} vs frozen raw {nh.m_pub_pre.mean():.2f} (JRM higher by {nh.m_jrm.mean() - nh.m_pub_pre.mean():+.2f}); p JRM {nh.p_jrm.mean():.2f} vs frozen {nh.p_pub.mean():.2f}.")
 out("\n## Remaining structural issues\n")
-out(f"* Raw (pre-conservation) JRM sums range {t.jrm_raw.min():.0f}-{t.jrm_raw.max():.0f}; the correction is spread equally per eligible player (largest: {t.jrm_adj.abs().idxmax()} {t.jrm_adj.loc[t.jrm_adj.abs().idxmax()]:+.1f} min over ~{int(d[d.team == t.jrm_adj.abs().idxmax()].p_jrm.round().sum())} players).")
-out("* Players with no NBA history carry JRM minutes above the frozen prior on average, and BOS' two rookies are the clearest case; their eligibility probability is unobservable from the historical pool (never-dressed roster members are absent from training).")
-out("* No injury report yet for most teams (`UNVERIFIED`): JRM's eligibility head is then the history-only head (Brier 0.079 on 2025-26 vs 0.038 with the report), so participation uncertainty is wide until the reports land; snapshots will be re-archived at each report.")
+worst = t.jrm_adj.abs().sort_values(ascending=False)
+big = [f"{k} {t.jrm_adj[k]:+.1f}" for k in worst.index[:6] if abs(t.jrm_adj[k]) >= 15]
+out(f"* Raw (pre-conservation) JRM sums range {t.jrm_raw.min():.0f}-{t.jrm_raw.max():.0f} (SD {t.jrm_raw.std():.1f}; historical opener SD 17, in-season 5.7). Conservation corrections of 15+ minutes: {', '.join(big) if big else 'none'}; "
+    "each is spread equally over the team's eligible players (about 1-3 minutes each), is within the historical opener dispersion, and is reported per team above rather than hidden in a scale factor.")
+out(f"* Players with no NBA history (n = {len(nh)}): JRM {nh.m_jrm.mean():.2f} vs frozen raw {nh.m_pub_pre.mean():.2f} minutes, p {nh.p_jrm.mean():.2f} vs {nh.p_pub.mean():.2f}. Their dressing probability is unobservable from the historical pool (never-dressed roster members are absent from training); they stay at Low reliability.")
+unv = (d.status == "UNVERIFIED").mean()
+out(f"* {unv:.0%} of rows have no injury observation yet (`UNVERIFIED`): the eligibility head is then history-only (Brier 0.079 on 2025-26 vs 0.038 with the report), so participation uncertainty is wide until the reports land; snapshots are re-archived at each report.")
+out("* Points reconciliation to the team-points projection (usage scaling) is a separate step and is not part of this minutes shadow.")
 open(sys.argv[3], "w").write("\n".join(L))
 print("\n".join(L[:60]))

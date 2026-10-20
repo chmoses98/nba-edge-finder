@@ -2,7 +2,7 @@
 
   python archive_shadow.py FEED.json SHADOW.csv OUTDIR [--push BRANCH]
 
-Writes OUTDIR/<UTC>_jrm_v1.json.gz (only games whose start is after the archive time, each row flagged pregame), appends its sha256 to
+Writes OUTDIR/<UTC>_jrm_{VER}.json.gz (only games whose start is after the archive time, each row flagged pregame), appends its sha256 to
 OUTDIR/MANIFEST.jsonl. With --push the files are committed to an orphan branch of the nba-edge-finder checkout in the current directory's
 repository: the GitHub push time is the independent timestamp. Rows are never rewritten; a later snapshot is a new file.
 """
@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 import pandas as pd
 
 feed_path, csv_path, outdir = sys.argv[1:4]
+VER = sys.argv[4] if len(sys.argv) > 4 else "v1"
+FROZEN_AT = {"v1": "6af02022b0fff19e24299e4b446463e711fe41b9", "v2": "f000f3c18b670ab94e3b71e403dda03bc0e5188a"}[VER]
 feed = json.load(open(feed_path))
 d = pd.read_csv(csv_path).rename(columns={"_status": "status", "_designation": "designation"})
 now = datetime.now(timezone.utc)
@@ -31,12 +33,12 @@ for r in d.itertuples(index=False):
                  "pregame": True})
 stamp = now.strftime("%Y%m%dT%H%M%SZ")
 code_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-doc = {"schema": "jrm.shadow.v1", "model": "pf-nba-jrm-0.1 (research only, authority: none)", "archived_utc": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+doc = {"schema": "jrm.shadow.v1", "version": VER, "model": "pf-nba-jrm-0.1 (research only, authority: none)", "archived_utc": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
        "feed_generated_utc": feed["generated_utc"], "feed_data_asof_utc": feed["data_asof_utc"], "frozen_model_version": feed["model"]["version"],
-       "code_commit": code_sha, "design_frozen_at": "6af02022b0fff19e24299e4b446463e711fe41b9", "scenarios": 400,
+       "code_commit": code_sha, "design_frozen_at": FROZEN_AT, "allocation": "uniform (validated configuration)", "scenarios": 400,
        "n_rows": len(rows), "games": sorted({r["game_id"] for r in rows}), "rows": rows}
 os.makedirs(outdir, exist_ok=True)
-path = os.path.join(outdir, f"{stamp}_jrm_v1.json.gz")
+path = os.path.join(outdir, f"{stamp}_jrm_{VER}.json.gz")
 blob = json.dumps(doc, sort_keys=True).encode()
 with gzip.open(path, "wb") as fh:
     fh.write(blob)
