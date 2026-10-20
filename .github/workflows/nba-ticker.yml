@@ -1,0 +1,67 @@
+name: nba-ticker
+# Reliable tick for the NBA research slots. GitHub `schedule` delivery proved unreliable (2026-10-20: pregame slots 11:20 and 13:50 ET produced no
+# run for 3+ hours). This job is long-lived and self-renewing, like the capture worker: every 5 minutes it asks nba.live.ticker which pregame /
+# settle slot is due but absent from the run ledger on projection-data and dispatches projection-foundation for exactly that slot (a named-slot
+# dispatch). It writes nothing; the slot guard and the write-once ledger make any duplicate dispatch a no-op. It dispatches nothing while a
+# projection-foundation run is already queued or running. Research only.
+on:
+  schedule:
+    - cron: "17 0,5,10,15,20 * * *"        # backstop starts; the concurrency queue + successor dispatch keep it continuous
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: nba-ticker
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash -uo pipefail {0}
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 335
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - name: Tick every 5 minutes for ~5h, queue a successor, exit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PF_DIR: research/projection_foundation
+        run: |
+          last_dispatch=""
+          successor=0
+          for i in $(seq 1 60); do
+            REF=""
+            if git fetch -q --depth=1 origin projection-data 2>/dev/null; then REF=FETCH_HEAD; fi
+            due=$(cd $PF_DIR && python -m nba.live.ticker ${REF:+--ledger-ref "$REF"} 2>&1)
+            echo "tick $i $(date -u +%H:%M:%SZ): due=[${due//$'\n'/; }]"
+            if [ -n "$due" ]; then
+              busy=$(gh run list --workflow projection-foundation.yml --limit 15 --json status --jq '[.[]|select(.status=="queued" or .status=="in_progress")]|length' 2>/dev/null || echo 0)
+              while read -r kind slot late; do
+                [ -z "$kind" ] && continue
+                key="$slot"
+                if [ "$busy" != "0" ]; then echo "  a projection-foundation run is already queued/running ($busy): not dispatching $slot"; continue; fi
+                if [[ "$last_dispatch" == *"$key@"* ]]; then
+                  prev=${last_dispatch##*"$key@"}; prev=${prev%%,*}
+                  if [ $(( $(date +%s) - prev )) -lt 1500 ]; then echo "  $slot was dispatched <25 min ago: waiting"; continue; fi
+                fi
+                echo "  dispatching $kind slot $slot (late ${late} min)"
+                if gh workflow run projection-foundation.yml --ref main -f dry_run=false -f slot="$slot" -f slot_kind="$kind" -f season_types=regular -f window_hours=30; then
+                  last_dispatch="$last_dispatch,$key@$(date +%s)"; busy=1
+                fi
+              done <<< "$due"
+            fi
+            if [ "$i" -ge 50 ] && [ "$successor" = 0 ]; then
+              pend=$(gh run list --workflow nba-ticker.yml --limit 10 --json status --jq '[.[]|select(.status=="queued")]|length' 2>/dev/null || echo 0)
+              if [ "$pend" = "0" ]; then gh workflow run nba-ticker.yml --ref main && echo "successor queued"; fi
+              successor=1
+            fi
+            sleep 300
+          done

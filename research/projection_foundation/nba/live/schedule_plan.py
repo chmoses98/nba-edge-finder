@@ -115,12 +115,24 @@ def research_stages(kind: str | None) -> str:
     return ""
 
 
+_SLOT_RE = re.compile(r"^\d{4}-\d{2}-\d{2}@\d{4}$")
+
+
 def make_plan(event: str, cron: str | None, now: datetime, dry_run: bool = False, stage_in: str = "all",
-              ledger_has=lambda slot_id, kind: False) -> Plan:
+              ledger_has=lambda slot_id, kind: False, slot_in: str = "", kind_in: str = "") -> Plan:
     """The decision. `ledger_has(slot_id, kind)` says whether the slot is already recorded in the archive's run ledger."""
     now = now.astimezone(UTC)
     if event == "pull_request" or (event == "workflow_dispatch" and dry_run):
         return Plan("dry", "all", None, None, None, None, event, cron, "dry run on a copy of the archive")
+    if event == "workflow_dispatch" and _SLOT_RE.match(slot_in or "") and kind_in in SLOTS:
+        # a dispatch that names its slot (the ticker's make-up runs): it serves exactly that slot and is skipped if the ledger already has it
+        day, hm = slot_in.split("@")
+        inst = datetime(int(day[:4]), int(day[5:7]), int(day[8:10]), int(hm[:2]), int(hm[2:]), tzinfo=ET).astimezone(UTC)
+        late = int((now - inst).total_seconds() // 60)
+        if ledger_has(slot_in, kind_in):
+            return Plan("skip", "", kind_in, slot_in, inst.isoformat(), late, event, cron, f"already_done: slot {slot_in} is in the run ledger")
+        return Plan(kind_in, slot_stages(kind_in), kind_in, slot_in, inst.isoformat(), late, event, cron,
+                    f"make-up dispatch for slot {slot_in} ({late} min after the slot)", research_stage=research_stages(kind_in))
     if event == "workflow_dispatch":
         sid = "manual-" + now.strftime("%Y%m%dT%H%M%SZ")
         if (stage_in or "all") == "all":
@@ -180,10 +192,12 @@ def main(argv=None) -> int:
     ap.add_argument("--dry-run", default="false")
     ap.add_argument("--stage", default="all")
     ap.add_argument("--now", default=None, help="ISO UTC (tests)")
+    ap.add_argument("--slot", default="", help="workflow_dispatch only: serve this named slot (YYYY-MM-DD@HHMM ET)")
+    ap.add_argument("--kind", default="", help="with --slot: pregame | settle")
     ap.add_argument("--ledger-ref", default=None, help="git ref holding the projection-data branch (e.g. FETCH_HEAD)")
     a = ap.parse_args(argv)
     now = datetime.fromisoformat(a.now.replace("Z", "+00:00")) if a.now else datetime.now(UTC)
-    p = make_plan(a.event, a.cron or None, now, a.dry_run == "true", a.stage, _ledger_lookup(a.ledger_ref))
+    p = make_plan(a.event, a.cron or None, now, a.dry_run == "true", a.stage, _ledger_lookup(a.ledger_ref), a.slot, a.kind)
     d = p.as_dict()
     print(json.dumps(d), file=sys.stderr)
     for k in ("mode", "stage", "research_stage", "kind", "slot_id", "slot_utc", "lateness_min", "reason", "skip_valid"):
