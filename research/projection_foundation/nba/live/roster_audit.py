@@ -65,7 +65,7 @@ def team(abbr: str) -> str:
     return ALIASES.get(a, a)
 
 
-def http_fetcher(timeout: float = 25.0) -> Fetcher:
+def http_fetcher(timeout: float = 12.0) -> Fetcher:
     def get(url: str, headers: dict | None = None) -> tuple[int, Any]:
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (research audit)", "Accept": "application/json, text/html", **(headers or {})})
         try:
@@ -130,7 +130,8 @@ def parse_bbref_roster(html: str) -> list[dict]:
     m = re.search(r'<table[^>]*id="roster"[^>]*>(.*?)</table>', html or "", re.S)
     if not m:
         return []
-    return [{"id": "", "name": re.sub(r"<[^>]+>", "", x).strip()} for x in re.findall(r'data-stat="player"[^>]*>(.*?)</td>', m.group(1), re.S) if re.sub(r"<[^>]+>", "", x).strip()]
+    cells = re.findall(r'<td[^>]*data-stat="player"[^>]*>(.*?)</td>', m.group(1), re.S)      # body cells only: the header cell is a <th>
+    return [{"id": "", "name": re.sub(r"<[^>]+>", "", x).strip()} for x in cells if re.sub(r"<[^>]+>", "", x).strip()]
 
 
 def bbref_rosters(get: Fetcher, abbrs: list[str], year: int) -> dict[str, Any]:
@@ -215,6 +216,14 @@ def minutes_structure(feed: dict) -> dict[str, dict]:
     return out
 
 
+def usable(indep: dict, espn: dict, floor: float = 0.6) -> dict:
+    """Keep only teams whose independent roster is plausibly complete (at least `floor` of the ESPN roster): a page that parsed to a
+    handful of names is a source problem, and comparing against it would invent roster errors."""
+    keep = {t: r for t, r in (indep.get("teams") or {}).items() if len(r) >= floor * max(1, len(espn.get("teams", {}).get(t, [])))}
+    dropped = sorted(set(indep.get("teams") or {}) - set(keep))
+    return {**indep, "teams": keep, "dropped_incomplete": dropped}
+
+
 def identity(feed: dict, espn: dict, nba: dict) -> dict[str, dict]:
     """Per team: feed players missing from each roster source, roster players the feed omits, players on two teams."""
     feed_by: dict[str, dict[str, dict]] = defaultdict(dict)
@@ -271,6 +280,7 @@ def availability_alignment(feed: dict, official: list[dict]) -> dict[str, Any]:
 
 def audit(feed: dict, official: list[dict], espn: dict, nba: dict, tx: dict) -> dict[str, Any]:
     ms = minutes_structure(feed)
+    nba = usable(nba, espn)
     ident = identity(feed, espn, nba)
     avail = availability_alignment(feed, official)
     errors: list[str] = []
@@ -282,7 +292,7 @@ def audit(feed: dict, official: list[dict], espn: dict, nba: dict, tx: dict) -> 
     errors += [f"ruled-out row not blocked: {x}" for x in avail["ruled_out_rows_not_blocked"]]
     return {"schema": "sift.nba_roster_audit.v1", "feed_generated_utc": feed.get("generated_utc"), "slate": feed.get("slate_date"),
             "checked_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "sources": {"espn_rosters": espn.get("status"), "league_rosters": nba.get("status"), "transactions": tx.get("status")},
+            "sources": {"espn_rosters": espn.get("status"), "independent_rosters": f"{nba.get('status')}; usable teams {sorted(nba.get('teams', {}))}; dropped as incomplete {nba.get('dropped_incomplete')}", "transactions": tx.get("status")},
             "minutes": {t: {k: v for k, v in m.items() if k != "players"} for t, m in ms.items()},
             "identity": ident, "availability": avail, "errors": errors, "genuine_roster_errors": len(errors),
             "transactions": [x for x in tx.get("rows", []) if x.get("team") in ms][:40],
