@@ -23,6 +23,8 @@ import lightgbm as lgb
 from nba import minutes as M
 from nba.common import lgb_walkforward
 
+import os as _os2
+LEVEL = _os2.environ.get("JRM_LEVEL", "E")        # v1 used the linear role blend D (commit 6af0202); v2 uses the LightGBM marginal E, falling back to D where E does not exist (pre-2017)
 T_BUDGET = 241.5
 ACTIVE_CAP = 15
 import json as _json, os as _os
@@ -45,7 +47,7 @@ def prepare(f: pd.DataFrame, mp: pd.DataFrame) -> pd.DataFrame:
     f = M.prep(f)
     f = f.join(mp[["A", "B", "D", "E", "E_inj", "F", "p_play"]])
     f["elig"] = eligible_flag(f)
-    f["lvl"] = f["D"].clip(2.0, 40.0)
+    f["lvl"] = (f["E"].fillna(f["D"]) if LEVEL == "E" else f["D"]).clip(2.0, 40.0)
     f["y_play"] = f["played"].astype(float)
     return f
 

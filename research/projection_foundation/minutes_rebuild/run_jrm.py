@@ -23,7 +23,7 @@ qf = f[M.HURDLE + ["lvl", "season"]].copy()
 qf["y"] = f["elig"].astype(float)
 f["q"] = lgb_walkforward(qf, M.HURDLE + ["lvl"], "y", objective="binary", params=dict(n_estimators=250)).clip(0.005, 0.995)
 log("q head done")
-tr_path = "../.cache/jrm_train_sets.parquet"
+tr_path = f"../.cache/jrm_train_sets_{jrm.LEVEL}.parquet"
 try:
     sets = pd.read_parquet(tr_path)
 except Exception:
@@ -42,5 +42,5 @@ for s in seasons:
     log(f"season {s}: {len(cur)} rows, train {len(tr)}")
 R = pd.concat(res)
 R.to_parquet(f"../.cache/jrm_pred_{tag}.parquet")
-f[["q"]].to_parquet("../.cache/jrm_q.parquet")
+f[["q"]].to_parquet(f"../.cache/jrm_q_{jrm.LEVEL}.parquet")
 log("saved")
