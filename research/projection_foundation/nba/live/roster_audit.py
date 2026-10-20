@@ -224,8 +224,14 @@ def usable(indep: dict, espn: dict, floor: float = 0.6) -> dict:
     return {**indep, "teams": keep, "dropped_incomplete": dropped}
 
 
-def identity(feed: dict, espn: dict, nba: dict) -> dict[str, dict]:
-    """Per team: feed players missing from each roster source, roster players the feed omits, players on two teams."""
+def identity(feed: dict, espn: dict, nba: dict, official: list[dict] | None = None, tx_rows: list[dict] | None = None) -> dict[str, dict]:
+    """Per team: feed players missing from the ESPN roster, on two rosters, contradicted by the independent roster, and (as information)
+    players an independent roster page simply does not list.
+
+    An ERROR is a contradiction: not on the team's current ESPN roster, on two ESPN rosters, or listed on a DIFFERENT team by the independent
+    source. A player the independent page does not list at all (two-way / rookie / recently signed players are often missing from public
+    roster pages) is only UNCONFIRMED; it is reported with whatever corroborates it (the league's own injury report names him under this
+    team, or a dated transaction names him) and is never silently dropped."""
     feed_by: dict[str, dict[str, dict]] = defaultdict(dict)
     for p in feed["players"]:
         if p["family"] == "minutes":
@@ -234,6 +240,15 @@ def identity(feed: dict, espn: dict, nba: dict) -> dict[str, dict]:
     for t, ps in espn["teams"].items():
         for a in ps:
             espn_team_of[a["id"]].add(t)
+    indep_team_of: dict[str, set] = defaultdict(set)
+    for t, ps in nba["teams"].items():
+        for a in ps:
+            indep_team_of[norm(a["name"])].add(t)
+    official_by_team: dict[str, set] = defaultdict(set)
+    for r in official or []:
+        if (r.get("detail") or {}).get("implicit") is not True:
+            official_by_team[team(r.get("team"))].add(r.get("entity_id"))
+    tx_text = [(team(x.get("team")), norm(x.get("text") or "")) for x in tx_rows or []]
     res: dict[str, dict] = {}
     for t, fp in feed_by.items():
         e = {a["id"]: a for a in espn["teams"].get(t, [])}
@@ -243,7 +258,19 @@ def identity(feed: dict, espn: dict, nba: dict) -> dict[str, dict]:
                                                    for i, p in fp.items() if e and i not in e]
         if n:
             nn = {norm(a["name"]) for a in n.values()}
-            row["not_on_league_roster_of_this_team"] = [p["name"] for p in fp.values() if norm(p["name"]) not in nn]
+            row["not_on_league_roster_of_this_team"] = [f"{p['name']} -> listed on {sorted(indep_team_of[norm(p['name'])])}" for p in fp.values()
+                                                         if norm(p["name"]) not in nn and indep_team_of.get(norm(p["name"]))]          # a contradiction
+            unconf = []
+            for i, p in fp.items():
+                if norm(p["name"]) in nn or indep_team_of.get(norm(p["name"])):
+                    continue
+                how = []
+                if f"espn:{i}" in official_by_team.get(t, set()):
+                    how.append("named under this team on the official injury report")
+                if any(tt == t and norm(p["name"]) in txt for tt, txt in tx_text):
+                    how.append("named in a dated transaction for this team")
+                unconf.append({"name": p["name"], "corroborated_by": how})
+            row["unconfirmed_by_independent_roster"] = unconf
             ff = {norm(p["name"]) for p in fp.values()}
             row["league_roster_not_in_feed"] = [a["name"] for a in n.values() if norm(a["name"]) not in ff]
         row["espn_roster_not_in_feed"] = [f"{a['name']} ({a['status'] or ''}{'; ' + ','.join(a['injuries']) if a['injuries'] else ''})" for i, a in e.items() if i not in fp] if e else None
@@ -281,7 +308,7 @@ def availability_alignment(feed: dict, official: list[dict]) -> dict[str, Any]:
 def audit(feed: dict, official: list[dict], espn: dict, nba: dict, tx: dict) -> dict[str, Any]:
     ms = minutes_structure(feed)
     nba = usable(nba, espn)
-    ident = identity(feed, espn, nba)
+    ident = identity(feed, espn, nba, official, tx.get("rows", []))
     avail = availability_alignment(feed, official)
     errors: list[str] = []
     for t, r in ident.items():
@@ -295,6 +322,8 @@ def audit(feed: dict, official: list[dict], espn: dict, nba: dict, tx: dict) -> 
             "sources": {"espn_rosters": espn.get("status"), "independent_rosters": f"{nba.get('status')}; usable teams {sorted(nba.get('teams', {}))}; dropped as incomplete {nba.get('dropped_incomplete')}", "transactions": tx.get("status")},
             "minutes": {t: {k: v for k, v in m.items() if k != "players"} for t, m in ms.items()},
             "identity": ident, "availability": avail, "errors": errors, "genuine_roster_errors": len(errors),
+            "unconfirmed_players": sum(len(r.get("unconfirmed_by_independent_roster") or []) for r in ident.values()),
+            "unconfirmed_without_corroboration": sum(1 for r in ident.values() for u in (r.get("unconfirmed_by_independent_roster") or []) if not u["corroborated_by"]),
             "transactions": [x for x in tx.get("rows", []) if x.get("team") in ms][:40],
             "transactions_about_new_team_players": tx.get("name_hits", []), "transactions_window": {"n": tx.get("n"), "oldest": tx.get("oldest")}}
 
@@ -312,12 +341,15 @@ def render(a: dict) -> str:
             if r.get(k): L.append(f"   {k}: {r[k]}")
         for k in ("league_roster_not_in_feed", "espn_roster_not_in_feed"):
             if r.get(k): L.append(f"   {k}: {r[k]}")
+        for u in r.get("unconfirmed_by_independent_roster") or []:
+            L.append(f"   unconfirmed by the independent roster page: {u['name']} ({'; '.join(u['corroborated_by']) or 'ESPN roster only'})")
     L += ["", f"availability: {a['availability']['official_explicit_designations']} · misaligned {a['availability']['n_misaligned']}",
           f"   ruled-out rows not blocked: {a['availability']['ruled_out_rows_not_blocked']}", f"   blocked but not ruled out: {a['availability']['blocked_but_not_ruled_out']}"]
     if a["transactions"]:
         L += ["", "recent transactions touching these teams:"] + [f"   {x['date']} {x['team']}: {x['text']}" for x in a["transactions"][:25]]
     if a.get("transactions_about_new_team_players"):
         L += ["", f"transactions naming a 'New team' player (window: {a['transactions_window']}):"] + [f"   {x['date']} {x['team']}: {x['text']}" for x in a["transactions_about_new_team_players"][:40]]
+    L += ["", f"players an independent roster page does not list: {a.get('unconfirmed_players')} (of which with no corroboration beyond the ESPN roster: {a.get('unconfirmed_without_corroboration')})"]
     L += ["", f"GENUINE ROSTER / AVAILABILITY ERRORS: {a['genuine_roster_errors']}"] + [f"   - {e}" for e in a["errors"][:40]]
     return "\n".join(L)
 

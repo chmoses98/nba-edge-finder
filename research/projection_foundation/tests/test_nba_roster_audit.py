@@ -111,12 +111,38 @@ def test_an_incomplete_independent_roster_is_ignored_not_trusted(fx):
     assert a["genuine_roster_errors"] == 0
 
 
-def test_a_complete_independent_roster_that_disagrees_is_an_error(fx):
-    espn = espn_from(fx["doc"])
-    det = [{"id": "", "name": p["name"]} for p in fx["doc"]["players"] if p["team"] == "DET" and p["family"] == "minutes"]
-    det[0] = {"id": "", "name": "Someone Else"}
-    a = run(fx, espn, {"status": "ok", "teams": {"DET": det}})
-    assert a["genuine_roster_errors"] == 1 and "not_on_league_roster_of_this_team" in a["errors"][0]
+def indep_for(fx, teams=("DET", "BOS")):
+    return {t: [{"id": "", "name": p["name"]} for p in fx["doc"]["players"] if p["team"] == t and p["family"] == "minutes"] for t in teams}
+
+
+def test_an_independent_roster_that_puts_a_player_on_another_team_is_an_error(fx):
+    ind = indep_for(fx)
+    moved = ind["DET"].pop(0)
+    ind["BOS"].append(moved)
+    a = run(fx, espn_from(fx["doc"]), {"status": "ok", "teams": ind})
+    assert a["genuine_roster_errors"] == 1
+    assert "not_on_league_roster_of_this_team" in a["errors"][0] and moved["name"] in a["errors"][0] and "BOS" in a["errors"][0]
+
+
+def test_a_player_an_independent_page_merely_omits_is_unconfirmed_not_an_error_and_says_what_corroborates_him(fx):
+    ind = indep_for(fx)
+    omitted = [ind["DET"].pop(0)["name"] for _ in range(3)]
+    tx = {"status": "ok", "rows": [{"date": "2026-07-02T07:00Z", "team": "DET", "text": f"Signed C {omitted[0]} to a two-way contract."}], "name_hits": []}
+    a = run(fx, espn_from(fx["doc"]), {"status": "ok", "teams": ind}, tx)
+    assert a["genuine_roster_errors"] == 0
+    unconf = {u["name"]: u["corroborated_by"] for u in a["identity"]["DET"]["unconfirmed_by_independent_roster"]}
+    assert set(unconf) == set(omitted)
+    assert unconf[omitted[0]] == ["named in a dated transaction for this team"]
+    assert a["unconfirmed_players"] == 3 and a["unconfirmed_without_corroboration"] >= 1
+
+
+def test_the_league_report_corroborates_a_player_by_name_and_team(fx):
+    ind = indep_for(fx)
+    flagged = next(o for o in fx["official"] if o["team"] == "DET" and (o.get("detail") or {}).get("implicit") is not True)
+    ind["DET"] = [x for x in ind["DET"] if x["name"] != flagged["entity_name"]]
+    a = run(fx, espn_from(fx["doc"]), {"status": "ok", "teams": ind})
+    u = {u["name"]: u for u in a["identity"]["DET"]["unconfirmed_by_independent_roster"]}[flagged["entity_name"]]
+    assert "named under this team on the official injury report" in u["corroborated_by"]
 
 
 def test_parsing_a_basketball_reference_roster_reads_body_cells_only():
