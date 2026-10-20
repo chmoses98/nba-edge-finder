@@ -43,7 +43,7 @@ jobs:
             due=$(cd $PF_DIR && python -m nba.live.ticker ${REF:+--ledger-ref "$REF"} 2>&1)
             echo "tick $i $(date -u +%H:%M:%SZ): due=[${due//$'\n'/; }]"
             if [ -n "$due" ]; then
-              busy=$(gh run list --workflow projection-foundation.yml --limit 15 --json status --jq '[.[]|select(.status=="queued" or .status=="in_progress")]|length' 2>/dev/null || echo 0)
+              busy=$(gh run list --workflow projection-foundation.yml --limit 15 --json status,event --jq '[.[]|select((.status=="queued" or .status=="in_progress") and .event!="pull_request")]|length' 2>/dev/null || echo 0)
               while read -r kind slot late; do
                 [ -z "$kind" ] && continue
                 key="$slot"
