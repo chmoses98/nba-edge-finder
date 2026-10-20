@@ -57,6 +57,12 @@ on:
       now:
         description: "dry run only: replay clock (ISO, UTC); blank = wall clock"
         default: ""
+      slot:
+        description: "make-up run for this slot (YYYY-MM-DD@HHMM, ET); blank = a plain manual run (nba-ticker uses it)"
+        default: ""
+      slot_kind:
+        description: "pregame | settle (with slot)"
+        default: ""
   pull_request:
     paths:
       - "research/projection_foundation/**"
@@ -101,13 +107,15 @@ jobs:
           CRON: ${{ github.event.schedule }}
           DRY: ${{ github.event.inputs.dry_run }}
           STAGE_IN: ${{ github.event.inputs.stage }}
+          SLOT_IN: ${{ github.event.inputs.slot }}
+          KIND_IN: ${{ github.event.inputs.slot_kind }}
         run: |
           set -euo pipefail
           REF=""
           if git fetch -q --depth=1 origin projection-data 2>/dev/null; then REF=FETCH_HEAD; fi
           cd $PF_DIR
           python -m nba.live.schedule_plan --event "$EVENT" --cron "$CRON" --dry-run "${DRY:-false}" --stage "${STAGE_IN:-all}" \
-            ${REF:+--ledger-ref "$REF"} 2> "$RUNNER_TEMP/plan.json" | tee -a "$GITHUB_OUTPUT"
+            --slot "${SLOT_IN:-}" --kind "${KIND_IN:-}" ${REF:+--ledger-ref "$REF"} 2> "$RUNNER_TEMP/plan.json" | tee -a "$GITHUB_OUTPUT"
           cat "$RUNNER_TEMP/plan.json"
           {
             echo "### plan"

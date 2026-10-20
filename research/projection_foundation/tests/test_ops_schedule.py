@@ -314,3 +314,37 @@ def test_dry_run_copy_of_a_worktree_is_detached_from_the_real_checkout(tmp_path)
     finally:
         import shutil
         shutil.rmtree(cleanup, ignore_errors=True)
+
+
+# ------------------------------------------------------------------------------------------------ ticker (reliable tick) and named-slot dispatch
+def test_named_slot_dispatch_serves_exactly_that_slot_and_skips_when_done():
+    p = plan("workflow_dispatch", None, "2026-10-20T18:20:00Z", slot_in="2026-10-20@1350", kind_in="pregame")
+    assert p.mode == "pregame" and p.slot_id == "2026-10-20@1350" and p.lateness_min == 30 and p.stage.startswith("capture,project")
+    assert p.research_stage.startswith("paper")
+    done = {("2026-10-20@1350", "pregame")}
+    p = plan("workflow_dispatch", None, "2026-10-20T18:20:00Z", has=lambda s, k: (s, k) in done, slot_in="2026-10-20@1350", kind_in="pregame")
+    assert p.mode == "skip" and SP.skip_is_valid(p.reason)
+    # an invalid slot string is a plain manual run, never a silent skip
+    assert plan("workflow_dispatch", None, "2026-10-20T18:20:00Z", slot_in="garbage", kind_in="pregame").slot_id.startswith("manual-")
+
+
+def test_ticker_dispatches_only_due_slots_missing_from_the_ledger():
+    from nba.live import ticker as TK
+    now = utc("2026-10-20T18:16:00Z")                       # 14:16 ET: the 11:20 and 13:50 pregame slots and 06:40 settle are all behind us
+    d = TK.due(now, lambda s, k: False)
+    assert [(x["kind"], x["slot_id"]) for x in d] == [("pregame", "2026-10-20@1350"), ("settle", "2026-10-20@0640")]
+    assert TK.due(now, lambda s, k: (s, k) == ("2026-10-20@1350", "pregame"))[0]["kind"] == "settle"
+    assert not [x for x in TK.due(utc("2026-10-20T17:55:00Z"), lambda s, k: k == "settle") if x["kind"] == "pregame"]   # inside the 12 min grace
+    assert TK.due(utc("2026-10-20T09:00:00Z"), lambda s, k: False)[0]["slot_id"] == "2026-10-19@2120"                    # last night's slot, 7 h late
+    assert not [x for x in TK.due(utc("2026-10-21T14:00:00Z"), lambda s, k: True)]
+
+
+def test_ticker_workflow_shape():
+    wf = yaml.safe_load((REPO / ".github" / "workflows" / "nba-ticker.yml").read_text())
+    job = wf["jobs"]["tick"]
+    assert wf["permissions"] == {"contents": "read", "actions": "write"} and wf["concurrency"]["group"] == "nba-ticker"
+    assert not wf["concurrency"]["cancel-in-progress"] and job["timeout-minutes"] > 300
+    text = (REPO / ".github" / "workflows" / "nba-ticker.yml").read_text()
+    assert "nba.live.ticker" in text and "-f slot=" in text and "git push" not in text
+    inputs = yaml.safe_load(WF.read_text()).get(True)["workflow_dispatch"]["inputs"]
+    assert "slot" in inputs and "slot_kind" in inputs
