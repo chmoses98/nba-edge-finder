@@ -3,12 +3,21 @@ Runs inside research/projection_foundation with PYTHONPATH=. on a GitHub runner.
 import json, re, sys, time, urllib.request, urllib.error
 from nba.live import roster_audit as RA
 
-TEAMS = {"BOS": (1610612738, "celtics", "boston-celtics", "bos"), "DET": (1610612765, "pistons", "detroit-pistons", "det"),
-         "NYK": (1610612752, "knicks", "new-york-knicks", "ny"), "PHI": (1610612755, "sixers", "philadelphia-76ers", "phi"),
-         "OKC": (1610612760, "thunder", "oklahoma-city-thunder", "okc"), "SAS": (1610612759, "spurs", "san-antonio-spurs", "sa")}
+# abbr: (nba.com id, nickname, slug, espn short)
+_T = [("ATL",1610612737,"hawks","atlanta-hawks","atl"),("BOS",1610612738,"celtics","boston-celtics","bos"),("BKN",1610612751,"nets","brooklyn-nets","bkn"),
+      ("CHA",1610612766,"hornets","charlotte-hornets","cha"),("CHI",1610612741,"bulls","chicago-bulls","chi"),("CLE",1610612739,"cavaliers","cleveland-cavaliers","cle"),
+      ("DAL",1610612742,"mavericks","dallas-mavericks","dal"),("DEN",1610612743,"nuggets","denver-nuggets","den"),("DET",1610612765,"pistons","detroit-pistons","det"),
+      ("GSW",1610612744,"warriors","golden-state-warriors","gs"),("HOU",1610612745,"rockets","houston-rockets","hou"),("IND",1610612754,"pacers","indiana-pacers","ind"),
+      ("LAC",1610612746,"clippers","los-angeles-clippers","lac"),("LAL",1610612747,"lakers","los-angeles-lakers","lal"),("MEM",1610612763,"grizzlies","memphis-grizzlies","mem"),
+      ("MIA",1610612748,"heat","miami-heat","mia"),("MIL",1610612749,"bucks","milwaukee-bucks","mil"),("MIN",1610612750,"timberwolves","minnesota-timberwolves","min"),
+      ("NOP",1610612740,"pelicans","new-orleans-pelicans","no"),("NYK",1610612752,"knicks","new-york-knicks","ny"),("OKC",1610612760,"thunder","oklahoma-city-thunder","okc"),
+      ("ORL",1610612753,"magic","orlando-magic","orl"),("PHI",1610612755,"sixers","philadelphia-76ers","phi"),("PHX",1610612756,"suns","phoenix-suns","phx"),
+      ("POR",1610612757,"blazers","portland-trail-blazers","por"),("SAC",1610612758,"kings","sacramento-kings","sac"),("SAS",1610612759,"spurs","san-antonio-spurs","sa"),
+      ("TOR",1610612761,"raptors","toronto-raptors","tor"),("UTA",1610612762,"jazz","utah-jazz","utah"),("WAS",1610612764,"wizards","washington-wizards","wsh")]
+TEAMS = {a: (i, n, s, e) for a, i, n, s, e in _T}
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
-def get(url, headers=None, timeout=20):
+def get(url, headers=None, timeout=8):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "text/html,application/json,*/*", "Accept-Language": "en-US,en;q=0.9", **(headers or {})})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -32,7 +41,6 @@ def sources(abbr):
     }
 
 def main():
-    import glob, os
     archive = sys.argv[1]
     feed = RA.load_feed(archive); official = RA.load_official(archive, None)
     espn = RA.espn_rosters(RA.http_fetcher()); tx = RA.espn_transactions(RA.http_fetcher(), [p["name"] for p in feed["players"] if p["family"] == "minutes" and any(a.startswith("New team") for a in p.get("adjustments", []))])
@@ -41,8 +49,8 @@ def main():
     ident = RA.identity(feed, espn, ind, official, tx.get("rows", []))
     todo = [(t, u["name"]) for t, r in ident.items() for u in r.get("unconfirmed_by_independent_roster", []) if not u["corroborated_by"]]
     allun = [(t, u["name"], u["corroborated_by"]) for t, r in ident.items() for u in r.get("unconfirmed_by_independent_roster", [])]
-    print("UNCONFIRMED by bbref:", len(allun), "| without corroboration:", len(todo))
-    for t, n, c in allun: print("  ", t, n, c or "ESPN ONLY")
+    print("UNCONFIRMED by bbref:", len(allun), "| without corroboration:", len(todo), flush=True)
+    for t, n, c in allun: print("  ", t, n, c or "ESPN ONLY", flush=True)
     cache = {}
     results = {}
     for t, name in todo:
@@ -52,7 +60,7 @@ def main():
             url, hdr = (spec if isinstance(spec, tuple) else (spec, None))
             if url not in cache:
                 cache[url] = get(url, hdr)
-                time.sleep(0.5)
+                time.sleep(0.3)
             st, body = cache[url]
             norm_body = RA.norm(re.sub(r"<[^>]+>", " ", body)) if st == 200 else ""
             hit = (st == 200) and key in norm_body
