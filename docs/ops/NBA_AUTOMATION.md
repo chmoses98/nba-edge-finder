@@ -8,6 +8,7 @@ Authority: RESEARCH / PAPER ONLY. No orders, no staking, no account access, no s
 |---|---|---|---|
 | `capture-worker` (existing, unchanged) | self-renewing long-lived job, cadence 15/10/7/5 min toward tip | `data-archive` | Kalshi boards + order books (delta chains), schedule, rosters, injuries |
 | `projection-foundation` | pregame slots 11:20, 13:50, 17:20, 18:20, 19:50, 21:20 ET; settle slot 06:40 ET; every slot has a +25 min backup cron; hourly sweep heartbeat | `projection-data` | availability capture, frozen-model forecasts (player + game), paper decisions, results, settlement, scorecards, weekly report, run ledger |
+| `nba-ticker` | self-renewing long-lived job (5-min loop, ~5 h), cron backstop starts every 5 h, concurrency group `nba-ticker` | nothing (dispatches only) | asks `nba.live.ticker` which slot is due (past a 12 min grace) but not in the run ledger and dispatches `projection-foundation` for exactly that slot |
 | `nba-watchdog` | every 30 min | issue `nba-ops-alert` only | reads the archives; opens/updates/closes one alert issue |
 | `nba-shadow-pure` (existing, unchanged) | existing schedule | `nba-shadow-pure` | the preregistered control |
 
@@ -15,6 +16,14 @@ Authority: RESEARCH / PAPER ONLY. No orders, no staking, no account access, no s
 * Work is organised in ET **slots** (`nba/live/schedule_plan.py`). Any event runs the most recent due slot unless the write-once ledger (`ops/nba/slots/...`) holds it. A late delivery executes the slot; a duplicate/backup/DST-alternate firing is an explicit `already_done` skip; a failed run writes no ledger record, so the next backup firing retries.
 * A pregame run whose window contains games but archived no forecast **fails**.
 * The always-run `outcome` job lists every stage as EXECUTED / SKIPPED (valid reason) / FAILED and fails the workflow on anything else.
+
+### Ticker (why GitHub's cron is no longer the clock)
+GitHub `schedule` delivery is late or absent (opening day 2026-10-20: the 11:20 and 13:50 ET slots, their backups and the sweep produced no run for 3+ hours). `nba-ticker` is a long-lived job like the capture worker: every 5 minutes it reads the run ledger on `projection-data`, and for a due pregame/settle slot that is missing it runs `gh workflow run projection-foundation.yml -f slot=<ET date>@<HHMM> -f slot_kind=<kind>`. That dispatch serves exactly that slot (named-slot plan), is a valid `already_done` skip if the ledger has it, and writes the same ledger record a scheduled run would.
+* It dispatches nothing while a live (`schedule`/`workflow_dispatch`) run is queued or running (PR dry-run CI does not count), never twice for one slot within 25 min, and treats a later manual pregame run as covering an earlier slot. A dispatch that fails, or a run that fails verification, leaves no ledger record, so the slot is requested again on a later tick.
+* A slot older than 8 h (pregame) / 30 h (settle) is not resurrected. A slot whose games already started cannot be served: forecasts are archived pre-tip only (late records are rejected, never backdated).
+* Self-renewal: at iteration 50 (~4 h 10 min) it queues a successor (`nba-ticker.yml`, waits in the concurrency group until the current job ends) unless one is already queued; the 5-hourly cron is the backstop. `workflow_dispatch` of `nba-ticker.yml` starts one by hand.
+* Ledger lookups use `git ls-tree --full-tree`: paths otherwise resolve relative to the current directory and a lookup from `research/projection_foundation` silently reports every slot as missing (found on the first live activation; pinned by a test).
+* Operational note: a manual `projection-foundation` dispatch is still valid (unnamed, always runs, recorded as `manual_<HHMMSS>`); the ticker treats it as covering earlier pregame slots.
 
 ## Archive map (`projection-data` branch; additions only unless marked view)
 
