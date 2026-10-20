@@ -237,7 +237,7 @@ def identity(feed: dict, espn: dict, nba: dict) -> dict[str, dict]:
     res: dict[str, dict] = {}
     for t, fp in feed_by.items():
         e = {a["id"]: a for a in espn["teams"].get(t, [])}
-        n = {a["id"]: a for a in nba["teams"].get(t, [])}
+        n = {(a["id"] or norm(a["name"])): a for a in nba["teams"].get(t, [])}      # sources without ids are keyed by name
         row: dict[str, Any] = {"feed": len(fp), "espn_roster": len(e) or None, "nba_roster": len(n) or None}
         row["not_on_espn_roster_of_this_team"] = [f"{p['name']} ({p['player_id']})" + (f" -> now on {sorted(espn_team_of.get(i, []))}" if espn_team_of.get(i) else " -> on no NBA roster")
                                                    for i, p in fp.items() if e and i not in e]
