@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import os
 from collections import Counter, defaultdict
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any
 
 
@@ -104,8 +104,13 @@ def build(archive: str, ctx: str, start_et: str, end_et: str, now: datetime, sea
             "team_outcome": tout_g.get(gid, 0) > 0,
             "paper_settlement": ps_g.get(gid, 0) > 0,
         }
-        need = list(REQUIRED) if parse_ts(tip) < now - timedelta(hours=8) else [k for k in REQUIRED if k in
-                                                                                  ("forecast", "participation_forecast", "availability_obs")]
+        hours_to_tip = (parse_ts(tip) - now).total_seconds() / 3600
+        if hours_to_tip > 36:
+            need = []                                    # not due yet: evidence for games further ahead than the projection window is not missing
+        elif parse_ts(tip) < now - timedelta(hours=8):
+            need = list(REQUIRED)
+        else:
+            need = [k for k in REQUIRED if k in ("forecast", "participation_forecast", "availability_obs")]
         missing = [k for k in need if not have[k]]
         for k in missing:
             missing_counter[k] += 1
@@ -120,8 +125,8 @@ def build(archive: str, ctx: str, start_et: str, end_et: str, now: datetime, sea
             "snapshot_horizons": sorted(h for h, v in sh.items() if any(x.get("quote_class") != "MISSING" for x in v)),
             "snapshot_median_gap_s": {h: (v[len(v) // 2] if v else None) for h, v in gaps.items()},
             "missing_snapshot_causes": dict(miss_snap), "n_decisions": sum(c for k, c in dec_by.items() if k[0] == gid),
-            "missing": missing, "complete": not missing and started})
-    led = LED.load_all(archive, start_et)
+            "missing": missing, "scheduled_later": hours_to_tip > 36, "complete": not missing and started})
+    led = LED.load_all(archive, (date.fromisoformat(start_et) - timedelta(days=3)).isoformat())      # slots serving the first games run the day before
     exp, done = _expected_slots(games, start_et, end_et, now, led)
     return {"schema": "sift.integrity.v1", "window": {"start_et": start_et, "end_et": end_et}, "generated_utc": iso(now),
             "n_games": len(games), "n_started": sum(1 for r in rows if r["started"]), "n_complete": sum(1 for r in rows if r["complete"]),
@@ -150,7 +155,8 @@ def _expected_slots(games, start_et, end_et, now, ledger) -> tuple[list[str], li
 
 def markdown(rep: dict) -> str:
     L = [f"### Data integrity ({rep['window']['start_et']} .. {rep['window']['end_et']} ET)", "",
-         f"- games scheduled: **{rep['n_games']}**, started: {rep['n_started']}, fully complete evidence: **{rep['n_complete']}**",
+         f"- games scheduled: **{rep['n_games']}** ({sum(1 for g in rep['games'] if g.get('scheduled_later'))} beyond the 36 h projection window, not yet due), "
+         f"started: {rep['n_started']}, fully complete evidence: **{rep['n_complete']}**",
          f"- missing evidence counts: {rep['missing_counts'] or 'none'}",
          f"- pregame slots expected {len(rep['slots']['expected'])}, executed/covered {len(rep['slots']['executed'])}, missed: "
          f"{rep['slots']['missed'] or 'none'}"]
@@ -158,6 +164,8 @@ def markdown(rep: dict) -> str:
         L.append(f"- run warnings: {sorted(set(rep['ledger_warnings']))[:6]}")
     L += ["", "| game | tip (UTC) | forecasts | obs | game fc | snapshots | decisions | outcome | missing |", "|---|---|---|---|---|---|---|---|---|"]
     for r in rep["games"]:
+        if r.get("scheduled_later"):
+            continue                                     # games beyond the projection window are counted, not listed as gaps
         L.append(f"| {r['away']}@{r['home']} | {r['start_utc'][5:16]} | {r['n_forecast_families']} fam / {r['n_forecast_versions']} v | "
                  f"{r['n_availability_obs']} | {'y' if r['has_game_forecast'] else 'n'} | {','.join(r['snapshot_horizons']) or '-'} | "
                  f"{r['n_decisions']} | {'y' if r['has_outcome'] else 'n'} | {', '.join(r['missing']) or '-'} |")
