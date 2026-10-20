@@ -1,0 +1,99 @@
+{
+ "authority": "research_only",
+ "by_day": {},
+ "data_status": {
+  "integrity": {
+   "decisions_asof_at_or_after_tip_excluded": 0,
+   "decisions_bad_identity_excluded": 0,
+   "decisions_duplicate_ids_dropped": 0,
+   "decisions_forecast_after_asof_excluded": 0,
+   "decisions_invalid_price_excluded": 0,
+   "decisions_raw": 27864,
+   "decisions_replay_excluded": 0,
+   "paper_settlements_orphaned": 0,
+   "paper_settlements_raw": 0,
+   "snapshots_replay_excluded": 0
+  },
+  "kinds_rows": {
+   "game_forecasts": 18,
+   "market_snapshots": 7614,
+   "paper_decisions": 0,
+   "pf_settlements": 0,
+   "team_outcomes": 0
+  }
+ },
+ "generated_utc": "2026-10-20T15:23:24Z",
+ "insufficient_sample": [
+  "INSUFFICIENT_SAMPLE: 0 games with evidence in this window (the preregistered minimum for a value verdict is 40 games and 200 independent decisions); nothing below is a finding",
+  "NO_SETTLED_FORECASTS: accuracy sections are empty until archived games finish",
+  "NO_PAPER_DECISIONS: market sections are empty (the paper engine has not archived decisions for this window)"
+ ],
+ "market": {
+  "hit_rates": {
+   "reason": "no paper decisions",
+   "status": "NO_DATA"
+  },
+  "liquidity": {
+   "decisions": {
+    "reason": "no paper decisions",
+    "status": "NO_DATA"
+   },
+   "snapshots": {
+    "reason": "no market snapshots",
+    "status": "NO_DATA"
+   },
+   "status": "OK"
+  },
+  "model_vs_market": {
+   "reason": "needs settled paper decisions with p_cond/p_model and bid/ask",
+   "status": "NO_DATA"
+  },
+  "paper": {
+   "n_decisions_raw": 0,
+   "reason": "no settled paper decisions",
+   "status": "NO_DATA"
+  },
+  "price_discovery": {
+   "reason": "no market snapshots",
+   "status": "NO_DATA"
+  }
+ },
+ "paper": true,
+ "projection": {
+  "reason": "no settled forecasts in the window",
+  "status": "NO_DATA"
+ },
+ "sample": {
+  "forecast_settlements": {
+   "n_games": 0,
+   "n_player_games": 0,
+   "n_rows": 0
+  },
+  "paper_decisions": {
+   "n_contracts": 0,
+   "n_decisions": 0,
+   "n_games": 0,
+   "n_player_games": 0,
+   "n_theses": 0
+  },
+  "paper_settled": 0,
+  "team_games": 0
+ },
+ "schema": "sift.paper_scorecard.v1",
+ "segments": {
+  "market": {
+   "reason": "no settled paper decisions",
+   "status": "NO_DATA"
+  },
+  "projection": {
+   "reason": "no settled non-void challenger forecasts",
+   "status": "NO_DATA"
+  }
+ },
+ "window": {
+  "day_et": "2026-10-18",
+  "days": null,
+  "prospective_only": true,
+  "prospective_start_utc": "2026-10-20T00:00:00Z"
+ }
+}

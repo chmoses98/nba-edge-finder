@@ -1,0 +1,112 @@
+{
+ "authority": "research_only",
+ "by_day": {},
+ "data_status": {
+  "integrity": {
+   "decisions_asof_at_or_after_tip_excluded": 0,
+   "decisions_bad_identity_excluded": 3564,
+   "decisions_duplicate_ids_dropped": 0,
+   "decisions_forecast_after_asof_excluded": 0,
+   "decisions_invalid_price_excluded": 6,
+   "decisions_raw": 27864,
+   "decisions_replay_excluded": 0,
+   "paper_settlements_orphaned": 0,
+   "paper_settlements_raw": 0,
+   "snapshots_replay_excluded": 0
+  },
+  "kinds_rows": {
+   "game_forecasts": 18,
+   "market_snapshots": 7614,
+   "paper_decisions": 24294,
+   "pf_settlements": 0,
+   "team_outcomes": 0
+  }
+ },
+ "generated_utc": "2026-10-20T15:23:24Z",
+ "insufficient_sample": [
+  "INSUFFICIENT_SAMPLE: 3 games with evidence in this window (the preregistered minimum for a value verdict is 40 games and 200 independent decisions); nothing below is a finding",
+  "NO_SETTLED_FORECASTS: accuracy sections are empty until archived games finish"
+ ],
+ "market": {
+  "hit_rates": {
+   "reason": "no played, settled paper decisions",
+   "status": "NO_DATA"
+  },
+  "liquidity": {
+   "decisions": {
+    "mean_spread": 0.05210669301061991,
+    "median_quote_age_s": 551.0,
+    "median_spread": 0.03,
+    "n_candidate_sides": 8098,
+    "quality_failures": {
+     "EXTREME_PRICE": 258,
+     "NO_SIZE": 35,
+     "SPREAD_WIDE": 356
+    },
+    "share_displayed_size_ge_1_contract": 0.4313410718695974,
+    "share_quality_gate_passed": 0.9249197332674735
+   },
+   "snapshots": {
+    "missing_causes": {},
+    "n": 7614,
+    "quote_class": {
+     "PLACEHOLDER": 34,
+     "TWO_SIDED": 7580
+    },
+    "share_two_sided": 0.9955345416338324
+   },
+   "status": "OK"
+  },
+  "model_vs_market": {
+   "reason": "needs settled paper decisions with p_cond/p_model and bid/ask",
+   "status": "NO_DATA"
+  },
+  "paper": {
+   "n_decisions_raw": 24294,
+   "reason": "no settled paper decisions",
+   "status": "NO_DATA"
+  },
+  "price_discovery": {
+   "reason": "needs settled outcomes for the snapshot contracts",
+   "status": "NO_DATA"
+  }
+ },
+ "paper": true,
+ "projection": {
+  "reason": "no settled forecasts in the window",
+  "status": "NO_DATA"
+ },
+ "sample": {
+  "forecast_settlements": {
+   "n_games": 0,
+   "n_player_games": 0,
+   "n_rows": 0
+  },
+  "paper_decisions": {
+   "n_contracts": 675,
+   "n_decisions": 24294,
+   "n_games": 3,
+   "n_player_games": 25,
+   "n_theses": 104
+  },
+  "paper_settled": 0,
+  "team_games": 0
+ },
+ "schema": "sift.paper_scorecard.v1",
+ "segments": {
+  "market": {
+   "reason": "no settled paper decisions",
+   "status": "NO_DATA"
+  },
+  "projection": {
+   "reason": "no settled non-void challenger forecasts",
+   "status": "NO_DATA"
+  }
+ },
+ "window": {
+  "day_et": null,
+  "days": 7,
+  "prospective_only": true,
+  "prospective_start_utc": "2026-10-20T00:00:00Z"
+ }
+}
