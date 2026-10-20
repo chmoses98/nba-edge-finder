@@ -1,6 +1,6 @@
 """Activation readiness of the NBA projection families, judged from the live archive (read-only).
 
-    python -m nba.live.activation_check --archive <projection-data checkout> [--now ISO] [--json OUT] [--strict]
+    python -m nba.live.activation_check --archive <projection-data checkout> [--now ISO] [--json OUT] [--strict] [--roster-audit AUDIT.json]
 
 SIFT shows the improved NBA engines (minutes, points, rebounds, assists, threes, PRA, FGA) as its one projection only after the
 official NBA injury report has been verified on a REAL slate. This module turns that requirement into checks over the artifacts the
@@ -45,7 +45,16 @@ KNOWN_DESIGNATIONS = ("OUT", "DOUBTFUL", "QUESTIONABLE", "PROBABLE", "ACTIVE")
 MAX_REPORT_AGE_H = 6.0            # the report the run read was published at most this long before the run
 MIN_TEAM_SUBMISSION_SHARE = 0.5   # at least this share of the window's teams have submitted player-level rows
 MIN_ELIGIBLE_NOT_BLOCKED = 0.95   # share of eligible (confirmed / likely active) rows whose gate is not BLOCK
-MIN_ELIGIBLE_PASS = 0.5           # share of eligible rows whose gate is PASS (team reconciliation may leave REVIEW)
+MIN_ELIGIBLE_PASS = 0.5           # share of eligible rows that are accepted (clean PASS, or the documented REVIEW below, audited)
+# The one REVIEW that D5 accepts as its own, separately reported category ("eligible Low-reliability REVIEW"): the team reconciliation's
+# early-season roster-uncertainty review, i.e. ONLY a `team_consistency` / `model_assumption` finding about normalising the team's
+# minutes (nba/live/reconcile.py: "Roles carried over from previous teams overlapped; early-season roster uncertainty."), within these
+# bounds, for an eligible (confirmed / likely active) player, and ONLY while a roster audit of the same feed found no roster, team or
+# availability error (nba/live/roster_audit.py). Any other finding, or the same finding without the audit, is "other REVIEW" and is never accepted.
+DOCUMENTED_CHECK = "team_consistency"
+DOCUMENTED_CATEGORY = "model_assumption"
+MAX_DOCUMENTED_NORMALISATION = 0.25   # the team's minutes were scaled by at least 1 - this (the engine's own hard limit is 0.55)
+MAX_AUDIT_AGE_H = 6.0                 # the roster audit was run at most this long before / after the feed it vouches for
 
 PASS, FAIL, PENDING, WARN = "PASS", "FAIL", "PENDING", "WARN"
 
@@ -157,7 +166,61 @@ def check_vocabulary(run: dict | None) -> list[dict]:
     ]
 
 
-def check_model_inputs(doc: dict | None, avail: list[dict] | None = None) -> list[dict]:
+def _documented_review(p: dict, recon: dict[tuple, dict]) -> bool:
+    """Is this REVIEW row's ONLY finding the documented early-season roster-uncertainty review, within bounds? (Pure; no audit here.)"""
+    fs = [f for f in p["gate"].get("findings", []) if f.get("severity") != "INFO"]
+    if not fs or any(f.get("check") != DOCUMENTED_CHECK or f.get("severity") != "REVIEW" or f.get("category") != DOCUMENTED_CATEGORY
+                     or "normalised to the team" not in (f.get("what") or "") for f in fs):
+        return False
+    r = recon.get((str(p.get("game_id")).replace("espn:", ""), p.get("team")))
+    if not r or r.get("status") != "REVIEW":
+        return False
+    lo = 1 - MAX_DOCUMENTED_NORMALISATION
+    return float(r.get("minutes_scale") or 1.0) >= lo and lo <= float(r.get("usage_scale") or 1.0) <= 1 + MAX_DOCUMENTED_NORMALISATION
+
+
+def audit_accepts(audit: dict | None, doc: dict) -> tuple[bool, str]:
+    """May the documented REVIEW be accepted for this feed? Only with a roster audit of the same slate and teams, run close to the feed, with no error."""
+    if not audit:
+        return False, "no roster audit supplied (--roster-audit)"
+    if audit.get("schema") != "sift.nba_roster_audit.v1":
+        return False, "the roster audit is not a sift.nba_roster_audit.v1 document"
+    if audit.get("slate") != doc.get("slate_date"):
+        return False, f"the roster audit is for slate {audit.get('slate')}, the feed for {doc.get('slate_date')}"
+    a, g = _ts(audit.get("feed_generated_utc")), _ts(doc.get("generated_utc"))
+    if not a or not g or abs((g - a).total_seconds()) / 3600 > MAX_AUDIT_AGE_H:
+        return False, f"the roster audit describes a feed from {audit.get('feed_generated_utc')}, not within {MAX_AUDIT_AGE_H:g} h of {doc.get('generated_utc')}"
+    teams = {p["team"] for p in doc.get("players", [])}
+    if not teams <= set((audit.get("identity") or {})):
+        return False, "the roster audit does not cover every team in the feed"
+    if "ok" != (audit.get("sources") or {}).get("espn_rosters"):
+        return False, "the roster audit could not read the current rosters"
+    if int(audit.get("genuine_roster_errors", 1)) != 0:
+        return False, f"the roster audit found {audit.get('genuine_roster_errors')} roster / availability error(s)"
+    return True, "a roster audit of this slate found no roster, team or availability error"
+
+
+def eligible_breakdown(doc: dict, audit: dict | None) -> dict:
+    """The four D5 categories over eligible (confirmed / likely active) rows, counted separately."""
+    elig = [p for p in doc["players"] if p["participation"]["status"] in ("CONFIRMED_ACTIVE", "LIKELY_ACTIVE")]
+    recon = {(str(r["game_id"]).replace("espn:", ""), r["team"]): r for r in doc.get("reconciliation", [])}
+    ok, why = audit_accepts(audit, doc)
+    clean = blocked = documented = other = 0
+    for p in elig:
+        st = p["gate"]["status"]
+        if st == "BLOCK":
+            blocked += 1
+        elif st == "PASS":
+            clean += 1
+        elif _documented_review(p, recon):
+            documented += 1
+        else:
+            other += 1
+    return {"eligible": len(elig), "clean_pass": clean, "documented_review": documented, "other_review": other, "blocked": blocked,
+            "audit_accepts": ok, "audit_why": why}
+
+
+def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit: dict | None = None) -> list[dict]:
     if not doc or not doc.get("players"):
         return [check("D1", "Availability reaches the model", PENDING, "no projection document")]
     rows = doc["players"]
@@ -191,17 +254,28 @@ def check_model_inputs(doc: dict | None, avail: list[dict] | None = None) -> lis
     out.append(check("D4", "Uncertain or unverified availability is REVIEW (SIFT shows it at Low reliability), never PASS", FAIL if passed else (PASS if unc else PENDING),
                      f"{len(unc)} rows uncertain / unverified; {len(passed)} wrongly PASS" if unc else "no uncertain row yet",
                      {"uncertain_rows": len(unc), "wrongly_pass": passed[:10]}))
-    # D5 eligible players are projected and not blocked
-    elig = [p for p in rows if p["participation"]["status"] in ("CONFIRMED_ACTIVE", "LIKELY_ACTIVE")]
-    if not elig:
+    # D5 eligible players are projected and not blocked. Four categories, counted and reported separately; PASS keeps its meaning (the
+    # gate said PASS), the 50 % bar is unchanged, and the only REVIEW that counts toward it is the documented, audited one.
+    b = eligible_breakdown(doc, audit)
+    n = b["eligible"]
+    if not n:
         out.append(check("D5", "Eligible (confirmed / likely active) players pass the projection-quality gate", PENDING, "no eligible player on the slate yet"))
     else:
-        nb = sum(p["gate"]["status"] != "BLOCK" for p in elig) / len(elig)
-        ps = sum(p["gate"]["status"] == "PASS" for p in elig) / len(elig)
-        ok = nb >= MIN_ELIGIBLE_NOT_BLOCKED and ps >= MIN_ELIGIBLE_PASS
-        out.append(check("D5", "Eligible (confirmed / likely active) players pass the projection-quality gate", PASS if ok else FAIL,
-                         f"{len(elig)} eligible rows: {nb:.0%} not blocked (need {MIN_ELIGIBLE_NOT_BLOCKED:.0%}), {ps:.0%} PASS (need {MIN_ELIGIBLE_PASS:.0%})",
-                         {"eligible_rows": len(elig), "not_blocked": round(nb, 3), "pass": round(ps, 3)}))
+        nb = (n - b["blocked"]) / n
+        accepted_with = (b["clean_pass"] + b["documented_review"]) / n
+        accepted_without = b["clean_pass"] / n
+        accepted = accepted_with if b["audit_accepts"] else accepted_without
+        ok = nb >= MIN_ELIGIBLE_NOT_BLOCKED and accepted >= MIN_ELIGIBLE_PASS
+        would = nb >= MIN_ELIGIBLE_NOT_BLOCKED and accepted_with >= MIN_ELIGIBLE_PASS
+        status = PASS if ok else (PENDING if would and not b["audit_accepts"] else FAIL)
+        cats = (f"clean PASS {b['clean_pass']} ({b['clean_pass'] / n:.0%}) · eligible REVIEW, documented early-season roster uncertainty "
+                f"{b['documented_review']} ({b['documented_review'] / n:.0%}; Low reliability{'' if b['audit_accepts'] else '; NOT accepted: ' + b['audit_why']}) · "
+                f"other REVIEW {b['other_review']} ({b['other_review'] / n:.0%}; never accepted) · BLOCKED {b['blocked']} ({b['blocked'] / n:.0%})")
+        out.append(check("D5", "Eligible (confirmed / likely active) players pass the projection-quality gate", status,
+                         f"{n} eligible rows: {cats}; {nb:.0%} not blocked (need {MIN_ELIGIBLE_NOT_BLOCKED:.0%}); accepted {accepted:.0%} (need {MIN_ELIGIBLE_PASS:.0%})",
+                         {"eligible_rows": n, **{k: b[k] for k in ("clean_pass", "documented_review", "other_review", "blocked")},
+                          "not_blocked": round(nb, 3), "pass": round(accepted_without, 3), "accepted": round(accepted, 3),
+                          "documented_review_accepted": b["audit_accepts"], "audit": b["audit_why"]}))
     # D7 no archived observation was ignored: a row whose game / player has an observation captured at or before the projection's own
     # time (and before the start) must not be published UNVERIFIED. This is the defect of 2026-10-19T18:52Z (the run's own ESPN capture
     # carried the same whole-second stamp as the projection clock and was excluded by the strictly-before cut-off).
@@ -247,14 +321,14 @@ def check_archive(archive: str, doc: dict | None, run: dict | None, now: datetim
 
 
 # --------------------------------------------------------------------------------------------------- driver
-def evaluate(archive: str, now: datetime | None = None) -> dict:
+def evaluate(archive: str, now: datetime | None = None, audit: dict | None = None) -> dict:
     now = now or datetime.now(timezone.utc)
     rp, pp = os.path.join(archive, "runs", "nba", "latest.json"), os.path.join(archive, "projections", "nba", "latest.json")
     run = _json(rp) if os.path.exists(rp) else None
     doc = _json(pp) if os.path.exists(pp) else None
     av_files = sorted(glob.glob(os.path.join(archive, "availability", "nba", "*", "*.jsonl.gz")))
     avail = _jsonl_gz(av_files) if av_files else []
-    checks = check_official_report(run, now) + check_identity(run) + check_vocabulary(run) + check_model_inputs(doc, avail) + check_archive(archive, doc, run, now)
+    checks = check_official_report(run, now) + check_identity(run) + check_vocabulary(run) + check_model_inputs(doc, avail, audit) + check_archive(archive, doc, run, now)
     req = [c for c in checks if c["required"]]
     if any(c["status"] == FAIL for c in req):
         verdict = "BLOCKED"
@@ -267,7 +341,9 @@ def evaluate(archive: str, now: datetime | None = None) -> dict:
             "run_published_utc": (run or {}).get("published_utc"), "projection_generated_utc": (doc or {}).get("generated_utc"),
             "slate_date": (doc or {}).get("slate_date"), "checks": checks, "remaining": remaining,
             "policy": {"max_report_age_h": MAX_REPORT_AGE_H, "min_team_submission_share": MIN_TEAM_SUBMISSION_SHARE,
-                       "min_eligible_not_blocked": MIN_ELIGIBLE_NOT_BLOCKED, "min_eligible_pass": MIN_ELIGIBLE_PASS},
+                       "min_eligible_not_blocked": MIN_ELIGIBLE_NOT_BLOCKED, "min_eligible_pass": MIN_ELIGIBLE_PASS,
+                       "documented_review": {"check": DOCUMENTED_CHECK, "category": DOCUMENTED_CATEGORY, "max_normalisation": MAX_DOCUMENTED_NORMALISATION,
+                                             "max_audit_age_h": MAX_AUDIT_AGE_H, "needs": "a roster audit (nba/live/roster_audit.py) of the same slate with no error"}},
             "note": "READY means the live evidence supports promotion; the promotion itself is a person's decision in SIFT (projectionApprovals.ts) after "
                     "scripts/verify-nba-activation.ts agrees. A replay, a rehearsal or a dry run on recorded data is not live evidence."}
 
@@ -291,8 +367,10 @@ def main(argv=None) -> int:
     ap.add_argument("--now", default=None)
     ap.add_argument("--json", default=None)
     ap.add_argument("--strict", action="store_true", help="exit 1 unless the verdict is READY")
+    ap.add_argument("--roster-audit", default=None, help="the JSON written by `python -m nba.live.roster_audit --json` for this feed; without it the documented "
+                    "early-season REVIEW is not accepted by D5")
     a = ap.parse_args(argv)
-    rep = evaluate(a.archive, _ts(a.now) if a.now else None)
+    rep = evaluate(a.archive, _ts(a.now) if a.now else None, _json(a.roster_audit) if a.roster_audit else None)
     md = markdown(rep)
     print(md)
     if a.json:
