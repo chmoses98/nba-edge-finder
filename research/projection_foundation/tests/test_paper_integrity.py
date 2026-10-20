@@ -80,3 +80,21 @@ def test_replay_snapshots_are_excluded_from_prospective_integrity(tmp_path):
     assert IG.build(str(arch), ctx, "2026-10-20", "2026-10-26", now)["games"][0]["has_snapshot_T-60"] is False
     assert IG.build(str(arch), ctx, "2026-10-20", "2026-10-26", now, replay_allowed=True)["games"][0]["has_snapshot_T-60"] is True
     assert S.SNAPSHOT_SCHEMA
+
+
+def test_games_beyond_the_projection_window_are_not_reported_as_missing_and_prior_day_slots_count(tmp_path):
+    tips = ["2026-10-20T19:00:00Z", "2026-10-26T23:00:00Z"]
+    ctx = _ctx(tmp_path, tips)
+    arch = tmp_path / "arch"
+    arch.mkdir()
+    now = utc("2026-10-20T16:30:00Z")
+    rep = IG.build(str(arch), ctx, "2026-10-20", "2026-10-26", now)
+    far = next(g for g in rep["games"] if g["game_id"] == "espn:1")
+    assert far["scheduled_later"] and far["missing"] == [] and "forecast" not in rep["missing_counts"] or rep["missing_counts"].get("forecast") == 1
+    st = {"capture": {"n_observations": 5, "errors": [], "sources": {"official": {"status": "ok"}}},
+          "project": {"games": 1, "status": "ok", "challenger_archive": {"written": 5, "duplicates": 0}}}
+    rec = LED.build_record("pregame", st, {"slot_id": "2026-10-19@2120", "kind": "pregame"}, utc("2026-10-20T02:20:00Z"))
+    rec["kind"] = "pregame"
+    LED.write(str(arch), rec)
+    rep = IG.build(str(arch), ctx, "2026-10-20", "2026-10-26", now)
+    assert "2026-10-19@2120" in rep["slots"]["executed"] or "2026-10-19@2120" not in rep["slots"]["missed"]

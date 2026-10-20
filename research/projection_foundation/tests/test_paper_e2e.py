@@ -87,7 +87,9 @@ def test_scorecard_and_report_work_with_decisions_but_no_settlements(world, tmp_
     card = EV.scorecard(str(root), now, window=7)
     assert card["sample"]["paper_decisions"]["n_decisions"] > 0 and card["sample"]["paper_settled"] == 0
     assert DG.root_cause(str(root), now, window=7)["authority"] == "research_only"
-    assert DG.ranked_hypotheses(str(root), now, window=7)["authority"] == "research_only"
+    hyp = DG.ranked_hypotheses(str(root), now, window=7)
+    assert hyp["authority"] == "research_only"
+    assert not [h for h in hyp["hypotheses"] if "KeyError" in str(h.get("reason", "")) + str(h.get("classification_reason", ""))]
     rep = REP.build_week(str(root), str(world["ctx"]), 1, now)
     assert rep["status"] == "PRELIMINARY"
     assert not {k for k, v in rep["sections"].items() if isinstance(v, dict) and v.get("status") == "SECTION_ERROR"}

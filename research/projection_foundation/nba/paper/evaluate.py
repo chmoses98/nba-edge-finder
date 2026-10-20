@@ -191,6 +191,12 @@ def load(archive: str, now: datetime, window: int | None = None, day_et: str | N
     D.dec = _load_decisions(archive, lo_utc, in_window, prospective_only, q)
     D.kinds["paper_decisions"] = int(len(D.dec))
     D.quality = q
+    if D.settle.empty:                 # nothing settled yet: keep the columns every test reads so an empty window is NO_DATA, never a KeyError
+        D.settle = pd.DataFrame({**{c: pd.Series(dtype=object) for c in ("model_role", "family", "game_id", "entity_id", "forecast_id", "model_id",
+                                                                      "participation", "p_status", "p_cert", "day_et", "game_start_utc", "generated_utc", "probs")},
+                                 **{c: pd.Series(dtype=float) for c in ("mean", "actual", "hours_pre", "lo")},
+                                 "void": pd.Series(dtype=bool), "start": pd.Series(dtype="datetime64[ns, UTC]"),
+                                 "gen": pd.Series(dtype="datetime64[ns, UTC]")})
     return D
 
 
