@@ -1,0 +1,56 @@
+{
+ "authority": "research_only",
+ "code_sha": "30967904f46c4b9081a980ec8c3eca27f62b0a45",
+ "cron": "20 15,16 * 1-6,10-12 *",
+ "dry_run": false,
+ "finished_utc": "2026-10-20T19:25:47Z",
+ "github_run_attempt": "1",
+ "github_run_id": "39482310211",
+ "kind": "pregame",
+ "lateness_min": 89,
+ "outcome": "EXECUTED_PRODUCED",
+ "produced": {
+  "availability_observations": 180,
+  "challenger_archive": {
+   "duplicates": 0,
+   "invalid": 0,
+   "late_rejected": 0,
+   "written": 2682
+  },
+  "forecast_rows": 2408,
+  "games_in_window": 10,
+  "gate": {
+   "BLOCK": 70,
+   "PASS": 213,
+   "REVIEW": 2125
+  },
+  "incumbent": {
+   "duplicates": 360,
+   "games": 2,
+   "invalid": 0,
+   "late_rejected": 0,
+   "paths": [],
+   "records_built": 360,
+   "shadow_rows_read": 300,
+   "status": "ok",
+   "written": 0
+  },
+  "official_report": "ok",
+  "players": 344,
+  "slate_date": "2026-10-20"
+ },
+ "schema": "sift.nba_run_ledger.v1",
+ "slot_id": "2026-10-20@1350",
+ "slot_utc": "2026-10-20T17:50:00+00:00",
+ "stages": [
+  "capture",
+  "project",
+  "publish",
+  "results",
+  "settle",
+  "score"
+ ],
+ "started_utc": "2026-10-20T19:24:20Z",
+ "trigger": "schedule",
+ "warnings": []
+}
