@@ -372,3 +372,35 @@ def test_ticker_treats_a_later_manual_pregame_run_as_covering_the_slot(tmp_path)
         assert not [x for x in d if x["kind"] == "pregame"]                     # slot 13:50 ET (17:50Z) is covered by the 18:17Z manual run
     finally:
         os.chdir(cwd)
+
+
+def _ledger_repo(tmp_path):
+    """A real git repo whose HEAD tree holds a ledger like the projection-data branch (the lookups read it with `git ls-tree`)."""
+    import subprocess
+    repo = tmp_path / "repo"
+    (repo / "ops" / "nba" / "slots" / "2026-10-20").mkdir(parents=True)
+    (repo / "ops" / "nba" / "slots" / "2026-10-20" / "1720_pregame.json").write_text("{}")
+    (repo / "ops" / "nba" / "slots" / "2026-10-20" / "0640_settle.json").write_text("{}")
+    (repo / "ops" / "nba" / "slots" / "2026-10-20" / "manual_190000.json").write_text("{}")
+    (repo / "research" / "projection_foundation").mkdir(parents=True)
+    for c in (["init", "-q"], ["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "ledger"]):
+        subprocess.run(["git", *c], cwd=repo, check=True)
+    return repo
+
+
+def test_ledger_lookups_work_from_a_subdirectory_like_the_workflows_call_them(tmp_path, monkeypatch):
+    """Defect found on the first live ticker run: `git ls-tree` resolves its path argument relative to the current directory, and both the
+    plan job and the ticker `cd research/projection_foundation` first, so every lookup returned 'not in the ledger' (the ticker asked for the
+    settle slot that was already recorded 9 s after it started). The lookups must read the repo-root ledger from any directory."""
+    from nba.live import ticker as TK
+    repo = _ledger_repo(tmp_path)
+    monkeypatch.chdir(repo / "research" / "projection_foundation")
+    has = SP._ledger_lookup("HEAD")
+    assert has("2026-10-20@1720", "pregame") and has("2026-10-20@0640", "settle")
+    assert not has("2026-10-20@1820", "pregame") and not has("2026-10-21@0640", "settle")
+    after = TK._manual_after_lookup("HEAD")
+    assert after(utc("2026-10-20T17:20:00Z")) and not after(utc("2026-10-20T19:30:00Z"))
+    # end to end: the settle slot is recorded, 17:20 is recorded, so at 21:33Z only nothing is due
+    assert TK.due(utc("2026-10-20T21:33:00Z"), has, after) == []
+    assert SP.make_plan("workflow_dispatch", None, utc("2026-10-20T21:33:00Z"), slot_in="2026-10-20@0640", kind_in="settle",
+                        ledger_has=has).reason.startswith("already_done")

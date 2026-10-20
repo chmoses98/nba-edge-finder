@@ -177,7 +177,7 @@ def _ledger_lookup(ref: str | None):
     def has(sid: str, kind: str) -> bool:
         day, hm = sid.split("@")
         try:
-            out = subprocess.check_output(["git", "ls-tree", "--name-only", ref, f"ops/nba/slots/{day}/"], text=True, stderr=subprocess.DEVNULL)
+            out = subprocess.check_output(["git", "ls-tree", "--full-tree", "--name-only", ref, f"ops/nba/slots/{day}/"], text=True, stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
             return False
         return f"ops/nba/slots/{day}/{hm}_{kind}.json" in out.split()
