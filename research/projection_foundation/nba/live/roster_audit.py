@@ -37,8 +37,8 @@ from typing import Any, Callable
 
 ESPN_TEAMS = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams"
 ESPN_ROSTER = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/{id}/roster"
-ESPN_TRANSACTIONS = ["https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/transactions?limit=200",
-                     "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/transactions?limit=200"]
+ESPN_TRANSACTIONS = ["https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/transactions?limit=1000",
+                     "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/transactions?limit=1000"]
 NBA_ROSTER = "https://stats.nba.com/stats/commonteamroster?LeagueID=00&Season={season}&TeamID={id}"
 NBA_TEAM_IDS = {"ATL": 1610612737, "BOS": 1610612738, "BKN": 1610612751, "CHA": 1610612766, "CHI": 1610612741, "CLE": 1610612739,
                 "DAL": 1610612742, "DEN": 1610612743, "DET": 1610612765, "GS": 1610612744, "GSW": 1610612744, "HOU": 1610612745,
@@ -121,14 +121,41 @@ def nba_rosters(get: Fetcher, abbrs: list[str], season: str) -> dict[str, Any]:
     return {"status": "ok" if out else f"unavailable {statuses}", "teams": out, "http": statuses}
 
 
-def espn_transactions(get: Fetcher) -> dict[str, Any]:
+BBREF_ROSTER = "https://www.basketball-reference.com/teams/{abbr}/{year}.html"
+BBREF_CODE = {"BKN": "BRK", "CHA": "CHO", "PHX": "PHO"}
+
+
+def parse_bbref_roster(html: str) -> list[dict]:
+    """Player names from the `roster` table of a Basketball-Reference team page (an independent, non-ESPN source)."""
+    m = re.search(r'<table[^>]*id="roster"[^>]*>(.*?)</table>', html or "", re.S)
+    if not m:
+        return []
+    return [{"id": "", "name": re.sub(r"<[^>]+>", "", x).strip()} for x in re.findall(r'data-stat="player"[^>]*>(.*?)</td>', m.group(1), re.S) if re.sub(r"<[^>]+>", "", x).strip()]
+
+
+def bbref_rosters(get: Fetcher, abbrs: list[str], year: int) -> dict[str, Any]:
+    out: dict[str, list[dict]] = {}
+    statuses: dict[str, Any] = {}
+    for a in abbrs:
+        st, html = get(BBREF_ROSTER.format(abbr=BBREF_CODE.get(a, a), year=year), None)
+        statuses[a] = st
+        rows = parse_bbref_roster(html) if isinstance(html, str) else []
+        if rows:
+            out[a] = rows
+    return {"status": "ok" if out else f"unavailable {statuses}", "teams": out, "http": statuses}
+
+
+def espn_transactions(get: Fetcher, names: list[str] | None = None) -> dict[str, Any]:
+    """Recent league transactions (ESPN). With `names`, every transaction text that mentions one of them is returned too."""
     for url in ESPN_TRANSACTIONS:
         st, doc = get(url, None)
         if st == 200 and isinstance(doc, dict):
             tx = doc.get("transactions") or doc.get("items") or []
-            return {"status": "ok", "url": url, "rows": [{"date": t.get("date"), "team": (t.get("team") or {}).get("abbreviation"),
-                                                          "text": (t.get("description") or t.get("text") or "")[:200]} for t in tx[:200]]}
-    return {"status": "unavailable", "rows": []}
+            rows = [{"date": t.get("date"), "team": (t.get("team") or {}).get("abbreviation"), "text": (t.get("description") or t.get("text") or "")[:240]} for t in tx]
+            wanted = {norm(n) for n in (names or [])}
+            hits = [r for r in rows if any(w and w in norm(r["text"]) for w in wanted)]
+            return {"status": "ok", "url": url, "n": len(rows), "oldest": min((r["date"] for r in rows if r["date"]), default=None), "rows": rows[:200], "name_hits": hits}
+    return {"status": "unavailable", "rows": [], "name_hits": []}
 
 
 # ----------------------------------------------------------------------------------------------------------------- analysis
@@ -258,7 +285,8 @@ def audit(feed: dict, official: list[dict], espn: dict, nba: dict, tx: dict) -> 
             "sources": {"espn_rosters": espn.get("status"), "league_rosters": nba.get("status"), "transactions": tx.get("status")},
             "minutes": {t: {k: v for k, v in m.items() if k != "players"} for t, m in ms.items()},
             "identity": ident, "availability": avail, "errors": errors, "genuine_roster_errors": len(errors),
-            "transactions": [x for x in tx.get("rows", []) if x.get("team") in ms][:40]}
+            "transactions": [x for x in tx.get("rows", []) if x.get("team") in ms][:40],
+            "transactions_about_new_team_players": tx.get("name_hits", []), "transactions_window": {"n": tx.get("n"), "oldest": tx.get("oldest")}}
 
 
 def render(a: dict) -> str:
@@ -278,6 +306,8 @@ def render(a: dict) -> str:
           f"   ruled-out rows not blocked: {a['availability']['ruled_out_rows_not_blocked']}", f"   blocked but not ruled out: {a['availability']['blocked_but_not_ruled_out']}"]
     if a["transactions"]:
         L += ["", "recent transactions touching these teams:"] + [f"   {x['date']} {x['team']}: {x['text']}" for x in a["transactions"][:25]]
+    if a.get("transactions_about_new_team_players"):
+        L += ["", f"transactions naming a 'New team' player (window: {a['transactions_window']}):"] + [f"   {x['date']} {x['team']}: {x['text']}" for x in a["transactions_about_new_team_players"][:40]]
     L += ["", f"GENUINE ROSTER / AVAILABILITY ERRORS: {a['genuine_roster_errors']}"] + [f"   - {e}" for e in a["errors"][:40]]
     return "\n".join(L)
 
@@ -294,7 +324,12 @@ def main(argv=None) -> int:
     yr = int((feed.get("slate_date") or "2026-10-20")[:4])
     season = a.season or (f"{yr}-{str(yr + 1)[2:]}" if int((feed.get("slate_date") or "2026-10-20")[5:7]) >= 8 else f"{yr - 1}-{str(yr)[2:]}")
     teams = sorted({p["team"] for p in feed["players"]})
-    res = audit(feed, official, espn_rosters(get), nba_rosters(get, teams, season), espn_transactions(get))
+    new_team_names = sorted({p["name"] for p in feed["players"] if p["family"] == "minutes" and any(x.startswith("New team") for x in p.get("adjustments", []))})
+    indep = nba_rosters(get, teams, season)
+    if not indep["teams"]:                       # the league host refuses cloud egress: fall back to a second, non-ESPN source
+        alt = bbref_rosters(get, teams, yr + 1 if int((feed.get("slate_date") or "2026-10-20")[5:7]) >= 8 else yr)
+        indep = {**alt, "status": f"basketball-reference: {alt['status']} (league host: {indep['status']})"}
+    res = audit(feed, official, espn_rosters(get), indep, espn_transactions(get, new_team_names))
     print(render(res))
     if a.json:
         with open(a.json, "w") as f:
