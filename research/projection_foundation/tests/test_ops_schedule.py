@@ -404,3 +404,66 @@ def test_ledger_lookups_work_from_a_subdirectory_like_the_workflows_call_them(tm
     assert TK.due(utc("2026-10-20T21:33:00Z"), has, after) == []
     assert SP.make_plan("workflow_dispatch", None, utc("2026-10-20T21:33:00Z"), slot_in="2026-10-20@0640", kind_in="settle",
                         ledger_has=has).reason.startswith("already_done")
+
+
+def test_recovery_cycle_overdue_dispatch_failure_retry_then_stop(tmp_path, monkeypatch):
+    """The whole make-up loop on a real git ledger: an overdue slot is requested after the grace; a dispatched run that fails verification
+    writes no record (the slot stays open and is requested again); the retry that verifies is recorded write-once; the ticker then stops
+    asking; a late cron firing for the same slot becomes an explicit `already_done` skip; the next slot is not requested early."""
+    import subprocess
+    from nba.live import ticker as TK
+    repo = tmp_path / "pd"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    (repo / "README.md").write_text("x")
+    (repo / "ops/nba/slots/2026-10-20").mkdir(parents=True)
+    (repo / "ops/nba/slots/2026-10-20/0640_settle.json").write_text("{}")          # the day's settle slot is already recorded
+
+    def commit():
+        subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "c", "--allow-empty"], cwd=repo, check=True)
+
+    commit()
+    sub = repo / "research" / "projection_foundation"
+    sub.mkdir(parents=True)
+    monkeypatch.chdir(sub)                                   # the directory both workflows call the lookups from
+
+    def ticker_at(t):
+        return TK.due(utc(t), SP._ledger_lookup("HEAD"), TK._manual_after_lookup("HEAD"))
+
+    good = {"capture": {"sources": {"official": {"status": "ok"}}}, "project": {"games": 3, "status": "ok", "challenger_archive": {"written": 5}}}
+    bad = {"capture": {"sources": {"official": {"status": "ok"}}}, "project": {"games": 3, "status": "error", "challenger_archive": {"written": 0}}}
+
+    def run_named(t, slot, st):
+        """What the dispatched workflow does: plan the named slot, run, build+write the record only if verification passes."""
+        plan = SP.make_plan("workflow_dispatch", None, utc(t), slot_in=slot, kind_in="pregame", ledger_has=SP._ledger_lookup("HEAD"))
+        if plan.mode == "skip":
+            return plan
+        try:
+            rec = LED.build_record("pregame", st, {"slot_id": plan.slot_id, "trigger": "workflow_dispatch"}, utc(t))
+        except LED.RunVerificationError:
+            return None                                       # job goes red, nothing committed
+        LED.write(str(repo), rec)
+        commit()
+        return plan
+
+    assert ticker_at("2026-10-20T21:25:00Z") == []                                     # 17:20 ET slot is 5 min old: inside the grace
+    d = ticker_at("2026-10-20T21:33:00Z")
+    assert [(x["kind"], x["slot_id"]) for x in d] == [("pregame", "2026-10-20@1720")]  # overdue past the grace: requested exactly
+    assert run_named("2026-10-20T21:33:30Z", "2026-10-20@1720", bad) is None            # failed run
+    assert not (repo / "ops/nba/slots/2026-10-20/1720_pregame.json").exists()           # ... leaves no record, so it cannot count as done
+    assert [x["slot_id"] for x in ticker_at("2026-10-20T21:59:00Z")] == ["2026-10-20@1720"]   # ... and the ticker asks again (retry)
+    plan = run_named("2026-10-20T22:00:00Z", "2026-10-20@1720", good)
+    assert plan.mode == "pregame" and plan.slot_id == "2026-10-20@1720"
+    assert (repo / "ops/nba/slots/2026-10-20/1720_pregame.json").exists()
+    assert ticker_at("2026-10-20T22:05:00Z") == []                                     # completed slot: no more dispatches
+    late = SP.make_plan("schedule", SP.SWEEP_CRON, utc("2026-10-20T22:10:00Z"), ledger_has=SP._ledger_lookup("HEAD"))
+    assert late.mode != "pregame" or late.slot_id != "2026-10-20@1720"                # the sweep does not redo it
+    dup = SP.make_plan("workflow_dispatch", None, utc("2026-10-20T22:11:00Z"), slot_in="2026-10-20@1720", kind_in="pregame",
+                       ledger_has=SP._ledger_lookup("HEAD"))
+    assert dup.mode == "skip" and dup.reason.startswith("already_done") and SP.skip_is_valid(dup.reason)
+    first = (repo / "ops/nba/slots/2026-10-20/1720_pregame.json").read_text()
+    assert LED.write(str(repo), LED.build_record("pregame", good, {"slot_id": "2026-10-20@1720", "trigger": "x"}, utc("2026-10-20T23:00:00Z"))) \
+        and (repo / "ops/nba/slots/2026-10-20/1720_pregame.json").read_text() == first    # write-once: history is never rewritten
+    assert ticker_at("2026-10-20T22:19:00Z") == []                                     # 18:20 ET slot (22:20Z) is not requested early
+    assert [x["slot_id"] for x in ticker_at("2026-10-20T22:33:00Z")] == ["2026-10-20@1820"]
