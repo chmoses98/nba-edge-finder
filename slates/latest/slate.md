@@ -1,30 +1,29 @@
-# NBA slate 2026-10-20 — generated 2026-10-20T18:42:09Z — nba-sim-0.1.0
+# NBA slate 2026-10-20 — generated 2026-10-20T19:47:01Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
-Market snapshot age: 3 min · injury snapshot age: 33 min (official)
+Market snapshot age: 3 min · injury snapshot age: 30 min (official)
 
 ## Coverage
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 821 |
-| MODELABLE | 799 |
-| RESEARCH | 37 |
-| UNRESOLVED | 662 |
+| BUILDABLE | 565 |
+| MODELABLE | 563 |
+| RESEARCH | 24 |
+| UNRESOLVED | 402 |
 
 ## Games
 
 | game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |
 |---|---|---:|---|---|---:|---:|---|
-| BOS @ DET | 2026-10-20T19:00:00Z | 0.503 | +0.2±16.4 | 214.9±19.9 | 0.048 | 60000 | ok |
-| PHI @ NYK | 2026-10-20T23:00:00Z | 0.892 | +19.5±15.8 | 222.2±20.0 | 0.048 | 40000 | ok |
-| OKC @ SAS | 2026-10-21T01:30:00Z | 0.519 | +0.7±16.3 | 221.0±20.1 | 0.049 | 40000 | ok |
+| PHI @ NYK | 2026-10-20T23:00:00Z | 0.882 | +18.8±15.9 | 222.5±20.0 | 0.048 | 60000 | ok |
+| OKC @ SAS | 2026-10-21T01:30:00Z | 0.514 | +0.6±16.4 | 221.0±20.2 | 0.049 | 40000 | ok |
 
 ## Contracts (OK gate, sorted by best EV)
 
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 1620, 'UNSUPPORTED': 699}
+Other gates: {'NO_EDGE': 1128, 'UNSUPPORTED': 426}
 
