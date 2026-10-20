@@ -169,7 +169,7 @@ def _game_forecast(gg: dict, g: pd.DataFrame, tdist, now_utc: str, asof: str) ->
             "rho": gm["rho"], "rho_source": gm["rho_source"], "context": ctx, "inputs_asof": asof}
 
 
-def project_slate(sl: dict | None, out: str | None, *, availability: dict | None = None, calib: dict | None = None,
+def project_slate(sl: dict | None, out: str | None, *, availability: dict | None = None, calib: dict | None = None, minutes_engine: str = "frozen",
                   now_utc: str | None = None, reconcile_cfg=None, max_hist_seasons: int = 7) -> dict:
     """Frozen-model forward projections for the games in `sl` (see load_slate; `sl["asof"]` = newest input captured).
 
@@ -238,6 +238,20 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     else:
         F["p_play"] = F["p_hurdle"]
         basis = ["hurdle"] * len(F)
+    # optional joint rotation model (minutes_jrm): replaces the independent hurdle x marginal minutes by report-calibrated eligibility, a depth-aware
+    # rotation model and an exact team-minutes budget. The default engine ("frozen") leaves everything below byte-for-byte as before.
+    jrm_on = minutes_engine == "jrm" and mode == "next_slate"
+    if minutes_engine not in ("frozen", "jrm"):
+        raise ValueError(f"unknown minutes_engine {minutes_engine!r}")
+    if jrm_on:
+        from . import minutes_jrm as J
+        fj = f.assign(E=mp["E"], D=mp["D"])
+        jr = J.slate_minutes(fj, classes, SLATE_SEASON)
+        F["p_play"] = jr["p_jrm"].to_numpy()
+        F["min_best"] = jr["m_jrm"].to_numpy()
+        F["min_inj"] = jr["m_jrm"].to_numpy()
+        f.loc[sl_idx, "min_best"] = F["min_best"].to_numpy()
+        basis = [("confirmed starter" if c == "STARTER_CONFIRMED" else "joint rotation model (report-calibrated eligibility)") for c in classes]
     # minutes: report-aware E_inj where the official report covers the game, else the frozen best (E)
     from .live.availability import SRC_OFFICIAL
     report_cov = np.array([bool(p.get("source") == SRC_OFFICIAL) for p in part])
@@ -247,7 +261,7 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     capped = np.isfinite(caps) & (F["min_best"].to_numpy() > caps)
     F["min_pub"] = np.where(capped, np.minimum(F["min_pub"], caps), F["min_pub"])
     F["min_best"] = np.where(capped, np.minimum(F["min_best"], caps), F["min_best"])
-    mres = frozen["minutes_dist"]
+    mres = J.minutes_dist_params() if jrm_on else frozen["minutes_dist"]
     # team
     tt, _ = T.fit_team(tctx)
     tt = tt[tt["game_id"].isin(set(F["game_id"]))]
@@ -348,7 +362,7 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
             "participation": pp, "role": "shadow", "data_asof_utc": asof,
             "_pmf": {"lo": int(d.lo), "probs": d.P[i]},
             "_tags": {"new_team": bool(r["team_changed"] == 1 or r["games_with_team"] < 5),
-                      "reconciled": (rec or {}).get("action", "none"), "minutes_model": "E_inj" if report_cov[i] else best_min,
+                      "reconciled": (rec or {}).get("action", "none"), "minutes_model": J.VERSION if jrm_on else ("E_inj" if report_cov[i] else best_min),
                       "n_own_games": int(np.nan_to_num(r["minutes_p_n"]))}}
         player_rows.append(row)
 
@@ -357,7 +371,7 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
         st_ = fam_state[fam]
         fz, sp, mu, rate = st_["fz"], st_["sp"], st_["mu_f"], st_["rate"]
         if fz["dist"] == "mixture":
-            scen = D.minutes_scenarios(fz["min_res"], F["min_best_f"].to_numpy())
+            scen = D.minutes_scenarios(mres if jrm_on else fz["min_res"], F["min_best_f"].to_numpy())
             scale = mu / np.maximum(rate * scen.mean(axis=1), 1e-6)
             d = D.mixture(rate, scen, fz["alpha_given_minutes"], SUPPORT_K[col], scale)
         elif fz["dist"] == "single_minutes_nb":
@@ -373,7 +387,8 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     for i, ix in enumerate(sl_idx):                       # minutes: the study's priority family (report-aware where covered)
         add_row(i, ix, "minutes", "minutes", mdist, MINUTES_RUNGS, float(mdist.mean[i]),
                 frozen["minutes_readiness"]["readiness"], 1.0, 0, float(F.loc[ix, "min_pub_f"]),
-                ["Minutes model: " + ("E_inj (official report features)" if report_cov[i] else f"{best_min} (no official report for this game)") + "."])
+                ["Minutes model: " + (f"joint rotation model ({J.VERSION}): team minutes conserved, no normalisation" if jrm_on else
+                                      ("E_inj (official report features)" if report_cov[i] else f"{best_min} (no official report for this game)")) + "."])
     # team block
     games = []
     game_forecast_errors: list[str] = []
@@ -400,11 +415,14 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
             game_forecast_errors.append(f"{gid}: {type(e).__name__}: {e}"[:200])
     fam_out["team_points"] = {"readiness": frozen["team"]["readiness"], "model": frozen["team"]["model_name"],
                               "reason": frozen["team"]["readiness_reason"]}
-    fam_out["minutes"] = {"readiness": frozen["minutes_readiness"]["readiness"], "model": frozen["minutes_readiness"]["model_name"],
-                          "reason": frozen["minutes_readiness"]["readiness_reason"]}
+    mr = frozen["minutes_readiness"]
+    if jrm_on:
+        mr = {**mr, **J.readiness()["minutes"], "model_name": f"joint rotation model ({J.VERSION})"}
+    fam_out["minutes"] = {"readiness": mr["readiness"], "model": mr["model_name"], "reason": mr["readiness_reason"]}
     res = {"schema": "sift.projections.v1", "sport": "NBA",
            "generated_utc": now_utc, "data_asof_utc": asof,
-           "model": {"id": MODEL_ID, "version": f"pf-{PF_VERSION}+{_git_sha()}", "authority": "research_only"},
+           "model": {"id": MODEL_ID, "version": f"pf-{PF_VERSION}+{_git_sha()}", "authority": "research_only",
+                     **({"minutes_engine": J.VERSION} if jrm_on else {})},          # the key exists only for the joint rotation model: the frozen document is unchanged
            "mode": mode, "slate_date": str(pd.Timestamp(F["date"].iloc[0]).date()) if len(F) else None,
            "history_through": str(pd.Timestamp(hist_last).date()),
            "inputs": files, "families": fam_out, "games": games, "players": player_rows,

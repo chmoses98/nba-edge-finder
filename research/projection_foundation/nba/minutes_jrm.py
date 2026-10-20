@@ -186,6 +186,11 @@ def load_q_calibration() -> dict:
     return json.load(open(ASSETS / "q_calibration.json"))
 
 
+def readiness() -> dict:
+    """Readiness of the minutes family under this engine, from the study's original READY rules (results/jrm/readiness.json)."""
+    return json.load(open(ASSETS / "readiness.json"))
+
+
 def minutes_dist_params() -> dict:
     """Empirical conditional-minutes residual distribution around the JRM forecast (fitted on 2017-18..2021-22 walk-forward predictions)."""
     return json.load(open(ASSETS / "minutes_dist.json"))

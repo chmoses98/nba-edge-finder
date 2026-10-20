@@ -141,7 +141,8 @@ def stage_project(a, now: datetime, work: str) -> dict:
     sl["asof"] = max([ctx["captured_utc"]] + used) if used else ctx["captured_utc"]
     sl["asof"] = min(sl["asof"], iso(now))
     out = os.path.join(work, "projections.json")
-    res = project_slate(sl, out, availability=avail, calib=calib, now_utc=iso(now))
+    # PF_NBA_MINUTES_ENGINE=jrm switches to the joint rotation model (nba/minutes_jrm.py); unset / "frozen" is the engine in production
+    res = project_slate(sl, out, availability=avail, calib=calib, now_utc=iso(now), minutes_engine=os.environ.get("PF_NBA_MINUTES_ENGINE", "frozen"))
     recs = FC.challenger_records(res)
     ar = pr.archive_forecasts(recs, a.archive, iso(now))
     try:                                      # team-points pmfs (game markets need them); a failure here is a warning, never a lost projection
