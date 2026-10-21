@@ -1,0 +1,15 @@
+{
+ "fixed": {
+  "OUT": 0.00835407038748667,
+  "DOUBTFUL": 0.013793103448275862
+ },
+ "recipe": "LogisticRegression(C=10) on logit(q_head) + status dummies; target = eligible (active list and not injury-out)",
+ "n_rows": 38525,
+ "intercept": 1.0573942798698446,
+ "coef": {
+  "logit": 0.9483082139026193,
+  "QUESTIONABLE": -1.5435905424718266,
+  "PROBABLE": 2.0926961855098782,
+  "AVAILABLE": 0.5040254739663566
+ }
+}

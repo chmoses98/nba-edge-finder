@@ -469,6 +469,16 @@ def test_recovery_cycle_overdue_dispatch_failure_retry_then_stop(tmp_path, monke
     assert [x["slot_id"] for x in ticker_at("2026-10-20T22:33:00Z")] == ["2026-10-20@1820"]
 
 
+def test_the_minutes_engine_switch_exists_only_in_the_dry_run_and_defaults_to_the_production_engine():
+    """The joint rotation model can be exercised by a dispatched DRY RUN (nothing pushed); no live job reads the switch and the default stays `frozen`."""
+    wf = yaml.safe_load(WF.read_text())
+    inp = wf.get(True)["workflow_dispatch"]["inputs"]["minutes_engine"]
+    assert inp["default"] == "frozen"
+    for name, job in wf["jobs"].items():
+        uses = "PF_NBA_MINUTES_ENGINE" in yaml.safe_dump(job)
+        assert uses == (name == "dry-run"), f"{name}: the engine switch must be read by the dry-run job only"
+
+
 def test_watchdog_paper_games_reads_the_real_paper_store_layout(tmp_path):
     """Found on opening night: MISSING_PAPER was raised for games that had thousands of paper decisions because the reader looked for
     paper/nba/<day>/decisions_*.jsonl.gz instead of the store's paper/nba/decisions/<day>/*.jsonl.gz."""

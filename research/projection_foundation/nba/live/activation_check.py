@@ -229,12 +229,13 @@ def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit:
     official = [p for p in pts if p["participation"].get("source") == OFFICIAL_SOURCE]
     out: list[dict] = []
     # D1 the resolved participation (and the report-aware P(play)) are on the rows
-    recal = [p for p in pts if p["participation"].get("p_play_basis") == "report-recalibrated hurdle"]
+    recal = [p for p in pts if p["participation"].get("p_play_basis") in ("report-recalibrated hurdle", "joint rotation model (report-calibrated eligibility)")]
     out.append(check("D1", "Rows carry the resolved participation and the report-recalibrated P(play)", PASS if official and len(recal) >= len(official) else PENDING,
                      f"{len(official)} players resolved from the official report; {len(recal)} with report-recalibrated P(play); participation {dict(c)}",
                      {"participation": dict(c), "official_resolved": len(official), "recalibrated": len(recal)}))
     # D2 the report-aware minutes model is used exactly where the report covers the player
-    has_einj = lambda p: any("Minutes model: E_inj" in a for a in p.get("adjustments", []))  # noqa: E731
+    # the frozen engine's E_inj, or the joint rotation model with eligibility calibrated on the official designation
+    has_einj = lambda p: any("Minutes model: E_inj" in a or "report-aware eligibility" in a for a in p.get("adjustments", []))  # noqa: E731
     mins = [p for p in rows if p["family"] == "minutes"]
     wrong = [p["player_id"] for p in mins if has_einj(p) != (p["participation"].get("source") == OFFICIAL_SOURCE)]
     n_einj = sum(has_einj(p) for p in mins)
@@ -298,6 +299,49 @@ def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit:
     return out
 
 
+MINUTES_BUDGET = 241.5
+MINUTES_TOL = 0.03          # |sum_i p_i x E[min_i | play] / 241.5 - 1| a JRM team may deviate: its construction makes the sum exact; a larger gap is a defect
+MINUTES_WARN = 0.05         # frozen engine: normalisation beyond this is reported (it is covered by the D5 policy, not required here)
+
+
+def minutes_integrity(doc: dict) -> dict:
+    """Per team-game: sum of p(play) x E[minutes | play] as published, and whether the publisher normalised minutes to get there."""
+    sums: dict[tuple, float] = {}
+    for p in doc.get("players") or []:
+        if p.get("family") != "minutes":
+            continue
+        pp = (p.get("participation") or {}).get("p_play")
+        if pp is None or p.get("mean") is None:
+            continue
+        k = (p.get("game_id"), p.get("team"))
+        sums[k] = sums.get(k, 0.0) + float(pp) * float(p["mean"])
+    scaled = {(r.get("game_id"), r.get("team")): r.get("minutes_scale", 1.0) for r in doc.get("reconciliation") or []
+              if "minutes" in str(r.get("action", ""))}
+    worst = max(((abs(v / MINUTES_BUDGET - 1), k) for k, v in sums.items()), default=(0.0, None))
+    return {"engine": (doc.get("model") or {}).get("minutes_engine", "frozen"), "teams": len(sums), "worst_gap": round(worst[0], 4), "worst_team": worst[1],
+            "outside_tol": sorted(f"{k[1]} {v / MINUTES_BUDGET - 1:+.1%}" for k, v in sums.items() if abs(v / MINUTES_BUDGET - 1) > MINUTES_TOL),
+            "normalised": sorted(f"{k[1]} x{v}" for k, v in scaled.items()), "scale_range": [min(scaled.values()), max(scaled.values())] if scaled else None}
+
+
+def check_minutes_integrity(doc: dict | None) -> list[dict]:
+    """F1: team minutes add up by construction, not by normalisation. Required when the projection declares the joint rotation model
+    (`model.minutes_engine == "jrm"`); for the frozen engine it is reported (WARN when a team needed a normalisation beyond 5%) and not required."""
+    title = "Team minutes are structurally coherent: sum of p x E[min | play] = 241.5 per team-game with no minutes normalisation"
+    if not doc or not doc.get("players"):
+        return [check("F1", title, PENDING, "no projection document", required=False)]
+    ev = minutes_integrity(doc)
+    if ev["engine"] == "frozen":
+        rng = ev["scale_range"]
+        warn = bool(rng) and (min(rng) < 1 - MINUTES_WARN or max(rng) > 1 + MINUTES_WARN)
+        return [check("F1", title, WARN if warn else PASS,
+                      f"frozen engine: {len(ev['normalised'])} team(s) normalised" + (f" (scales {rng[0]:.2f}-{rng[1]:.2f}); allowed by the D5 policy, not by this check" if rng else ""),
+                      ev, required=False)]
+    bad = ev["outside_tol"] or ev["normalised"]
+    return [check("F1", title, FAIL if bad else PASS,
+                  (f"{len(ev['outside_tol'])} team(s) outside +-{MINUTES_TOL:.0%} of {MINUTES_BUDGET} and {len(ev['normalised'])} normalised" if bad
+                   else f"all {ev['teams']} team-games within +-{MINUTES_TOL:.0%} (worst {ev['worst_gap']:.2%}) and none normalised"), ev, required=True)]
+
+
 def check_archive(archive: str, doc: dict | None, run: dict | None, now: datetime) -> list[dict]:
     fc_files = sorted(glob.glob(os.path.join(archive, "forecasts", "nba", "*", "*.jsonl.gz")))
     av_files = sorted(glob.glob(os.path.join(archive, "availability", "nba", "*", "*.jsonl.gz")))
@@ -328,7 +372,7 @@ def evaluate(archive: str, now: datetime | None = None, audit: dict | None = Non
     doc = _json(pp) if os.path.exists(pp) else None
     av_files = sorted(glob.glob(os.path.join(archive, "availability", "nba", "*", "*.jsonl.gz")))
     avail = _jsonl_gz(av_files) if av_files else []
-    checks = check_official_report(run, now) + check_identity(run) + check_vocabulary(run) + check_model_inputs(doc, avail, audit) + check_archive(archive, doc, run, now)
+    checks = check_official_report(run, now) + check_identity(run) + check_vocabulary(run) + check_model_inputs(doc, avail, audit) + check_minutes_integrity(doc) + check_archive(archive, doc, run, now)
     req = [c for c in checks if c["required"]]
     if any(c["status"] == FAIL for c in req):
         verdict = "BLOCKED"
