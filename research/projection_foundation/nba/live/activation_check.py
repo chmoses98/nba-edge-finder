@@ -220,6 +220,14 @@ def eligible_breakdown(doc: dict, audit: dict | None) -> dict:
             "audit_accepts": ok, "audit_why": why}
 
 
+def _out_basis(p: dict) -> str:
+    """Why a row is ruled out: official OUT, official DOUBTFUL, or an aggregator-only OUT (ESPN, no official designation)."""
+    pa = p["participation"]
+    if pa["status"] == "CONFIRMED_OUT":
+        return "official OUT"
+    return "aggregator-only OUT (ESPN)" if pa.get("source") != OFFICIAL_SOURCE else f"official {pa.get('designation') or 'LIKELY_OUT'}"
+
+
 def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit: dict | None = None) -> list[dict]:
     if not doc or not doc.get("players"):
         return [check("D1", "Availability reaches the model", PENDING, "no projection document")]
@@ -247,7 +255,8 @@ def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit:
     not_blocked = [(p["player_id"], p["family"]) for p in outp if p["gate"]["status"] != "BLOCK"]
     out.append(check("D3", "Ruled-out players are withheld (gate BLOCK in every family)", FAIL if not_blocked else (PASS if outp else PENDING),
                      f"{len(outp)} rows of ruled-out players; {len(not_blocked)} not blocked" if outp else "no ruled-out player on the slate yet (nothing to withhold)",
-                     {"ruled_out_rows": len(outp), "not_blocked": not_blocked[:10]}))
+                     {"ruled_out_rows": len(outp), "not_blocked": not_blocked[:10],
+                      "by_basis": {k: sum(1 for p in outp if _out_basis(p) == k) for k in sorted({_out_basis(p) for p in outp})}}))
     # D4 uncertain / unverified availability lowers reliability: gate REVIEW, never PASS
     unc = [p for p in rows if p["participation"]["status"] in ("UNCERTAIN", "UNVERIFIED")]
     passed = [(p["player_id"], p["family"]) for p in unc if p["gate"]["status"] == "PASS"]
