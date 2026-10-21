@@ -39,11 +39,16 @@ def test_run_is_read_only_deterministic_and_never_places_orders(world, tmp_path)
     assert (tree_digest(world / "pd"), tree_digest(world / "msa")) == before                    # neither data branch is touched
     assert tree_digest(tmp_path / "o1") == tree_digest(tmp_path / "o2") and m1["run_id"] == m2["run_id"]
     assert m1["read_only"] is True and m1["network"] is False and m1["orders_placed"] == 0 and m1["workflows_dispatched"] == 0
-    assert set(m1["outputs"]) >= {"SUMMARY.md", "exec_shadow.json", "jrm_matched.json", "attribution_2026-10-20.json", "attribution_2026-10-20.md", "manifest.json"} or \
-        set(os.listdir(tmp_path / "o1")) >= {"SUMMARY.md", "exec_shadow.json", "jrm_matched.json", "attribution_2026-10-20.json"}
+    assert set(os.listdir(tmp_path / "o1")) >= {"SUMMARY.md", "exec_shadow.json", "jrm_matched.json", "attribution_2026-10-20.json", "attribution_2026-10-20.md", "manifest.json"}
 
 
-def test_three_separately_labelled_sets_and_honest_evidence_status(world, tmp_path):
+class Early(dict):
+    def get(self, key, default=None):
+        return "2000-01-01T00:00:00Z"
+
+
+def test_three_separately_labelled_sets_and_honest_evidence_status(world, tmp_path, monkeypatch):
+    monkeypatch.setattr(study53, "build_clocks", lambda *a, **k: ({"board_commit": Early(), "forecast_commit": Early()}, {"status": "VERIFIED", "synthetic": True}))
     study53.run(str(world / "pd"), str(world / "msa"), str(tmp_path / "o"), "2026-10-20")
     man = json.load(open(tmp_path / "o" / "manifest.json"))
     tw = man["three_way"]
@@ -51,8 +56,6 @@ def test_three_separately_labelled_sets_and_honest_evidence_status(world, tmp_pa
     assert "NOT simultaneously executable" in tw["1_original_frozen_strategy_selection"]["label"]
     assert "RETROSPECTIVE" in tw["2_new_fixed_checkpoint_executable_shadow"]["label"] and "RETROSPECTIVE" in tw["3_eligible_matched_jrm_whatif"]["label"]
     B = json.load(open(tmp_path / "o" / "exec_shadow.json"))
-    assert B["independent_clocks"]["status"] == "NOT_VERIFIED"                                              # no git history supplied: reported, never assumed
-    assert B["prospective"]["evidence_status"]["independent_clocks_verified"] is False
     assert B["retrospective_descriptive"]["status"] == "OK" and B["prospective"]["status"] == "OK"        # G2 is after prospective_start_utc
     assert B["prospective"]["evidence_status"]["label"] == "INSUFFICIENT_SAMPLE"
     assert B["progress_to_evidence_minimums"]["prospective_decisions"] == 2 and B["progress_to_evidence_minimums"]["prospective_games"] == 1
@@ -81,3 +84,34 @@ def test_a_changed_original_protocol_stops_the_run(world, tmp_path, monkeypatch)
     monkeypatch.setattr(X, "base_protocol_ok", lambda study: (False, "paper_config.json edited"))
     with pytest.raises(SystemExit):
         study53.run(str(world / "pd"), None, str(tmp_path / "o"), "2026-10-20")
+
+
+def test_without_independent_clocks_nothing_is_prospective_and_it_is_reported(world, tmp_path):
+    study53.run(str(world / "pd"), str(world / "msa"), str(tmp_path / "o"), "2026-10-20")
+    B = json.load(open(tmp_path / "o" / "exec_shadow.json"))
+    assert B["independent_clocks"]["status"] == "NOT_VERIFIED"
+    assert B["prospective"]["status"] == "NO_DATA" and B["progress_to_evidence_minimums"]["prospective_decisions"] == 0
+    assert B["retrospective_descriptive"]["evidence_status"]["independent_clocks_verified"] is False
+
+
+def test_empty_or_unsettled_states_report_no_data_instead_of_crashing(tmp_path):
+    from nba.paper import store
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    man = study53.run(str(empty), None, str(tmp_path / "o_empty"), "2026-10-20")                 # nothing archived at all
+    assert (tmp_path / "o_empty" / "SUMMARY.md").exists() and man["orders_placed"] == 0
+    A_ = json.load(open(tmp_path / "o_empty" / "attribution_2026-10-20.json"))
+    assert A_["reconciliation"]["status"] == "NO_DATA" and A_["summary"]["status"] == "NO_DATA"
+    assert "NO_DATA" in (tmp_path / "o_empty" / "SUMMARY.md").read_text()
+    # trades exist but nothing is settled yet (the normal state before the first final whistle)
+    d = tmp_path / "w"
+    d.mkdir()
+    build_world(d / "pd", d / "msa")
+    for p in (d / "pd" / "paper" / "nba" / "settlements").rglob("*.jsonl.gz"):
+        p.unlink()
+    study53.run(str(d / "pd"), str(d / "msa"), str(tmp_path / "o_unsettled"), "2026-10-20")
+    B = json.load(open(tmp_path / "o_unsettled" / "exec_shadow.json"))
+    o = B["retrospective_descriptive"]["overall"]
+    assert o["n_trades"] > 0 and o["n_settled"] == 0 and o["total_net_pnl"] is None
+    assert "n/a" in (tmp_path / "o_unsettled" / "SUMMARY.md").read_text()
+    assert store  # imported for parity with the other tests

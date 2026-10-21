@@ -27,8 +27,11 @@ cd research/projection_foundation && PYTHONPATH=../../src python -m nba.paper.st
 | tests | `tests/test_issue53_*.py`, `tests/issue53_synth.py` | synthetic world driven by the REAL engine and settlement code |
 
 ### Protocol freeze (`exec_shadow_config.json`)
-Study `ISSUE53_EXEC_SHADOW_V1`, declared 2026-10-21T21:35Z, **`prospective_start_utc` 2026-10-22T06:00Z**. The independent timestamp of the protocol is the
-git push time of the commit that adds the file; a decision is prospective only if its checkpoint is at/after the start *and* that push precedes it.
+Study `ISSUE53_EXEC_SHADOW_V1` v1.1.0, declared 2026-10-21T21:35Z (first push 22:01:37Z), amended 22:10Z after an independent code review and before any
+prospective data existed (amendment log inside the file; no numeric threshold changed), **`prospective_start_utc` 2026-10-22T06:00Z**. The independent timestamp of
+the protocol is the git push time of the commit that adds the file. A decision is prospective only if its checkpoint AND its actual computation (`decided_utc`) are
+at/after the start, it was computed before tip, the protocol push precedes the start, and the independent archive clocks were supplied (fail closed: without
+`--git-repo` nothing is prospective). Only prospective **and settled** decisions count toward the minimums.
 Numeric thresholds are copied verbatim from `PF_EDGE_STRICT_V1` (EV >= 0.06, PASS only, p_play >= 0.85, spread <= 0.06, same caps); nothing was tuned on
 October 20/21. The only new numbers are the executability parameters decided before anything was scored: checkpoint T-60, `max_quote_age_s` 900 (the
 existing closing-line constant), displayed size >= 1 contract. Evidence minimums stay 200 decisions / 40 games with a positive lower bound under both game-
@@ -89,4 +92,6 @@ settlement is the paper system's (Kalshi result, DNP at the scalar / last fair p
 4. **Replay vs live.** The primary checkpoint runs only exist as as-of replays (computed after the fact, within the information rules). Genuinely contemporaneous coverage near T-60 was absent on opening night.
 5. `depth_at_entry` is optional evidence; 53 sides show size on the board but 0 at the ask in the sampled book (treated as a conflict, not a fill).
 6. Fee model uses the series multiplier from the board row; DNP outcomes settle at `modeled_last_valid_mid` until an authoritative scalar is archived (none occurred).
-7. Scope: the new modules are not scheduled anywhere; evidence accrues only when someone runs `study53` on new archive state (owner decision, see PR).
+7. `board_commit_index` trusts the capture branch's commit-subject convention (`capture: <run> at <tick>`) and only covers the fetched history depth; ticks outside it are `BOARD_ARCHIVE_UNVERIFIED`.
+8. JRM eligibility is the PR #45 register; this study additionally requires both snapshot clocks >= 5 minutes before the decision instant, the same feed as the frozen decision, and an identical rebuilt frozen probability (otherwise the player is `FROZEN_INPUT_MISMATCH`, not a JRM effect).
+9. Scope: the new modules are not scheduled anywhere; evidence accrues only when someone runs `study53` on new archive state (owner decision, see PR).

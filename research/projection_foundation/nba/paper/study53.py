@@ -39,7 +39,9 @@ def inputs_digest(archive: str, msa: str | None, study: dict) -> str:
         for root, _, files in sorted(os.walk(base)):
             for fn in sorted(files):
                 p = os.path.join(root, fn)
-                h.update(f"{os.path.relpath(p, archive)}:{os.path.getsize(p)}\n".encode())
+                h.update(os.path.relpath(p, archive).encode())
+                with open(p, "rb") as f:
+                    h.update(hashlib.sha256(f.read()).digest())
     if msa:
         reg = os.path.join(msa, "eligibility", "REGISTER.jsonl")
         if os.path.exists(reg):
@@ -60,9 +62,14 @@ def three_way(attr_summary: dict, exec_all: dict, jrm_block: dict) -> dict[str, 
             return {"status": (m or {}).get("status", "NO_DATA")}
         o = m["overall"]
         return {"n_decisions": o["n_trades"], "n_games": o["n_games"], "net_pnl": o["total_net_pnl"], "roi_on_cash_outlay": o["roi_on_cash_outlay"], "hit_rate": o["hit_rate"]}
+    if attr_summary.get("status") == "NO_DATA":
+        first = {"label": "PF_EDGE_STRICT_V1 earliest TRADE per thesis across horizons", "status": "NO_DATA", "reason": attr_summary.get("reason")}
+    else:
+        nr = attr_summary["by_decision_mode"].get("asof_replay", {}).get("n", 0)
+        first = {"label": f"PF_EDGE_STRICT_V1 earliest TRADE per thesis across horizons (NOT simultaneously executable; {nr} of {attr_summary['overall']['n']} are as-of replays)",
+                 **{k: attr_summary["overall"][k] for k in ("n", "net_pnl", "entry_cost", "roi")}, "roi_basis": "net P&L / sum of quoted asks (scorecard definition)"}
     return {
-        "1_original_frozen_strategy_selection": {"label": "PF_EDGE_STRICT_V1 earliest TRADE per thesis across horizons (NOT simultaneously executable; 6 of 7 as-of replays)",
-                                                  **{k: attr_summary["overall"][k] for k in ("n", "net_pnl", "entry_cost", "roi")}, "roi_basis": "net P&L / sum of quoted asks (scorecard definition)"},
+        "1_original_frozen_strategy_selection": first,
         "2_new_fixed_checkpoint_executable_shadow": {"label": "PF_EDGE_STRICT_T60_EXEC_V1, T-60 only, global ledger, displayed size, integer fee (RETROSPECTIVE application of the frozen rules; not prospective evidence)",
                                                       **exec_row(exec_all)},
         "3_eligible_matched_jrm_whatif": jrm_block.get("headline", {"status": "NO_DATA"})}
@@ -122,7 +129,7 @@ def run(archive: str, msa: str | None, out: str, attribution_day: str = "2026-10
         B["comparator_retrospective_without_independent_clocks"]["note"] = ("same rules WITHOUT requiring the board / forecast to have been committed to the data branches before "
                                                                            "the checkpoint: shows what the independent-clock rule removes")
     tr = X._frame(pops["retrospective_descriptive"])
-    tr = tr[tr["decision"] == "TRADE"]
+    tr = tr[tr["decision"] == "TRADE"] if len(tr) else tr
     B["retrospective_descriptive"]["opening_hour_effect"] = X.opening_hour_effect(tr, D.snaps)
     B["games"] = X.game_status(v1, D, study)
     B["contemporaneous_crosscheck"] = X.crosscheck_contemporaneous(D, study, base, fa, v1)
@@ -237,6 +244,8 @@ def no_trade_examples(cs: list[dict], per_reason: int = 2, cap: int = 14) -> lis
 
 def original_seven_jrm(t: pd.DataFrame, snaps: list[J.Snapshot], archive: str, base: dict, study: dict) -> list[dict]:
     """For each of the seven original selections: was an eligible same-feed JRM snapshot available at ITS decision instant, and would JRM still pass the strict rules?"""
+    if t.empty:
+        return []
     out = []
     ids = {i for fids in t["forecast_ids"] for i in (fids or [])[:1] if i}
     pm = J.forecast_pmfs(archive, ids)
@@ -247,10 +256,7 @@ def original_seven_jrm(t: pd.DataFrame, snaps: list[J.Snapshot], archive: str, b
         if snap:
             pr_ = snap.rows.get((r["game_id"], r["entity_id"]))
             rec = pm.get((r["forecast_ids"] or [None])[0])
-            cdict = {"p_play": r["p_play"], "k": r["k"], "side": r["side"], "p_market_mid": None}
-            # m_side is not stored in the attribution table: recover the DNP-leg mid from p_model = p_play*p_cond + (1-p_play)*m_side
-            if r["p_play"] is not None and r["p_play"] < 1 and r.get("p_cond") is not None:
-                cdict["p_market_mid"] = (r["p_model"] - r["p_play"] * r["p_cond"]) / (1 - r["p_play"])
+            cdict = {"p_play": r["p_play"], "k": r["k"], "side": r["side"], "p_market_mid": r.get("p_market_mid"), "p_model": r["p_model"]}
             pj = J.jrm_probabilities(cdict, pr_, rec) if pr_ and rec else None
             if pj:
                 eff, fee = r["effective_entry"], r["fee_paid_settlement"]
@@ -260,7 +266,7 @@ def original_seven_jrm(t: pd.DataFrame, snaps: list[J.Snapshot], archive: str, b
                             "jrm_would_pass_ev_0.06": bool(ev_j >= study["strategies"][X.STRATEGY]["min_ev_net"]),
                             "rebuild_check_p_model": pj["p_model_frozen_rebuilt"], "note": "retrospective what-if on the original T-90 / LIVE selection, archive_scale_approximation"})
             else:
-                row["note"] = "matched snapshot lacks the player or frozen inputs differ"
+                row["note"] = "matched snapshot lacks the player, the DNP-leg mid is unavailable, or the rebuilt frozen probability differs from the archived one: no what-if"
         out.append(row)
     return out
 
@@ -268,10 +274,13 @@ def original_seven_jrm(t: pd.DataFrame, snaps: list[J.Snapshot], archive: str, b
 def summary_markdown(study: dict, rec: dict, summ: dict, B: dict, C: dict, tw: dict, day: str, run_id: str, t: pd.DataFrame) -> str:
     L = [f"# Issue #53 research summary (run `{run_id}`)", "",
          "**Research only. No orders, no wagering authority, no deployment, no model activation.** Everything below that precedes "
-         f"`prospective_start_utc` = {study['prospective_start_utc']} is RETROSPECTIVE and DESCRIPTIVE; two or three opening games are not evidence of an edge.", "",
-         "## 1. The original strict-strategy selections, reconciled",
-         f"- recomputed {rec['recomputed']['n_decisions']} decisions in {rec['recomputed']['n_games']} games: net P&L ${rec['recomputed']['net_pnl']:.2f} on ${rec['recomputed']['entry_cost']:.2f} of quoted asks = "
-         f"{100 * rec['recomputed']['roi']:.3f}% (matches the archived scorecard: {rec.get('matches_scorecard')}; matches the issue text: {rec['matches_issue_text']})."]
+         f"`prospective_start_utc` = {study['prospective_start_utc']} is RETROSPECTIVE and DESCRIPTIVE; a handful of games is not evidence of an edge.", "",
+         "## 1. The original strict-strategy selections, reconciled"]
+    if summ.get("status") == "NO_DATA":
+        L.append(f"- **NO_DATA**: {summ.get('reason')}")
+        return "\n".join(L + _summary_tail(study, B, C, tw))
+    L.append(f"- recomputed {rec['recomputed']['n_decisions']} decisions in {rec['recomputed']['n_games']} games: net P&L ${rec['recomputed']['net_pnl']:.2f} on ${rec['recomputed']['entry_cost']:.2f} of quoted asks = "
+             f"{100 * rec['recomputed']['roi']:.3f}% (matches the archived scorecard: {rec.get('matches_scorecard')}; matches the issue text: {rec['matches_issue_text']}).")
     n_all = summ["overall"]["n"]
     modes = summ["by_decision_mode"]
     L.append("- decision mode: " + ", ".join(f"{v['n']} of {n_all} {k} (P&L ${v['net_pnl']:.2f})" for k, v in modes.items()) + "; none has a recorded fill.")
@@ -288,16 +297,36 @@ def summary_markdown(study: dict, rec: dict, summ: dict, B: dict, C: dict, tw: d
         L.append("- actionability check (latest contemporaneous board before each replay row was computed): " + "; ".join(
             f"#{r['n']} {r['player'].split()[-1]} ask {r['actionability_check']['ask_then']} vs selected {r['price']}" for r in act if r["decision_mode"] == "asof_replay") + ".")
     L.append("")
+    return "\n".join(L + _summary_tail(study, B, C, tw))
+
+
+def _summary_tail(study: dict, B: dict, C: dict, tw: dict) -> list[str]:
+    L: list[str] = []
     L += ["## 2. Executable fixed-checkpoint portfolio (T-60, global ledger)"]
     pro = B["prospective"]
+    rt = B["retrospective_descriptive"]
     L.append(f"- prospective: **{pro.get('status')}**" + (f" - {pro['reason']}" if pro.get("reason") else "") if pro.get("status") != "OK" else f"- prospective: {json.dumps(pro.get('overall'))}")
     rt = B["retrospective_descriptive"]
     if rt.get("status") == "OK":
         o = rt["overall"]
-        L.append(f"- retrospective application of the frozen rules to the opening games: {o['n_trades']} trades in {o['n_games']} games, net P&L ${o['total_net_pnl']:.2f}, "
-                 f"ROI on cash outlay {100 * o['roi_on_cash_outlay']:.1f}%, hit rate {100 * o['hit_rate']:.0f}%; CI not defined (<5 games).")
+        pct = lambda x: "n/a" if x is None else f"{100 * x:.1f}%"  # noqa: E731
+        usd = "n/a (no settled trade)" if o["total_net_pnl"] is None else f"${o['total_net_pnl']:.2f}"
+        L.append(f"- retrospective application of the frozen rules: {o['n_trades']} trades in {o['n_games']} games ({o['n_settled']} settled), net P&L {usd}, "
+                 f"ROI on cash outlay {pct(o['roi_on_cash_outlay'])}, hit rate {pct(o['hit_rate'])}"
+                 + ("; no interval is defined (< 5 games)." if o["n_games"] < 5 else "."))
+    elif rt.get("status") in ("NO_DATA", "NO_TRADES"):
+        L.append(f"- retrospective: **{rt['status']}** - {rt.get('reason')}")
+    if rt.get("eligible_vs_blocked"):
         ev = rt["eligible_vs_blocked"]
         L.append(f"- candidate sides {ev['candidate_sides']}: eligible {ev['eligible_sides']}, blocked {ev['blocked_sides']}; primary reasons {json.dumps(ev['primary_block_reason'])}")
+    cmp_ = B.get("comparator_retrospective_without_independent_clocks")
+    if cmp_ and cmp_.get("status") == "OK":
+        o2 = cmp_["overall"]
+        pnl2 = "n/a" if o2["total_net_pnl"] is None else f"${o2['total_net_pnl']:.2f}"
+        L.append(f"- the same rules WITHOUT the independent-clock requirement would trade {o2['n_trades']} in {o2['n_games']} games (net P&L {pnl2}); the difference is boards "
+                 "committed to the capture branch only after the checkpoint (lag per game: "
+                 + ", ".join(f"{g[-3:]} {v['lag_s']:.0f}s{' AFTER' if v['committed_after_checkpoint'] else ''}" for g, v in B.get("board_archive_lag_s", {}).items()) + ").")
+    L.append(f"- independent clocks: {json.dumps(B['independent_clocks'])}")
     L.append("- games: " + ", ".join(f"{g['game_id'][-3:]}={g['status']}" for g in B["games"]))
     pg = B["progress_to_evidence_minimums"]
     L.append(f"- progress to the evidence minimum: {pg['prospective_decisions']}/{pg['required_decisions']} prospective decisions, {pg['prospective_games']}/{pg['required_games']} games (retrospective rows never count).")
@@ -312,7 +341,7 @@ def summary_markdown(study: dict, rec: dict, summ: dict, B: dict, C: dict, tw: d
         L.append(f"- JRM prospective gate (tracked separately, verdict owned by PR #45): {gt['eligible_settled_games']}/{gt['min_settled_games']} eligible settled games -> **{gt['status']}**.")
     L += ["", "## 4. Three-way table (separately labelled)", "", "```json", json.dumps(_num(tw), indent=1, sort_keys=True), "```", "",
           "Full detail: `attribution_*.md`, `exec_shadow.json`, `jrm_matched.json`. Outstanding risks are listed in `docs/research/ISSUE53_EXEC_SHADOW.md`.", ""]
-    return "\n".join(L)
+    return L
 
 
 def main(argv: list[str] | None = None) -> int:

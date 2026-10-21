@@ -71,7 +71,7 @@ def test_summary_reports_side_and_player_structure(arch):
     assert s["by_side"]["NO"]["n"] == 2 and s["overall"]["n"] == 2
     assert s["concentration"]["share_NO"] == 1.0 and s["concentration"]["n_games"] == 1
     md = A.to_markdown(t, A.reconcile(arch, t, "2026-10-20"), s, "2026-10-20")
-    assert "## The seven selections" in md and "**asof_replay**" in md and "no fill" not in md.lower() or "recorded fill" in md
+    assert "## The 2 selections" in md and "**asof_replay**" in md and "none has" not in md and "7 theses" not in md
 
 
 def test_board_archive_clock_is_attached_when_supplied(arch):

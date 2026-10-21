@@ -1,9 +1,14 @@
 {
   "config_id": "nba_exec_shadow_config",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "study_id": "ISSUE53_EXEC_SHADOW_V1",
   "issue": "chmoses98/nba-edge-finder#53",
   "declared_utc": "2026-10-21T21:35:00Z",
+  "amended_utc": "2026-10-21T22:10:00Z",
+  "amendments": [
+    {"version": "1.1.0", "utc": "2026-10-21T22:10:00Z", "before_any_prospective_data": true,
+     "changes": "After an independent code review, before any decision instant at or after prospective_start_utc existed: (1) prospective now ALSO requires the row to have been computed (decided_utc) at/after the start and before tip, and independent archive clocks to be supplied (fail closed); (2) only prospective AND settled decisions count toward the evidence minimums; (3) a missing spread blocks (SPREAD_UNKNOWN); (4) games sharing a checkpoint instant are admitted by descending ev_net_exec through the one ledger; no numeric threshold changed."}
+  ],
   "prospective_start_utc": "2026-10-22T06:00:00Z",
   "authority": "research_only",
   "notes": "Protocol of a NEW, additive, read-only study. It does not modify PF_EDGE_STRICT_V1 or paper_config.json (pinned below by sha256). Changing any value means a new version, a new config_sha and a new evaluation window. The independent timestamp of this protocol is the git push time of the commit that adds this file; a decision counts as prospective only if its decision instant is at or after prospective_start_utc AND that push time precedes prospective_start_utc. Everything computed for decision instants before prospective_start_utc (in particular the 2026-10-20 / 2026-10-21 opening games) is RETROSPECTIVE and DESCRIPTIVE: it is shown for transparency and is never counted toward the evidence minimums below.",

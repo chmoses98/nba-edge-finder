@@ -8,7 +8,7 @@ Read-only reconstruction from the immutable `projection-data` archive. Descripti
 - archived scorecard `paper/nba/scorecards/daily/2026-10-20.json`: match = **True**; issue text (7 / 2 games / $1.39 / $3.40 / 40.882%): match = **True**
 - ROI definition: sum(net_pnl) / sum(quoted ask price); slippage and fees are inside net_pnl, not in the denominator. With slippage in the denominator the entry cost is $3.47; on cash outlay (entry + fee) ROI is 38.50%.
 
-## The seven selections
+## The 7 selections
 
 | # | game | player | contract (plain words) | horizon / mode | as_of -> decided (lag) | p_model | p_play | ask | size | spread | fee/slip | EV net | result | net P&L | CLV |
 |--:|---|---|---|---|---|--:|--:|--:|--:|--:|--:|--:|---|--:|---|
@@ -47,4 +47,4 @@ Archive evidence per row (paths relative to `projection-data`): decision, settle
 - **fills**: no order exists for any of the rows; none of the prices is a recorded fill
 - **multi_horizon_selection**: each thesis is taken at the EARLIEST horizon that traded it; the alternative horizons are alternative runs with separately reset exposure caps
 
-Concentration: 7 theses sit on 5 player-games in 2 games; points, PRA and threes of one player move together, so the number of independent outcomes is closer to 5 player-games, and the game is the cluster.
+Concentration: 7 theses sit on 5 player-games in 2 games; stats of one player move together, so the number of independent outcomes is closer to the player-games, and the game is the cluster.

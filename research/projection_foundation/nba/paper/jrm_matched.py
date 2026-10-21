@@ -42,7 +42,7 @@ MARGIN = timedelta(minutes=5)                 # PR #45 archive_rules.MARGIN
 V2_FREEZE = "f000f3c18b670ab94e3b71e403dda03bc0e5188a"
 LABEL = "archive_scale_approximation"
 REJECT_CODES = ("NO_REGISTER_ROW", "REGISTER_NOT_ELIGIBLE", "GAME_NOT_ELIGIBLE", "SHA_MISMATCH", "NOT_V2_UNIFORM", "ARCHIVED_AFTER_DECISION",
-                "BRANCH_COMMIT_AFTER_DECISION", "TOO_CLOSE_TO_TIP", "FEED_MISMATCH", "NO_SNAPSHOT_FOR_GAME", "PLAYER_NOT_IN_SNAPSHOT",
+                "BRANCH_COMMIT_AFTER_DECISION", "TOO_CLOSE_TO_DECISION", "TOO_CLOSE_TO_TIP", "FEED_MISMATCH", "NO_SNAPSHOT_FOR_GAME", "PLAYER_NOT_IN_SNAPSHOT",
                 "FROZEN_INPUT_MISMATCH", "ROW_INVALID", "ROW_NOT_PREGAME")
 
 
@@ -126,6 +126,8 @@ def match_snapshot(snaps: list[Snapshot], game_id: str, tip, info_cutoff, frozen
             reasons.append("ARCHIVED_AFTER_DECISION")
         elif b is None or b > info_cutoff:
             reasons.append("BRANCH_COMMIT_AFTER_DECISION")
+        elif a + MARGIN > info_cutoff or b + MARGIN > info_cutoff:
+            reasons.append("TOO_CLOSE_TO_DECISION")            # config: both clocks at least 5 minutes before the decision instant
         elif a + MARGIN > tip or b + MARGIN > tip:
             reasons.append("TOO_CLOSE_TO_TIP")
         elif frozen_feed_utc is None or s.feed_generated_utc != frozen_feed_utc:
@@ -164,10 +166,16 @@ def jrm_probabilities(c: dict, row: dict, rec: dict) -> dict[str, Any] | None:
     side_yes = c["side"] == "YES"
     p_c_f = p_yes_f if side_yes else 1 - p_yes_f
     p_c_j = p_yes_j if side_yes else 1 - p_yes_j
+    if c.get("p_play") is None or c.get("p_model") is None:
+        return None
     pp_f, pp_j = float(c["p_play"]), float(row["p_play_jrm"])
     m_side = c.get("p_market_mid")
-    m_side = None if m_side is None else float(m_side)
+    m_side = None if m_side is None or pd.isna(m_side) else float(m_side)
+    if m_side is None and (pp_f < 1 or pp_j < 1):
+        return None                                         # the DNP leg cannot be valued: never silently dropped
     mix = (lambda pp, pc: pp * pc + (1 - pp) * m_side) if m_side is not None else (lambda pp, pc: pc)
+    if abs(mix(pp_f, p_c_f) - float(c["p_model"])) > 1e-6:
+        return None                                         # the rebuilt frozen probability is not the archived one: any difference would be booked as a JRM effect
     return {"ratio_minutes": r, "p_cond_frozen": p_c_f, "p_cond_jrm": p_c_j, "p_play_frozen": pp_f, "p_play_jrm": pp_j, "p_model_frozen_rebuilt": mix(pp_f, p_c_f),
             "p_model_jrm": mix(pp_j, p_c_j), "m_side": m_side, "minutes_frozen": m_frozen, "minutes_jrm": float(row["minutes_given_play_jrm"]),
             "minutes_before_gate": float(fp.get("minutes_given_play_before_gate", np.nan))}
@@ -183,14 +191,21 @@ def build_variant(cands: list[dict], snaps: list[Snapshot], pmfs: dict[str, dict
         v = dict(c)
         v["jrm"] = None
         gid = c["game_id"]
-        if gid not in cache:
-            cache[gid] = match_snapshot(snaps, gid, c["tip"], c["as_of"], c.get("forecast_generated_utc"))
-            ledger["games"][gid] = {"snapshot": cache[gid][0].file if cache[gid][0] else None, "reason": cache[gid][1]}
-        snap, why = cache[gid]
+        player = str(c.get("family", "")).startswith("player_") and c.get("entity_id") is not None
+        key = (gid, c.get("forecast_generated_utc"), c["as_of"])         # a game's player and game-level forecasts may come from different feed clocks
+        if player and key not in cache:
+            cache[key] = match_snapshot(snaps, gid, c["tip"], c["as_of"], c.get("forecast_generated_utc"))
+            prev = ledger["games"].get(gid)
+            if prev is None or (prev["snapshot"] is None and cache[key][0] is not None):
+                ledger["games"][gid] = {"snapshot": cache[key][0].file if cache[key][0] else None, "reason": cache[key][1]}
+        if not player:
+            v["jrm_status"] = "GAME_LEVEL_UNCHANGED"
+            ledger["rows"][v["jrm_status"]] += 1
+            out.append(v)
+            continue
+        snap, why = cache[key]
         if snap is None:
             v["jrm_status"] = why
-        elif not str(c.get("family", "")).startswith("player_") or c.get("entity_id") is None:
-            v["jrm_status"] = "GAME_LEVEL_UNCHANGED"
         else:
             row = snap.rows.get((gid, c["entity_id"]))
             rec = pmfs.get((c.get("forecast_ids") or [None])[0])
@@ -206,7 +221,7 @@ def build_variant(cands: list[dict], snaps: list[Snapshot], pmfs: dict[str, dict
                     v["jrm_status"] = "COVERED"
                     v["jrm"] = {**pj, "snapshot": snap.file}
                     v["p_play"], v["p_cond"], v["p_model"] = pj["p_play_jrm"], pj["p_cond_jrm"], pj["p_model_jrm"]
-                    v["ev_net_exec"] = pj["p_model_jrm"] - v["effective_entry_exec"] - v["fee_int"]
+                    v["ev_net_exec"] = None if v["effective_entry_exec"] is None else pj["p_model_jrm"] - v["effective_entry_exec"] - v["fee_int"]
         ledger["rows"][v["jrm_status"]] += 1
         out.append(v)
     ledger["rows"] = dict(ledger["rows"])
@@ -230,7 +245,7 @@ def pair_decisions(v1: list[dict], jr: list[dict]) -> dict[str, Any]:
                      "reason_v1": a["reason"], "reason_jrm": b["reason"], "eligible_v1": not a["blockers"], "eligible_jrm": not b["blockers"],
                      "ratio_minutes": (b["jrm"] or {}).get("ratio_minutes"), "minutes_frozen": (b["jrm"] or {}).get("minutes_frozen"),
                      "minutes_jrm": (b["jrm"] or {}).get("minutes_jrm"), "p_play_v1": a.get("p_play"), "p_play_jrm": b.get("p_play"),
-                     "won": a.get("won"), "net_pnl": a.get("net_pnl"), "clv_cents": a.get("clv_cents"), "settled": bool(a.get("settled")),
+                     "won": a.get("won"), "dnp": bool(a.get("dnp")), "net_pnl": a.get("net_pnl"), "clv_cents": a.get("clv_cents"), "settled": bool(a.get("settled")),
                      "tip": a["tip"], "unit_id": a["unit_id"], "thesis_id": a["thesis_id"], "decision_mode": a["decision_mode"]})
     df = pd.DataFrame(rows)
     return {"frame": df}
@@ -330,13 +345,16 @@ def minutes_accuracy(snaps_by_game: dict[str, Snapshot], actual: pd.DataFrame) -
                                       "mae_diff_jrm_minus_frozen": ST.cluster_diff(np.abs(ej), np.abs(ef), pl["game_id"]),
                                       "note": "negative diff = JRM better; bias = prediction - actual"}
         sj = ((pl["p90"].astype(float) - pl["p10"].astype(float)) / 2.5631).to_numpy()
-        sf = np.full(len(pl), np.nan)
-        cr_j = _gauss_crps(pl["m_jrm"].to_numpy(float), np.where(np.isfinite(sj), sj, 5.0), pl["minutes"].to_numpy(float))
-        # like-for-like: the frozen forecast gets the same Gaussian shape with the JRM interval width (the snapshot holds no frozen pmf width)
-        cr_f = _gauss_crps(pl["m_fro"].to_numpy(float), np.where(np.isfinite(sj), sj, 5.0), pl["minutes"].to_numpy(float))
-        out["conditional_minutes"]["crps_gauss_approx"] = {"jrm": ST._f(cr_j.mean()), "frozen_same_width": ST._f(cr_f.mean()), "diff": ST.cluster_diff(cr_j, cr_f, pl["game_id"]),
-                                                           "note": "APPROXIMATE: Gaussian with sd = (p90-p10)/2.563 of the JRM snapshot applied to both means; not a CRPS of either model's own distribution"}
-        del sf
+        ok = np.isfinite(sj)
+        if ok.any():                                         # rows without a JRM interval are left out, never given an invented width
+            cr_j = _gauss_crps(pl["m_jrm"].to_numpy(float)[ok], sj[ok], pl["minutes"].to_numpy(float)[ok])
+            # like-for-like: the frozen forecast gets the same Gaussian shape with the JRM interval width (the snapshot holds no frozen pmf width)
+            cr_f = _gauss_crps(pl["m_fro"].to_numpy(float)[ok], sj[ok], pl["minutes"].to_numpy(float)[ok])
+            out["conditional_minutes"]["crps_gauss_approx"] = {"n": int(ok.sum()), "jrm": ST._f(cr_j.mean()), "frozen_same_width": ST._f(cr_f.mean()),
+                                                               "diff": ST.cluster_diff(cr_j, cr_f, pl["game_id"].to_numpy()[ok]),
+                                                               "note": "APPROXIMATE: Gaussian with sd = (p90-p10)/2.563 of the JRM snapshot applied to both means; not a CRPS of either model's own distribution"}
+        else:
+            out["conditional_minutes"]["crps_gauss_approx"] = {"status": "NO_DATA", "reason": "no JRM p10/p90"}
     uj, uf = (f["u_jrm"] - f["minutes"].fillna(0)).to_numpy(), (f["u_fro"] - f["minutes"].fillna(0)).to_numpy()
     out["unconditional_minutes"] = {"mae_jrm": ST._f(np.abs(uj).mean()), "mae_frozen": ST._f(np.abs(uf).mean()), "bias_jrm": ST._f(uj.mean()), "bias_frozen": ST._f(uf.mean()),
                                     "mae_diff_jrm_minus_frozen": ST.cluster_diff(np.abs(uj), np.abs(uf), f["game_id"])}
@@ -348,7 +366,7 @@ def minutes_accuracy(snaps_by_game: dict[str, Snapshot], actual: pd.DataFrame) -
 
 def stat_family_accuracy(pairs: pd.DataFrame) -> dict[str, Any]:
     """Rung-probability Brier of the covered, settled, played-or-not YES-complement per family: p_yes frozen vs JRM against the realised YES."""
-    p = pairs[pairs["covered"] & pairs["settled"] & pairs["won"].notna()].copy()
+    p = pairs[pairs["covered"] & pairs["settled"] & pairs["won"].notna() & ~pairs["dnp"].fillna(False).astype(bool)].copy()
     if p.empty:
         return {"status": "NO_DATA", "reason": "no covered settled player contracts"}
     p["y_side"] = p["won"].astype(float)

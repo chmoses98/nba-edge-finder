@@ -1,6 +1,6 @@
-# Issue #53 research summary (run `61d690159f468eb5`)
+# Issue #53 research summary (run `485dcb6398f61475`)
 
-**Research only. No orders, no wagering authority, no deployment, no model activation.** Everything below that precedes `prospective_start_utc` = 2026-10-22T06:00:00Z is RETROSPECTIVE and DESCRIPTIVE; two or three opening games are not evidence of an edge.
+**Research only. No orders, no wagering authority, no deployment, no model activation.** Everything below that precedes `prospective_start_utc` = 2026-10-22T06:00:00Z is RETROSPECTIVE and DESCRIPTIVE; a handful of games is not evidence of an edge.
 
 ## 1. The original strict-strategy selections, reconciled
 - recomputed 7 decisions in 2 games: net P&L $1.39 on $3.40 of quoted asks = 40.882% (matches the archived scorecard: True; matches the issue text: True).
@@ -11,8 +11,10 @@
 
 ## 2. Executable fixed-checkpoint portfolio (T-60, global ledger)
 - prospective: **NO_DATA** - no decision instants at or after 2026-10-22T06:00:00Z in the archive yet
-- retrospective application of the frozen rules to the opening games: 3 trades in 1 games, net P&L $0.46, ROI on cash outlay 29.9%, hit rate 67%; CI not defined (<5 games).
+- retrospective application of the frozen rules: 3 trades in 1 games (3 settled), net P&L $0.46, ROI on cash outlay 29.9%, hit rate 66.7%; no interval is defined (< 5 games).
 - candidate sides 1802: eligible 13, blocked 1789; primary reasons {"GATE_STATUS": 985, "BOARD_ARCHIVED_AFTER_CHECKPOINT": 564, "EV_BELOW_THRESHOLD": 73, "QUALITY_GATE:SPREAD_WIDE": 57, "QUALITY_GATE:EXTREME_PRICE": 43, "DEPTH_CONFLICT_ORDERBOOK": 29, "QUALITY_GATE:NO_SIZE": 25, "SPREAD_WIDE_STRICT": 13, "ELIGIBLE": 13}
+- the same rules WITHOUT the independent-clock requirement would trade 6 in 2 games (net P&L $0.83); the difference is boards committed to the capture branch only after the checkpoint (lag per game: 088 204s AFTER, 089 203s, 090 209s).
+- independent clocks: {"status": "VERIFIED", "board_ref": "origin/data-archive", "forecast_ref": "origin/projection-data", "board_ticks_indexed": 156, "board_ticks_earliest": "2026-10-20T16:06:07Z", "forecast_ids_indexed": 35786}
 - games: 088=NO_TRADE, 089=NO_TRADE, 090=TRADED, 834=NOT_DUE, 835=NOT_DUE, 091=NOT_DUE, 836=NOT_DUE, 837=NOT_DUE, 838=NOT_DUE, 839=NOT_DUE, 840=NOT_DUE, 092=NOT_DUE, 841=NOT_DUE, 842=NOT_DUE, 093=NOT_DUE, 094=NOT_DUE
 - progress to the evidence minimum: 0/200 prospective decisions, 0/40 games (retrospective rows never count).
 
@@ -26,7 +28,7 @@
 {
  "1_original_frozen_strategy_selection": {
   "entry_cost": 3.4,
-  "label": "PF_EDGE_STRICT_V1 earliest TRADE per thesis across horizons (NOT simultaneously executable; 6 of 7 as-of replays)",
+  "label": "PF_EDGE_STRICT_V1 earliest TRADE per thesis across horizons (NOT simultaneously executable; 6 of 7 are as-of replays)",
   "n": 7,
   "net_pnl": 1.39,
   "roi": 0.40882,

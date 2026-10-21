@@ -46,7 +46,7 @@ STRATEGY = "PF_EDGE_STRICT_T60_EXEC_V1"
 BLOCK_CODES = ("NOT_CHECKPOINT_HORIZON", "MODE_NOT_ALLOWED", "BOARD_AFTER_CHECKPOINT", "FORECAST_AFTER_DECISION", "FORECAST_ARCHIVED_AFTER_DECISION",
                "FORECAST_ARCHIVE_UNVERIFIED", "FORECAST_COMMIT_UNVERIFIED", "FORECAST_COMMITTED_AFTER_CHECKPOINT", "BOARD_ARCHIVE_UNVERIFIED",
                "BOARD_ARCHIVED_AFTER_CHECKPOINT", "NO_EXECUTABLE_QUOTE", "QUALITY_GATE", "STALE_QUOTE_AT_CHECKPOINT", "INSUFFICIENT_DEPTH", "DEPTH_CONFLICT_ORDERBOOK",
-               "GATE_STATUS", "LOW_P_PLAY", "SPREAD_WIDE_STRICT", "EV_BELOW_THRESHOLD")
+               "GATE_STATUS", "LOW_P_PLAY", "SPREAD_WIDE_STRICT", "SPREAD_UNKNOWN", "EV_BELOW_THRESHOLD")
 THESIS_CODES = ("NOT_BEST_IN_THESIS", "THESIS_ALREADY_HELD", "EXPOSURE_CAP")
 EDGE_BINS = [0.06, 0.10, 0.15, 0.25, 10.0]
 EDGE_LABELS = ["0.06-0.10", "0.10-0.15", "0.15-0.25", ">=0.25"]
@@ -109,7 +109,11 @@ def prepare(row: dict, study: dict, base: dict) -> dict:
     c["quote_age_at_checkpoint_s"] = None if board is None else (cp - board).total_seconds()
     c["computation_lag_s"] = None if (decided is None or as_of is None) else (decided - as_of).total_seconds()
     c["minutes_to_tip_decided"] = None if decided is None else (tip - decided).total_seconds() / 60.0
-    c["prospective"] = bool(cp >= _ts(study["prospective_start_utc"]))
+    start = _ts(study["prospective_start_utc"])
+    # prospective = the checkpoint AND the actual computation are after the frozen start, and the row was computed before the game began (a replay run after the
+    # result is known can never be prospective). `select` additionally requires the independent archive clocks.
+    c["computed_before_tip"] = bool(decided is not None and decided < tip)
+    c["prospective"] = bool(cp >= start and decided is not None and decided >= start and decided < tip)
     price = _n(c.get("price"))
     contracts = int(study["execution"]["order_contracts"])
     if price is not None:
@@ -148,7 +152,7 @@ def block_reasons(c: dict, scfg: dict, study: dict, forecast_archive: dict[str, 
             out.append("FORECAST_ARCHIVE_UNVERIFIED")
         elif any(_ts(a) > c["as_of"] for a in arch):
             out.append("FORECAST_ARCHIVED_AFTER_DECISION")
-    if clocks:
+    if clocks is not None:
         bc = clocks.get("board_commit")
         if bc is not None and c["board"] is not None:
             t = bc.get(MK.iso(c["board"]))
@@ -186,8 +190,8 @@ def block_reasons(c: dict, scfg: dict, study: dict, forecast_archive: dict[str, 
         out.append("GATE_STATUS")
     if str(c.get("family", "")).startswith("player_") and scfg.get("min_p_play") is not None and (c.get("p_play") is None or c["p_play"] < scfg["min_p_play"]):
         out.append("LOW_P_PLAY")
-    if scfg.get("max_spread") is not None and c.get("spread") is not None and c["spread"] > scfg["max_spread"] + 1e-9:
-        out.append("SPREAD_WIDE_STRICT")
+    if scfg.get("max_spread") is not None and (c.get("spread") is None or c["spread"] > scfg["max_spread"] + 1e-9):
+        out.append("SPREAD_WIDE_STRICT" if c.get("spread") is not None else "SPREAD_UNKNOWN")
     ev = c.get("ev_net_exec")
     if ev is None or not math.isfinite(ev) or ev < scfg["min_ev_net"] - 1e-12:
         out.append("EV_BELOW_THRESHOLD")
@@ -243,21 +247,24 @@ def select(cands: list[dict], study: dict, base: dict, *, strategy_id: str = STR
            forecast_archive: dict[str, str] | None = None, ev_key: str = "ev_net_exec", prepared: bool = False, clocks: dict | None = None) -> list[dict]:
     """TRADE / NO_TRADE row for every candidate side. Pure and deterministic.
 
-    Order of events (the exposure order): checkpoints chronologically (ties by game id); within a checkpoint, per thesis the eligible side with the
-    highest `ev_key` (ties: lower price, ticker, side), then admission by descending `ev_key` through the ONE ledger."""
+    Order of events (the exposure order): checkpoints chronologically; within one checkpoint instant (all games that share it) per thesis the eligible side
+    with the highest `ev_key` (ties: lower price, ticker, side), then admission by descending `ev_key` through the ONE ledger."""
     scfg = study["strategies"][STRATEGY]                      # the JRM variant shares these rules by construction (differs_only_in)
     led = ledger or Ledger(study["exposure"])
     cs = cands if prepared else [prepare(r, study, base) for r in cands]
+    verified = clocks is not None and clocks.get("board_commit") is not None and clocks.get("forecast_commit") is not None
     for c in cs:
         c["strategy_id"] = strategy_id
         c["blockers"] = block_reasons(c, scfg, study, forecast_archive, clocks)
+        c["independent_clocks_checked"] = bool(verified)
+        c["prospective"] = bool(c["prospective"] and verified)            # fail closed: no independent archive proof -> never counted as prospective
         c["decision"], c["reason"] = "NO_TRADE", (c["blockers"][0] if c["blockers"] else None)
         c["exposure_after"] = None
     elig = [c for c in cs if not c["blockers"]]
     by_cp: dict[Any, list[dict]] = defaultdict(list)
     for c in elig:
-        by_cp[(c["checkpoint"], c["game_id"])].append(c)
-    for key in sorted(by_cp, key=lambda k: (k[0], str(k[1]))):
+        by_cp[c["checkpoint"]].append(c)
+    for key in sorted(by_cp):
         grp = by_cp[key]
         best: dict[str, dict] = {}
         for c in sorted(grp, key=lambda x: (-x[ev_key], x["price"], x["ticker"], x["side"])):
@@ -401,7 +408,7 @@ def _frame(cs: list[dict]) -> pd.DataFrame:
             "threshold", "k", "price", "effective_entry_exec", "fee_int", "spread", "top_size", "p_model", "p_cond", "p_play", "ev_net_exec", "ev_net",
             "quote_age_at_checkpoint_s", "computation_lag_s", "decision_mode", "prospective", "decision", "reason", "tip", "checkpoint", "as_of",
             "won", "net_pnl", "clv_cents", "closing_line", "dnp", "dnp_value_source", "fee_paid", "settled", "horizon", "forecast_generated_utc"]
-    return pd.DataFrame([{k: c.get(k) for k in keep} for c in cs])
+    return pd.DataFrame([{k: c.get(k) for k in keep} for c in cs], columns=keep)
 
 
 def _grp(g: pd.DataFrame) -> dict[str, Any]:
@@ -412,7 +419,8 @@ def _grp(g: pd.DataFrame) -> dict[str, Any]:
             "n_player_games": int(g["unit_id"].nunique()) if n else 0,
             "total_net_pnl": ST._f(s["net_pnl"].sum()) if len(s) else None, "cash_outlay": ST._f(cost.sum()) if len(s) else None,
             "roi_on_cash_outlay": ST._f(s["net_pnl"].sum() / cost.sum()) if len(s) and cost.sum() > 0 else None,
-            "hit_rate": ST._f(s["won"].astype(float).mean()) if len(s) and s["won"].notna().any() else None}
+            "hit_rate": ST._f(s["won"].astype(float).mean()) if len(s) and s["won"].notna().any() else None,
+            "n_dnp_settled_at_fair_price": int(s["dnp"].fillna(False).astype(bool).sum()) if len(s) else 0}
 
 
 def max_drawdown(g: pd.DataFrame) -> dict[str, Any]:
@@ -422,7 +430,7 @@ def max_drawdown(g: pd.DataFrame) -> dict[str, Any]:
     eq = np.concatenate([[0.0], np.cumsum(s["net_pnl"].astype(float).to_numpy())])
     dd = np.maximum.accumulate(eq) - eq
     return {"max_drawdown": ST._f(dd.max()), "n": int(len(s)), "final_equity": ST._f(eq[-1]),
-            "note": "dollars, 1 contract per position, ordered by tip time (settlement order); a path statistic of a handful of games, not a risk estimate"}
+            "note": "dollars, 1 contract per position, ordered by tip time; a path statistic of a handful of games, not a risk estimate"}
 
 
 def portfolio_metrics(cs: list[dict], study: dict, *, label: str, clocks_verified: bool | None = None) -> dict[str, Any]:
@@ -475,13 +483,15 @@ def portfolio_metrics(cs: list[dict], study: dict, *, label: str, clocks_verifie
     out["exposure_concentration"] = concentration(tr)
     out["computation_lag_s"] = {"mean": ST._f(tr["computation_lag_s"].mean()), "max": ST._f(tr["computation_lag_s"].max()),
                                 "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"}
-    n_dec, n_games = len(tr), tr["game_id"].nunique()
+    pro = st[st["prospective"].fillna(False).astype(bool)] if len(st) else st                  # only PROSPECTIVE, SETTLED decisions can count toward the minimums
+    n_dec, n_games = len(pro), pro["game_id"].nunique() if len(pro) else 0
     lows = []
-    if len(st):
-        lows = [out["roi"]["on_cash_outlay_effective_entry_plus_fee"]["game_clustered"]["ci95"][0], out["roi"]["on_cash_outlay_effective_entry_plus_fee"]["player_game_clustered"]["ci95"][0]]
+    if len(pro):
+        cost_p = pro["effective_entry_exec"] + pro["fee_paid"].fillna(pro["fee_int"])
+        lows = [ST.cluster_ratio(pro["net_pnl"], cost_p, pro["game_id"])["ci95"][0], ST.cluster_ratio(pro["net_pnl"], cost_p, pro["unit_id"])["ci95"][0]]
     meets = n_dec >= ev["min_decisions"] and n_games >= ev["min_games"]
     lo_ok = bool(lows) and all(x is not None and x > 0 for x in lows)
-    out["evidence_status"] = {"label": "INSUFFICIENT_SAMPLE" if not meets else ("POSITIVE_CI_PAPER_ONLY" if lo_ok else "NOT_ESTABLISHED"),
+    out["evidence_status"] = {"counted": "prospective AND settled decisions only", "label": "INSUFFICIENT_SAMPLE" if not meets else ("POSITIVE_CI_PAPER_ONLY" if lo_ok else "NOT_ESTABLISHED"),
                               "have": {"decisions": int(n_dec), "games": int(n_games)}, "required": {"decisions": ev["min_decisions"], "games": ev["min_games"]},
                               "lower_cis_game_and_player_game": lows, "independent_clocks_verified": clocks_verified,
                               "authority": "none; never a value claim below the minimums"}

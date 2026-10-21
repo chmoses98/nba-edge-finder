@@ -176,6 +176,9 @@ def attribute(archive: str, day_et: str, now: datetime | None = None, *, git_rep
 # ================================================================================================ reconciliation + summaries
 def reconcile(archive: str, t: pd.DataFrame, day_et: str) -> dict[str, Any]:
     """Recompute net P&L / entry cost / ROI from the table and compare with the archived daily scorecard and with the figures quoted in the issue."""
+    if t.empty:
+        return {"status": "NO_DATA", "reason": f"no settled {STRATEGY} TRADE decisions for {day_et}", "matches_scorecard": None, "matches_issue_text": False,
+                "issue_stated": ISSUE_STATED}
     p = os.path.join(archive, "paper", "nba", "scorecards", "daily", f"{day_et}.json")
     card = json.load(open(p)) if os.path.exists(p) else None
     ov = None
@@ -186,7 +189,7 @@ def reconcile(archive: str, t: pd.DataFrame, day_et: str) -> dict[str, Any]:
     out: dict[str, Any] = {"recomputed": mine, "scorecard_file": os.path.relpath(p, archive) if card else None,
                            "roi_definition": "sum(net_pnl) / sum(quoted ask price); slippage and fees are inside net_pnl, not in the denominator",
                            "entry_cost_incl_slippage": round(float(t["effective_entry"].sum()), 6),
-                           "roi_on_cash_outlay": float(t["net_pnl"].sum() / (t["effective_entry"] + t["fee_paid_settlement"].fillna(0)).sum())}
+                           "roi_on_cash_outlay": float(t["net_pnl"].sum() / (t["effective_entry"] + t["fee_paid_settlement"]).sum()) if t["fee_paid_settlement"].notna().all() else None}
     if ov:
         sc = {"n_decisions": ov["n_decisions"], "n_games": ov["n_games"], "net_pnl": ov["total_net_pnl"], "roi": ov["roi"]}
         out["scorecard"] = sc
@@ -203,7 +206,7 @@ def reconcile(archive: str, t: pd.DataFrame, day_et: str) -> dict[str, Any]:
 def summarize(t: pd.DataFrame) -> dict[str, Any]:
     """NO vs YES, family concentration, per-player / per-game structure and what drives the headline."""
     if t.empty:
-        return {"status": "NO_DATA"}
+        return {"status": "NO_DATA", "reason": "no settled selected trades"}
 
     def blk(g: pd.DataFrame) -> dict[str, Any]:
         return {"n": int(len(g)), "wins": int((g["won"] == True).sum()), "net_pnl": round(float(g["net_pnl"].sum()), 4),  # noqa: E712
@@ -216,7 +219,7 @@ def summarize(t: pd.DataFrame) -> dict[str, Any]:
     out["same_player_pairs"] = {g["player"].iloc[0]: sorted(g["family"]) for _, g in pg if len(g) > 1}
     out["concentration"] = {"share_NO": round(float((t["side"] == "NO").mean()), 4), "share_points_family": round(float(t["family"].isin(["player_points", "player_pra", "player_threes"]).mean()), 4),
                             "n_player_games": int(t["entity_id"].nunique()), "n_games": int(t["game_id"].nunique()),
-                            "effective_independent_units_note": "7 theses sit on 5 player-games in 2 games; points, PRA and threes of one player move together, so the number of independent outcomes is closer to 5 player-games, and the game is the cluster"}
+                            "effective_independent_units_note": f"{len(t)} theses sit on {t['entity_id'].nunique()} player-games in {t['game_id'].nunique()} games; stats of one player move together, so the number of independent outcomes is closer to the player-games, and the game is the cluster"}
     best = t.sort_values("net_pnl", ascending=False).iloc[0]
     out["leave_one_out"] = {"without_largest_winner": {"dropped": f"{best['player']} {best['family']} {best['side']}", "net_pnl": round(float(t['net_pnl'].sum() - best['net_pnl']), 4)},
                             "replay_only_rows": blk(t[t["decision_mode"] == "asof_replay"]) if (t["decision_mode"] == "asof_replay").any() else None,
@@ -237,6 +240,8 @@ def summarize(t: pd.DataFrame) -> dict[str, Any]:
 
 
 def to_markdown(t: pd.DataFrame, rec: dict, summ: dict, day_et: str) -> str:
+    if t.empty:
+        return f"# Issue #53 A: attribution of the {STRATEGY} selected trades, {day_et}\n\n**NO_DATA**: {rec.get('reason', 'no settled selected trades')}\n"
     L = [f"# Issue #53 A: exact attribution of the {STRATEGY} selected trades, {day_et}", "",
          "Read-only reconstruction from the immutable `projection-data` archive. Descriptive; **not** evidence of an executable edge (2 games).", "",
          "## Reconciliation", "",
@@ -245,7 +250,7 @@ def to_markdown(t: pd.DataFrame, rec: dict, summ: dict, day_et: str) -> str:
          f"- archived scorecard `{rec.get('scorecard_file')}`: match = **{rec.get('matches_scorecard')}**; issue text (7 / 2 games / $1.39 / $3.40 / 40.882%): match = **{rec['matches_issue_text']}**",
          f"- ROI definition: {rec['roi_definition']}. With slippage in the denominator the entry cost is ${rec['entry_cost_incl_slippage']:.2f}; on cash outlay (entry + fee) ROI is "
          f"{100 * rec['roi_on_cash_outlay']:.2f}%.", "",
-         "## The seven selections", "",
+         f"## The {len(t)} selections", "",
          "| # | game | player | contract (plain words) | horizon / mode | as_of -> decided (lag) | p_model | p_play | ask | size | spread | fee/slip | EV net | result | net P&L | CLV |",
          "|--:|---|---|---|---|---|--:|--:|--:|--:|--:|--:|--:|---|--:|---|"]
     for r in t.to_dict("records"):

@@ -37,6 +37,15 @@ def ctx(world):
             "t60": X.load_candidates(D, study, base, fa)}
 
 
+class EarlyClocks(dict):
+    """Independent clocks that say 'archived long before any checkpoint' for every key (tests that are not about the clocks)."""
+    def get(self, key, default=None):
+        return "2000-01-01T00:00:00Z"
+
+
+OK_CLOCKS = {"board_commit": EarlyClocks(), "forecast_commit": EarlyClocks()}
+
+
 def sel(ctx, rows=None, **kw):
     cs = [copy.deepcopy(c) for c in (ctx["t60"] if rows is None else rows)]
     return X.select(cs, kw.pop("study", ctx["study"]), ctx["base"], forecast_archive=kw.pop("fa", ctx["fa"]), prepared=True, **kw)
@@ -176,7 +185,8 @@ def test_quote_age_spread_and_missing_ask_filters(ctx):
     assert "STALE_QUOTE_AT_CHECKPOINT" not in reasons(ctx, {**c, "quote_age_at_checkpoint_s": 900.0})
     assert "SPREAD_WIDE_STRICT" in reasons(ctx, {**c, "spread": 0.07})
     assert "SPREAD_WIDE_STRICT" not in reasons(ctx, {**c, "spread": 0.06})
-    assert reasons(ctx, {**c, "price": None}) [0:1] == ["NO_EXECUTABLE_QUOTE"] or "NO_EXECUTABLE_QUOTE" in reasons(ctx, {**c, "price": None})
+    assert reasons(ctx, {**c, "price": None}) == ["NO_EXECUTABLE_QUOTE"]                # the primary (and only) reason
+    assert "SPREAD_UNKNOWN" in reasons(ctx, {**c, "spread": None})                       # a missing spread is a block, not a pass
     assert "GATE_STATUS" in reasons(ctx, {**c, "gate": {"status": "REVIEW"}})
     assert "LOW_P_PLAY" in reasons(ctx, {**c, "p_play": 0.84})
     assert "EV_BELOW_THRESHOLD" in reasons(ctx, {**c, "ev_net_exec": 0.0599})
@@ -206,21 +216,22 @@ def test_one_expression_per_thesis_and_no_rung_or_side_stacking(ctx):
 
 def test_the_ledger_is_global_across_calls_horizons_and_days(ctx):
     study = copy.deepcopy(ctx["study"])
-    study["exposure"]["max_trades_per_game"] = 3
+    study["exposure"]["max_trades_per_game"] = 1
     led = X.Ledger(study["exposure"])
     first = sel(ctx, study=study, ledger=led)
-    n1 = sum(1 for c in first if c["decision"] == "TRADE" and c["game_id"] == "espn:7001")
-    assert n1 == 2
+    assert sum(1 for c in first if c["decision"] == "TRADE" and c["game_id"] == "espn:7001") == 1
+    assert "EXPOSURE_CAP:GAME" in {c["reason"] for c in first if c["game_id"] == "espn:7001"}             # the cap really bound inside the first call
     # a SECOND checkpoint of the same game (another horizon, same study ledger): theses already held can never be entered again, game cap counts everything
     s2 = copy.deepcopy(study)
     s2["checkpoint"]["horizon"], s2["checkpoint"]["minutes_before_tip"] = "T-30", 30
     rows30 = [X.prepare(r, s2, ctx["base"]) for r in ctx["all_rows"] if r["horizon"] == "T-30" and r["game_id"] == "espn:7001"]
     second = X.select(rows30, s2, ctx["base"], ledger=led, forecast_archive=ctx["fa"], prepared=True)
     assert [c for c in second if c["decision"] == "TRADE"] == []
-    assert "THESIS_ALREADY_HELD" in {c["reason"] for c in second if not c["blockers"]}
+    reasons2 = {c["reason"] for c in second if not c["blockers"]}
+    assert "THESIS_ALREADY_HELD" in reasons2 and "EXPOSURE_CAP:GAME" in reasons2             # game cap counts the first checkpoint's position
     # with a fresh ledger (what the original per-horizon engine does) the same rows trade again: the reset is the difference
     fresh = X.select([copy.deepcopy(c) for c in rows30], s2, ctx["base"], forecast_archive=ctx["fa"], prepared=True)
-    assert sum(1 for c in fresh if c["decision"] == "TRADE") == 2
+    assert sum(1 for c in fresh if c["decision"] == "TRADE" and c["game_id"] == "espn:7001") == 1
 
 
 def test_game_cap_and_player_game_cap_use_the_one_ledger():
@@ -237,21 +248,20 @@ def test_game_cap_and_player_game_cap_use_the_one_ledger():
         if cap is None:
             led.admit(c, 0.5)
         got.append(cap)
-    assert got == [None, None, "EXPOSURE_CAP:PLAYER_GAME", None, None, "EXPOSURE_CAP:GAME", "EXPOSURE_CAP:GAME"] or got[2] == "EXPOSURE_CAP:PLAYER_GAME"
+    # a,a admitted (2 = player cap), third a -> PLAYER_GAME; b admitted (3rd position of BOS: team cap 3 not yet hit); c admitted (4th game position) ; d,e -> GAME
+    assert got == [None, None, "EXPOSURE_CAP:PLAYER_GAME", None, None, "EXPOSURE_CAP:GAME", "EXPOSURE_CAP:GAME"]
     assert led.caps_hit(cand(0, "a"), 0.5) == "THESIS_ALREADY_HELD"
 
 
-def test_daily_notional_cap_is_chronological_across_games(ctx):
+def test_day_notional_caps_are_per_et_day_so_different_days_do_not_share_one(ctx):
     study = copy.deepcopy(ctx["study"])
     study["exposure"]["max_notional_per_day"] = 0.7                                       # room for exactly one 0.55-0.56 position per ET day
     out = sel(ctx, study=study)
-    g2 = [c for c in out if c["game_id"] == "espn:7002"]
     # games 7001 (ET 2026-10-20) and 7002 (ET 2026-10-22) are different days, so each admits exactly one; the second trade of each is capped by the day
     for gid in ("espn:7001", "espn:7002"):
         tr = [c for c in out if c["game_id"] == gid and c["decision"] == "TRADE"]
         assert len(tr) == 1
         assert any(c["reason"] == "EXPOSURE_CAP:NOTIONAL_DAY" for c in out if c["game_id"] == gid)
-    assert g2
 
 
 def test_same_day_games_are_admitted_in_checkpoint_order_not_input_order(ctx):
@@ -311,17 +321,34 @@ def test_dnp_is_settled_at_the_fair_price_not_as_a_no_and_not_fee_free(ctx):
 
 # ------------------------------------------------------------------------------------------------------------------ metrics / evidence labels
 def test_prospective_and_retrospective_are_separated_and_never_mixed(ctx):
-    out = sel(ctx)
+    out = sel(ctx, clocks=OK_CLOCKS)
     pops = X.split_populations(out)
     assert {c["game_id"] for c in pops["retrospective_descriptive"]} == {"espn:7001"}
     assert {c["game_id"] for c in pops["prospective"]} == {"espn:7002"}
 
 
+def test_prospective_fails_closed_without_independent_clocks_and_for_late_computation(ctx):
+    no_clocks = sel(ctx)                                                                  # clocks=None: nothing can be prospective
+    assert not any(c["prospective"] for c in no_clocks) and not any(c["independent_clocks_checked"] for c in no_clocks)
+    assert not any(c["prospective"] for c in sel(ctx, clocks={}))                         # an empty clock dict is not proof either
+    assert not any(c["prospective"] for c in sel(ctx, clocks={"board_commit": EarlyClocks()}))      # both clocks are needed
+    # a replay of a prospective game that was COMPUTED after the tip (result possibly known) or before the frozen start is never prospective
+    g2 = [c for c in ctx["t60"] if c["game_id"] == "espn:7002"][0]
+    base_row = {k: v for k, v in g2.items()}
+    start = X._ts(ctx["study"]["prospective_start_utc"])
+    late = X.prepare({**{k: v for k, v in ctx["all_rows"][0].items()}, **{"game_start_utc": iso(g2["tip"]), "as_of_utc": iso(g2["as_of"]), "decided_utc": iso(g2["tip"] + timedelta(hours=3))}}, ctx["study"], ctx["base"])
+    early = X.prepare({**{k: v for k, v in ctx["all_rows"][0].items()}, **{"game_start_utc": iso(g2["tip"]), "as_of_utc": iso(g2["as_of"]), "decided_utc": iso(start - timedelta(hours=1))}}, ctx["study"], ctx["base"])
+    ok = X.prepare({**{k: v for k, v in ctx["all_rows"][0].items()}, **{"game_start_utc": iso(g2["tip"]), "as_of_utc": iso(g2["as_of"]), "decided_utc": iso(g2["tip"] - timedelta(minutes=30))}}, ctx["study"], ctx["base"])
+    assert (late["prospective"], early["prospective"], ok["prospective"]) == (False, False, True) and late["computed_before_tip"] is False
+    assert base_row["prospective"] is True
+
+
 def test_sample_labels_never_claim_value_below_the_minimums(ctx):
-    out = sel(ctx)
-    m = X.portfolio_metrics(out, ctx["study"], label="all")
+    out = sel(ctx, clocks=OK_CLOCKS)
+    m = X.portfolio_metrics(out, ctx["study"], label="all", clocks_verified=True)
     assert m["status"] == "OK" and m["evidence_status"]["label"] == "INSUFFICIENT_SAMPLE"
-    assert m["evidence_status"]["have"] == {"decisions": 4, "games": 2} and m["evidence_status"]["lower_cis_game_and_player_game"] == [None, None]
+    assert m["evidence_status"]["have"] == {"decisions": 2, "games": 1}                   # only the PROSPECTIVE settled decisions (game 7002) are counted
+    assert m["independent_units"]["n_decisions"] == 4                                      # the descriptive totals still show everything and m["evidence_status"]["lower_cis_game_and_player_game"] == [None, None]
     assert m["roi"]["on_cash_outlay_effective_entry_plus_fee"]["game_clustered"]["ci95"] == [None, None]          # < 5 games: no interval is printed
     assert m["independent_units"]["n_games"] == 2 and m["independent_units"]["n_player_games"] == 4
     assert m["clv_cents"]["n_valid"] >= 1

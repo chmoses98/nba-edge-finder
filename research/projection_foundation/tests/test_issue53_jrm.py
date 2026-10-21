@@ -83,7 +83,7 @@ def test_late_close_to_tip_and_other_feed_snapshots_do_not_match(same):
     # within 5 minutes of tip (the PR #45 margin) -> never prospective
     close = copy.copy(snap)
     close.archived_utc = close.branch_commit_utc = iso(g1["tip"] - timedelta(minutes=3))
-    assert J.match_snapshot([close], "espn:7001", g1["tip"], g1["tip"] - timedelta(minutes=1), g1["forecast_generated_utc"])[1] == "TOO_CLOSE_TO_TIP"
+    assert J.match_snapshot([close], "espn:7001", g1["tip"], g1["tip"] + timedelta(minutes=10), g1["forecast_generated_utc"])[1] == "TOO_CLOSE_TO_TIP"
     # a snapshot of another feed than the frozen decision used
     assert J.match_snapshot(same["snaps"], "espn:7001", g1["tip"], g1["as_of"], "2026-10-20T00:00:00Z")[1] == "FEED_MISMATCH"
     assert J.match_snapshot(same["snaps"], "espn:7003", g1["tip"], g1["as_of"], g1["forecast_generated_utc"])[1] == "NO_SNAPSHOT_FOR_GAME"
@@ -190,3 +190,47 @@ def test_minutes_accuracy_with_and_without_outcomes(more):
 def test_uncovered_players_and_game_markets_are_unchanged_by_construction(same):
     v, _ = variant(same)
     assert all(c["jrm"] is None for c in v if c["jrm_status"] != "COVERED")
+
+
+def test_snapshot_must_precede_the_decision_by_the_five_minute_margin(same):
+    g1 = [x for x in same["prepared"] if x["game_id"] == "espn:7001"][0]
+    snap = copy.copy(next(s for s in same["snaps"] if any(g == "espn:7001" for g, _ in s.rows)))
+    cutoff = g1["as_of"]
+    for gap, want in ((timedelta(seconds=30), "TOO_CLOSE_TO_DECISION"), (timedelta(minutes=4, seconds=59), "TOO_CLOSE_TO_DECISION"), (timedelta(minutes=5), "OK")):
+        snap.archived_utc = snap.branch_commit_utc = iso(cutoff - gap)
+        assert J.match_snapshot([snap], "espn:7001", g1["tip"], cutoff, g1["forecast_generated_utc"])[1] == want
+    snap.archived_utc, snap.branch_commit_utc = iso(cutoff - timedelta(minutes=20)), iso(cutoff - timedelta(minutes=1))       # independent clock inside the margin
+    assert J.match_snapshot([snap], "espn:7001", g1["tip"], cutoff, g1["forecast_generated_utc"])[1] == "TOO_CLOSE_TO_DECISION"
+
+
+def test_a_game_level_row_with_another_feed_clock_cannot_change_the_players_match(same):
+    rows = [copy.deepcopy(c) for c in same["prepared"] if c["game_id"] == "espn:7001"]
+    game_row = copy.deepcopy(rows[0])
+    game_row.update({"family": "game_total", "entity_id": None, "forecast_generated_utc": "2026-10-20T12:00:00Z"})            # different feed clock, listed FIRST
+    for order in ([game_row] + rows, rows + [game_row]):
+        v, led = J.build_variant([copy.deepcopy(x) for x in order], same["snaps"], same["pmfs"], same["study"], same["base"])
+        assert led["games"]["espn:7001"]["reason"] == "OK"
+        assert sum(1 for c in v if c["jrm_status"] == "COVERED") == len(rows) and [c for c in v if c["family"] == "game_total"][0]["jrm_status"] == "GAME_LEVEL_UNCHANGED"
+
+
+def test_a_rebuilt_frozen_probability_that_differs_from_the_archived_one_is_not_matched(same):
+    c = next(x for x in same["prepared"] if x["game_id"] == "espn:7001" and x["family"] == "player_points")
+    snap = next(s for s in same["snaps"] if any(g == "espn:7001" for g, _ in s.rows))
+    row, rec = snap.rows[("espn:7001", c["entity_id"])], same["pmfs"][c["forecast_ids"][0]]
+    assert J.jrm_probabilities(c, row, rec) is not None
+    assert J.jrm_probabilities({**c, "p_model": c["p_model"] + 0.01}, row, rec) is None            # any gap would be booked as a JRM effect
+    assert J.jrm_probabilities({**c, "p_market_mid": None}, row, rec) is None                      # the DNP leg is never silently dropped
+    assert J.jrm_probabilities({**c, "p_play": None}, row, rec) is None
+
+
+def test_frozen_and_jrm_paths_share_no_state_and_order_does_not_matter(same):
+    cands = [copy.deepcopy(c) for c in same["prepared"]]
+    snapshot_before = copy.deepcopy(cands)
+    v, _ = J.build_variant(cands, same["snaps"], same["pmfs"], same["study"], same["base"])
+    assert cands == snapshot_before                                                                  # build_variant never mutates the frozen inputs
+    s_jrm = X.select(v, same["study"], same["base"], strategy_id="PF_EDGE_STRICT_T60_EXEC_JRM_V1", forecast_archive=same["fa"], prepared=True)
+    assert cands == snapshot_before or all(cands[i]["p_model"] == snapshot_before[i]["p_model"] for i in range(len(cands)))
+    a = X.select([copy.deepcopy(c) for c in snapshot_before], same["study"], same["base"], forecast_archive=same["fa"], prepared=True)
+    rev = X.select([copy.deepcopy(c) for c in reversed(snapshot_before)], same["study"], same["base"], forecast_archive=same["fa"], prepared=True)
+    key = lambda cs: sorted((c["ticker"], c["side"], c["decision"], c["reason"]) for c in cs)       # noqa: E731
+    assert key(a) == key(rev) and s_jrm is not None                                                  # input order never changes the selection
