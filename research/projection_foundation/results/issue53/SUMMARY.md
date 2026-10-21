@@ -1,6 +1,6 @@
-# Issue #53 research summary (run `485dcb6398f61475`)
+# Issue #53 research summary (run `4be3c29b5ed9de96`)
 
-**Research only. No orders, no wagering authority, no deployment, no model activation.** Everything below that precedes `prospective_start_utc` = 2026-10-22T06:00:00Z is RETROSPECTIVE and DESCRIPTIVE; a handful of games is not evidence of an edge.
+**Research only. No orders, no wagering authority, no deployment, no model activation.** Everything below that precedes `prospective_start_utc` = 2026-10-24T06:00:00Z is RETROSPECTIVE and DESCRIPTIVE; a handful of games is not evidence of an edge.
 
 ## 1. The original strict-strategy selections, reconciled
 - recomputed 7 decisions in 2 games: net P&L $1.39 on $3.40 of quoted asks = 40.882% (matches the archived scorecard: True; matches the issue text: True).
@@ -10,15 +10,16 @@
 - actionability check (latest contemporaneous board before each replay row was computed): #1 Thompson ask 0.46 vs selected 0.46; #2 Cunningham ask 0.91 vs selected 0.52; #3 Cunningham ask 0.53 vs selected 0.52; #5 Williams ask 0.63 vs selected 0.62; #6 Williams ask 0.58 vs selected 0.57; #7 Gilgeous-Alexander ask 0.27 vs selected 0.26.
 
 ## 2. Executable fixed-checkpoint portfolio (T-60, global ledger)
-- prospective: **NO_DATA** - no decision instants at or after 2026-10-22T06:00:00Z in the archive yet
+- sealed pre-tip ledger (the ONLY source of prospective evidence): **NOT_SUPPLIED**
+- prospective: **NO_DATA** - no sealed pre-tip ledger supplied; reconstruction can never be prospective
 - retrospective application of the frozen rules: 3 trades in 1 games (3 settled), net P&L $0.46, ROI on cash outlay 29.9%, hit rate 66.7%; no interval is defined (< 5 games).
 - candidate sides 1802: eligible 13, blocked 1789; primary reasons {"GATE_STATUS": 985, "BOARD_ARCHIVED_AFTER_CHECKPOINT": 564, "EV_BELOW_THRESHOLD": 73, "QUALITY_GATE:SPREAD_WIDE": 57, "QUALITY_GATE:EXTREME_PRICE": 43, "DEPTH_CONFLICT_ORDERBOOK": 29, "QUALITY_GATE:NO_SIZE": 25, "SPREAD_WIDE_STRICT": 13, "ELIGIBLE": 13}
 - the same rules WITHOUT the independent-clock requirement would trade 6 in 2 games (net P&L $0.83); the difference is boards committed to the capture branch only after the checkpoint (lag per game: 088 204s AFTER, 089 203s, 090 209s).
 - independent clocks: {"status": "VERIFIED", "board_ref": "origin/data-archive", "forecast_ref": "origin/projection-data", "board_ticks_indexed": 156, "board_ticks_earliest": "2026-10-20T16:06:07Z", "forecast_ids_indexed": 35786}
 - games: 088=NO_TRADE, 089=NO_TRADE, 090=TRADED, 834=NOT_DUE, 835=NOT_DUE, 091=NOT_DUE, 836=NOT_DUE, 837=NOT_DUE, 838=NOT_DUE, 839=NOT_DUE, 840=NOT_DUE, 092=NOT_DUE, 841=NOT_DUE, 842=NOT_DUE, 093=NOT_DUE, 094=NOT_DUE
-- progress to the evidence minimum: 0/200 prospective decisions, 0/40 games (retrospective rows never count).
+- progress to the evidence minimum: 0/200 prospective decisions, 0/40 games (reconstructions never count; counted from the verified sealed ledger only).
 
-## 3. Matched JRM what-if
+## 3. Matched JRM what-if (archive-scale APPROXIMATION; the exact engine comparison is the isolated dry run, see jrm-exact-dryrun)
 - matched games: 1; decision matrix over candidate sides: {"both_bet": 1, "v1_only": 2, "jrm_only": 2, "neither": 615}; downstream = archive_scale_approximation.
 - JRM prospective gate (tracked separately, verdict owned by PR #45): 1/20 eligible settled games -> **INSUFFICIENT_SAMPLE**.
 

@@ -41,7 +41,8 @@ from . import markets as MK
 from . import settle as SE
 from . import stats as ST
 
-STUDY_PATH = Path(__file__).with_name("exec_shadow_config.json")
+STUDY_PATH = Path(__file__).with_name("exec_shadow_config_v2.json")          # v1.1.0 (exec_shadow_config.json) is kept byte-identical for the record
+STUDY_V1_PATH = Path(__file__).with_name("exec_shadow_config.json")
 STRATEGY = "PF_EDGE_STRICT_T60_EXEC_V1"
 BLOCK_CODES = ("NOT_CHECKPOINT_HORIZON", "MODE_NOT_ALLOWED", "BOARD_AFTER_CHECKPOINT", "FORECAST_AFTER_DECISION", "FORECAST_ARCHIVED_AFTER_DECISION",
                "FORECAST_ARCHIVE_UNVERIFIED", "FORECAST_COMMIT_UNVERIFIED", "FORECAST_COMMITTED_AFTER_CHECKPOINT", "BOARD_ARCHIVE_UNVERIFIED",
@@ -109,11 +110,11 @@ def prepare(row: dict, study: dict, base: dict) -> dict:
     c["quote_age_at_checkpoint_s"] = None if board is None else (cp - board).total_seconds()
     c["computation_lag_s"] = None if (decided is None or as_of is None) else (decided - as_of).total_seconds()
     c["minutes_to_tip_decided"] = None if decided is None else (tip - decided).total_seconds() / 60.0
-    start = _ts(study["prospective_start_utc"])
-    # prospective = the checkpoint AND the actual computation are after the frozen start, and the row was computed before the game began (a replay run after the
-    # result is known can never be prospective). `select` additionally requires the independent archive clocks.
+    # A row built here is a RECONSTRUCTION from archives, whenever it is computed: nothing can prove the choice existed before tip, so it is NEVER prospective
+    # (owner review of PR #54). Prospective evidence exists only as a verified SEAL (nba.paper.exec_seal), which sets `prospective` itself after verification.
     c["computed_before_tip"] = bool(decided is not None and decided < tip)
-    c["prospective"] = bool(cp >= start and decided is not None and decided >= start and decided < tip)
+    c["prospective"] = False
+    c["origin"] = "reconstruction"
     price = _n(c.get("price"))
     contracts = int(study["execution"]["order_contracts"])
     if price is not None:
@@ -317,6 +318,13 @@ def forecast_archive_index(archive: str) -> dict[str, str]:
     return idx
 
 
+def forecast_archive_index_from(fc_records: list[dict], gf_records: list[dict]) -> dict[str, str]:
+    """forecast_id / game_forecast_id -> self-reported archived_utc, from record lists already in memory."""
+    idx = {r["forecast_id"]: r["archived_utc"] for r in fc_records if r.get("forecast_id") and r.get("archived_utc")}
+    idx.update({r["game_forecast_id"]: r["archived_utc"] for r in gf_records if r.get("game_forecast_id") and r.get("archived_utc")})
+    return idx
+
+
 def board_commit_index(repo: str, ref: str = "origin/data-archive") -> dict[str, str]:
     """capture tick (UTC ISO, as in `board_observed_utc`) -> git commit time of the commit that archived it on the capture branch (an independent clock).
     Commit subjects are 'capture: <run> at <tick>'. History older than the fetched depth is simply absent (-> BOARD_ARCHIVE_UNVERIFIED)."""
@@ -396,7 +404,7 @@ def game_status(cs: list[dict], D, study: dict) -> list[dict]:
             status = "NO_TRADE"
             cnt = Counter((c["reason"] or "ELIGIBLE_NOT_SELECTED").split(":")[0] for c in rows if c["reason"] != "NOT_BEST_IN_THESIS")
             why = "; ".join(f"{k}={v}" for k, v in cnt.most_common(4))
-        out.append({"game_id": g["game_id"], "game_start_utc": g["game_start_utc"], "checkpoint_utc": MK.iso(cp), "prospective": bool(cp >= _ts(study["prospective_start_utc"])),
+        out.append({"game_id": g["game_id"], "game_start_utc": g["game_start_utc"], "checkpoint_utc": MK.iso(cp), "after_prospective_start": bool(cp >= _ts(study["prospective_start_utc"])), "prospective": False,
                     "status": status, "reason": why, "n_candidate_sides": len(rows), "n_eligible": sum(1 for c in rows if not c["blockers"]),
                     "n_trades": len(trades)})
     return out

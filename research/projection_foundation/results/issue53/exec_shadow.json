@@ -1323,9 +1323,10 @@
   "pf_settlements_generated_after_tip_excluded": 0,
   "snapshots_replay_excluded": 0
  },
- "declared_utc": "2026-10-21T21:35:00Z",
+ "declared_utc": "2026-10-21T23:45:00Z",
  "games": [
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-20T18:00:00Z",
    "game_id": "espn:401909088",
    "game_start_utc": "2026-10-20T19:00:00Z",
@@ -1337,6 +1338,7 @@
    "status": "NO_TRADE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-20T22:00:00Z",
    "game_id": "espn:401909089",
    "game_start_utc": "2026-10-20T23:00:00Z",
@@ -1348,6 +1350,7 @@
    "status": "NO_TRADE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T00:30:00Z",
    "game_id": "espn:401909090",
    "game_start_utc": "2026-10-21T01:30:00Z",
@@ -1359,6 +1362,7 @@
    "status": "TRADED"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:00:00Z",
    "game_id": "espn:401909834",
    "game_start_utc": "2026-10-21T23:00:00Z",
@@ -1370,6 +1374,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:00:00Z",
    "game_id": "espn:401909835",
    "game_start_utc": "2026-10-21T23:00:00Z",
@@ -1381,6 +1386,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:30:00Z",
    "game_id": "espn:401909091",
    "game_start_utc": "2026-10-21T23:30:00Z",
@@ -1392,6 +1398,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:30:00Z",
    "game_id": "espn:401909836",
    "game_start_utc": "2026-10-21T23:30:00Z",
@@ -1403,6 +1410,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:30:00Z",
    "game_id": "espn:401909837",
    "game_start_utc": "2026-10-21T23:30:00Z",
@@ -1414,6 +1422,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T23:00:00Z",
    "game_id": "espn:401909838",
    "game_start_utc": "2026-10-22T00:00:00Z",
@@ -1425,6 +1434,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T23:00:00Z",
    "game_id": "espn:401909839",
    "game_start_utc": "2026-10-22T00:00:00Z",
@@ -1436,6 +1446,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T23:30:00Z",
    "game_id": "espn:401909840",
    "game_start_utc": "2026-10-22T00:30:00Z",
@@ -1447,6 +1458,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-22T01:00:00Z",
    "game_id": "espn:401909092",
    "game_start_utc": "2026-10-22T02:00:00Z",
@@ -1458,6 +1470,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-22T01:00:00Z",
    "game_id": "espn:401909841",
    "game_start_utc": "2026-10-22T02:00:00Z",
@@ -1469,6 +1482,7 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-22T01:30:00Z",
    "game_id": "espn:401909842",
    "game_start_utc": "2026-10-22T02:30:00Z",
@@ -1480,24 +1494,26 @@
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-22T22:00:00Z",
    "game_id": "espn:401909093",
    "game_start_utc": "2026-10-22T23:00:00Z",
    "n_candidate_sides": 0,
    "n_eligible": 0,
    "n_trades": 0,
-   "prospective": true,
+   "prospective": false,
    "reason": null,
    "status": "NOT_DUE"
   },
   {
+   "after_prospective_start": false,
    "checkpoint_utc": "2026-10-23T00:30:00Z",
    "game_id": "espn:401909094",
    "game_start_utc": "2026-10-23T01:30:00Z",
    "n_candidate_sides": 0,
    "n_eligible": 0,
    "n_trades": 0,
-   "prospective": true,
+   "prospective": false,
    "reason": null,
    "status": "NOT_DUE"
   }
@@ -1703,6 +1719,7 @@
   }
  ],
  "progress_to_evidence_minimums": {
+  "counted_from": "verified sealed pre-tip ledger only",
   "prospective_decisions": 0,
   "prospective_games": 0,
   "required_decisions": 200,
@@ -1711,10 +1728,10 @@
  },
  "prospective": {
   "label": "prospective",
-  "reason": "no decision instants at or after 2026-10-22T06:00:00Z in the archive yet",
+  "reason": "no sealed pre-tip ledger supplied; reconstruction can never be prospective",
   "status": "NO_DATA"
  },
- "prospective_start_utc": "2026-10-22T06:00:00Z",
+ "prospective_start_utc": "2026-10-24T06:00:00Z",
  "retrospective_descriptive": {
   "by_decision_mode": {
    "asof_replay": {
@@ -1991,10 +2008,13 @@
   "status": "OK",
   "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1"
  },
- "run_id": "485dcb6398f61475",
+ "run_id": "4be3c29b5ed9de96",
  "schema": "issue53.exec_shadow.v1",
+ "sealed_ledger": {
+  "status": "NOT_SUPPLIED"
+ },
  "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1",
- "study_config_sha256": "4b6d8fe6bae932504cbac6bbc8f9e75f5a382977447790693cff24a30b97cb56",
+ "study_config_sha256": "2192f9e4ea251989417831f58c05a6aaecd841ece2d5dbd9d83349b0c1748fb4",
  "study_id": "ISSUE53_EXEC_SHADOW_V1",
  "trades": [
   {

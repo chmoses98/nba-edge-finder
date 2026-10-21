@@ -56,9 +56,8 @@ def test_three_separately_labelled_sets_and_honest_evidence_status(world, tmp_pa
     assert "NOT simultaneously executable" in tw["1_original_frozen_strategy_selection"]["label"]
     assert "RETROSPECTIVE" in tw["2_new_fixed_checkpoint_executable_shadow"]["label"] and "RETROSPECTIVE" in tw["3_eligible_matched_jrm_whatif"]["label"]
     B = json.load(open(tmp_path / "o" / "exec_shadow.json"))
-    assert B["retrospective_descriptive"]["status"] == "OK" and B["prospective"]["status"] == "OK"        # G2 is after prospective_start_utc
-    assert B["prospective"]["evidence_status"]["label"] == "INSUFFICIENT_SAMPLE"
-    assert B["progress_to_evidence_minimums"]["prospective_decisions"] == 2 and B["progress_to_evidence_minimums"]["prospective_games"] == 1
+    assert B["retrospective_descriptive"]["status"] == "OK" and B["prospective"]["status"] == "NO_DATA"      # no sealed ledger: reconstruction is never prospective
+    assert B["progress_to_evidence_minimums"]["prospective_decisions"] == 0 and B["progress_to_evidence_minimums"]["prospective_games"] == 0
     assert B["progress_to_evidence_minimums"]["retrospective_rows_never_counted"] is True
     games = {g["game_id"]: g for g in B["games"]}
     assert games["espn:7003"]["status"] == "NO_TRADE" and "GAP_TOO_LARGE" in games["espn:7003"]["reason"]
@@ -92,6 +91,27 @@ def test_without_independent_clocks_nothing_is_prospective_and_it_is_reported(wo
     assert B["independent_clocks"]["status"] == "NOT_VERIFIED"
     assert B["prospective"]["status"] == "NO_DATA" and B["progress_to_evidence_minimums"]["prospective_decisions"] == 0
     assert B["retrospective_descriptive"]["evidence_status"]["independent_clocks_verified"] is False
+
+
+def test_regression_study53_run_the_day_after_a_final_game_cannot_create_a_prospective_selection(world, tmp_path, monkeypatch):
+    """Owner review of PR #54: upstream paper decisions carry a pre-tip decided_utc (after the frozen start) but study53 first runs AFTER the game. The reconstructed
+    new-strategy portfolio must NOT be prospective; with no sealed pre-tip artifact the prospective result is NO_DATA."""
+    from nba.paper import exec_shadow as X2
+    real = X2.load_study
+    def early_start(path=None):
+        s = real(path)
+        s["prospective_start_utc"] = "2026-10-22T00:00:00Z"                                      # make game 7002 (tip 2026-10-23T00:00Z) 'after the start'
+        return s
+    monkeypatch.setattr(X2, "load_study", early_start)
+    monkeypatch.setattr(study53, "build_clocks", lambda *a, **k: ({"board_commit": Early(), "forecast_commit": Early()}, {"status": "VERIFIED", "synthetic": True}))
+    from datetime import datetime, timezone
+    now = datetime(2026, 10, 24, 12, 0, tzinfo=timezone.utc)                                     # the day after the last final game
+    study53.run(str(world / "pd"), str(world / "msa"), str(tmp_path / "o"), "2026-10-20", now=now)
+    B = json.load(open(tmp_path / "o" / "exec_shadow.json"))
+    g2 = [t for t in B["trades"] if t["game_id"] == "espn:7002"]
+    assert g2 and all(t["prospective"] is False for t in B["trades"])                            # the reconstruction does contain game 7002's selections ...
+    assert B["prospective"]["status"] == "NO_DATA" and B["progress_to_evidence_minimums"]["prospective_decisions"] == 0      # ... but none is prospective
+    assert B["sealed_ledger"]["status"] == "NOT_SUPPLIED"
 
 
 def test_empty_or_unsettled_states_report_no_data_instead_of_crashing(tmp_path):

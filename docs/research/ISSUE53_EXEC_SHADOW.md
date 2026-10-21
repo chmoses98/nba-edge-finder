@@ -1,7 +1,7 @@
 # Issue #53: opening-night attribution, executable T-60 shadow portfolio, matched JRM what-if
 
 **RESEARCH ONLY.** Additive and read-only. No order, no wagering authority, no stake or router change, no deployment, no model activation (JRM / PR #47),
-no workflow dispatched. `PF_EDGE_STRICT_V1`, `paper_config.json` (sha256 pinned), the forecasts, settlements, scorecards, `projection-data` and
+no production workflow dispatched or changed. `PF_EDGE_STRICT_V1`, `paper_config.json` (sha256 pinned), the forecasts, settlements, scorecards, `projection-data` and
 `minutes-shadow-archive` are untouched. Everything below dated before `prospective_start_utc` is **retrospective and descriptive**; two or three
 opening games are not evidence of an edge and no profitable edge is claimed.
 
@@ -21,28 +21,72 @@ cd research/projection_foundation && PYTHONPATH=../../src python -m nba.paper.st
 | deliverable | module | notes |
 |---|---|---|
 | A. seven-bet attribution | `attribution.py` | reuses `evaluate.load` and the scorecard's own earliest-trade-per-thesis rule; reconciles to the archived scorecard JSON; archive paths + git commit times; no hand-entered picks |
-| B. executable shadow portfolio | `exec_shadow.py` + `exec_shadow_config.json` | new strategy id `PF_EDGE_STRICT_T60_EXEC_V1`; frozen protocol; global ledger; independent archive clocks |
+| B. executable shadow portfolio | `exec_shadow.py` + `exec_shadow_config_v2.json` (v1.1.0 preserved) | new strategy id `PF_EDGE_STRICT_T60_EXEC_V1`; frozen protocol; global ledger; independent archive clocks; reconstruction only |
+| B'. sealed pre-tip ledger | `exec_seal.py`, `scripts/exec_seal_ci.sh`, `.github/workflows/exec-shadow-seal.yml` | the only source of prospective evidence; write-once seals on branch `exec-shadow-seals`; MISSED markers; offline verification and settlement join |
+| C'. exact JRM dry run | `jrm_exact.py`, `.github/workflows/jrm-exact-dryrun.yml` | full downstream engine, frozen and jrm from one capture, one board; isolated, label-gated |
 | C. matched JRM counterfactual | `jrm_matched.py` | new id `PF_EDGE_STRICT_T60_EXEC_JRM_V1`; consumes the PR #45 register, never re-implements or relaxes its rules |
 | run + summary | `study53.py` | `python -m nba.paper.study53` |
 | tests | `tests/test_issue53_*.py`, `tests/issue53_synth.py` | synthetic world driven by the REAL engine and settlement code |
 
-### Protocol freeze (`exec_shadow_config.json`)
-Study `ISSUE53_EXEC_SHADOW_V1` v1.1.0, declared 2026-10-21T21:35Z (first push 22:01:37Z), amended 22:10Z after an independent code review and before any
-prospective data existed (amendment log inside the file; no numeric threshold changed), **`prospective_start_utc` 2026-10-22T06:00Z**. The independent timestamp of
-the protocol is the git push time of the commit that adds the file. A decision is prospective only if its checkpoint AND its actual computation (`decided_utc`) are
-at/after the start, it was computed before tip, the protocol push precedes the start, and the independent archive clocks were supplied (fail closed: without
-`--git-repo` nothing is prospective). Only prospective **and settled** decisions count toward the minimums.
-Numeric thresholds are copied verbatim from `PF_EDGE_STRICT_V1` (EV >= 0.06, PASS only, p_play >= 0.85, spread <= 0.06, same caps); nothing was tuned on
-October 20/21. The only new numbers are the executability parameters decided before anything was scored: checkpoint T-60, `max_quote_age_s` 900 (the
-existing closing-line constant), displayed size >= 1 contract. Evidence minimums stay 200 decisions / 40 games with a positive lower bound under both game-
-and player-game-clustered bootstraps; JRM's 20-game gate is tracked separately and decided by PR #45's script.
+### Protocol v2.0.0 (`exec_shadow_config_v2.json`), owner decisions of 2026-10-21 on PR #54
+* **Strict T-60 cut-off kept** (decision 1): a board and a forecast must be observed/generated **and committed** to their archive branches at/before the checkpoint.
+  No grace window, no later horizon, no fallback to an earlier archived tick. BOS@DET stays `NO_TRADE`.
+* **Sealed pre-tip ledger replaces reconstruction as the only source of prospective evidence** (decision 2, the review's finding): v1.1.0 keyed `prospective` off the
+  upstream paper engine's `decided_utc`; a study run after the game could therefore label a reconstructed new-strategy portfolio prospective. v1.1.0 is kept
+  byte-identical (`exec_shadow_config.json`, sha256 `4b6d8fe6...`), nothing was ever collected under it, and **nothing computed under v1.x counts**. In v2 a row built by
+  `exec_shadow.prepare` is a reconstruction and `prospective` is always False (regression test: `study53.run` the day after a final game on an upstream pre-tip
+  `decided_utc` creates no prospective selection). New later start: **`prospective_start_utc` = 2026-10-24T06:00Z** (v1.1.0's 2026-10-22T06:00Z lapsed without a sealing path).
+  Selection rules, strategy ids and thresholds are unchanged (copied from `PF_EDGE_STRICT_V1`, never tuned). If the PR is merged and the schedule first runs after
+  the start, the start must be amended again (a seal is counted only if the protocol file's commit on the default branch precedes it).
+* **Exact JRM through the full engine as an isolated dry run** (decision 3), see below; the archive-scale approximation stays separately labelled.
 
-Rules of the executable portfolio: one checkpoint per game (a missing/stale/after-checkpoint/not-yet-archived board is `NO_TRADE` for the whole game; no other
-horizon is substituted); board **and** forecast must be observed/generated **and archived** (self-reported clock, and the git commit time of the capture /
-forecast file as an independent clock) at or before the checkpoint; side-specific ask (NO = 1 - YES bid, size = YES bid size), displayed size >= order,
-sampled-order-book conflict blocks (`DEPTH_CONFLICT_ORDERBOOK`), 1 cent slippage, whole-order cent-rounded fee in the *entry* EV as well as in settlement;
-one expression per thesis; one global chronological ledger (player-game, team-game, game, game notional, day notional, thesis) that is never reset;
-settlement is the paper system's (Kalshi result, DNP at the scalar / last fair price, fee not refunded).
+Rules of the executable portfolio (unchanged from v1): one checkpoint per game (a missing / stale / after-checkpoint / not-yet-archived board is `NO_TRADE` for the whole
+game); side-specific ask (NO = 1 - YES bid, size = YES bid size), displayed size >= order, sampled-order-book conflict blocks (`DEPTH_CONFLICT_ORDERBOOK`), 1 cent
+slippage, whole-order cent-rounded fee in the *entry* EV as well as in settlement; one expression per thesis; one global chronological ledger that is never reset;
+settlement is the paper system's (Kalshi result, DNP at the scalar / last fair price, fee not refunded). Evidence minimums stay 200 decisions / 40 games with a
+positive lower bound under both game- and player-game-clustered bootstraps; JRM's 20-game gate is tracked separately and decided by PR #45's script.
+
+## Sealed pre-tip ledger (`nba/paper/exec_seal.py`, `.github/workflows/exec-shadow-seal.yml`)
+**What a seal is.** A read-only job runs after a game's T-60 archive cut-off + 6 minutes (capture ticks reach the capture branch ~3.4 minutes after observation) and
+at least 10 minutes before tip, evaluates the game with the frozen rules **from the raw archives, not from upstream paper-decision rows**, and appends an immutable seal to
+its own branch `exec-shadow-seals` (the only branch it writes; additions only, enforced by `guard_diff`). A seal records: strategy id, protocol sha256, code sha and
+dirtiness, ref/event/run id, data refs, the market tick (observed time, commit time, gap) and the forecast ids with commit times, the decision and reasons of **every**
+candidate side (hashed file), the selected decisions with prices and sizes, the exposure ledger before/after, the computation time and source hashes. Games with no board,
+no forecasts, a late board commit or no tradeable contract are sealed `NO_TRADE` with the reason; a game whose window closes unsealed gets a `MISSED` marker, a red run and
+an alert issue (`nba-exec-shadow-alert`) and is **never sealed late as if on time**. Games whose window opened before the ledger was first enabled are `BEFORE_ENABLED`.
+
+**What counts** (`verify_seal`, offline, post-game): body and candidate-file hashes match; protocol sha256/version match; computed inside
+[start, tip - 10 min] and not before the window opened; the seal commit's independent git commit time on the ledger branch is not before the computation and not after the
+deadline; code sha reachable from the default branch (a pull-request or branch run can never be counted); protocol file committed on the default branch before the start;
+independent clocks recorded; not a dry run. Anything else is listed with its reason and is uncounted. **Postgame, `exec_seal.evaluate` joins the paper settlement
+(Kalshi result first, box score second, DNP at the fair price) to the counted sealed trades and never recomputes a selection**; every scheduled game appears as
+SEALED_COUNTED / SEALED_UNCOUNTED / MISSED / NO_SEAL_RECORD / NOT_DUE.
+
+**Dress rehearsal on real data (not evidence).** Running the sealer in `--dry-run` at simulated pre-tip times against the real archives reproduces the reconstruction without
+reading any upstream decision row: BOS@DET `NO_TRADE` (board committed 18:02:15Z > 18:00Z), NYK@PHI `NO_TRADE` (gate/quality/depth), OKC@SAS **the same 3 contracts at the same prices**
+(`results/issue53/dress_rehearsal/`). That agreement is a consistency check of the sealer, not a result.
+
+**Cadence, cost and reliability.** Cron every 5 minutes during UTC 16:00-03:55 (season months): each run is a ~20-30 s *plan* (schedule snapshot + ledger, a blobless
+history fetch of the capture branch); boards and forecasts are mounted only when a window is open, then the seal step takes ~10 s of compute. A 44-minute window gives ~9
+attempts per game; concurrency serialises runs and the helper is idempotent per game. Residual risk, stated plainly: GitHub's scheduler is not a clock (the repo's own notes record
+hours of missing cron delivery on opening day). The design is therefore fail-closed: a missed window is uncounted, loud, and recorded, never papered over. I did not touch the
+ticker; if you later want stronger delivery, the existing ticker pattern (self-renewing job) can dispatch `workflow_dispatch` of this workflow without changing the study.
+Expected loss of games to archive lag: with ticks every 5-15 minutes and ~3.4 minutes lag, the last tick before T-60 is committed in time only when it was observed more
+than ~3.4 minutes before the checkpoint, so a sizeable share of games will be `NO_TRADE` by construction (1 of 3 on opening night). That slows the 200-decision / 40-game
+target and is the price of the strict rule; every seal records the tick gap and commit margin so this can be quantified without any change to the rule.
+
+**Safe proposed cadence.** (1) Merge only on your approval; the first live run stamps `ENABLED_UTC`. (2) 2026-10-22..23: burn-in (seals are produced and verified but, by the
+start rule, uncounted). (3) Run `python -m nba.paper.study53 --seals <ledger checkout> --context ... --code-repo ...` any morning for the daily page; weekly for the report.
+(4) Before 2026-10-24T06:00Z confirm in the burn-in that games show SEALED_UNCOUNTED with only BEFORE_PROSPECTIVE_START as the reason, then the start stands; otherwise amend it.
+
+## Exact JRM dry run (`nba/paper/jrm_exact.py`, `.github/workflows/jrm-exact-dryrun.yml`)
+PR #45's opt-in engine (`project_slate(minutes_engine="jrm")`) is run **in one process on one capture** (the production `stage_project` is called twice with
+`PF_NBA_MINUTES_ENGINE` set per call; same slate, availability, calibration, clock), so usage, participation, reconciliation and publisher gates are the engine's own.
+Both result sets are converted to forecast records exactly as the live pipeline does and priced on the **same Kalshi board** with the **same strict rules**; the report
+compares engine diagnostics (gate counts, teams normalised, team sum of p x minutes), the per-player minutes / P(play) table (written so it can be scored when the games
+finish), and the matched market selections contract by contract. Isolation: `contents: read` only, no secrets or push step, every data branch mounted read-only and a
+throw-away copy used, PR #45 merged only inside the runner at a pinned SHA (fails if the branch moved), runs only on manual dispatch or a PR carrying the label
+`jrm-exact-dryrun`, 40-minute timeout, never scheduled. Tests inject stub engines; guards on the workflow files are tests too.
 
 ## Findings (retrospective, descriptive; archive state `projection-data` 8ce75b5, `minutes-shadow-archive` c38f874)
 

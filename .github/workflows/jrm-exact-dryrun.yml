@@ -1,0 +1,97 @@
+name: jrm-exact-dryrun
+# Issue #53 (owner decision 3 on PR #54): EXACT frozen-vs-JRM comparison through the FULL downstream projection engine. ISOLATED, RESEARCH ONLY, bounded.
+#   * `contents: read` only. No secrets, no push step, no issue/comment step. Every data branch is mounted read-only and the pipeline works on a throw-away COPY of
+#     projection-data (nba.live.run.prepare_archive(dry_run=True)); nothing is written to projection-data, data-archive, minutes-shadow-archive or any other branch.
+#   * The JRM engine is PR #45's opt-in `PF_NBA_MINUTES_ENGINE=jrm` at a PINNED SHA, merged only inside this runner's checkout (never pushed). No production default is switched;
+#     #45 and #47 are not merged or promoted; the live ticker, collector and scheduled projection-foundation workflow are untouched.
+#   * One capture, two engines: frozen and jrm are projected in ONE process from the same slate / availability / calibration / clock and priced on the SAME Kalshi board with the
+#     SAME strict rules (nba/paper/jrm_exact.py). Output: job summary + artifact. Cost: one run of the same size as the existing projection-foundation PR dry-run (<= 40 min).
+#   * Triggers: manual dispatch, or a pull request carrying the label `jrm-exact-dryrun` (remove the label to stop further runs). Never scheduled.
+on:
+  workflow_dispatch:
+    inputs:
+      pr45_sha:
+        description: "pinned head SHA of draft PR #45 (claude/nba-minutes-jrm); the run fails if the branch moved"
+        default: "e19f8dcff9a4e0b0b9f55f9703d08119ff25bc2f"
+      window_hours:
+        description: "projection window in hours after now"
+        default: "30"
+  pull_request:
+    types: [labeled, synchronize]
+    paths:
+      - ".github/workflows/jrm-exact-dryrun.yml"
+      - "research/projection_foundation/nba/paper/jrm_exact.py"
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash -eo pipefail {0}
+
+env:
+  PF_DIR: research/projection_foundation
+  PY: "3.13"
+  PIP_PINS: "numpy==2.5.3 pandas==3.0.5 scipy==1.18.1 scikit-learn==1.9.1 lightgbm==4.7.0 pyarrow==26.0.0 pytest==9.1.1 pyyaml==6.0.1 httpx==0.28.1 pypdf==6.17.0 pydantic==2.13.5 orjson==3.13.0"
+  PR45_SHA_DEFAULT: "e19f8dcff9a4e0b0b9f55f9703d08119ff25bc2f"
+
+concurrency:
+  group: jrm-exact-dryrun-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dryrun:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'jrm-exact-dryrun')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Merge draft PR #45 at the pinned SHA (inside this runner only; never pushed)
+        env:
+          PIN: ${{ github.event.inputs.pr45_sha }}
+        run: |
+          PIN="${PIN:-$PR45_SHA_DEFAULT}"
+          git fetch -q origin claude/nba-minutes-jrm
+          HEAD45=$(git rev-parse FETCH_HEAD)
+          echo "PR #45 head: $HEAD45 (pinned: $PIN)"
+          if [ "$HEAD45" != "$PIN" ]; then echo "::error::draft PR #45 moved since it was pinned; re-pin explicitly (the exact run must be reproducible)"; exit 1; fi
+          git -c user.email=ci@local -c user.name=ci merge --no-edit --no-ff "$PIN"
+          echo "JRM_PR45_SHA=$PIN" >> "$GITHUB_ENV"
+          git log --oneline -3
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ env.PY }}" }
+      - name: Install (pinned to the versions the study and these tests ran on)
+        run: |
+          pip install -q $PIP_PINS
+          pip install -q -e . --no-deps
+      - name: Cache the ESPN box-score mirror
+        uses: actions/cache@v4
+        with:
+          path: research/projection_foundation/.cache/hoopr
+          key: pf-nba-hoopr-${{ github.run_id }}
+          restore-keys: pf-nba-hoopr-
+      - name: Mount the data branches (read-only copies)
+        run: bash $PF_DIR/scripts/nba_live_ci.sh mount "$RUNNER_TEMP/m" dry
+      - name: Exact dry run (capture once, project frozen and jrm, price both on one board)
+        working-directory: research/projection_foundation
+        env:
+          WIN: ${{ github.event.inputs.window_hours }}
+        run: |
+          python -m nba.paper.jrm_exact --archive "$RUNNER_TEMP/m/projection-data" --context "$RUNNER_TEMP/m/data-archive" --market "$RUNNER_TEMP/m/data-archive" \
+            --pit "$RUNNER_TEMP/m/pit" --shadow "$RUNNER_TEMP/m/shadow" --out "$RUNNER_TEMP/jrm_exact" --window-hours "${WIN:-96}"
+      - name: Isolation check (the mounted branches must be unchanged)
+        run: |
+          for d in projection-data data-archive shadow pit; do
+            if [ -d "$RUNNER_TEMP/m/$d" ] && [ -n "$(git -C "$RUNNER_TEMP/m/$d" status --porcelain 2>/dev/null | grep -v '^??' || true)" ]; then echo "::error::$d was modified"; exit 1; fi
+          done
+          echo "mounted branches unchanged"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jrm-exact-dryrun-${{ github.run_id }}
+          path: ${{ runner.temp }}/jrm_exact
+          retention-days: 30
+          if-no-files-found: ignore

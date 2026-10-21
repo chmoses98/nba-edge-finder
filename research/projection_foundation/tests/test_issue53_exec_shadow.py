@@ -2,6 +2,7 @@
 
 World = tests/issue53_synth.py: real paper-engine decisions on synthetic boards and forecasts. Nothing here is real data or a claim about edges."""
 import copy
+import json
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -52,18 +53,33 @@ def sel(ctx, rows=None, **kw):
 
 
 # ------------------------------------------------------------------------------------------------------------------ protocol
+V1_SHA = "4b6d8fe6bae932504cbac6bbc8f9e75f5a382977447790693cff24a30b97cb56"
+
+
 def test_original_protocol_is_pinned_and_the_new_study_has_its_own_ids(ctx):
     ok, why = X.base_protocol_ok(ctx["study"])
     assert ok, why
     s = ctx["study"]
-    assert not set(s["strategies"]) & set(S.STRATEGIES)                              # new identifiers only: V1 is never reused or modified
-    assert s["checkpoint"]["horizon"] == "T-60" and s["checkpoint"]["allowed_decision_modes"] == ["asof_replay"]
-    assert utc(s["prospective_start_utc"]) > utc(s["declared_utc"])                  # the start is after the protocol is recorded
+    assert s["version"] == "2.0.0" and not set(s["strategies"]) & set(S.STRATEGIES)               # new identifiers only: V1 is never reused or modified
+    assert s["checkpoint"]["horizon"] == "T-60" and s["checkpoint"]["prospective_decision_modes"] == ["sealed_pretip_asof"]
+    assert "asof_replay" in s["checkpoint"]["allowed_decision_modes"] and "asof_replay" not in s["checkpoint"]["prospective_decision_modes"]
+    assert utc(s["prospective_start_utc"]) > utc(s["declared_utc"]) and s["prospective_start_utc"] > "2026-10-22T06:00:00Z"        # a NEW, later start
     assert s["evidence"]["min_decisions"] == 200 and s["evidence"]["min_games"] == 40
     strict = CFG.load()["strategies"]["PF_EDGE_STRICT_V1"]
     mine = s["strategies"][X.STRATEGY]
     for k in ("min_ev_net", "min_p_play", "max_spread", "gate_statuses", "quality_required"):
         assert mine[k] == strict[k]                                                   # thresholds copied verbatim, never tuned
+
+
+def test_the_superseded_protocol_is_preserved_byte_for_byte(ctx):
+    import hashlib
+    raw = X.STUDY_V1_PATH.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == V1_SHA == ctx["study"]["supersedes"]["sha256"]
+    v1 = json.loads(raw)
+    assert v1["version"] == "1.1.0" and v1["prospective_start_utc"] == "2026-10-22T06:00:00Z" and "sealing" not in v1
+    for k in ("min_ev_net", "min_p_play", "max_spread", "gate_statuses"):
+        assert v1["strategies"][X.STRATEGY][k] == ctx["study"]["strategies"][X.STRATEGY][k]            # selection rules did not change between versions
+    assert "strict T-60 archive cutoff" in ctx["study"]["supersedes"]["unchanged"]
 
 
 def test_changed_base_protocol_is_detected(ctx, monkeypatch):
@@ -320,31 +336,25 @@ def test_dnp_is_settled_at_the_fair_price_not_as_a_no_and_not_fee_free(ctx):
 
 
 # ------------------------------------------------------------------------------------------------------------------ metrics / evidence labels
-def test_prospective_and_retrospective_are_separated_and_never_mixed(ctx):
-    out = sel(ctx, clocks=OK_CLOCKS)
-    pops = X.split_populations(out)
-    assert {c["game_id"] for c in pops["retrospective_descriptive"]} == {"espn:7001"}
-    assert {c["game_id"] for c in pops["prospective"]} == {"espn:7002"}
-
-
-def test_prospective_fails_closed_without_independent_clocks_and_for_late_computation(ctx):
-    no_clocks = sel(ctx)                                                                  # clocks=None: nothing can be prospective
-    assert not any(c["prospective"] for c in no_clocks) and not any(c["independent_clocks_checked"] for c in no_clocks)
-    assert not any(c["prospective"] for c in sel(ctx, clocks={}))                         # an empty clock dict is not proof either
-    assert not any(c["prospective"] for c in sel(ctx, clocks={"board_commit": EarlyClocks()}))      # both clocks are needed
-    # a replay of a prospective game that was COMPUTED after the tip (result possibly known) or before the frozen start is never prospective
+def test_a_reconstruction_is_never_prospective_however_it_is_run(ctx):
+    for clocks in (None, OK_CLOCKS, {}, {"board_commit": EarlyClocks()}):
+        out = sel(ctx, clocks=clocks)
+        assert not any(c["prospective"] for c in out) and X.split_populations(out)["prospective"] == []
+        assert all(c["origin"] == "reconstruction" for c in out)
+    # upstream pre-tip decided_utc after the frozen start does NOT make a reconstructed new-strategy selection prospective (owner review of PR #54)
+    study = copy.deepcopy(ctx["study"])
+    study["prospective_start_utc"] = "2026-10-22T00:00:00Z"
     g2 = [c for c in ctx["t60"] if c["game_id"] == "espn:7002"][0]
-    base_row = {k: v for k, v in g2.items()}
-    start = X._ts(ctx["study"]["prospective_start_utc"])
-    late = X.prepare({**{k: v for k, v in ctx["all_rows"][0].items()}, **{"game_start_utc": iso(g2["tip"]), "as_of_utc": iso(g2["as_of"]), "decided_utc": iso(g2["tip"] + timedelta(hours=3))}}, ctx["study"], ctx["base"])
-    early = X.prepare({**{k: v for k, v in ctx["all_rows"][0].items()}, **{"game_start_utc": iso(g2["tip"]), "as_of_utc": iso(g2["as_of"]), "decided_utc": iso(start - timedelta(hours=1))}}, ctx["study"], ctx["base"])
-    ok = X.prepare({**{k: v for k, v in ctx["all_rows"][0].items()}, **{"game_start_utc": iso(g2["tip"]), "as_of_utc": iso(g2["as_of"]), "decided_utc": iso(g2["tip"] - timedelta(minutes=30))}}, ctx["study"], ctx["base"])
-    assert (late["prospective"], early["prospective"], ok["prospective"]) == (False, False, True) and late["computed_before_tip"] is False
-    assert base_row["prospective"] is True
+    start = X._ts(study["prospective_start_utc"])
+    for decided in (g2["tip"] - timedelta(minutes=30), g2["tip"] + timedelta(hours=3), start + timedelta(hours=1)):
+        row = X.prepare({**ctx["all_rows"][0], "game_start_utc": iso(g2["tip"]), "as_of_utc": iso(g2["as_of"]), "decided_utc": iso(decided)}, study, ctx["base"])
+        assert row["prospective"] is False
 
 
 def test_sample_labels_never_claim_value_below_the_minimums(ctx):
     out = sel(ctx, clocks=OK_CLOCKS)
+    for c in out:
+        c["prospective"] = c["game_id"] == "espn:7002"                                      # what a VERIFIED SEAL does; reconstruction itself never sets it
     m = X.portfolio_metrics(out, ctx["study"], label="all", clocks_verified=True)
     assert m["status"] == "OK" and m["evidence_status"]["label"] == "INSUFFICIENT_SAMPLE"
     assert m["evidence_status"]["have"] == {"decisions": 2, "games": 1}                   # only the PROSPECTIVE settled decisions (game 7002) are counted

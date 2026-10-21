@@ -24,6 +24,7 @@ import pandas as pd
 from . import attribution as A
 from . import config as CFG
 from . import evaluate as E
+from . import exec_seal as SL
 from . import exec_shadow as X
 from . import jrm_matched as J
 from . import markets as MK
@@ -89,7 +90,9 @@ def build_clocks(archive: str, git_repo: str | None, board_ref: str, forecast_re
 
 
 def run(archive: str, msa: str | None, out: str, attribution_day: str = "2026-10-20", *, git_repo: str | None = None, projection_ref: str | None = None,
-        msa_ref: str | None = None, now: datetime | None = None, board_ref: str = "origin/data-archive", forecast_ref: str = "origin/projection-data") -> dict[str, Any]:
+        msa_ref: str | None = None, now: datetime | None = None, board_ref: str = "origin/data-archive", forecast_ref: str = "origin/projection-data",
+        seals: str | None = None, context: str | None = None, market: str | None = None, code_repo: str | None = None,
+        default_branch_ref: str = "origin/main") -> dict[str, Any]:
     os.makedirs(out, exist_ok=True)
     study, base = X.load_study(), CFG.load()
     ok, why = X.base_protocol_ok(study)
@@ -121,7 +124,19 @@ def run(archive: str, msa: str | None, out: str, attribution_day: str = "2026-10
                          "prospective_start_utc": study["prospective_start_utc"], "declared_utc": study["declared_utc"], "data_integrity": _num(D.quality),
                          "independent_clocks": clock_info}
     cv = clocks is not None
-    B["prospective"] = X.portfolio_metrics(pops["prospective"], study, label="prospective", clocks_verified=cv) if pops["prospective"] else {"status": "NO_DATA", "reason": f"no decision instants at or after {study['prospective_start_utc']} in the archive yet", "label": "prospective"}
+    # PROSPECTIVE evidence is ONLY the verified sealed pre-tip ledger. A reconstruction (everything below) is never prospective, however late or early it is run.
+    if seals:
+        sched = SL.schedule_games(context, now, lookback_h=24 * 21, horizon_h=48) if context else None
+        ev = SL.evaluate(seals, archive, market, now, study, base, code_repo=code_repo, default_branch_ref=default_branch_ref, schedule=sched)
+        B["sealed_ledger"] = _num({k: v for k, v in ev.items() if k != "counted_trades"} | {"counted_trades": ev["counted_trades"]})
+        B["prospective"] = ev["metrics"] if ev["metrics"].get("status") == "OK" else {"status": "NO_DATA", "reason": "no COUNTED sealed decision yet", "label": "prospective",
+                                                                                 "game_counts": ev["game_counts"]}
+        B["prospective"]["source"] = "sealed_pretip_ledger"
+        prog = {"prospective_decisions": ev["progress"]["counted_trades_settled"], "prospective_games": ev["progress"]["counted_games_traded"]}
+    else:
+        B["sealed_ledger"] = {"status": "NOT_SUPPLIED"}
+        B["prospective"] = {"status": "NO_DATA", "reason": "no sealed pre-tip ledger supplied; reconstruction can never be prospective", "label": "prospective"}
+        prog = {"prospective_decisions": 0, "prospective_games": 0}
     B["retrospective_descriptive"] = X.portfolio_metrics(pops["retrospective_descriptive"], study, label="retrospective_descriptive", clocks_verified=cv)
     if v1_unverified is not None:
         B["comparator_retrospective_without_independent_clocks"] = X.portfolio_metrics(X.split_populations(v1_unverified)["retrospective_descriptive"], study,
@@ -140,8 +155,7 @@ def run(archive: str, msa: str | None, out: str, attribution_day: str = "2026-10
                                                 "board_commit_utc", "forecast_commit_utc")}
                         for c in v1 if c["decision"] == "TRADE"])
     B["no_trade_examples"] = _num(no_trade_examples(v1))
-    B["progress_to_evidence_minimums"] = {"prospective_decisions": int(sum(1 for c in pops["prospective"] if c["decision"] == "TRADE")),
-                                          "prospective_games": int(len({c["game_id"] for c in pops["prospective"] if c["decision"] == "TRADE"})),
+    B["progress_to_evidence_minimums"] = {**prog, "counted_from": "verified sealed pre-tip ledger only",
                                           "required_decisions": study["evidence"]["min_decisions"], "required_games": study["evidence"]["min_games"],
                                           "retrospective_rows_never_counted": True}
     with open(os.path.join(out, "exec_shadow.json"), "w") as f:
@@ -305,6 +319,8 @@ def _summary_tail(study: dict, B: dict, C: dict, tw: dict) -> list[str]:
     L += ["## 2. Executable fixed-checkpoint portfolio (T-60, global ledger)"]
     pro = B["prospective"]
     rt = B["retrospective_descriptive"]
+    sl = B.get("sealed_ledger") or {}
+    L.append("- sealed pre-tip ledger (the ONLY source of prospective evidence): " + (f"{json.dumps(sl.get('game_counts'))}" if sl.get("game_counts") is not None else f"**{sl.get('status', 'NOT_SUPPLIED')}**"))
     L.append(f"- prospective: **{pro.get('status')}**" + (f" - {pro['reason']}" if pro.get("reason") else "") if pro.get("status") != "OK" else f"- prospective: {json.dumps(pro.get('overall'))}")
     rt = B["retrospective_descriptive"]
     if rt.get("status") == "OK":
@@ -329,8 +345,8 @@ def _summary_tail(study: dict, B: dict, C: dict, tw: dict) -> list[str]:
     L.append(f"- independent clocks: {json.dumps(B['independent_clocks'])}")
     L.append("- games: " + ", ".join(f"{g['game_id'][-3:]}={g['status']}" for g in B["games"]))
     pg = B["progress_to_evidence_minimums"]
-    L.append(f"- progress to the evidence minimum: {pg['prospective_decisions']}/{pg['required_decisions']} prospective decisions, {pg['prospective_games']}/{pg['required_games']} games (retrospective rows never count).")
-    L += ["", "## 3. Matched JRM what-if"]
+    L.append(f"- progress to the evidence minimum: {pg['prospective_decisions']}/{pg['required_decisions']} prospective decisions, {pg['prospective_games']}/{pg['required_games']} games (reconstructions never count; counted from the verified sealed ledger only).")
+    L += ["", "## 3. Matched JRM what-if (archive-scale APPROXIMATION; the exact engine comparison is the isolated dry run, see jrm-exact-dryrun)"]
     if C.get("status") != "OK":
         L.append(f"- **{C.get('status')}**: {C.get('reason')}")
     else:
@@ -355,9 +371,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--forecast-ref", default="origin/projection-data", help="git ref of the projection-data branch inside --git-repo (independent forecast archive clock)")
     ap.add_argument("--projection-ref", default=None)
     ap.add_argument("--msa-ref", default=None)
+    ap.add_argument("--seals", default=None, help="checkout of the exec-shadow-seals branch (the ONLY source of prospective evidence)")
+    ap.add_argument("--context", default=None, help="data-archive checkout with context/schedule (lists every scheduled game)")
+    ap.add_argument("--market", default=None, help="data-archive checkout with kalshi/markets* (authoritative results, closing lines)")
+    ap.add_argument("--code-repo", default=None, help="git repo that holds the default branch (code reachability of seals)")
+    ap.add_argument("--default-branch-ref", default="origin/main")
     a = ap.parse_args(argv)
     man = run(a.archive, a.msa, a.out, a.attribution_day, git_repo=a.git_repo, projection_ref=a.projection_ref, msa_ref=a.msa_ref,
-              board_ref=a.board_ref, forecast_ref=a.forecast_ref)
+              board_ref=a.board_ref, forecast_ref=a.forecast_ref, seals=a.seals, context=a.context, market=a.market, code_repo=a.code_repo,
+              default_branch_ref=a.default_branch_ref)
     print(json.dumps({"run_id": man["run_id"], "outputs": man["outputs"]}, indent=1))
     return 0
 
