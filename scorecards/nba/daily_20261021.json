@@ -44,16 +44,38 @@
  "authority": "research_only",
  "capture": {
   "availability": {
-   "coverage": null,
-   "errors": null,
-   "max_newest_age_minutes": null,
-   "official": {},
-   "official_report_game_share": null
+   "coverage": 1.0,
+   "errors": [],
+   "max_newest_age_minutes": 857.0,
+   "official": {
+    "last_modified_utc": "2026-10-21T15:30:04Z",
+    "official_explicit": 75,
+    "official_implicit": 305,
+    "report_time_utc": "2026-10-21T15:30:00Z",
+    "status": "ok",
+    "via": "nba_official_live"
+   },
+   "official_report_game_share": 1.0
   },
-  "challenger_archive": null,
-  "forecasts_archived": 24929,
+  "challenger_archive": {
+   "duplicates": 0,
+   "invalid": 0,
+   "late_rejected": 0,
+   "written": 2711
+  },
+  "forecasts_archived": 27640,
   "games": 14,
-  "incumbent": null
+  "incumbent": {
+   "duplicates": 0,
+   "games": 0,
+   "invalid": 0,
+   "late_rejected": 0,
+   "paths": [],
+   "records_built": 0,
+   "shadow_rows_read": 0,
+   "status": "ok",
+   "written": 0
+  }
  },
  "families": [
   {
@@ -439,7 +461,7 @@
    }
   }
  ],
- "generated_utc": "2026-10-21T10:57:17Z",
+ "generated_utc": "2026-10-21T15:39:16Z",
  "nba_segments": {
   "early_season_and_reconciliation": [
    {
@@ -597,6 +619,6 @@
  "sport": "NBA",
  "window": {
   "days": 7,
-  "since_utc": "2026-10-14T10:57:17Z"
+  "since_utc": "2026-10-14T15:39:16Z"
  }
 }
