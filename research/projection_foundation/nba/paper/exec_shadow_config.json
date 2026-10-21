@@ -1,0 +1,90 @@
+{
+  "config_id": "nba_exec_shadow_config",
+  "version": "1.0.0",
+  "study_id": "ISSUE53_EXEC_SHADOW_V1",
+  "issue": "chmoses98/nba-edge-finder#53",
+  "declared_utc": "2026-10-21T21:35:00Z",
+  "prospective_start_utc": "2026-10-22T06:00:00Z",
+  "authority": "research_only",
+  "notes": "Protocol of a NEW, additive, read-only study. It does not modify PF_EDGE_STRICT_V1 or paper_config.json (pinned below by sha256). Changing any value means a new version, a new config_sha and a new evaluation window. The independent timestamp of this protocol is the git push time of the commit that adds this file; a decision counts as prospective only if its decision instant is at or after prospective_start_utc AND that push time precedes prospective_start_utc. Everything computed for decision instants before prospective_start_utc (in particular the 2026-10-20 / 2026-10-21 opening games) is RETROSPECTIVE and DESCRIPTIVE: it is shown for transparency and is never counted toward the evidence minimums below.",
+  "base_protocol": {
+    "path": "research/projection_foundation/nba/paper/paper_config.json",
+    "config_id": "nba_paper_config",
+    "version": "1.0.0",
+    "sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
+    "inherits": ["quality", "execution.fee_taker_multiplier", "execution.fee_use_series_multiplier", "thesis", "game_model"],
+    "note": "quality gates (two-sided, active, top size, spread <= 0.15, price 0.03-0.97, no BLOCK gate), the fee multiplier and the thesis definitions are read from the pinned base file, not re-declared. A test fails if the base file's digest changes."
+  },
+  "checkpoint": {
+    "horizon": "T-60",
+    "minutes_before_tip": 60,
+    "allowed_decision_modes": ["asof_replay"],
+    "max_quote_age_s": 900,
+    "max_quote_age_note": "age of the board at the checkpoint (checkpoint - board_observed_utc); 900 s is the existing CLOSING_MAX_AGE_S constant of the paper system, chosen before any result was scored here and not tuned. The base 1800 s board-age gate also still applies.",
+    "board_after_checkpoint": "NO_TRADE (a board observed after the checkpoint is never used)",
+    "missing_or_stale_board": "NO_TRADE for the whole game (reason recorded per game); never replaced by another horizon, never backfilled",
+    "no_retroactive_best_horizon": true
+  },
+  "execution": {
+    "side_price_basis": "ask",
+    "slippage": 0.01,
+    "order_contracts": 1,
+    "min_displayed_size": 1.0,
+    "fee_rounding": "whole-order, round-up-to-cent taker fee (nba_edge.kalshi.fees) used BOTH for the entry decision (ev_net_exec) and for settlement",
+    "dnp_policy": "participation-aware: p_model prices the DNP leg at the decision-time mid; settlement values a DNP at the authoritative Kalshi scalar when archived, otherwise the LAST_VALID mid (flagged modeled_last_valid_mid); never a fee-free void",
+    "insufficient_displayed_depth": "the candidate is blocked (INSUFFICIENT_DEPTH) -> PASS / NO_TRADE; no partial fill is imagined and nothing is filled beyond the displayed top-of-book size"
+  },
+  "strategies": {
+    "PF_EDGE_STRICT_T60_EXEC_V1": {
+      "role": "candidate_shadow",
+      "version": "1.0.0",
+      "numeric_rules_copied_from": "PF_EDGE_STRICT_V1 v1.0.0 (verbatim values, not tuned)",
+      "min_ev_net": 0.06,
+      "ev_basis": "ev_net_exec = p_model - effective_entry - whole_order_integer_fee",
+      "quality_required": true,
+      "gate_statuses": ["PASS"],
+      "min_p_play": 0.85,
+      "max_spread": 0.06,
+      "one_per_thesis": true,
+      "rule": "one fixed pretip checkpoint per game; PASS-only; one highest-net-EV contract per thesis; global chronological exposure ledger"
+    },
+    "PF_EDGE_STRICT_T60_EXEC_JRM_V1": {
+      "role": "counterfactual_variant",
+      "version": "1.0.0",
+      "matched_to": "PF_EDGE_STRICT_T60_EXEC_V1",
+      "differs_only_in": "p_play and the conditional stat probabilities of players covered by an ELIGIBLE, matched, pre-tip JRM snapshot (minutes/participation inputs and their downstream projection); everything else (contract, side, price, size, entry time, costs, filters, exposure order, matchup context, game-level projections) is identical",
+      "downstream": "p_cond' = P(X >= k / r) from the archived frozen pmf with r = minutes_given_play_jrm / frozen_published.minutes_given_play_after_gate (the paper engine's own mean-scale convention, probability.p_ge(scale=r)); p_play' = p_play_jrm; p_model' = p_play' * p_cond' + (1 - p_play') * m_side. Rates, usage redistribution and gate status are NOT re-estimated: this is an archive-only approximation, labelled as such in every output"
+    }
+  },
+  "exposure": {
+    "max_trades_per_thesis": 1,
+    "max_trades_per_player_game": 2,
+    "max_trades_per_team_game": 3,
+    "max_trades_per_game": 8,
+    "max_notional_per_game": 100.0,
+    "max_notional_per_day": 300.0,
+    "scope": "ONE global chronological ledger across all checkpoints and games (caps are never reset between horizon snapshots or runs); positions are admitted in decision-instant order, within an instant by descending ev_net_exec; a thesis already held can never be entered again"
+  },
+  "jrm_matching": {
+    "register": "minutes-shadow-archive:eligibility/REGISTER.jsonl",
+    "rules_owner": "PR chmoses98/nba-edge-finder#45 (minutes_rebuild/archive_rules.py F1-F5). Reused through the register, not re-implemented: the eligibility verdict is the register's.",
+    "required": [
+      "register row eligible_for_prospective_scoring == true AND the game in games_eligible",
+      "file sha256 equals the register / MANIFEST sha256 (changed-tree / edited file -> reject)",
+      "archived_utc AND branch_commit_utc at least 5 minutes before the decision instant and before the tip (post-tip / late -> reject)",
+      "feed_generated_utc equals the V1 decision's forecast_generated_utc (same feed, else NO_MATCH)",
+      "version v2, allocation recorded as uniform, row pregame == true"
+    ],
+    "reject_always": ["jrm_v1/*", "jrm_v2/* (variance-weighted variant, ERRATA.md)", "any snapshot without a register row", "any reconstruction after tip"],
+    "prospective_gate": {"min_settled_games": 20, "starter_guard": "established rotation players (JRM rank <= 8, p_jrm >= 0.5): MAE(JRM) - MAE(frozen) CI upper bound < +0.25 min", "owner": "PR #45 evaluate_prospective.py (not recomputed or relaxed here; this study only tracks the game count)"},
+    "promotion": "none: no model promotion, no activation of JRM or PR #47 is possible from this study"
+  },
+  "evidence": {
+    "min_decisions": 200,
+    "min_games": 40,
+    "primary_unit": "game (cluster); secondary: player-game",
+    "value_validation_requires": "n_decisions >= 200 AND n_games >= 40 AND lower 95% bound of ROI > 0 under BOTH game-clustered and player-game-clustered bootstraps",
+    "language": "never 'edge', 'profitable' or 'validated' below the minimums; first-week results are descriptive only"
+  },
+  "no_tuning": "No threshold above was chosen or changed after looking at 2026-10-20 / 2026-10-21 results. Any optimisation is a distinct FUTURE experiment with its own preregistration, prospective start and multiple-testing discipline."
+}

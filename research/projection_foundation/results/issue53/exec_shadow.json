@@ -1,0 +1,2082 @@
+{
+ "authority": "research_only",
+ "base_protocol": {
+  "detail": "paper_config.json sha256 d96f667f9744 == pinned d96f667f9744",
+  "ok": true,
+  "sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6"
+ },
+ "board_archive_lag_s": {
+  "espn:401909088": {
+   "board_committed_utc": "2026-10-20T18:02:15Z",
+   "board_observed_utc": "2026-10-20T17:58:51Z",
+   "checkpoint_utc": "2026-10-20T18:00:00Z",
+   "committed_after_checkpoint": true,
+   "lag_s": 204.0
+  },
+  "espn:401909089": {
+   "board_committed_utc": "2026-10-20T21:58:22Z",
+   "board_observed_utc": "2026-10-20T21:54:59Z",
+   "checkpoint_utc": "2026-10-20T22:00:00Z",
+   "committed_after_checkpoint": false,
+   "lag_s": 203.0
+  },
+  "espn:401909090": {
+   "board_committed_utc": "2026-10-21T00:29:16Z",
+   "board_observed_utc": "2026-10-21T00:25:47Z",
+   "checkpoint_utc": "2026-10-21T00:30:00Z",
+   "committed_after_checkpoint": false,
+   "lag_s": 209.0
+  }
+ },
+ "comparator_retrospective_without_independent_clocks": {
+  "by_decision_mode": {
+   "asof_replay": {
+    "cash_outlay": 3.1700000000000004,
+    "hit_rate": 0.6666666666666666,
+    "n_games": 2,
+    "n_player_games": 4,
+    "n_settled": 6,
+    "n_trades": 6,
+    "roi_on_cash_outlay": 0.2618296529968454,
+    "total_net_pnl": 0.8300000000000001
+   }
+  },
+  "by_edge_bucket": {
+   "0.10-0.15": {
+    "cash_outlay": 0.6,
+    "hit_rate": 1.0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.6666666666666667,
+    "total_net_pnl": 0.4
+   },
+   "0.15-0.25": {
+    "cash_outlay": 2.5700000000000003,
+    "hit_rate": 0.6,
+    "n_games": 2,
+    "n_player_games": 4,
+    "n_settled": 5,
+    "n_trades": 5,
+    "roi_on_cash_outlay": 0.16731517509727625,
+    "total_net_pnl": 0.43
+   }
+  },
+  "by_family": {
+   "player_points": {
+    "cash_outlay": 1.9300000000000002,
+    "hit_rate": 0.5,
+    "n_games": 2,
+    "n_player_games": 4,
+    "n_settled": 4,
+    "n_trades": 4,
+    "roi_on_cash_outlay": 0.0362694300518135,
+    "total_net_pnl": 0.07000000000000006
+   },
+   "player_pra": {
+    "cash_outlay": 0.59,
+    "hit_rate": 1.0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.6949152542372882,
+    "total_net_pnl": 0.41
+   },
+   "player_threes": {
+    "cash_outlay": 0.65,
+    "hit_rate": 1.0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.5384615384615384,
+    "total_net_pnl": 0.35
+   }
+  },
+  "by_quote_age": {
+   "120-300s": {
+    "cash_outlay": 1.54,
+    "hit_rate": 0.6666666666666666,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.2987012987012987,
+    "total_net_pnl": 0.46
+   },
+   "<=120s": {
+    "cash_outlay": 1.6300000000000001,
+    "hit_rate": 0.6666666666666666,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.22699386503067484,
+    "total_net_pnl": 0.37
+   }
+  },
+  "by_side": {
+   "NO": {
+    "cash_outlay": 3.1700000000000004,
+    "hit_rate": 0.6666666666666666,
+    "n_games": 2,
+    "n_player_games": 4,
+    "n_settled": 6,
+    "n_trades": 6,
+    "roi_on_cash_outlay": 0.2618296529968454,
+    "total_net_pnl": 0.8300000000000001
+   }
+  },
+  "clv_cents": {
+   "ci95": [
+    null,
+    null
+   ],
+   "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+   "mean": 3.75,
+   "n_clusters": 2,
+   "n_obs": 6,
+   "n_settled": 6,
+   "n_valid": 6,
+   "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+   "se": null,
+   "share_positive": 0.8333333333333334,
+   "z": null
+  },
+  "computation_lag_s": {
+   "max": 3423.0,
+   "mean": 2325.5,
+   "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
+  },
+  "dnp": {
+   "n_dnp": 0,
+   "sources": {}
+  },
+  "eligible_vs_blocked": {
+   "any_block_reason": {
+    "DEPTH_CONFLICT_ORDERBOOK": 53,
+    "EV_BELOW_THRESHOLD": 1593,
+    "GATE_STATUS": 1554,
+    "INSUFFICIENT_DEPTH": 30,
+    "QUALITY_GATE:EXTREME_PRICE": 60,
+    "QUALITY_GATE:NO_SIZE": 30,
+    "QUALITY_GATE:SPREAD_WIDE": 116,
+    "SPREAD_WIDE_STRICT": 280
+   },
+   "blocked_sides": 1774,
+   "candidate_sides": 1802,
+   "eligible_not_traded_reason": {
+    "EXPOSURE_CAP:PLAYER_GAME": 2,
+    "EXPOSURE_CAP:TEAM_GAME": 6,
+    "NOT_BEST_IN_THESIS": 14
+   },
+   "eligible_sides": 28,
+   "primary_block_reason": {
+    "DEPTH_CONFLICT_ORDERBOOK": 49,
+    "ELIGIBLE": 28,
+    "EV_BELOW_THRESHOLD": 155,
+    "GATE_STATUS": 1345,
+    "QUALITY_GATE:EXTREME_PRICE": 54,
+    "QUALITY_GATE:NO_SIZE": 30,
+    "QUALITY_GATE:SPREAD_WIDE": 115,
+    "SPREAD_WIDE_STRICT": 26
+   },
+   "trades": 6
+  },
+  "evidence_status": {
+   "authority": "none; never a value claim below the minimums",
+   "have": {
+    "decisions": 6,
+    "games": 2
+   },
+   "independent_clocks_verified": false,
+   "label": "INSUFFICIENT_SAMPLE",
+   "lower_cis_game_and_player_game": [
+    null,
+    null
+   ],
+   "required": {
+    "decisions": 200,
+    "games": 40
+   }
+  },
+  "exposure_concentration": {
+   "max_trades_per_player_game": 2,
+   "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
+   "players_with_multiple_trades": 2,
+   "share_NO": 1.0,
+   "share_of_notional_by_family": {
+    "player_points": 0.6065573770491803,
+    "player_pra": 0.18688524590163932,
+    "player_threes": 0.2065573770491803
+   },
+   "share_of_notional_by_game": {
+    "espn:401909088": 0.5147540983606557,
+    "espn:401909090": 0.4852459016393442
+   },
+   "share_of_notional_by_player": {
+    "espn:4278073": 0.08852459016393442,
+    "espn:4432166": 0.36065573770491804,
+    "espn:4593803": 0.3967213114754098,
+    "espn:4684742": 0.15409836065573768
+   },
+   "share_of_notional_by_side": {
+    "NO": 0.9999999999999999
+   }
+  },
+  "independent_units": {
+   "n_decisions": 6,
+   "n_games": 2,
+   "n_player_games": 4,
+   "n_settled_decisions": 6,
+   "n_theses": 6,
+   "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
+  },
+  "label": "retrospective_descriptive_no_clock_check",
+  "n_candidate_sides": 1802,
+  "note": "same rules WITHOUT requiring the board / forecast to have been committed to the data branches before the checkpoint: shows what the independent-clock rule removes",
+  "overall": {
+   "cash_outlay": 3.1700000000000004,
+   "hit_rate": 0.6666666666666666,
+   "n_games": 2,
+   "n_player_games": 4,
+   "n_settled": 6,
+   "n_trades": 6,
+   "roi_on_cash_outlay": 0.2618296529968454,
+   "total_net_pnl": 0.8300000000000001
+  },
+  "roi": {
+   "fees_per_contract_mean": 0.02,
+   "max_drawdown": {
+    "final_equity": 0.8300000000000001,
+    "max_drawdown": 0.49,
+    "n": 6,
+    "note": "dollars, 1 contract per position, ordered by tip time (settlement order); a path statistic of a handful of games, not a risk estimate"
+   },
+   "mean_net_pnl_per_contract": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.13833333333333334,
+    "n_clusters": 2,
+    "n_obs": 6,
+    "se": null,
+    "z": null
+   },
+   "on_cash_outlay_effective_entry_plus_fee": {
+    "game_clustered": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "n_clusters": 2,
+     "n_obs": 6,
+     "ratio": 0.2618296529968454
+    },
+    "player_game_clustered": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "n_clusters": 4,
+     "n_obs": 6,
+     "ratio": 0.2618296529968454
+    }
+   },
+   "on_quoted_price_scorecard_compatible": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "n_clusters": 2,
+    "n_obs": 6,
+    "ratio": 0.2775919732441472
+   },
+   "slippage_per_contract": 0.01
+  },
+  "status": "OK",
+  "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1"
+ },
+ "contemporaneous_crosscheck": {
+  "games": {
+   "espn:401909088": {
+    "minutes_to_tip": 40.8,
+    "nearest_run_as_of": "2026-10-20T18:19:13Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909089": {
+    "minutes_to_tip": 85.2,
+    "nearest_run_as_of": "2026-10-20T21:34:50Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909090": {
+    "minutes_to_tip": 92.1,
+    "nearest_run_as_of": "2026-10-20T23:57:56Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909091": {
+    "minutes_to_tip": 106.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909092": {
+    "minutes_to_tip": 256.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909093": {
+    "minutes_to_tip": 1516.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909094": {
+    "minutes_to_tip": 1666.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909834": {
+    "minutes_to_tip": 76.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909835": {
+    "minutes_to_tip": 76.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909836": {
+    "minutes_to_tip": 106.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909837": {
+    "minutes_to_tip": 106.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909838": {
+    "minutes_to_tip": 136.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909839": {
+    "minutes_to_tip": 136.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909840": {
+    "minutes_to_tip": 166.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909841": {
+    "minutes_to_tip": 256.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   },
+   "espn:401909842": {
+    "minutes_to_tip": 286.4,
+    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
+    "within_window": false
+   }
+  },
+  "status": "NO_DATA",
+  "window_minutes_to_tip": [
+   45.0,
+   75.0
+  ]
+ },
+ "contemporaneous_runs_by_game": [
+  {
+   "as_of_utc": "2026-10-19T20:10:43Z",
+   "dist_to_checkpoint_min": 1309.3,
+   "game_id": "espn:401909088",
+   "minutes_to_tip": 1369.3,
+   "n": 416
+  },
+  {
+   "as_of_utc": "2026-10-19T21:30:00Z",
+   "dist_to_checkpoint_min": 1230.0,
+   "game_id": "espn:401909088",
+   "minutes_to_tip": 1290.0,
+   "n": 416
+  },
+  {
+   "as_of_utc": "2026-10-19T23:22:08Z",
+   "dist_to_checkpoint_min": 1117.9,
+   "game_id": "espn:401909088",
+   "minutes_to_tip": 1177.9,
+   "n": 416
+  },
+  {
+   "as_of_utc": "2026-10-19T23:45:26Z",
+   "dist_to_checkpoint_min": 1094.6,
+   "game_id": "espn:401909088",
+   "minutes_to_tip": 1154.6,
+   "n": 416
+  },
+  {
+   "as_of_utc": "2026-10-20T00:37:53Z",
+   "dist_to_checkpoint_min": 1042.1,
+   "game_id": "espn:401909088",
+   "minutes_to_tip": 1102.1,
+   "n": 416
+  },
+  {
+   "as_of_utc": "2026-10-20T02:10:51Z",
+   "dist_to_checkpoint_min": 949.1,
+   "game_id": "espn:401909088",
+   "minutes_to_tip": 1009.1,
+   "n": 416
+  },
+  {
+   "as_of_utc": "2026-10-20T16:32:54Z",
+   "dist_to_checkpoint_min": 87.1,
+   "game_id": "espn:401909088",
+   "minutes_to_tip": 147.1,
+   "n": 490
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 19.200000000000003,
+   "game_id": "espn:401909088",
+   "minutes_to_tip": 40.8,
+   "n": 576
+  },
+  {
+   "as_of_utc": "2026-10-19T20:10:43Z",
+   "dist_to_checkpoint_min": 1549.3,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 1609.3,
+   "n": 520
+  },
+  {
+   "as_of_utc": "2026-10-19T21:30:00Z",
+   "dist_to_checkpoint_min": 1470.0,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 1530.0,
+   "n": 518
+  },
+  {
+   "as_of_utc": "2026-10-19T23:22:08Z",
+   "dist_to_checkpoint_min": 1357.9,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 1417.9,
+   "n": 520
+  },
+  {
+   "as_of_utc": "2026-10-19T23:45:26Z",
+   "dist_to_checkpoint_min": 1334.6,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 1394.6,
+   "n": 520
+  },
+  {
+   "as_of_utc": "2026-10-20T00:37:53Z",
+   "dist_to_checkpoint_min": 1282.1,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 1342.1,
+   "n": 520
+  },
+  {
+   "as_of_utc": "2026-10-20T02:10:51Z",
+   "dist_to_checkpoint_min": 1189.2,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 1249.2,
+   "n": 520
+  },
+  {
+   "as_of_utc": "2026-10-20T16:32:54Z",
+   "dist_to_checkpoint_min": 327.1,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 387.1,
+   "n": 530
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 220.8,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 280.8,
+   "n": 608
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 154.2,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 214.2,
+   "n": 608
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 25.200000000000003,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 85.2,
+   "n": 614
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 41.9,
+   "game_id": "espn:401909089",
+   "minutes_to_tip": 18.1,
+   "n": 618
+  },
+  {
+   "as_of_utc": "2026-10-19T20:10:43Z",
+   "dist_to_checkpoint_min": 1699.3,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 1759.3,
+   "n": 414
+  },
+  {
+   "as_of_utc": "2026-10-19T21:30:00Z",
+   "dist_to_checkpoint_min": 1620.0,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 1680.0,
+   "n": 414
+  },
+  {
+   "as_of_utc": "2026-10-19T23:22:08Z",
+   "dist_to_checkpoint_min": 1507.9,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 1567.9,
+   "n": 414
+  },
+  {
+   "as_of_utc": "2026-10-19T23:45:26Z",
+   "dist_to_checkpoint_min": 1484.6,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 1544.6,
+   "n": 414
+  },
+  {
+   "as_of_utc": "2026-10-20T00:37:53Z",
+   "dist_to_checkpoint_min": 1432.1,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 1492.1,
+   "n": 414
+  },
+  {
+   "as_of_utc": "2026-10-20T02:10:51Z",
+   "dist_to_checkpoint_min": 1339.2,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 1399.2,
+   "n": 414
+  },
+  {
+   "as_of_utc": "2026-10-20T16:32:54Z",
+   "dist_to_checkpoint_min": 477.1,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 537.1,
+   "n": 420
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 370.8,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 430.8,
+   "n": 594
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 304.1,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 364.1,
+   "n": 604
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 175.2,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 235.2,
+   "n": 608
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 108.1,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 168.1,
+   "n": 608
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 32.099999999999994,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 92.1,
+   "n": 620
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 52.7,
+   "game_id": "espn:401909090",
+   "minutes_to_tip": 7.3,
+   "n": 620
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 1690.8,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 1750.8,
+   "n": 520
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 1624.2,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 1684.2,
+   "n": 516
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1495.2,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 1555.2,
+   "n": 524
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1428.0,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 1488.0,
+   "n": 534
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1352.1,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 1412.1,
+   "n": 538
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1267.3,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 1327.3,
+   "n": 556
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 410.6,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 470.6,
+   "n": 578
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 253.60000000000002,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 313.6,
+   "n": 618
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 46.400000000000006,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 106.4,
+   "n": 630
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1645.2,
+   "game_id": "espn:401909092",
+   "minutes_to_tip": 1705.2,
+   "n": 322
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1578.0,
+   "game_id": "espn:401909092",
+   "minutes_to_tip": 1638.0,
+   "n": 322
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1502.1,
+   "game_id": "espn:401909092",
+   "minutes_to_tip": 1562.1,
+   "n": 336
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1417.3,
+   "game_id": "espn:401909092",
+   "minutes_to_tip": 1477.3,
+   "n": 344
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 560.6,
+   "game_id": "espn:401909092",
+   "minutes_to_tip": 620.6,
+   "n": 388
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 403.6,
+   "game_id": "espn:401909092",
+   "minutes_to_tip": 463.6,
+   "n": 432
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 196.39999999999998,
+   "game_id": "espn:401909092",
+   "minutes_to_tip": 256.4,
+   "n": 514
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 1663.5,
+   "game_id": "espn:401909093",
+   "minutes_to_tip": 1723.5,
+   "n": 574
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 1456.4,
+   "game_id": "espn:401909093",
+   "minutes_to_tip": 1516.4,
+   "n": 594
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 1606.4,
+   "game_id": "espn:401909094",
+   "minutes_to_tip": 1666.4,
+   "n": 374
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 1660.8,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 1720.8,
+   "n": 526
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 1594.2,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 1654.2,
+   "n": 524
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1465.2,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 1525.2,
+   "n": 518
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1398.0,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 1458.0,
+   "n": 540
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1322.1,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 1382.1,
+   "n": 592
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1237.3,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 1297.3,
+   "n": 608
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 380.6,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 440.6,
+   "n": 642
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 223.60000000000002,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 283.6,
+   "n": 654
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 16.400000000000006,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 76.4,
+   "n": 654
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 1660.8,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 1720.8,
+   "n": 426
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 1594.2,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 1654.2,
+   "n": 422
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1465.2,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 1525.2,
+   "n": 436
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1398.0,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 1458.0,
+   "n": 442
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1322.1,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 1382.1,
+   "n": 480
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1237.3,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 1297.3,
+   "n": 478
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 380.6,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 440.6,
+   "n": 534
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 223.60000000000002,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 283.6,
+   "n": 588
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 16.400000000000006,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 76.4,
+   "n": 606
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 1690.8,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 1750.8,
+   "n": 348
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 1624.2,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 1684.2,
+   "n": 350
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1495.2,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 1555.2,
+   "n": 352
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1428.0,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 1488.0,
+   "n": 358
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1352.1,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 1412.1,
+   "n": 362
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1267.3,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 1327.3,
+   "n": 422
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 410.6,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 470.6,
+   "n": 438
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 253.60000000000002,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 313.6,
+   "n": 508
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 46.400000000000006,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 106.4,
+   "n": 520
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 1690.8,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 1750.8,
+   "n": 438
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 1624.2,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 1684.2,
+   "n": 424
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1495.2,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 1555.2,
+   "n": 432
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1428.0,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 1488.0,
+   "n": 452
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1352.1,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 1412.1,
+   "n": 498
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1267.3,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 1327.3,
+   "n": 506
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 410.6,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 470.6,
+   "n": 550
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 253.60000000000002,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 313.6,
+   "n": 618
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 46.400000000000006,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 106.4,
+   "n": 662
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 1720.8,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 1780.8,
+   "n": 408
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 1654.2,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 1714.2,
+   "n": 416
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1525.2,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 1585.2,
+   "n": 418
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1458.0,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 1518.0,
+   "n": 432
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1382.1,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 1442.1,
+   "n": 426
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1297.3,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 1357.3,
+   "n": 458
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 440.6,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 500.6,
+   "n": 494
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 283.6,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 343.6,
+   "n": 558
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 76.4,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 136.4,
+   "n": 594
+  },
+  {
+   "as_of_utc": "2026-10-20T18:19:13Z",
+   "dist_to_checkpoint_min": 1720.8,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 1780.8,
+   "n": 424
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 1654.2,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 1714.2,
+   "n": 454
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1525.2,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 1585.2,
+   "n": 464
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1458.0,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 1518.0,
+   "n": 478
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1382.1,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 1442.1,
+   "n": 478
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1297.3,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 1357.3,
+   "n": 476
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 440.6,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 500.6,
+   "n": 570
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 283.6,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 343.6,
+   "n": 632
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 76.4,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 136.4,
+   "n": 692
+  },
+  {
+   "as_of_utc": "2026-10-20T19:25:51Z",
+   "dist_to_checkpoint_min": 1684.2,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 1744.2,
+   "n": 478
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1555.2,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 1615.2,
+   "n": 486
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1488.0,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 1548.0,
+   "n": 492
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1412.1,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 1472.1,
+   "n": 504
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1327.3,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 1387.3,
+   "n": 556
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 470.6,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 530.6,
+   "n": 560
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 313.6,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 373.6,
+   "n": 620
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 106.4,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 166.4,
+   "n": 634
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1645.2,
+   "game_id": "espn:401909841",
+   "minutes_to_tip": 1705.2,
+   "n": 470
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1578.0,
+   "game_id": "espn:401909841",
+   "minutes_to_tip": 1638.0,
+   "n": 472
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1502.1,
+   "game_id": "espn:401909841",
+   "minutes_to_tip": 1562.1,
+   "n": 462
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1417.3,
+   "game_id": "espn:401909841",
+   "minutes_to_tip": 1477.3,
+   "n": 510
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 560.6,
+   "game_id": "espn:401909841",
+   "minutes_to_tip": 620.6,
+   "n": 542
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 403.6,
+   "game_id": "espn:401909841",
+   "minutes_to_tip": 463.6,
+   "n": 558
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 196.39999999999998,
+   "game_id": "espn:401909841",
+   "minutes_to_tip": 256.4,
+   "n": 616
+  },
+  {
+   "as_of_utc": "2026-10-20T21:34:50Z",
+   "dist_to_checkpoint_min": 1675.2,
+   "game_id": "espn:401909842",
+   "minutes_to_tip": 1735.2,
+   "n": 366
+  },
+  {
+   "as_of_utc": "2026-10-20T22:41:57Z",
+   "dist_to_checkpoint_min": 1608.0,
+   "game_id": "espn:401909842",
+   "minutes_to_tip": 1668.0,
+   "n": 372
+  },
+  {
+   "as_of_utc": "2026-10-20T23:57:56Z",
+   "dist_to_checkpoint_min": 1532.1,
+   "game_id": "espn:401909842",
+   "minutes_to_tip": 1592.1,
+   "n": 370
+  },
+  {
+   "as_of_utc": "2026-10-21T01:22:40Z",
+   "dist_to_checkpoint_min": 1447.3,
+   "game_id": "espn:401909842",
+   "minutes_to_tip": 1507.3,
+   "n": 370
+  },
+  {
+   "as_of_utc": "2026-10-21T15:39:25Z",
+   "dist_to_checkpoint_min": 590.6,
+   "game_id": "espn:401909842",
+   "minutes_to_tip": 650.6,
+   "n": 424
+  },
+  {
+   "as_of_utc": "2026-10-21T18:16:27Z",
+   "dist_to_checkpoint_min": 433.6,
+   "game_id": "espn:401909842",
+   "minutes_to_tip": 493.6,
+   "n": 424
+  },
+  {
+   "as_of_utc": "2026-10-21T21:43:37Z",
+   "dist_to_checkpoint_min": 226.39999999999998,
+   "game_id": "espn:401909842",
+   "minutes_to_tip": 286.4,
+   "n": 524
+  }
+ ],
+ "data_integrity": {
+  "decisions_asof_at_or_after_tip_excluded": 0,
+  "decisions_bad_identity_excluded": 20689,
+  "decisions_duplicate_ids_dropped": 0,
+  "decisions_forecast_after_asof_excluded": 0,
+  "decisions_invalid_price_excluded": 3606,
+  "decisions_raw": 244177,
+  "decisions_replay_excluded": 0,
+  "paper_corrections_applied": 0,
+  "paper_settlements_orphaned": 0,
+  "paper_settlements_raw": 25523,
+  "paper_settlements_strategy_mismatch_excluded": 0,
+  "pf_settlements_generated_after_tip_excluded": 0,
+  "snapshots_replay_excluded": 0
+ },
+ "declared_utc": "2026-10-21T21:35:00Z",
+ "games": [
+  {
+   "checkpoint_utc": "2026-10-20T18:00:00Z",
+   "game_id": "espn:401909088",
+   "game_start_utc": "2026-10-20T19:00:00Z",
+   "n_candidate_sides": 564,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT=564",
+   "status": "NO_TRADE"
+  },
+  {
+   "checkpoint_utc": "2026-10-20T22:00:00Z",
+   "game_id": "espn:401909089",
+   "game_start_utc": "2026-10-20T23:00:00Z",
+   "n_candidate_sides": 618,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": "GATE_STATUS=512; QUALITY_GATE=85; DEPTH_CONFLICT_ORDERBOOK=21",
+   "status": "NO_TRADE"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T00:30:00Z",
+   "game_id": "espn:401909090",
+   "game_start_utc": "2026-10-21T01:30:00Z",
+   "n_candidate_sides": 620,
+   "n_eligible": 13,
+   "n_trades": 3,
+   "prospective": false,
+   "reason": null,
+   "status": "TRADED"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T22:00:00Z",
+   "game_id": "espn:401909834",
+   "game_start_utc": "2026-10-21T23:00:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T22:00:00Z",
+   "game_id": "espn:401909835",
+   "game_start_utc": "2026-10-21T23:00:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T22:30:00Z",
+   "game_id": "espn:401909091",
+   "game_start_utc": "2026-10-21T23:30:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T22:30:00Z",
+   "game_id": "espn:401909836",
+   "game_start_utc": "2026-10-21T23:30:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T22:30:00Z",
+   "game_id": "espn:401909837",
+   "game_start_utc": "2026-10-21T23:30:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T23:00:00Z",
+   "game_id": "espn:401909838",
+   "game_start_utc": "2026-10-22T00:00:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T23:00:00Z",
+   "game_id": "espn:401909839",
+   "game_start_utc": "2026-10-22T00:00:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-21T23:30:00Z",
+   "game_id": "espn:401909840",
+   "game_start_utc": "2026-10-22T00:30:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-22T01:00:00Z",
+   "game_id": "espn:401909092",
+   "game_start_utc": "2026-10-22T02:00:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-22T01:00:00Z",
+   "game_id": "espn:401909841",
+   "game_start_utc": "2026-10-22T02:00:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-22T01:30:00Z",
+   "game_id": "espn:401909842",
+   "game_start_utc": "2026-10-22T02:30:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": false,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-22T22:00:00Z",
+   "game_id": "espn:401909093",
+   "game_start_utc": "2026-10-22T23:00:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": true,
+   "reason": null,
+   "status": "NOT_DUE"
+  },
+  {
+   "checkpoint_utc": "2026-10-23T00:30:00Z",
+   "game_id": "espn:401909094",
+   "game_start_utc": "2026-10-23T01:30:00Z",
+   "n_candidate_sides": 0,
+   "n_eligible": 0,
+   "n_trades": 0,
+   "prospective": true,
+   "reason": null,
+   "status": "NOT_DUE"
+  }
+ ],
+ "independent_clocks": {
+  "board_ref": "origin/data-archive",
+  "board_ticks_earliest": "2026-10-20T16:06:07Z",
+  "board_ticks_indexed": 156,
+  "forecast_ids_indexed": 35786,
+  "forecast_ref": "origin/projection-data",
+  "status": "VERIFIED"
+ },
+ "no_trade_examples": [
+  {
+   "all_blockers": [
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.3615628241416485,
+   "ev_net_v1_basis": 0.3703628241416485,
+   "family": "player_points",
+   "game_id": "espn:401909090",
+   "k": 10.0,
+   "player": "Dylan Harper",
+   "price": 0.19,
+   "primary_reason": "GATE_STATUS",
+   "side": "NO",
+   "spread": 0.04,
+   "top_size": 1.0
+  },
+  {
+   "all_blockers": [
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.365031025519705,
+   "ev_net_v1_basis": 0.369106025519705,
+   "family": "player_assists",
+   "game_id": "espn:401909089",
+   "k": 4.0,
+   "player": "Karl-Anthony Towns",
+   "price": 0.34,
+   "primary_reason": "GATE_STATUS",
+   "side": "NO",
+   "spread": 0.03,
+   "top_size": 144.61
+  },
+  {
+   "all_blockers": [
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT",
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.3382650376015564,
+   "ev_net_v1_basis": 0.3413320376015564,
+   "family": "player_points",
+   "game_id": "espn:401909088",
+   "k": 25.0,
+   "player": "Jayson Tatum",
+   "price": 0.4,
+   "primary_reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT",
+   "side": "NO",
+   "spread": 0.01,
+   "top_size": 6075.0
+  },
+  {
+   "all_blockers": [
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT",
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.3243784250552725,
+   "ev_net_v1_basis": 0.3269414250552725,
+   "family": "player_pra",
+   "game_id": "espn:401909088",
+   "k": 40.0,
+   "player": "Jayson Tatum",
+   "price": 0.46,
+   "primary_reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT",
+   "side": "NO",
+   "spread": 0.01,
+   "top_size": 22.15
+  },
+  {
+   "all_blockers": [
+    "DEPTH_CONFLICT_ORDERBOOK",
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.2333769539269717,
+   "ev_net_v1_basis": 0.2378999539269717,
+   "family": "player_points",
+   "game_id": "espn:401909089",
+   "k": 30.0,
+   "player": "Jalen Brunson",
+   "price": 0.66,
+   "primary_reason": "DEPTH_CONFLICT_ORDERBOOK",
+   "side": "NO",
+   "spread": 0.01,
+   "top_size": 223.0
+  },
+  {
+   "all_blockers": [
+    "QUALITY_GATE:NO_SIZE",
+    "INSUFFICIENT_DEPTH",
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.19402185941556402,
+   "ev_net_v1_basis": 0.196773859415564,
+   "family": "player_pra",
+   "game_id": "espn:401909090",
+   "k": 40.0,
+   "player": "Victor Wembanyama",
+   "price": 0.43,
+   "primary_reason": "QUALITY_GATE:NO_SIZE",
+   "side": "NO",
+   "spread": 0.01,
+   "top_size": 0.5
+  },
+  {
+   "all_blockers": [
+    "QUALITY_GATE:NO_SIZE",
+    "INSUFFICIENT_DEPTH",
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.15187080024000008,
+   "ev_net_v1_basis": 0.15745780024000006,
+   "family": "player_assists",
+   "game_id": "espn:401909090",
+   "k": 2.0,
+   "player": "Cason Wallace",
+   "price": 0.28,
+   "primary_reason": "QUALITY_GATE:NO_SIZE",
+   "side": "NO",
+   "spread": 0.02,
+   "top_size": 0.5
+  },
+  {
+   "all_blockers": [
+    "DEPTH_CONFLICT_ORDERBOOK",
+    "GATE_STATUS",
+    "SPREAD_WIDE_STRICT"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.1058822468158492,
+   "ev_net_v1_basis": 0.11241424681584919,
+   "family": "player_assists",
+   "game_id": "espn:401909089",
+   "k": 2.0,
+   "player": "Mikal Bridges",
+   "price": 0.25,
+   "primary_reason": "DEPTH_CONFLICT_ORDERBOOK",
+   "side": "NO",
+   "spread": 0.08,
+   "top_size": 10.0
+  },
+  {
+   "all_blockers": [],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.10682699908455008,
+   "ev_net_v1_basis": 0.11002699908455008,
+   "family": "player_pra",
+   "game_id": "espn:401909090",
+   "k": 30.0,
+   "player": "Jalen Williams",
+   "price": 0.59,
+   "primary_reason": "EXPOSURE_CAP:PLAYER_GAME",
+   "side": "NO",
+   "spread": 0.03,
+   "top_size": 1.0
+  },
+  {
+   "all_blockers": [],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.10074794273331834,
+   "ev_net_v1_basis": 0.10527094273331834,
+   "family": "player_points",
+   "game_id": "espn:401909090",
+   "k": 10.0,
+   "player": "Isaiah Hartenstein",
+   "price": 0.66,
+   "primary_reason": "EXPOSURE_CAP:TEAM_GAME",
+   "side": "NO",
+   "spread": 0.01,
+   "top_size": 3.0
+  },
+  {
+   "all_blockers": [],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.06819637798000001,
+   "ev_net_v1_basis": 0.07349637798000001,
+   "family": "player_assists",
+   "game_id": "espn:401909090",
+   "k": 2.0,
+   "player": "Isaiah Hartenstein",
+   "price": 0.29,
+   "primary_reason": "EXPOSURE_CAP:TEAM_GAME",
+   "side": "NO",
+   "spread": 0.03,
+   "top_size": 5.0
+  }
+ ],
+ "progress_to_evidence_minimums": {
+  "prospective_decisions": 0,
+  "prospective_games": 0,
+  "required_decisions": 200,
+  "required_games": 40,
+  "retrospective_rows_never_counted": true
+ },
+ "prospective": {
+  "label": "prospective",
+  "reason": "no decision instants at or after 2026-10-22T06:00:00Z in the archive yet",
+  "status": "NO_DATA"
+ },
+ "prospective_start_utc": "2026-10-22T06:00:00Z",
+ "retrospective_descriptive": {
+  "by_decision_mode": {
+   "asof_replay": {
+    "cash_outlay": 1.54,
+    "hit_rate": 0.6666666666666666,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.2987012987012987,
+    "total_net_pnl": 0.46
+   }
+  },
+  "by_edge_bucket": {
+   "0.10-0.15": {
+    "cash_outlay": 0.6,
+    "hit_rate": 1.0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.6666666666666667,
+    "total_net_pnl": 0.4
+   },
+   "0.15-0.25": {
+    "cash_outlay": 0.9400000000000001,
+    "hit_rate": 0.5,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 2,
+    "n_trades": 2,
+    "roi_on_cash_outlay": 0.06382978723404255,
+    "total_net_pnl": 0.06
+   }
+  },
+  "by_family": {
+   "player_points": {
+    "cash_outlay": 0.89,
+    "hit_rate": 0.5,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 2,
+    "n_trades": 2,
+    "roi_on_cash_outlay": 0.12359550561797758,
+    "total_net_pnl": 0.11000000000000004
+   },
+   "player_threes": {
+    "cash_outlay": 0.65,
+    "hit_rate": 1.0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.5384615384615384,
+    "total_net_pnl": 0.35
+   }
+  },
+  "by_quote_age": {
+   "120-300s": {
+    "cash_outlay": 1.54,
+    "hit_rate": 0.6666666666666666,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.2987012987012987,
+    "total_net_pnl": 0.46
+   }
+  },
+  "by_side": {
+   "NO": {
+    "cash_outlay": 1.54,
+    "hit_rate": 0.6666666666666666,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.2987012987012987,
+    "total_net_pnl": 0.46
+   }
+  },
+  "clv_cents": {
+   "ci95": [
+    null,
+    null
+   ],
+   "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+   "mean": 0.3333333333333333,
+   "n_clusters": 1,
+   "n_obs": 3,
+   "n_settled": 3,
+   "n_valid": 3,
+   "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+   "se": null,
+   "share_positive": 0.6666666666666666,
+   "z": null
+  },
+  "computation_lag_s": {
+   "max": 3423.0,
+   "mean": 3423.0,
+   "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
+  },
+  "dnp": {
+   "n_dnp": 0,
+   "sources": {}
+  },
+  "eligible_vs_blocked": {
+   "any_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 564,
+    "DEPTH_CONFLICT_ORDERBOOK": 53,
+    "EV_BELOW_THRESHOLD": 1593,
+    "GATE_STATUS": 1554,
+    "INSUFFICIENT_DEPTH": 30,
+    "QUALITY_GATE:EXTREME_PRICE": 60,
+    "QUALITY_GATE:NO_SIZE": 30,
+    "QUALITY_GATE:SPREAD_WIDE": 116,
+    "SPREAD_WIDE_STRICT": 280
+   },
+   "blocked_sides": 1789,
+   "candidate_sides": 1802,
+   "eligible_not_traded_reason": {
+    "EXPOSURE_CAP:PLAYER_GAME": 1,
+    "EXPOSURE_CAP:TEAM_GAME": 2,
+    "NOT_BEST_IN_THESIS": 7
+   },
+   "eligible_sides": 13,
+   "primary_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 564,
+    "DEPTH_CONFLICT_ORDERBOOK": 29,
+    "ELIGIBLE": 13,
+    "EV_BELOW_THRESHOLD": 73,
+    "GATE_STATUS": 985,
+    "QUALITY_GATE:EXTREME_PRICE": 43,
+    "QUALITY_GATE:NO_SIZE": 25,
+    "QUALITY_GATE:SPREAD_WIDE": 57,
+    "SPREAD_WIDE_STRICT": 13
+   },
+   "trades": 3
+  },
+  "evidence_status": {
+   "authority": "none; never a value claim below the minimums",
+   "have": {
+    "decisions": 3,
+    "games": 1
+   },
+   "independent_clocks_verified": true,
+   "label": "INSUFFICIENT_SAMPLE",
+   "lower_cis_game_and_player_game": [
+    null,
+    null
+   ],
+   "required": {
+    "decisions": 200,
+    "games": 40
+   }
+  },
+  "exposure_concentration": {
+   "max_trades_per_player_game": 2,
+   "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
+   "players_with_multiple_trades": 1,
+   "share_NO": 1.0,
+   "share_of_notional_by_family": {
+    "player_points": 0.5743243243243243,
+    "player_threes": 0.42567567567567566
+   },
+   "share_of_notional_by_game": {
+    "espn:401909090": 1.0
+   },
+   "share_of_notional_by_player": {
+    "espn:4278073": 0.18243243243243246,
+    "espn:4593803": 0.8175675675675675
+   },
+   "share_of_notional_by_side": {
+    "NO": 1.0
+   }
+  },
+  "independent_units": {
+   "n_decisions": 3,
+   "n_games": 1,
+   "n_player_games": 2,
+   "n_settled_decisions": 3,
+   "n_theses": 3,
+   "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
+  },
+  "label": "retrospective_descriptive",
+  "n_candidate_sides": 1802,
+  "opening_hour_effect": {
+   "buckets": {
+    ">6h": {
+     "cash_outlay": 1.54,
+     "hit_rate": 0.6666666666666666,
+     "n_games": 1,
+     "n_player_games": 2,
+     "n_settled": 3,
+     "n_trades": 3,
+     "roi_on_cash_outlay": 0.2987012987012987,
+     "total_net_pnl": 0.46
+    }
+   },
+   "definition": "as_of - first OPEN board of the ticker",
+   "status": "OK"
+  },
+  "overall": {
+   "cash_outlay": 1.54,
+   "hit_rate": 0.6666666666666666,
+   "n_games": 1,
+   "n_player_games": 2,
+   "n_settled": 3,
+   "n_trades": 3,
+   "roi_on_cash_outlay": 0.2987012987012987,
+   "total_net_pnl": 0.46
+  },
+  "roi": {
+   "fees_per_contract_mean": 0.02,
+   "max_drawdown": {
+    "final_equity": 0.46,
+    "max_drawdown": 0.29,
+    "n": 3,
+    "note": "dollars, 1 contract per position, ordered by tip time (settlement order); a path statistic of a handful of games, not a risk estimate"
+   },
+   "mean_net_pnl_per_contract": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.15333333333333335,
+    "n_clusters": 1,
+    "n_obs": 3,
+    "se": null,
+    "z": null
+   },
+   "on_cash_outlay_effective_entry_plus_fee": {
+    "game_clustered": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "n_clusters": 1,
+     "n_obs": 3,
+     "ratio": 0.2987012987012987
+    },
+    "player_game_clustered": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "n_clusters": 2,
+     "n_obs": 3,
+     "ratio": 0.2987012987012987
+    }
+   },
+   "on_quoted_price_scorecard_compatible": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "n_clusters": 1,
+    "n_obs": 3,
+    "ratio": 0.31724137931034485
+   },
+   "slippage_per_contract": 0.01
+  },
+  "status": "OK",
+  "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1"
+ },
+ "run_id": "61d690159f468eb5",
+ "schema": "issue53.exec_shadow.v1",
+ "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1",
+ "study_config_sha256": "89fe0c4ce933e3750e70a0cf03358399d912ad2431e0d7d6b7b58d4200d104e4",
+ "study_id": "ISSUE53_EXEC_SHADOW_V1",
+ "trades": [
+  {
+   "board_commit_utc": "2026-10-21T00:29:16Z",
+   "clv_cents": 0.5,
+   "computation_lag_s": 3423.0,
+   "decision_mode": "asof_replay",
+   "effective_entry_exec": 0.63,
+   "ev_net_exec": 0.16643361217,
+   "exposure_after": {
+    "day_notional": 0.63,
+    "game": 1,
+    "game_notional": 0.63,
+    "player_game": 1,
+    "team_game": 1
+   },
+   "family": "player_threes",
+   "fee_int": 0.02,
+   "forecast_commit_utc": "2026-10-20T23:57:52Z",
+   "game_id": "espn:401909090",
+   "k": 2.0,
+   "net_pnl": 0.35,
+   "p_model": 0.81643361217,
+   "p_play": 0.9877,
+   "player_name": "Jalen Williams",
+   "price": 0.62,
+   "prospective": false,
+   "quote_age_at_checkpoint_s": 253.0,
+   "side": "NO",
+   "spread": 0.01,
+   "ticker": "KXNBA3PT-26OCT20OKCSAS-OKCJWILLIAMS8-2",
+   "top_size": 6.0,
+   "won": 1.0
+  },
+  {
+   "board_commit_utc": "2026-10-21T00:29:16Z",
+   "clv_cents": 0.5,
+   "computation_lag_s": 3423.0,
+   "decision_mode": "asof_replay",
+   "effective_entry_exec": 0.27,
+   "ev_net_exec": 0.15597737815401472,
+   "exposure_after": {
+    "day_notional": 0.9,
+    "game": 2,
+    "game_notional": 0.9,
+    "player_game": 1,
+    "team_game": 2
+   },
+   "family": "player_points",
+   "fee_int": 0.02,
+   "forecast_commit_utc": "2026-10-20T23:57:52Z",
+   "game_id": "espn:401909090",
+   "k": 25.0,
+   "net_pnl": -0.29,
+   "p_model": 0.4459773781540147,
+   "p_play": 0.9921,
+   "player_name": "Shai Gilgeous-Alexander",
+   "price": 0.26,
+   "prospective": false,
+   "quote_age_at_checkpoint_s": 253.0,
+   "side": "NO",
+   "spread": 0.01,
+   "ticker": "KXNBAPTS-26OCT20OKCSAS-OKCSGILGEOUSALEXANDER2-25",
+   "top_size": 10.14,
+   "won": 0.0
+  },
+  {
+   "board_commit_utc": "2026-10-21T00:29:16Z",
+   "clv_cents": 0.0,
+   "computation_lag_s": 3423.0,
+   "decision_mode": "asof_replay",
+   "effective_entry_exec": 0.58,
+   "ev_net_exec": 0.13290181249416258,
+   "exposure_after": {
+    "day_notional": 1.48,
+    "game": 3,
+    "game_notional": 1.48,
+    "player_game": 2,
+    "team_game": 3
+   },
+   "family": "player_points",
+   "fee_int": 0.02,
+   "forecast_commit_utc": "2026-10-20T23:57:52Z",
+   "game_id": "espn:401909090",
+   "k": 20.0,
+   "net_pnl": 0.4,
+   "p_model": 0.7329018124941625,
+   "p_play": 0.9877,
+   "player_name": "Jalen Williams",
+   "price": 0.57,
+   "prospective": false,
+   "quote_age_at_checkpoint_s": 253.0,
+   "side": "NO",
+   "spread": 0.01,
+   "ticker": "KXNBAPTS-26OCT20OKCSAS-OKCJWILLIAMS8-20",
+   "top_size": 11.0,
+   "won": 1.0
+  }
+ ]
+}
