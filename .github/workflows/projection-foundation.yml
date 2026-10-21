@@ -164,6 +164,7 @@ jobs:
           PF_WORK: ${{ runner.temp }}/pf_work
           # dry run only; empty (pull_request, scheduled) = the frozen engine in production
           PF_NBA_MINUTES_ENGINE: ${{ github.event.inputs.minutes_engine }}
+          PF_KEEP_DRY: "1"   # TEST BRANCH ONLY: keep the throwaway archive copy so the checker can read what THIS run published
         run: |
           set -euo pipefail
           NOW="${{ github.event.inputs.now }}"
@@ -182,9 +183,10 @@ jobs:
         run: |
           set -uo pipefail
           # the checker appends its markdown to the job summary itself; it never fails the job here (report only), the verdict is read from the summary / JSON
-          python -m nba.live.activation_check --archive "$RUNNER_TEMP/m/projection-data" --json "$PF_WORK/activation_check.json" || true
+          DRYA=$(ls -d /tmp/pf_nba_dry_*/archive | head -n1); echo "dry-run archive: $DRYA"
+          python -m nba.live.activation_check --archive "$DRYA" --json "$PF_WORK/activation_check.json" || true
           # TEST BRANCH ONLY (not in the PRs): echo the feed into the log (gzip+base64) so it can be re-verified offline with the SIFT verifier
-          F="$RUNNER_TEMP/m/projection-data/projections/nba/latest.json"
+          F="$DRYA/projections/nba/latest.json"
           if [ -f "$F" ]; then echo "FEED_B64_BEGIN"; gzip -9c "$F" | base64 -w 120; echo "FEED_B64_END"; fi
       - name: PF unit tests (recorded real fixtures; includes the hoopR agreement checks now that the cache is warm)
         working-directory: research/projection_foundation
