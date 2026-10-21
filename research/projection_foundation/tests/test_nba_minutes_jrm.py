@@ -195,3 +195,36 @@ def test_f1_is_part_of_evaluate_but_only_blocks_a_jrm_feed(doc):
     chk = AC.check_minutes_integrity(doc) + AC.check_minutes_integrity(_make_conserving(copy.deepcopy(doc)))
     req = [c for c in chk if c["required"]]
     assert len(req) == 1 and req[0]["status"] == AC.PASS
+
+
+# ----------------------------------------------------------------------------------------------------------------- D1 / D2 read the joint rotation model's labels
+def _label_as_jrm(doc):
+    """What project_slate(minutes_engine='jrm') publishes: eligibility calibrated on the report exactly where the official report covers the player."""
+    d = _make_conserving(doc)
+    for p in d["players"]:
+        official = p["participation"].get("source") == AC.OFFICIAL_SOURCE
+        if p["family"] == "points":
+            p["participation"]["p_play_basis"] = ("joint rotation model (report-calibrated eligibility)" if official else "joint rotation model (history-only eligibility)")
+        if p["family"] == "minutes":
+            p["adjustments"] = [a for a in p.get("adjustments", []) if "Minutes model" not in a] + \
+                [f"Minutes model: joint rotation model (jrm-0.1, {'report-aware' if official else 'history-only'} eligibility): team minutes conserved, no normalisation."]
+    return d
+
+
+def _ids(doc):
+    return {c["id"]: c for c in AC.check_model_inputs(doc, [], None)}
+
+
+def test_d1_and_d2_accept_the_jrm_labels_and_still_catch_a_mislabelled_row(doc):
+    d = _label_as_jrm(doc)
+    c = _ids(d)
+    assert c["D1"]["status"] == AC.PASS and c["D2"]["status"] == AC.PASS
+    # an official-covered minutes row published without report-aware eligibility is still a D2 failure (the requirement is not weakened)
+    row = next(p for p in d["players"] if p["family"] == "minutes" and p["participation"].get("source") == AC.OFFICIAL_SOURCE)
+    row["adjustments"] = [a.replace("report-aware", "history-only") for a in row["adjustments"]]
+    assert _ids(d)["D2"]["status"] == AC.FAIL
+    # ... and a report-covered player whose P(play) basis is not report-calibrated keeps D1 from passing
+    d2 = _label_as_jrm(copy.deepcopy(doc))
+    pt = next(p for p in d2["players"] if p["family"] == "points" and p["participation"].get("source") == AC.OFFICIAL_SOURCE)
+    pt["participation"]["p_play_basis"] = "joint rotation model (history-only eligibility)"
+    assert _ids(d2)["D1"]["status"] != AC.PASS
