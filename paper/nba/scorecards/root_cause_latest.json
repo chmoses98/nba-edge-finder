@@ -1,134 +1,1122 @@
 {
  "authority": "research_only",
- "banner": "INSUFFICIENT_SAMPLE: 3 games; every statistic below is descriptive, not a finding",
+ "banner": "INSUFFICIENT_SAMPLE: 14 games; every statistic below is descriptive, not a finding",
  "classes": [
   {
+   "brier": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.11539143330097089,
+    "n_clusters": 3,
+    "n_obs": 103,
+    "se": null,
+    "z": null
+   },
    "class": "participation",
    "class_id": 1,
-   "n_games": null,
-   "reading": "NO_DATA: no settled forecasts",
-   "reason": "no settled forecasts",
-   "repeatability": null,
-   "statistic": "",
-   "status": "NO_DATA",
-   "value": null
+   "decomposition": {
+    "conditional_production_component": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -0.3040776699029126,
+     "n_clusters": 3,
+     "n_obs": 103,
+     "se": null,
+     "z": null
+    },
+    "family": "points",
+    "identity": "p*mu - played*y = (p - played)*mu + played*(mu - y)",
+    "mse_conditional": 22.936821359223305,
+    "mse_participation": 1.823922398587553,
+    "mse_total": 25.008670495286584,
+    "n": 103,
+    "n_games": 3,
+    "participation_component": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 0.20011933980582525,
+     "n_clusters": 3,
+     "n_obs": 103,
+     "se": null,
+     "z": null
+    },
+    "status": "OK",
+    "unconditional_error": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -0.10395833009708721,
+     "n_clusters": 3,
+     "n_obs": 103,
+     "se": null,
+     "z": null
+    }
+   },
+   "n_games": 3,
+   "reading": "P(play) is over-confident by 0.089 on average; Brier 0.1154. Participation errors enter unconditional stat error through (p - played) * mu; see decomposition.",
+   "repeatability": {
+    "n_days": 1,
+    "note": "fewer than 2 days: repeatability cannot be assessed",
+    "share_same_sign": 1.0
+   },
+   "statistic": "mean(P(play) - played), challenger",
+   "status": "MEASURED",
+   "value": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.08910582524271844,
+    "n_clusters": 3,
+    "n_obs": 103,
+    "se": null,
+    "z": null
+   }
   },
   {
+   "cells": {
+    "bench(<18 pred min)": {
+     "n": 28,
+     "n_games": 3,
+     "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+     "suppressed": true
+    },
+    "rotation(18-28)": {
+     "n": 32,
+     "n_games": 3,
+     "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+     "suppressed": true
+    },
+    "starter-like(>28)": {
+     "n": 8,
+     "n_games": 3,
+     "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+     "suppressed": true
+    }
+   },
    "class": "starter_rotation_assumptions",
    "class_id": 2,
-   "n_games": null,
-   "reading": "NO_DATA: no settled forecasts",
-   "reason": "no settled forecasts",
-   "repeatability": null,
-   "statistic": "",
-   "status": "NO_DATA",
-   "value": null
+   "limitation": "role proxy is derived from the forecast itself; confirmed-starter status is not in the outcome archive",
+   "n_games": 3,
+   "reading": "Role = predicted-minutes bucket (a proxy: starter flags are not archived with outcomes). A starter-minus-bench bias gap away from 0 means the rotation shape (not the overall level) is wrong; bias is conditional on playing.",
+   "repeatability": {
+    "n_days": 1,
+    "note": "fewer than 2 days: repeatability cannot be assessed",
+    "share_same_sign": 1.0
+   },
+   "statistic": "minutes bias by role proxy (starter-like - bench)",
+   "status": "MEASURED",
+   "value": {
+    "ci95": [
+     -8.441558441558442,
+     -4.678857142857142
+    ],
+    "diff": -7.690892857142856,
+    "n_a": 8,
+    "n_b": 28,
+    "se": 1.1215991582033271
+   }
   },
   {
    "class": "minutes_allocation",
    "class_id": 3,
-   "n_games": null,
-   "reading": "NO_DATA: no settled forecasts",
-   "reason": "no settled forecasts",
-   "repeatability": null,
-   "statistic": "",
-   "status": "NO_DATA",
-   "value": null
+   "n_games": 3,
+   "reading": "verdict on the old simulator's systematic minutes under-prediction: INCUMBENT_BIAS_NOT_NEGATIVE. Challenger bias -0.88 min.",
+   "repeatability": {
+    "n_days": 1,
+    "note": "fewer than 2 days: repeatability cannot be assessed",
+    "share_same_sign": 1.0
+   },
+   "statistic": "minutes bias (pred - actual), challenger vs incumbent, paired",
+   "status": "MEASURED",
+   "value": {
+    "challenger_bias": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -0.8764705882352941,
+     "n_clusters": 3,
+     "n_obs": 68,
+     "se": null,
+     "z": null
+    },
+    "incumbent_bias": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 9.95265294117647,
+     "n_clusters": 3,
+     "n_obs": 51,
+     "se": null,
+     "z": null
+    },
+    "paired": {
+     "abs_error_diff_challenger_minus_incumbent": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -5.028927450980391,
+      "n_clusters": 3,
+      "n_obs": 51,
+      "se": null,
+      "z": null
+     },
+     "bias_diff_challenger_minus_incumbent": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -11.515201960784314,
+      "n_clusters": 3,
+      "n_obs": 51,
+      "se": null,
+      "z": null
+     },
+     "n": 51
+    },
+    "segments_paired": {
+     "injury_status": {
+      "LIKELY_ACTIVE": {
+       "incumbent_bias": 10.078831914893618,
+       "n": 47,
+       "n_games": 3,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "UNCERTAIN": {
+       "incumbent_bias": 8.47005,
+       "n": 4,
+       "n_games": 2,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      }
+     },
+     "minutes_bucket": {
+      "12-20": {
+       "incumbent_bias": 15.067842857142859,
+       "n": 21,
+       "n_games": 3,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "20-28": {
+       "incumbent_bias": 7.52895,
+       "n": 22,
+       "n_games": 3,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "<12": {
+       "incumbent_bias": 16.3712,
+       "n": 1,
+       "n_games": 1,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      ">28": {
+       "incumbent_bias": 1.3075000000000006,
+       "n": 7,
+       "n_games": 3,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      }
+     },
+     "opp_def": {
+      "unknown": {
+       "incumbent_bias": 9.95265294117647,
+       "n": 51,
+       "n_games": 3,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      }
+     },
+     "role_proxy": {
+      "bench(<18 pred min)": {
+       "incumbent_bias": 14.876818749999998,
+       "n": 16,
+       "n_games": 3,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "rotation(18-28)": {
+       "incumbent_bias": 9.30013214285714,
+       "n": 28,
+       "n_games": 3,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "starter-like(>28)": {
+       "incumbent_bias": 1.3075000000000006,
+       "n": 7,
+       "n_games": 3,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      }
+     },
+     "team": {
+      "BOS": {
+       "incumbent_bias": 10.46341111111111,
+       "n": 9,
+       "n_games": 1,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "DET": {
+       "incumbent_bias": 11.852722222222221,
+       "n": 9,
+       "n_games": 1,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "NYK": {
+       "incumbent_bias": 9.40401,
+       "n": 10,
+       "n_games": 1,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "OKC": {
+       "incumbent_bias": 9.106877777777779,
+       "n": 9,
+       "n_games": 1,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "PHI": {
+       "incumbent_bias": 5.19055,
+       "n": 4,
+       "n_games": 1,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      },
+      "SAS": {
+       "incumbent_bias": 10.997589999999999,
+       "n": 10,
+       "n_games": 1,
+       "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+       "suppressed": true
+      }
+     }
+    },
+    "team_minutes_budget_error": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 2.6685113333333326,
+     "n_clusters": 3,
+     "n_obs": 6,
+     "n_team_games": 6,
+     "note": "sum over forecast players of P(play)*minutes minus actual minutes (240 + overtime is the true budget); only players with archived forecasts are summed",
+     "se": null,
+     "z": null
+    }
+   },
+   "verdict": "INCUMBENT_BIAS_NOT_NEGATIVE"
   },
   {
    "class": "usage_and_per_minute_rates",
    "class_id": 4,
+   "families": {
+    "assists": {
+     "minutes_component": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.1906684098425031,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "mse_minutes_component": 0.4380758107695321,
+     "mse_rate_component": 3.033628829699538,
+     "n": 68,
+     "rate_component": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.1297860569013266,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "rate_component_repeatability": {
+      "n_days": 1,
+      "note": "fewer than 2 days: repeatability cannot be assessed",
+      "share_same_sign": 1.0
+     },
+     "total_error": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.06088235294117645,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    },
+    "points": {
+     "minutes_component": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.6832773153828807,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "mse_minutes_component": 7.736868049685898,
+     "mse_rate_component": 31.93158381347473,
+     "n": 68,
+     "rate_component": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.22268908008876334,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "rate_component_repeatability": {
+      "n_days": 1,
+      "note": "fewer than 2 days: repeatability cannot be assessed",
+      "share_same_sign": 1.0
+     },
+     "total_error": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.4605882352941175,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    },
+    "rebounds": {
+     "minutes_component": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.1624215659377579,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "mse_minutes_component": 1.6424756240506238,
+     "mse_rate_component": 3.685318844688867,
+     "n": 68,
+     "rate_component": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.06478431641518333,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "rate_component_repeatability": {
+      "n_days": 1,
+      "note": "fewer than 2 days: repeatability cannot be assessed",
+      "share_same_sign": 1.0
+     },
+     "total_error": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.22720588235294123,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    }
+   },
    "n_games": null,
-   "reading": "NO_DATA: no settled forecasts",
-   "reason": "no settled forecasts",
-   "repeatability": null,
-   "statistic": "",
-   "status": "NO_DATA",
-   "value": null
+   "reading": "Per-minute rate (usage) accounts for ~80% of the squared-error budget (rate vs minutes components, points); a rate-component mean away from 0 is a usage / efficiency bias independent of minutes.",
+   "repeatability": {
+    "n_days": 1,
+    "note": "fewer than 2 days: repeatability cannot be assessed",
+    "share_same_sign": 1.0
+   },
+   "statistic": "error = r_pred*(m_pred - m_act) + m_act*(r_pred - r_act): rate component, points",
+   "status": "MEASURED",
+   "value": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.22268908008876334,
+    "n_clusters": 3,
+    "n_obs": 68,
+    "se": null,
+    "z": null
+   }
   },
   {
    "class": "opponent_adjustment",
    "class_id": 5,
    "n_games": null,
-   "reading": "NO_DATA: no settled forecasts",
-   "reason": "no settled forecasts",
+   "reading": "NO_DATA: opponent-defence terciles need earlier final games in team_outcomes (unknown early in the season) and game_forecasts",
+   "reason": "opponent-defence terciles need earlier final games in team_outcomes (unknown early in the season) and game_forecasts",
    "repeatability": null,
-   "statistic": "",
+   "statistic": "points bias: generous minus stingy opponents",
    "status": "NO_DATA",
    "value": null
   },
   {
    "class": "pace",
    "class_id": 6,
-   "n_games": null,
-   "reading": "NO_DATA: needs game_forecasts and team_outcomes (written by the pregame and results stages)",
-   "reason": "needs game_forecasts and team_outcomes (written by the pregame and results stages)",
+   "corr_player_vs_total_error": null,
+   "n_games": 3,
+   "pace": {
+    "reason": "game_forecasts carry no expected-pace context (not invented)",
+    "status": "NO_DATA"
+   },
+   "reading": "Game-total bias +8.06; per-game correlation between total error and mean player-points error: None. A high correlation points at pace/environment (shared by all players) rather than player-specific rates.",
    "repeatability": null,
-   "statistic": "game total error and pace error",
-   "status": "NO_DATA",
-   "value": null
+   "statistic": "game total error (pred - actual) and correlation with mean player-points error",
+   "status": "MEASURED",
+   "value": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 8.063333333333333,
+    "n_clusters": 3,
+    "n_obs": 3,
+    "se": null,
+    "z": null
+   }
   },
   {
    "class": "distribution_shape_tails",
    "class_id": 7,
+   "families": {
+    "assists": {
+     "coverage_80": 0.7794117647058824,
+     "coverage_90": 0.8529411764705882,
+     "lower_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.017647058823529415,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "n": 68,
+     "pit_var_ratio": 0.9792653961361593,
+     "upper_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.002941176470588236,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    },
+    "fga": {
+     "coverage_80": 0.7058823529411765,
+     "coverage_90": 0.8529411764705882,
+     "lower_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.047058823529411764,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "n": 68,
+     "pit_var_ratio": 1.0713667412664627,
+     "upper_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.047058823529411764,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    },
+    "minutes": {
+     "coverage_80": 0.75,
+     "coverage_90": 0.8676470588235294,
+     "lower_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.0029411764705882413,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "n": 68,
+     "pit_var_ratio": 1.1508992416083137,
+     "upper_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.047058823529411764,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    },
+    "points": {
+     "coverage_80": 0.7941176470588235,
+     "coverage_90": 0.8823529411764706,
+     "lower_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.01176470588235294,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "n": 68,
+     "pit_var_ratio": 1.0821104351724231,
+     "upper_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.01764705882352942,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    },
+    "pra": {
+     "coverage_80": 0.7941176470588235,
+     "coverage_90": 0.9117647058823529,
+     "lower_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.0029411764705882413,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "n": 68,
+     "pit_var_ratio": 1.0014430174927507,
+     "upper_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.002941176470588241,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    },
+    "rebounds": {
+     "coverage_80": 0.7794117647058824,
+     "coverage_90": 0.8970588235294118,
+     "lower_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.011764705882352936,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "n": 68,
+     "pit_var_ratio": 1.032084646185146,
+     "upper_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.032352941176470584,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    },
+    "threes": {
+     "coverage_80": 0.7647058823529411,
+     "coverage_90": 0.8529411764705882,
+     "lower_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.011764705882352932,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     },
+     "n": 68,
+     "pit_var_ratio": 1.0489403814380804,
+     "upper_tail_excess": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.047058823529411764,
+      "n_clusters": 3,
+      "n_obs": 68,
+      "se": null,
+      "z": null
+     }
+    }
+   },
    "n_games": null,
-   "reading": "NO_DATA: no settled forecasts",
-   "reason": "no settled forecasts",
+   "reading": "Largest departure of PIT variance from 1: minutes (1.15; >1 = too narrow). Upper-tail excess > 0 means actual outcomes exceed the forecast 90th percentile more often than 10%.",
    "repeatability": null,
-   "statistic": "",
-   "status": "NO_DATA",
-   "value": null
+   "statistic": "PIT variance ratio / tail excess (observed share beyond the 10%/90% quantiles minus 10%)",
+   "status": "MEASURED",
+   "value": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.01764705882352942,
+    "n_clusters": 3,
+    "n_obs": 68,
+    "se": null,
+    "z": null
+   }
   },
   {
+   "cells": {
+    "PROJECTED": {
+     "mean_p": 0.867335632183908,
+     "n": 87,
+     "n_games": 3,
+     "played_rate": 0.7586206896551724,
+     "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+     "suppressed": true
+    },
+    "REPORTED": {
+     "mean_p": 0.10748125,
+     "n": 16,
+     "n_games": 3,
+     "played_rate": 0.125,
+     "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+     "suppressed": true
+    }
+   },
    "class": "injury_information",
    "class_id": 8,
-   "n_games": null,
-   "reading": "NO_DATA: no settled forecasts",
-   "reason": "no settled forecasts",
-   "repeatability": null,
-   "statistic": "",
-   "status": "NO_DATA",
-   "value": null
+   "n_games": 3,
+   "reading": "A negative gap means official reports sharpen P(play) as intended; ~0 means the report adds nothing measurable yet (e.g. opening week).",
+   "repeatability": {
+    "n_days": 1,
+    "note": "fewer than 2 days: repeatability cannot be assessed",
+    "share_same_sign": 1.0
+   },
+   "statistic": "participation Brier: official-report (REPORTED) minus unverified/projected information states",
+   "status": "MEASURED",
+   "status_changes": {
+    "brier_changed_minus_unchanged": {
+     "ci95": [
+      -0.23085258214285714,
+      -0.02531038413793106
+     ],
+     "diff": -0.11506098069230772,
+     "n_a": 13,
+     "n_b": 90,
+     "se": 0.04807475736325239
+    },
+    "n_player_games_observed": 103,
+    "n_player_games_with_status_change": 13,
+    "note": "status changes between pregame observations; forecasts generated before a change are the ones at risk"
+   },
+   "value": {
+    "ci95": [
+     -0.23124617464285716,
+     -0.05698849834482759
+    ],
+    "diff": -0.1324660152658046,
+    "n_a": 16,
+    "n_b": 87,
+    "se": 0.041011305975698395
+   }
   },
   {
+   "by_horizon": {
+    "LAST_VALID": {
+     "diff_model_minus_market": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.0039238552537276174,
+      "n_clusters": 3,
+      "n_obs": 917,
+      "se": null,
+      "z": null
+     },
+     "n_contracts": 917,
+     "repeatability": {
+      "n_days": 1,
+      "note": "fewer than 2 days: repeatability cannot be assessed",
+      "share_same_sign": 1.0
+     }
+    },
+    "T-10": {
+     "diff_model_minus_market": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.0036818043759177395,
+      "n_clusters": 3,
+      "n_obs": 909,
+      "se": null,
+      "z": null
+     },
+     "n_contracts": 909,
+     "repeatability": {
+      "n_days": 1,
+      "note": "fewer than 2 days: repeatability cannot be assessed",
+      "share_same_sign": 1.0
+     }
+    },
+    "T-30": {
+     "diff_model_minus_market": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.003543290701104882,
+      "n_clusters": 3,
+      "n_obs": 908,
+      "se": null,
+      "z": null
+     },
+     "n_contracts": 908,
+     "repeatability": {
+      "n_days": 1,
+      "note": "fewer than 2 days: repeatability cannot be assessed",
+      "share_same_sign": 1.0
+     }
+    },
+    "T-60": {
+     "diff_model_minus_market": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.003909985198693605,
+      "n_clusters": 3,
+      "n_obs": 901,
+      "se": null,
+      "z": null
+     },
+     "n_contracts": 901,
+     "repeatability": {
+      "n_days": 1,
+      "note": "fewer than 2 days: repeatability cannot be assessed",
+      "share_same_sign": 1.0
+     }
+    },
+    "T-90": {
+     "diff_model_minus_market": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": -0.003698937260613984,
+      "n_clusters": 3,
+      "n_obs": 872,
+      "se": null,
+      "z": null
+     },
+     "n_contracts": 872,
+     "repeatability": {
+      "n_days": 1,
+      "note": "fewer than 2 days: repeatability cannot be assessed",
+      "share_same_sign": 1.0
+     }
+    }
+   },
    "class": "market_timing",
    "class_id": 9,
-   "n_games": null,
-   "reading": "NO_DATA: needs settled paper decisions with p_cond/p_model and bid/ask",
-   "reason": "needs settled paper decisions with p_cond/p_model and bid/ask",
+   "n_games": 3,
+   "price_discovery": {
+    "closing_horizon": "LAST_VALID",
+    "definition": "share_h = sum(B_ref - B_h) / sum(B_ref - B_close), B = (mid - y_yes)^2 on contracts present at ref, h and close",
+    "horizons": {
+     "LAST_VALID": {
+      "brier_close": 0.15964646139705885,
+      "brier_h": 0.15964646139705885,
+      "brier_ref": 0.1649660386029412,
+      "mean_abs_move_to_close": 0.0,
+      "n_contracts": 544,
+      "n_games": 3,
+      "share_ci95": [
+       null,
+       null
+      ],
+      "share_of_ref_to_close_improvement": 1.0
+     },
+     "T-10": {
+      "brier_close": 0.15964646139705885,
+      "brier_h": 0.16007233455882353,
+      "brier_ref": 0.1649660386029412,
+      "mean_abs_move_to_close": 0.009549632352941177,
+      "n_contracts": 544,
+      "n_games": 3,
+      "share_ci95": [
+       null,
+       null
+      ],
+      "share_of_ref_to_close_improvement": 0.9199422914110955
+     },
+     "T-30": {
+      "brier_close": 0.15964646139705885,
+      "brier_h": 0.16036888786764705,
+      "brier_ref": 0.1649660386029412,
+      "mean_abs_move_to_close": 0.011433823529411765,
+      "n_contracts": 544,
+      "n_games": 3,
+      "share_ci95": [
+       null,
+       null
+      ],
+      "share_of_ref_to_close_improvement": 0.8641947578485406
+     },
+     "T-60": {
+      "brier_close": 0.15964646139705885,
+      "brier_h": 0.16108704044117647,
+      "brier_ref": 0.1649660386029412,
+      "mean_abs_move_to_close": 0.012637867647058824,
+      "n_contracts": 544,
+      "n_games": 3,
+      "share_ci95": [
+       null,
+       null
+      ],
+      "share_of_ref_to_close_improvement": 0.7291929436563744
+     },
+     "T-90": {
+      "brier_close": 0.15964646139705885,
+      "brier_h": 0.16228602941176473,
+      "brier_ref": 0.1649660386029412,
+      "mean_abs_move_to_close": 0.014604779411764706,
+      "n_contracts": 544,
+      "n_games": 3,
+      "share_ci95": [
+       null,
+       null
+      ],
+      "share_of_ref_to_close_improvement": 0.5038011645385907
+     }
+    },
+    "reference_horizon": "OPEN",
+    "status": "OK"
+   },
+   "reading": "Window with the smallest (best) model-minus-market gap: LAST_VALID. Prices converge toward the closing line; see price_discovery shares. A model edge that exists only at early windows and vanishes by T-10 is a timing signal, not yet value.",
    "repeatability": null,
-   "statistic": "model-minus-market Brier by pregame window",
-   "status": "NO_DATA",
-   "value": null
+   "statistic": "model-minus-market Brier at each pregame window (negative = model better), plus market price discovery",
+   "status": "MEASURED",
+   "value": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": -0.004140709610606742,
+    "n_clusters": 3,
+    "n_obs": 12615,
+    "se": null,
+    "z": null
+   }
   },
   {
    "class": "fees_settlement_execution",
    "class_id": 10,
-   "n_games": null,
-   "reading": "NO_DATA: no settled paper decisions",
-   "reason": "no settled paper decisions",
-   "repeatability": null,
-   "statistic": "gross vs net P&L, DNP settlement effect, execution quality",
-   "status": "NO_DATA",
-   "value": null
+   "detail": {
+    "cost_per_contract": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 0.02601496689260667,
+     "n_clusters": 3,
+     "n_obs": 25523,
+     "se": null,
+     "z": null
+    },
+    "selected_gross_pnl": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 0.09938566552901026,
+     "n_clusters": 3,
+     "n_obs": 293,
+     "se": null,
+     "z": null
+    },
+    "selected_net_pnl": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 0.0695221843003413,
+     "n_clusters": 3,
+     "n_obs": 293,
+     "se": null,
+     "z": null
+    },
+    "share_quality_gate_failed": 0.14034400344787057
+   },
+   "n_games": 3,
+   "reading": "Costs average 0.026 per contract; compare with the model's gross edge before reading any ROI. DNP legs and non-executable quotes are listed separately.",
+   "repeatability": {
+    "n_days": 1,
+    "note": "fewer than 2 days: repeatability cannot be assessed",
+    "share_same_sign": 1.0
+   },
+   "selected_net": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.0695221843003413,
+    "n_clusters": 3,
+    "n_obs": 293,
+    "se": null,
+    "z": null
+   },
+   "statistic": "per-contract trading costs (fee + slippage) and the gross-to-net P&L gap; DNP settlement effect",
+   "status": "MEASURED",
+   "value": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.02601496689260667,
+    "n_clusters": 3,
+    "n_obs": 25523,
+    "se": null,
+    "z": null
+   }
   }
  ],
- "generated_utc": "2026-10-20T15:23:24Z",
+ "generated_utc": "2026-10-21T10:59:36Z",
  "insufficient_sample": true,
  "integrity": {
   "decisions_asof_at_or_after_tip_excluded": 0,
-  "decisions_bad_identity_excluded": 3564,
+  "decisions_bad_identity_excluded": 13577,
   "decisions_duplicate_ids_dropped": 0,
   "decisions_forecast_after_asof_excluded": 0,
-  "decisions_invalid_price_excluded": 6,
-  "decisions_raw": 27864,
+  "decisions_invalid_price_excluded": 3402,
+  "decisions_raw": 172727,
   "decisions_replay_excluded": 0,
+  "paper_corrections_applied": 0,
   "paper_settlements_orphaned": 0,
-  "paper_settlements_raw": 0,
+  "paper_settlements_raw": 25523,
+  "paper_settlements_strategy_mismatch_excluded": 0,
+  "pf_settlements_generated_after_tip_excluded": 0,
   "snapshots_replay_excluded": 0
  },
- "minutes_underprediction_verdict": null,
- "n_games": 3,
+ "minutes_underprediction_verdict": "INCUMBENT_BIAS_NOT_NEGATIVE",
+ "n_games": 14,
  "schema": "sift.root_cause.v1",
  "window": {
   "day_et": null,

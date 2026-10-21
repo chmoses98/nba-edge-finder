@@ -1,35 +1,89 @@
 # NBA paper-system scorecard (research only)
 
-_generated 2026-10-20T15:23:24Z · window 7 d · prospective_only=True · nothing here is a bet recommendation_
+_generated 2026-10-21T10:59:36Z · window 7 d · prospective_only=True · nothing here is a bet recommendation_
 
-> **INSUFFICIENT_SAMPLE: 3 games with evidence in this window (the preregistered minimum for a value verdict is 40 games and 200 independent decisions); nothing below is a finding**
-
-> **NO_SETTLED_FORECASTS: accuracy sections are empty until archived games finish**
+> **INSUFFICIENT_SAMPLE: 14 games with evidence in this window (the preregistered minimum for a value verdict is 40 games and 200 independent decisions); nothing below is a finding**
 
 ## Sample (independent units)
 
-- forecast settlements: 0 rows over 0 games / 0 player-games; team games 0
-- paper decisions: {'n_games': 3, 'n_player_games': 25, 'n_theses': 104, 'n_decisions': 24294, 'n_contracts': 675}; settled 0
+- forecast settlements: 1364 rows over 3 games / 130 player-games; team games 3
+- paper decisions: {'n_games': 14, 'n_player_games': 143, 'n_theses': 603, 'n_decisions': 155748, 'n_contracts': 3587}; settled 25523
 
-**Integrity counters** (excluded / dropped records): decisions_raw=27864, decisions_bad_identity_excluded=3564, decisions_invalid_price_excluded=6
+**Integrity counters** (excluded / dropped records): decisions_raw=172727, paper_settlements_raw=25523, decisions_bad_identity_excluded=13577, decisions_invalid_price_excluded=3402
 
 ## Projection accuracy
 
-NO_DATA: no settled forecasts in the window
+**Minutes (conditional on playing; bias = pred - actual)**
+
+| model | n (games) | MAE | bias [95% CI] |
+|---|---|---|---|
+| challenger | 68 (3) | 5.39 | -0.88 |
+| incumbent | 51 (3) | 10.11 | +9.95 |
+
+Paired challenger - incumbent on 51 player-games: MAE diff -5.03; bias diff -11.52 (negative = challenger better)
+
+**Participation Brier**
+
+| model | n | Brier [95% CI] | mean p | played |
+|---|---|---|---|---|
+| challenger | 103 | +0.1154 | 0.749 | 0.660 |
+| incumbent | 90 | +0.2454 | 0.489 | 0.567 |
+
+**Player stats, conditional on playing**
+
+| family | n | MAE | bias [95% CI] | CRPS | 80% cover | vs incumbent MAE diff |
+|---|---|---|---|---|---|---|
+| assists | 68 | 1.28 | -0.06 | +0.881 | 78% | -0.549 |
+| fga | 68 | 2.85 | -0.90 | +2.035 | 71% | n/a |
+| points | 68 | 4.35 | -0.46 | +3.051 | 79% | -3.170 |
+| pra | 68 | 5.50 | -0.57 | +3.905 | 79% | n/a |
+| rebounds | 68 | 1.88 | -0.23 | +1.273 | 78% | -0.752 |
+| threes | 68 | 0.91 | -0.11 | +0.609 | 76% | -0.353 |
+
+**Participation vs production (points)**: unconditional error -0.10; participation component MSE 1.82, conditional-production component MSE 22.94
+
+**Team**: team points bias +4.03, MAE 7.60
 
 ## Market performance
 
-model vs market: NO_DATA (needs settled paper decisions with p_cond/p_model and bid/ask)
+**Model vs market mid** (3 games, 39 player-games, 917 contracts): Brier diff (model - market) -0.0041; one contract/thesis/horizon: -0.0079
+  - T-90: -0.0037 (n_contracts 872)
+  - T-60: -0.0039 (n_contracts 901)
+  - T-30: -0.0035 (n_contracts 908)
+  - T-10: -0.0037 (n_contracts 909)
+  - LAST_VALID: -0.0039 (n_contracts 917)
 
-paper trading: NO_DATA (no settled paper decisions)
+| strategy | all candidates: n / ROI | selected (1/thesis): n / games / ROI [95% CI] | verdict | CLV cents (valid closes) |
+|---|---|---|---|---|
+| PF_ALL_CANDIDATES_V1 | 25230 / -0.101 | no trades | n/a | n/a |
+| PF_EDGE_STRICT_V1 | 21 / +0.289 | 7 / 2 / n/a | INSUFFICIENT_SAMPLE | +3.86 |
+| PF_EDGE_V1 | 272 / +0.160 | 42 / 3 / n/a | INSUFFICIENT_SAMPLE | +0.56 |
 
-price discovery: NO_DATA (needs settled outcomes for the snapshot contracts)
+Benchmarks: NO_BET_V1 ROI 0 by definition; MARKET_ONLY_V1 = quote mid (scored above); control SHADOW_PURE_PREREG_V1 is read from nba-shadow-pure by the weekly report.
 
-**Liquidity**: median spread 0.03, quality gate passed 0.9249197332674735, displayed size >= 1: 0.4313410718695974
+**Price discovery** (share of OPEN->close Brier improvement achieved by horizon): T-90: 0.50, T-60: 0.73, T-30: 0.86, T-10: 0.92, LAST_VALID: 1.00
+
+**Liquidity**: median spread 0.04, quality gate passed 0.717447415055089, displayed size >= 1: 0.1988211726635334
 
 ## Segments (cells below the minimum sample are suppressed)
 
-projection segments: NO_DATA (no settled non-void challenger forecasts)
+- minutes bias by minutes_bucket: all cells suppressed (4 suppressed)
+- minutes bias by role_proxy: all cells suppressed (3 suppressed)
+- minutes bias by injury_status: all cells suppressed (2 suppressed)
+- minutes bias by freshness: all cells suppressed (1 suppressed)
+- points bias by minutes_bucket: all cells suppressed (4 suppressed)
+- points bias by role_proxy: all cells suppressed (3 suppressed)
+- points bias by injury_status: all cells suppressed (2 suppressed)
+- points bias by freshness: all cells suppressed (1 suppressed)
+- selected_trades by side: all cells suppressed (2 suppressed)
+- selected_trades by price_range: all cells suppressed (5 suppressed)
+- selected_trades by horizon: all cells suppressed (5 suppressed)
+- selected_trades by family: all cells suppressed (6 suppressed)
+- all_candidates by side: all cells suppressed (2 suppressed)
+- all_candidates by price_range: all cells suppressed (5 suppressed)
+- all_candidates by horizon: all cells suppressed (6 suppressed)
+- all_candidates by family: all cells suppressed (9 suppressed)
 
 ## By day
 
+- 2026-10-20: 3 games, 130 player-games, minutes MAE +5.39, bias -0.88
