@@ -1,6 +1,6 @@
 ## NBA projection scorecard — last 28 days
 
-Generated 2026-10-21T18:16:17Z. Research only; nothing here is a betting signal.
+Generated 2026-10-21T18:38:53Z. Research only; nothing here is a betting signal.
 
 Archived pregame forecasts: 30595 across 15 games. Settled: 924 (void/DNP 440, stat corrections 0).
 
@@ -11,8 +11,8 @@ Archived pregame forecasts: 30595 across 15 games. Settled: 924 (void/DNP 440, s
 | fga | pf-nba-fga (challenger) | 68 (3) | 2.848 | -0.905 | 2.035 | 71% | — |
 | minutes | nba_sim_rotation_v1 (incumbent) | 51 (3) | 10.107 | +9.953 | — | — |  |
 | minutes | pf-nba-minutes (challenger) | 68 (3) | 5.391 | -0.876 | 3.620 | 75% | — |
-| participation | nba_sim_rotation_v1 (incumbent) | 90 (3) | 0.495 | -0.078 | 0.245 | 80% |  |
-| participation | pf-nba-participation (challenger) | 103 (3) | 0.198 | +0.089 | 0.115 | 74% | -0.1813 [-0.2288, -0.1331] (n=63) |
+| participation (yes/no) | nba_sim_rotation_v1 (incumbent) | 90 (3) | Brier 0.2454 | calib -0.078 | log loss 0.6839 | — |  |
+| participation (yes/no) | pf-nba-participation (challenger) | 103 (3) | Brier 0.1154 | calib +0.089 | log loss 0.3444 | — | -0.1813 [-0.2288, -0.1331] (n=63) (Brier) |
 | points | nba_sim_rotation_v1 (incumbent) | 51 (3) | 7.648 | +6.661 | — | — |  |
 | points | pf-nba-points (challenger) | 68 (3) | 4.349 | -0.461 | 3.051 | 79% | — |
 | pra | pf-nba-pra (challenger) | 68 (3) | 5.502 | -0.571 | 3.905 | 79% | — |
