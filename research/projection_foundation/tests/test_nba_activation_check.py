@@ -186,3 +186,14 @@ def test_markdown_and_cli(tmp_path, capsys):
 def test_an_empty_archive_is_pending(tmp_path):
     rep = AC.evaluate(str(tmp_path), NOW)
     assert rep["verdict"] == "PENDING" and rep["checks"][0]["status"] == "PENDING"
+
+
+def test_d3_reports_why_each_ruled_out_row_is_ruled_out_and_a_leaked_aggregator_out_fails(tmp_path):
+    def m(r, d, a, f):
+        for p in d["players"][:3]:
+            p["participation"].update(status="LIKELY_OUT", certainty="PROJECTED", source="espn_injuries", designation="OUT")
+            p["gate"]["status"] = "REVIEW"
+    rep = verdict(tmp_path, m)
+    d3 = next(c for c in rep["checks"] if c["id"] == "D3")
+    assert d3["status"] == "FAIL" and d3["evidence"]["by_basis"].get("aggregator-only OUT (ESPN)") == 3
+    assert d3["evidence"]["not_blocked"]

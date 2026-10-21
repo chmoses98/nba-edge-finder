@@ -432,6 +432,35 @@ def test_a_just_captured_espn_out_reaches_the_projection_of_the_same_run(pre, tm
     assert new["status"] == "LIKELY_OUT" and new["certainty"] == "PROJECTED"      # what wall_clock() now guarantees
 
 
+def test_likely_out_players_are_withheld_by_the_gate_but_keep_their_honest_label():
+    """Conservative ESPN-OUT rule: an aggregator-only OUT (and an official DOUBTFUL) is ruled out: gate BLOCK in every family, label unchanged (LIKELY_OUT / PROJECTED)."""
+    from pf_core import gate
+    now = utc("2026-10-20T21:00:00Z")
+    r = lambda rows: PART.resolve_event(rows, "espn:1", "2026-10-20T23:00:00Z", ["espn:7"], now)["espn:7"]  # noqa: E731
+    off = lambda st: _obs(source=AV.SRC_OFFICIAL, certainty="REPORTED", status=st, source_updated_utc="2026-10-20T19:30:00Z")  # noqa: E731
+    def verdict(d):
+        gi = gate.GateInput(sport="NBA", family="points", entity_id="7", entity_name="X", team="PHI", game_id="espn:1", game_start_utc="2026-10-20T23:00:00Z", mean=10.0,
+                            injury_status=d["gate_injury_status"], participation=d["status"], participation_reasons=d["reasons"])
+        return gate.evaluate(gi, now_utc=iso(now))["status"]
+    espn = r([_obs()])                                                                      # ESPN OUT, nothing official
+    assert espn["status"] == "LIKELY_OUT" and espn["certainty"] == "PROJECTED" and espn["gate_injury_status"] == "OUT"
+    assert any("aggregator-only OUT" in x for x in espn["reasons"])
+    assert verdict(espn) == "BLOCK"
+    doubtful = r([off("DOUBTFUL")])
+    assert doubtful["status"] == "LIKELY_OUT" and doubtful["gate_injury_status"] == "OUT" and verdict(doubtful) == "BLOCK"
+    assert any("official DOUBTFUL" in x for x in doubtful["reasons"])
+    # the official OUT is unchanged, and nothing else is withheld by this rule
+    assert r([off("OUT")])["status"] == "CONFIRMED_OUT" and verdict(r([off("OUT")])) == "BLOCK"
+    q = r([off("QUESTIONABLE")])
+    assert q["status"] == "UNCERTAIN" and q["gate_injury_status"] == "QUESTIONABLE" and verdict(q) == "REVIEW"
+    # an ESPN OUT the covering official report contradicts (older than an official AVAILABLE) is NOT blocked: the official designation wins
+    assert r([off("ACTIVE"), _obs()])["status"] == "LIKELY_ACTIVE" and r([off("ACTIVE"), _obs()])["gate_injury_status"] == "PROBABLE"
+    # ... and an unlisted-but-ESPN-OUT conflict stays uncertain (REVIEW), spelled out
+    imp = _obs(source=AV.SRC_OFFICIAL, certainty="PROJECTED", status="ACTIVE", source_updated_utc="2026-10-20T19:30:00Z", detail={"implicit": True})
+    c = r([imp, _obs()])
+    assert c["status"] == "UNCERTAIN" and c["gate_injury_status"] == "QUESTIONABLE"
+
+
 def test_an_unrecognised_official_status_is_uncertain_never_unlisted_and_available():
     pytest.importorskip("pypdf")
     from nba_edge.availability.official_report import extract_words, parse_words

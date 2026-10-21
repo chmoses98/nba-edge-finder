@@ -115,6 +115,13 @@ def resolve_event(rows: list[dict], event_id: str, start_utc: str, entities: Ite
              "age_minutes": None if part.age_minutes is None else round(part.age_minutes, 1), "reasons": reasons,
              "designation": chosen["status"] if chosen else None, "implicit": implicit, "_class": cls,
              "gate_injury_status": part.gate_injury_status()}
+        if part.status == av.LIKELY_OUT:
+            # Conservative rule (approved with the D5 policy): a player the sources rule out is WITHHELD (gate BLOCK) in every family, not published as a
+            # REVIEW row. This covers an ESPN-aggregator-only OUT (no official designation) and an official DOUBTFUL, the two ways to be LIKELY_OUT, which is
+            # what activation check D3 and SIFT S4 already define as ruled out. The status and certainty stay honest (LIKELY_OUT, PROJECTED): only the gate input moves.
+            d["gate_injury_status"] = "OUT"
+            d["reasons"].append("withheld: " + ("aggregator-only OUT (no official designation), not published as a conditional projection" if (chosen or {}).get("source") == SRC_ESPN_INJ
+                                                else "official DOUBTFUL, ruled out as likely out before the game"))
         if R:
             d["restriction"] = {"minutes_cap": (R.get("detail") or {}).get("minutes_cap"), "source": R["source"],
                                 "certainty": R["certainty"], "text": (R.get("detail") or {}).get("text")}
