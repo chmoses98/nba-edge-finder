@@ -73,20 +73,15 @@ def outcome_games(archive: str, now: datetime) -> set[str]:
 
 
 def paper_games(archive: str, now: datetime) -> set[str] | None:
-    base = os.path.join(archive, "paper", "nba")
-    if not os.path.isdir(base):
+    """Games that have paper decisions. Reads the paper store's real layout (paper/nba/decisions/<day>/*.jsonl.gz) through its own reader;
+    an earlier version looked for paper/nba/<day>/decisions_*.jsonl.gz, found nothing and raised MISSING_PAPER for every started game."""
+    from ..paper import store
+    if not os.path.isdir(os.path.join(archive, "paper", "nba")):
         return None
-    out: set[str] = set()
     lo = (now - timedelta(days=4)).strftime("%Y-%m-%d")
-    for day in sorted(os.listdir(base)):
-        if day < lo:
-            continue
-        for fn in glob.glob(os.path.join(base, day, "decisions_*.jsonl.gz")):
-            with gzip.open(fn, "rt") as f:
-                for line in f:
-                    if line.strip():
-                        out.add(json.loads(line)["game_id"])
-    return out
+    base = os.path.join(archive, "paper", "nba", "decisions")
+    days = [d for d in sorted(os.listdir(base)) if d >= lo] if os.path.isdir(base) else []
+    return {r["game_id"] for r in store.read(archive, "decisions", days)}
 
 
 def market_capture_age_min(ctx: str, now: datetime) -> float | None:
