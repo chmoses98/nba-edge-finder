@@ -532,6 +532,16 @@ scenario sampling with stratified draws and an empirical active-list size, and a
 development / validation because variance-weighted and proportional rules shave starters more). Outputs p(play), E[minutes | play] and its distribution, all
 coherent by construction (sum of p x E[min] = 241.5). No uniform scale, no tolerance, no correction factor.
 
+**The 241.5 budget, exactly** (`minutes_rebuild/budget_audit.py`, `artifacts/BUDGET_AUDIT.md`; 26,418 team-games 2016-2026). A team's player-minutes are
+240 in a regulation game and 240 + 25 per overtime period (five players, five minutes). 241.5 is therefore not a rule of the game but the **mixture mean**: with
+P(overtime) = 4.7-5.5% (0.0615 periods per game on average) the expectation is 240 + 25 x 0.06 = 241.5. The realised mean is 241.63 over all ten seasons (box-score integer
+rounding adds about +0.09: ESPN reports whole minutes, SD of the rounding noise 0.99) and 241.3-241.4 in the last three seasons. The constant is not biased in any way
+that matters: the pooled bias of the JRM's conditional minutes on validation + holdout is +0.008 minute (SE 0.067; the scale that would remove it is 0.9996), games with
+overtime are under-forecast and regulation games over-forecast by construction (starters -5.2 / +0.3 minutes), which is the irreducible overtime variance and is carried
+by the player-level residual distribution, not hidden in the budget. A game-specific budget does not help: the only available predictor of overtime (pre-game expected
+|margin|) has R2 = 0.001 on realised team minutes and lowers the squared error of the constant by 0.1% (42.40 vs 42.35): immaterial, so the constant is kept. The model conserves 241.5 per scenario; on the
+real games the realised total is 240 about 95% of the time and 265+ otherwise, and the model's minutes distribution (empirical residual) covers both.
+
 **Result, conditional frame, holdout 2024-25 + 2025-26** (52,796 player-games, 4,924 team-games; game-clustered paired 95% CI vs the frozen best model `E`):
 
 | | MAE | CRPS | bias | ΔCRPS vs frozen E | team-sum SD |

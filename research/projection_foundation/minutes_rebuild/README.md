@@ -4,6 +4,7 @@ Research only (authority: none). Production is unchanged: the publisher runs the
 
 | file | what it is |
 |---|---|
+| `budget_audit.py` / `artifacts/BUDGET_AUDIT.md` | verifies the 241.5 budget: regulation 240 + 25 per overtime period, mixture mean, by season, by expected margin, bias of the JRM in regulation vs overtime games |
 | `PHASE1_ROOT_CAUSE.md` | why projected team minutes exceed 241.5 on the 2026-10-20 slate, with the additive decomposition and the historical evidence |
 | `../nba/minutes_jrm.py` | the model (eligibility head, depth-aware rotation heads, scenario sampling, exact team budget) and the live entry point `slate_minutes()` |
 | `../results/jrm/` | frozen assets: list-size distribution, report-aware eligibility calibration, minutes residual distribution, readiness |
