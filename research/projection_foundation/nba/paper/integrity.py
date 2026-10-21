@@ -30,6 +30,16 @@ REQUIRED = ("forecast", "participation_forecast", "availability_obs", "game_fore
             "team_outcome", "paper_settlement")
 
 
+WINDOW_H = 30          # projection window of the live workflow (--window-hours default): a game is only projected once a slot falls inside it
+
+
+def owed_projection(tip, now) -> bool:
+    """A game owes forecasts only once a pregame slot has run (>= 1 h ago) whose forward window contained it. The previous rule (tip within
+    36 h) flagged games 30-36 h out as `missing` although no slot could include them yet (2026-10-21 report: CLE@PHI, 36 h out)."""
+    return any(tip - timedelta(hours=WINDOW_H) <= inst <= now - timedelta(hours=1)
+               for inst, _ in SP.slot_instants("pregame", tip, days_back=3))
+
+
 def _et_date(ts: str) -> str:
     from zoneinfo import ZoneInfo
     return parse_ts(ts).astimezone(ZoneInfo("America/New_York")).date().isoformat()
@@ -105,8 +115,9 @@ def build(archive: str, ctx: str, start_et: str, end_et: str, now: datetime, sea
             "paper_settlement": ps_g.get(gid, 0) > 0,
         }
         hours_to_tip = (parse_ts(tip) - now).total_seconds() / 3600
-        if hours_to_tip > 36:
-            need = []                                    # not due yet: evidence for games further ahead than the projection window is not missing
+        due = owed_projection(parse_ts(tip), now)
+        if not due:
+            need = []                                    # not due yet: no slot has yet covered this game, so its evidence is not missing
         elif parse_ts(tip) < now - timedelta(hours=8):
             need = list(REQUIRED)
         else:
@@ -125,7 +136,7 @@ def build(archive: str, ctx: str, start_et: str, end_et: str, now: datetime, sea
             "snapshot_horizons": sorted(h for h, v in sh.items() if any(x.get("quote_class") != "MISSING" for x in v)),
             "snapshot_median_gap_s": {h: (v[len(v) // 2] if v else None) for h, v in gaps.items()},
             "missing_snapshot_causes": dict(miss_snap), "n_decisions": sum(c for k, c in dec_by.items() if k[0] == gid),
-            "missing": missing, "scheduled_later": hours_to_tip > 36, "complete": not missing and started})
+            "missing": missing, "scheduled_later": not due and hours_to_tip > 0, "complete": not missing and started})
     led = LED.load_all(archive, (date.fromisoformat(start_et) - timedelta(days=3)).isoformat())      # slots serving the first games run the day before
     exp, done = _expected_slots(games, start_et, end_et, now, led)
     return {"schema": "sift.integrity.v1", "window": {"start_et": start_et, "end_et": end_et}, "generated_utc": iso(now),
@@ -155,7 +166,7 @@ def _expected_slots(games, start_et, end_et, now, ledger) -> tuple[list[str], li
 
 def markdown(rep: dict) -> str:
     L = [f"### Data integrity ({rep['window']['start_et']} .. {rep['window']['end_et']} ET)", "",
-         f"- games scheduled: **{rep['n_games']}** ({sum(1 for g in rep['games'] if g.get('scheduled_later'))} beyond the 36 h projection window, not yet due), "
+         f"- games scheduled: **{rep['n_games']}** ({sum(1 for g in rep['games'] if g.get('scheduled_later'))} not yet covered by a projection slot (30 h window)), "
          f"started: {rep['n_started']}, fully complete evidence: **{rep['n_complete']}**",
          f"- missing evidence counts: {rep['missing_counts'] or 'none'}",
          f"- pregame slots expected {len(rep['slots']['expected'])}, executed/covered {len(rep['slots']['executed'])}, missed: "
