@@ -229,12 +229,13 @@ def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit:
     official = [p for p in pts if p["participation"].get("source") == OFFICIAL_SOURCE]
     out: list[dict] = []
     # D1 the resolved participation (and the report-aware P(play)) are on the rows
-    recal = [p for p in pts if p["participation"].get("p_play_basis") == "report-recalibrated hurdle"]
+    recal = [p for p in pts if p["participation"].get("p_play_basis") in ("report-recalibrated hurdle", "joint rotation model (report-calibrated eligibility)")]
     out.append(check("D1", "Rows carry the resolved participation and the report-recalibrated P(play)", PASS if official and len(recal) >= len(official) else PENDING,
                      f"{len(official)} players resolved from the official report; {len(recal)} with report-recalibrated P(play); participation {dict(c)}",
                      {"participation": dict(c), "official_resolved": len(official), "recalibrated": len(recal)}))
     # D2 the report-aware minutes model is used exactly where the report covers the player
-    has_einj = lambda p: any("Minutes model: E_inj" in a for a in p.get("adjustments", []))  # noqa: E731
+    # the frozen engine's E_inj, or the joint rotation model with eligibility calibrated on the official designation
+    has_einj = lambda p: any("Minutes model: E_inj" in a or "report-aware eligibility" in a for a in p.get("adjustments", []))  # noqa: E731
     mins = [p for p in rows if p["family"] == "minutes"]
     wrong = [p["player_id"] for p in mins if has_einj(p) != (p["participation"].get("source") == OFFICIAL_SOURCE)]
     n_einj = sum(has_einj(p) for p in mins)

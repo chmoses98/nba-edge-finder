@@ -251,7 +251,11 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
         F["min_best"] = jr["m_jrm"].to_numpy()
         F["min_inj"] = jr["m_jrm"].to_numpy()
         f.loc[sl_idx, "min_best"] = F["min_best"].to_numpy()
-        basis = [("confirmed starter" if c == "STARTER_CONFIRMED" else "joint rotation model (report-calibrated eligibility)") for c in classes]
+        from .live.availability import SRC_OFFICIAL as _SRC_OFF
+        # the eligibility head is calibrated on the official designation exactly where the official report covers the player (the verifier's D1/D2 read these labels)
+        basis = [("confirmed starter" if c == "STARTER_CONFIRMED" else
+                  ("joint rotation model (report-calibrated eligibility)" if p.get("source") == _SRC_OFF else "joint rotation model (history-only eligibility)"))
+                 for c, p in zip(classes, part)]
     # minutes: report-aware E_inj where the official report covers the game, else the frozen best (E)
     from .live.availability import SRC_OFFICIAL
     report_cov = np.array([bool(p.get("source") == SRC_OFFICIAL) for p in part])
@@ -387,7 +391,7 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     for i, ix in enumerate(sl_idx):                       # minutes: the study's priority family (report-aware where covered)
         add_row(i, ix, "minutes", "minutes", mdist, MINUTES_RUNGS, float(mdist.mean[i]),
                 frozen["minutes_readiness"]["readiness"], 1.0, 0, float(F.loc[ix, "min_pub_f"]),
-                ["Minutes model: " + (f"joint rotation model ({J.VERSION}): team minutes conserved, no normalisation" if jrm_on else
+                ["Minutes model: " + (f"joint rotation model ({J.VERSION}, {'report-aware' if report_cov[i] else 'history-only'} eligibility): team minutes conserved, no normalisation" if jrm_on else
                                       ("E_inj (official report features)" if report_cov[i] else f"{best_min} (no official report for this game)")) + "."])
     # team block
     games = []
