@@ -467,3 +467,14 @@ def test_recovery_cycle_overdue_dispatch_failure_retry_then_stop(tmp_path, monke
         and (repo / "ops/nba/slots/2026-10-20/1720_pregame.json").read_text() == first    # write-once: history is never rewritten
     assert ticker_at("2026-10-20T22:19:00Z") == []                                     # 18:20 ET slot (22:20Z) is not requested early
     assert [x["slot_id"] for x in ticker_at("2026-10-20T22:33:00Z")] == ["2026-10-20@1820"]
+
+
+def test_watchdog_paper_games_reads_the_real_paper_store_layout(tmp_path):
+    """Found on opening night: MISSING_PAPER was raised for games that had thousands of paper decisions because the reader looked for
+    paper/nba/<day>/decisions_*.jsonl.gz instead of the store's paper/nba/decisions/<day>/*.jsonl.gz."""
+    from nba.paper import store
+    root = str(tmp_path)
+    rows = [{"decision_id": "d1", "game_id": "espn:1", "decision": "PASS"}, {"decision_id": "d2", "game_id": "espn:2", "decision": "TRADE"}]
+    store.write_once(root, "decisions", "2026-10-20", rows, utc("2026-10-20T21:35:00Z"))
+    assert WD.paper_games(root, utc("2026-10-21T00:00:00Z")) == {"espn:1", "espn:2"}
+    assert WD.paper_games(str(tmp_path / "empty"), utc("2026-10-21T00:00:00Z")) is None
