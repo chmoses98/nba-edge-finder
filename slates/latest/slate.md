@@ -1,4 +1,4 @@
-# NBA slate 2026-10-21 — generated 2026-10-21T21:25:05Z — nba-sim-0.1.0
+# NBA slate 2026-10-21 — generated 2026-10-21T22:24:22Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
@@ -8,10 +8,10 @@ Market snapshot age: 4 min · injury snapshot age: 0 min (official)
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 2857 |
-| MODELABLE | 3041 |
-| RESEARCH | 189 |
-| UNRESOLVED | 2326 |
+| BUILDABLE | 2874 |
+| MODELABLE | 3085 |
+| RESEARCH | 191 |
+| UNRESOLVED | 2373 |
 
 ## Games
 
@@ -21,7 +21,7 @@ Market snapshot age: 4 min · injury snapshot age: 0 min (official)
 | MIL @ WAS | 2026-10-21T23:00:00Z | 0.355 | -6.2±16.5 | 237.0±20.8 | 0.049 | 60000 | ok |
 | MIN @ MIA | 2026-10-21T23:30:00Z | 0.491 | -0.3±16.5 | 233.0±20.6 | 0.048 | 40000 | ok |
 | CHA @ BKN | 2026-10-21T23:30:00Z | 0.073 | -22.9±15.7 | 215.5±19.9 | 0.044 | 40000 | ok |
-| CHI @ TOR | 2026-10-21T23:30:00Z | 0.804 | +13.7±16.2 | 227.1±20.2 | 0.048 | 40000 | ok |
+| CHI @ TOR | 2026-10-21T23:30:00Z | 0.800 | +13.7±16.2 | 227.2±20.3 | 0.047 | 40000 | ok |
 | UTA @ MEM | 2026-10-22T00:00:00Z | 0.557 | +2.4±16.8 | 244.6±21.1 | 0.047 | 60000 | ok |
 | IND @ NOP | 2026-10-22T00:00:00Z | 0.585 | +3.4±16.3 | 237.7±20.5 | 0.049 | 40000 | ok |
 | DAL @ HOU | 2026-10-22T00:30:00Z | 0.823 | +14.5±15.6 | 222.2±19.7 | 0.048 | 40000 | ok |
@@ -34,5 +34,5 @@ Market snapshot age: 4 min · injury snapshot age: 0 min (official)
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 5898, 'UNSUPPORTED': 2515}
+Other gates: {'NO_EDGE': 5959, 'UNSUPPORTED': 2564}
 
