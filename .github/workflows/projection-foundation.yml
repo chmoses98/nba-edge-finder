@@ -57,6 +57,9 @@ on:
       now:
         description: "dry run only: replay clock (ISO, UTC); blank = wall clock"
         default: ""
+      minutes_engine:
+        description: "dry run only: frozen (the production default) | jrm (research candidate: PF_NBA_MINUTES_ENGINE). Scheduled and live runs never read this input."
+        default: "frozen"
       slot:
         description: "make-up run for this slot (YYYY-MM-DD@HHMM, ET); blank = a plain manual run (nba-ticker uses it)"
         default: ""
@@ -159,6 +162,8 @@ jobs:
         working-directory: research/projection_foundation
         env:
           PF_WORK: ${{ runner.temp }}/pf_work
+          # dry run only; empty (pull_request, scheduled) = the frozen engine in production
+          PF_NBA_MINUTES_ENGINE: ${{ github.event.inputs.minutes_engine }}
         run: |
           set -euo pipefail
           NOW="${{ github.event.inputs.now }}"
@@ -169,6 +174,15 @@ jobs:
           python -m nba.live.run --stage all --dry-run --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" \
             --shadow "$RUNNER_TEMP/m/shadow" --pit "$RUNNER_TEMP/m/pit" --context "$RUNNER_TEMP/m/data-archive" \
             --season-types "$SEASON" --window-hours "$WIN" ${NOW:+--now "$NOW"}
+      - name: Activation check of the dry-run output (report only; the JRM feed must also pass F1)
+        if: always()
+        working-directory: research/projection_foundation
+        env:
+          PF_WORK: ${{ runner.temp }}/pf_work
+        run: |
+          set -uo pipefail
+          # the checker appends its markdown to the job summary itself; it never fails the job here (report only), the verdict is read from the summary / JSON
+          python -m nba.live.activation_check --archive "$RUNNER_TEMP/m/projection-data" --json "$PF_WORK/activation_check.json" > /dev/null || true
       - name: PF unit tests (recorded real fixtures; includes the hoopR agreement checks now that the cache is warm)
         working-directory: research/projection_foundation
         run: |
