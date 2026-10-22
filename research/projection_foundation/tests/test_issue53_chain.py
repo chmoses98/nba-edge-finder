@@ -177,6 +177,8 @@ class Fake:
     def __init__(self, tmp_path, ctx, rc=None):
         self.tmp, self.ctx, self.rc, self.calls, self.now = tmp_path, ctx, rc or {}, [], t("2026-10-20T18:00:00Z")
         self.mono = 0.0
+        self.remote = {"exec-shadow-seals": dict(self.rc.get("ledger_files") or {}), "exec-shadow-seals-t45": dict(self.rc.get("ledger_files_t45") or {})}
+        self.dir_branch: dict[str, str] = {}
 
     def kind(self, cmd):
         s = " ".join(map(str, cmd))
@@ -193,11 +195,14 @@ class Fake:
             shutil.rmtree(dest, ignore_errors=True)
             shutil.copytree(self.ctx, dest)
         if k == "mount_seals":
-            d = Path(cmd[cmd.index("mount_seals") + 1])
+            i = cmd.index("mount_seals")
+            d = Path(cmd[i + 1])
+            br = cmd[i + 2] if len(cmd) > i + 2 else "exec-shadow-seals"
+            self.dir_branch[str(d)] = br
             shutil.rmtree(d, ignore_errors=True)
             d.mkdir(parents=True)
             subprocess.run(["git", "init", "-q", str(d)], check=True)
-            for name, text in (self.rc.get("ledger_files") or {}).items():
+            for name, text in self.remote[br].items():
                 (d / name).parent.mkdir(parents=True, exist_ok=True)
                 (d / name).write_text(text)
         if k == "exec_seal seal" and "--dry-run" not in cmd:                   # a seal file for the open game (what the real sealer writes)
@@ -206,7 +211,7 @@ class Fake:
             (seals / "seals/2026-10-20/espn_401909088__fake.json").write_text("{}")
         if k == "ledger_remote.py export":                                      # additions = every file of the (fresh) ledger worktree that the remote does not have
             src, dst = Path(cmd[cmd.index("--seals") + 1]), Path(cmd[cmd.index("--dir") + 1])
-            have = set((self.rc.get("ledger_files") or {}))
+            have = set(self.remote[self.dir_branch.get(str(src), "exec-shadow-seals")])
             for p in src.rglob("*"):
                 if p.is_file() and ".git" not in p.parts and str(p.relative_to(src)) not in have:
                     (dst / p.relative_to(src)).parent.mkdir(parents=True, exist_ok=True)
@@ -216,7 +221,7 @@ class Fake:
             rc = self._rc(k)
             if rc == 0:
                 Path(out).write_text(json.dumps({"status": "PUBLISHED", "commit_utc": "2026-10-20T18:21:00Z"}))
-                files = self.rc.setdefault("ledger_files", {})                  # the remote keeps what was published
+                files = self.remote[cmd[cmd.index("--branch") + 1]]             # the remote keeps what was published
                 root = Path(cmd[cmd.index("--dir") + 1])
                 for p in root.rglob("*"):
                     if p.is_file():
@@ -323,7 +328,7 @@ def test_the_first_live_iteration_enables_the_ledger_and_publishes_the_stamp(tmp
     f.now = t("2026-10-20T16:00:00Z")
     c = chain(tmp_path, f, max_minutes=1)
     c.run_chain()
-    assert f.rc["ledger_files"]["ENABLED_UTC"].strip() == "2026-10-20T16:00:00Z"                              # published once; later iterations see it on the remote
+    assert f.remote["exec-shadow-seals"]["ENABLED_UTC"].strip() == "2026-10-20T16:00:00Z"                              # published once; later iterations see it on the remote
     assert (Path(c.seals) / "ENABLED_UTC").read_text().strip() == "2026-10-20T16:00:00Z"
     assert "ledger_remote.py publish" in f.kinds()
 
@@ -346,3 +351,39 @@ def test_one_successor_after_the_threshold_only_while_still_needed_and_the_chain
 
 def test_a_live_chain_refuses_a_clock_override(capsys):
     assert SC.main(["--work", "/tmp/x", "--now", "2026-10-20T18:20:00Z"]) == 2
+
+
+def test_two_lanes_seal_and_publish_to_their_own_branches_and_never_share_state(tmp_path, env_token):
+    ctx = make_ctx(tmp_path / "c")
+    f = Fake(tmp_path, ctx, rc={"ledger_files": {"ENABLED_UTC": "2026-10-20T00:00:00Z\n"}, "ledger_files_t45": {"ENABLED_UTC": "2026-10-20T00:00:00Z\n"}})
+    f.now = t("2026-10-20T18:26:00Z")                                                                  # inside both windows (control 18:10-18:50, t45 18:20-18:50)
+    c = chain(tmp_path, f, max_minutes=1, lanes="control,t45")
+    c.run_chain()
+    seals = [x for x in f.calls if x[0] == "exec_seal seal"]
+    assert [x[2][x[2].index("--lane") + 1] for x in seals[:2]] == ["control", "t45"]
+    assert len({x[2][x[2].index("--seals") + 1] for x in seals[:2]}) == 2                              # separate worktrees
+    pubs = [x for x in f.calls if x[0] == "ledger_remote.py publish"]
+    assert {x[2][x[2].index("--branch") + 1] for x in pubs} == {"exec-shadow-seals", "exec-shadow-seals-t45"}
+    assert any(x[2][x[2].index("--out") + 1].endswith("publish_t45.json") for x in pubs)
+    mounts = [x for x in f.calls if x[0] == "mount_seals"]
+    assert {x[2][x[2].index("mount_seals") + 2] for x in mounts} == {"exec-shadow-seals", "exec-shadow-seals-t45"}
+
+
+def test_the_default_chain_runs_only_the_control_lane(tmp_path, env_token):
+    ctx = make_ctx(tmp_path / "c")
+    f = Fake(tmp_path, ctx, rc={"ledger_files": {"ENABLED_UTC": "2026-10-20T00:00:00Z\n"}})
+    f.now = t("2026-10-20T18:26:00Z")
+    chain(tmp_path, f, max_minutes=1).run_chain()
+    assert all("--lane" not in x[2] or x[2][x[2].index("--lane") + 1] == "control" for x in f.calls) and not any("t45" in " ".join(map(str, x[2])) for x in f.calls)
+
+
+def test_unknown_lanes_are_refused(tmp_path):
+    with pytest.raises(SystemExit):
+        chain(tmp_path, Fake(tmp_path, make_ctx(tmp_path / "c")), lanes="control,t90")
+
+
+def test_a_dry_two_lane_rehearsal_publishes_nothing(tmp_path, env_token):
+    f = Fake(tmp_path, make_ctx(tmp_path / "c"))
+    chain(tmp_path, f, dry_run=True, now="2026-10-20T18:26:00Z", lanes="control,t45").run_chain()
+    k = f.kinds()
+    assert k.count("exec_seal seal") == 2 and not set(k) & {"mount_seals", "ledger_remote.py export", "ledger_remote.py publish", "workflow run"}

@@ -103,7 +103,7 @@ def code_info(repo: str, study_path: str | None = None) -> dict[str, Any]:
 
 # ================================================================================================ schedule + windows
 # Standard-library module shared with the idle gate and the liveness monitor (see seal_windows.py): ONE implementation of "is a game owed a seal now?".
-from .seal_windows import (_stamp, enabled_utc, game_state, gid_file, list_sealed, mark_enabled, plan as _plan, schedule_games, window)  # noqa: E402,F401
+from .seal_windows import (LANES, _stamp, enabled_utc, game_state, gid_file, lane_study_path, list_sealed, mark_enabled, plan as _plan, schedule_games, window)  # noqa: E402,F401
 
 
 def plan(context_dir: str, seal_dir: str, now: datetime, study: dict) -> dict[str, Any]:
@@ -116,7 +116,7 @@ def ledger_from_seals(seal_dir: str, study: dict) -> X.Ledger:
     led = X.Ledger(study["exposure"])
     rows = []
     for body, _ in iter_seals(seal_dir):
-        if body.get("dry_run") or body.get("status") != "TRADED" or body.get("protocol_sha256") != X.study_sha() or body.get("strategy_id") != X.STRATEGY:
+        if body.get("dry_run") or body.get("status") != "TRADED" or body.get("protocol_sha256") != X.protocol_sha(study) or body.get("strategy_id") != X.strategy_id(study):
             continue
         for pos in body.get("selected") or []:
             rows.append((body["checkpoint_utc"], body["game"]["game_id"], pos))
@@ -133,13 +133,21 @@ def iter_seals(seal_dir: str):
             yield {"_unreadable": True}, p
 
 
-def _book_rows(market: str, cp: datetime, gap_max_s: int) -> tuple[Any, ...]:
-    """(tick, board, why): the latest capture tick OBSERVED at/before the checkpoint within the allowed gap, reconstructed as-of that tick."""
+def _book_rows(market: str, cp: datetime, gap_max_s: int, rule: str = "observed_and_committed_by_checkpoint", commits: dict | None = None) -> tuple[Any, ...]:
+    """(tick, board, why): the board of the decision, reconstructed as-of that tick.
+    control rule (`observed_and_committed_by_checkpoint`): the latest capture tick OBSERVED at/before the checkpoint within the allowed gap (its commit time is checked by the caller);
+    `latest_committed_by_decision`: the latest tick that was also COMMITTED to the capture branch at/before the decision instant - what a trader at that instant could have read."""
     reader = MK.ChainReader(market, "markets")
     ticks = reader.ticks(cp - timedelta(seconds=gap_max_s), cp)
     if not ticks:
         return None, None, "NO_BOARD_WITHIN_GAP"
-    want = ticks[-1]
+    if rule == "latest_committed_by_decision":
+        ok = [t for t in ticks if (commits or {}).get(MK.iso(t)) and MK.parse_ts(commits[MK.iso(t)]) <= cp]
+        if not ok:
+            return None, None, "NO_BOARD_COMMITTED_BY_DECISION"
+        want = ok[-1]
+    else:
+        want = ticks[-1]
     board = None
     for dt, b in reader.walk(want, want):
         if dt == want:
@@ -172,8 +180,11 @@ def seal_games(games: list[dict], archive: str, market: str, seal_dir: str, now:
         m: dict[str, Any] = {"game": g, "w": w, "reason": None, "board": None}
         meta[g["game_id"]] = m
         gm = MK.Game.from_dict({"game_id": g["game_id"], "start_utc": g["start_utc"], "home": g["home"], "away": g["away"], "game_date_et": g.get("game_date_et")})
-        tick, board, why = _book_rows(market, cp, int(study["checkpoint"].get("max_board_gap_s", 1800)))
+        rule = X.board_rule_id(study)
+        tick, board, why = _book_rows(market, cp, int(study["checkpoint"].get("max_board_gap_s", 1800)), rule, clocks.get("board_commit"))
         m["board"] = {"tick_observed_utc": _iso(tick), "gap_s": None if tick is None else (cp - tick).total_seconds()}
+        if rule != "observed_and_committed_by_checkpoint":
+            m["board"]["rule"] = rule
         if why:
             m["reason"] = why
             return
@@ -195,7 +206,7 @@ def seal_games(games: list[dict], archive: str, market: str, seal_dir: str, now:
             return
         gi = MK.GameIndex([gm])
         ob = MK.ChainReader(market, "orderbooks")
-        rows, cov = MK.snapshot_rows(board, gi, gm, "T-60", cp, tick, book=RUN._book_at(ob, {}, tick))
+        rows, cov = MK.snapshot_rows(board, gi, gm, study["checkpoint"]["horizon"], cp, tick, book=RUN._book_at(ob, {}, tick))
         players = MK.PlayerIndex(fc_ok)
         RUN._fill_player_ids(rows, players)
         fc, gfc = PR.Forecasts(fc_ok, tick), PR.GameForecasts(gf_ok, tick)
@@ -221,7 +232,7 @@ def seal_games(games: list[dict], archive: str, market: str, seal_dir: str, now:
             due.remove(g)
             prepared_all[:] = [c for c in prepared_all if c.get("game_ref") != g["game_id"]]
     fa = X.forecast_archive_index_from(fc_rec, gf_rec)
-    selected_all = X.select(prepared_all, study, base, forecast_archive=fa, prepared=True, clocks=clocks, ledger=ledger) if prepared_all else []
+    selected_all = X.select(prepared_all, study, base, strategy_id=X.strategy_id(study), forecast_archive=fa, prepared=True, clocks=clocks, ledger=ledger) if prepared_all else []
     by_game: dict[str, list[dict]] = defaultdict(list)
     for c in selected_all:
         by_game[c["game_id"]].append(c)
@@ -238,7 +249,7 @@ def seal_games(games: list[dict], archive: str, market: str, seal_dir: str, now:
         cand_bytes = gzip.compress("\n".join(json.dumps(r, sort_keys=True, default=str) for r in rows_json).encode(), mtime=0)
         w = m["w"]
         body = {
-            "schema": SCHEMA, "study_id": study["study_id"], "study_version": study["version"], "strategy_id": X.STRATEGY, "protocol_sha256": X.study_sha(),
+            "schema": SCHEMA, "study_id": study["study_id"], "study_version": study["version"], "strategy_id": X.strategy_id(study), "protocol_sha256": X.protocol_sha(study),
             "paper_config_sha256": CFG.config_sha(), "decision_mode": MODE, "dry_run": bool(dry_run),
             "game": {k: g.get(k) for k in ("game_id", "start_utc", "home", "away", "game_date_et", "schedule_file", "schedule_sha256", "schedule_observed_utc")},
             "checkpoint_utc": _iso(w["checkpoint"]), "window": {"opens_utc": _iso(w["opens"]), "closes_utc": _iso(w["closes"])}, "computed_utc": _iso(now),
@@ -297,7 +308,7 @@ def mark_missed(games: list[dict], seal_dir: str, now: datetime, study: dict, *,
         w = window(g, study)
         rec = {"schema": SCHEMA + ".missed", "game_id": g["game_id"], "tip_utc": g["start_utc"], "checkpoint_utc": _iso(w["checkpoint"]), "window_closed_utc": _iso(w["closes"]),
                "detected_utc": _iso(now), "status": "MISSED", "counted": False,
-               "reason": "no seal was committed inside the window (scheduler delay / runner outage / archive lag); uncounted, never sealed late", "protocol_sha256": X.study_sha()}
+               "reason": "no seal was committed inside the window (scheduler delay / runner outage / archive lag); uncounted, never sealed late", "protocol_sha256": X.protocol_sha(study)}
         out.append(rec)
         if not dry_run:
             os.makedirs(os.path.join(seal_dir, "missed"), exist_ok=True)
@@ -357,15 +368,15 @@ def _history_problems(seal_dir: str, rel: str, hist: dict) -> tuple[list[str], s
 
 
 def verify_seal(body: dict, path_rel: str, hist: dict, study: dict, *, protocol_sha: str, seal_dir: str, code_reachable: bool | None,
-                final_ticks: list[str] | None = None, final_tip: str | None = None) -> tuple[bool, list[str]]:
+                final_ticks: list[str] | None = None, final_tip: str | None = None, final_commits: dict[str, str] | None = None) -> tuple[bool, list[str]]:
     """(counted, reasons). Every failure is listed; counted only with an empty list. Never raises on a malformed seal."""
     try:
-        return _verify(body, path_rel, hist, study, protocol_sha, seal_dir, code_reachable, final_ticks, final_tip)
+        return _verify(body, path_rel, hist, study, protocol_sha, seal_dir, code_reachable, final_ticks, final_tip, final_commits)
     except Exception as e:  # noqa: BLE001
         return False, [f"MALFORMED_SEAL:{type(e).__name__}"]
 
 
-def _verify(body, path_rel, hist, study, protocol_sha, seal_dir, code_reachable, final_ticks, final_tip):
+def _verify(body, path_rel, hist, study, protocol_sha, seal_dir, code_reachable, final_ticks, final_tip, final_commits=None):
     why: list[str] = []
     sc = study["sealing"]
     if body.get("_unreadable"):
@@ -421,7 +432,20 @@ def _verify(body, path_rel, hist, study, protocol_sha, seal_dir, code_reachable,
         why.append("BOARD_COMMIT_NOT_RECORDED")
     # the sealed board must be the latest tick OBSERVED at/before the checkpoint in the FINAL archive (an earlier tick = a forbidden fallback)
     st = (body.get("board") or {}).get("tick_observed_utc")
-    if final_ticks is None:
+    if X.board_rule_id(study) == "latest_committed_by_decision":
+        # availability rule: the sealed board must have been COMMITTED at/before the decision instant and be the latest tick observed AND committed by it in the FINAL archive
+        bc = (body.get("board") or {}).get("commit_utc")
+        if st and (not bc or MK.parse_ts(bc) > cp):
+            why.append("BOARD_NOT_COMMITTED_BY_DECISION")
+        if final_commits is None:
+            why.append("LATEST_COMMITTED_TICK_UNVERIFIED")
+        else:
+            lo = cp - timedelta(seconds=int(study["checkpoint"].get("max_board_gap_s", 1800)))
+            cands = [t for t, c in final_commits.items() if lo <= MK.parse_ts(t) <= cp and MK.parse_ts(c) <= cp]
+            latest = max(cands, key=MK.parse_ts) if cands else None
+            if latest != st:
+                why.append("NOT_LATEST_COMMITTED_TICK_AT_DECISION")
+    elif final_ticks is None:
         why.append("LATEST_TICK_UNVERIFIED")
     else:
         lo = cp - timedelta(seconds=int(study["checkpoint"].get("max_board_gap_s", 1800)))
@@ -452,7 +476,7 @@ def hydrate(row: dict, body: dict, study: dict, counted: bool) -> dict:
     c["tip"] = c["tip"] or MK.parse_ts(body["game"]["start_utc"])
     c["checkpoint"] = c["checkpoint"] or MK.parse_ts(body["checkpoint_utc"])
     c["as_of"] = c["as_of"] or MK.parse_ts(c["as_of_utc"])
-    c["strategy_id"] = X.STRATEGY
+    c["strategy_id"] = X.strategy_id(study)
     c["blockers"] = c.get("blockers") or []
     c["prospective"] = bool(counted)
     c["origin"] = "sealed_pretip"
@@ -464,7 +488,7 @@ def hydrate(row: dict, body: dict, study: dict, counted: bool) -> dict:
 
 
 # ================================================================================================ settlement join (post-game; never changes a selection)
-def settle_sealed(trades: list[dict], archive: str | None, market: str | None, now: datetime, base: dict) -> dict[str, Any]:
+def settle_sealed(trades: list[dict], archive: str | None, market: str | None, now: datetime, base: dict, *, strategy_id: str | None = None, horizon: str = "T-60") -> dict[str, Any]:
     """Attach the paper system's settlement to SEALED trades (Kalshi result first, box-derived second, DNP at the fair price). Selections are not touched."""
     st: Counter = Counter()
     if not trades:
@@ -484,8 +508,8 @@ def settle_sealed(trades: list[dict], archive: str | None, market: str | None, n
         if c["tip"] > cutoff:
             st["PENDING_GAME_NOT_OVER"] += 1
             continue
-        d = {**c, "decision_id": S.decision_id(X.STRATEGY, c["candidate_id"], c["ticker"], c["side"]), "cluster_id": c["game_id"], "replay": False, "simulated_contracts": 1,
-             "effective_entry": c["effective_entry_exec"], "game_start_utc": MK.iso(c["tip"]), "horizon": "T-60", "decision": "TRADE",
+        d = {**c, "decision_id": S.decision_id(strategy_id or X.STRATEGY, c["candidate_id"], c["ticker"], c["side"]), "cluster_id": c["game_id"], "replay": False, "simulated_contracts": 1,
+             "effective_entry": c["effective_entry_exec"], "game_start_utc": MK.iso(c["tip"]), "horizon": horizon, "decision": "TRADE",
              "fee_assumption": c.get("fee_assumption") or {"multiplier": base["execution"]["fee_taker_multiplier"]}}
         o = None
         if d["family"] in SE.PROP_FAMILY and d.get("entity_id"):
@@ -517,10 +541,10 @@ def _closing(reader: MK.ChainReader, ticker: str, tip: datetime) -> dict:
 
 # ================================================================================================ evaluation
 def evaluate(seal_dir: str, archive: str | None, market: str | None, now: datetime, study: dict, base: dict, *, code_repo: str | None = None,
-             default_branch_ref: str = "origin/main", schedule: list[dict] | None = None) -> dict[str, Any]:
+             default_branch_ref: str = "origin/main", schedule: list[dict] | None = None, board_commits: dict[str, str] | None = None) -> dict[str, Any]:
     """Verify every seal, join settlements to the COUNTED trades, and report every scheduled game (sealed / missed / duplicate / not sealed). Selections are read,
     never recomputed. `market` (the final capture archive) is needed to prove the sealed tick was the latest tick at the checkpoint; without it nothing counts."""
-    protocol_sha = X.study_sha()
+    protocol_sha = X.protocol_sha(study)
     hist = seal_history(seal_dir)
     final_ticks = [MK.iso(t) for t in MK.ChainReader(market, "markets").ticks()] if market else None
     sched = {g["game_id"]: g for g in (schedule or [])}
@@ -553,7 +577,7 @@ def evaluate(seal_dir: str, archive: str | None, market: str | None, now: dateti
                 r = subprocess.run(["git", "-C", code_repo, "merge-base", "--is-ancestor", sha, default_branch_ref], capture_output=True)
                 reach = (r.returncode == 0) if r.returncode in (0, 1) else None
         ok, why = verify_seal(body, rel, hist, study, protocol_sha=protocol_sha, seal_dir=seal_dir, code_reachable=reach, final_ticks=final_ticks,
-                              final_tip=(sched.get(gid) or {}).get("start_utc"))
+                              final_tip=(sched.get(gid) or {}).get("start_utc"), final_commits=board_commits)
         games[gid] = {"game_id": gid, "status": body.get("status"), "game_reason": body.get("game_reason"), "counted": ok, "uncounted_reasons": why, "seal_id": body.get("seal_id"),
                       "seal_commit_utc": add_t if add_t != "9999" else None, "computed_utc": body.get("computed_utc"), "tip_utc": body["game"].get("start_utc"),
                       "board": body.get("board"), "n_trades": body["candidates"].get("n_trades"), "category": "SEALED_COUNTED" if ok else "SEALED_UNCOUNTED"}
@@ -575,7 +599,7 @@ def evaluate(seal_dir: str, archive: str | None, market: str | None, now: dateti
             w = window(g, study)
             games[g["game_id"]] = {"game_id": g["game_id"], "tip_utc": g["start_utc"], "counted": False,
                                    "category": "NOT_DUE" if now < w["opens"] else "NO_SEAL_RECORD", "status": "NO_DATA"}
-    settle = settle_sealed(counted_trades, archive, market, now, base)
+    settle = settle_sealed(counted_trades, archive, market, now, base, strategy_id=X.strategy_id(study), horizon=study["checkpoint"]["horizon"])
     counted_all = [c for c in all_cs if c["prospective"]]
     metrics = X.portfolio_metrics(counted_all, study, label="sealed_prospective", clocks_verified=True) if counted_all else \
         {"status": "NO_DATA", "reason": "no COUNTED sealed decisions yet", "label": "sealed_prospective"}
@@ -614,12 +638,14 @@ def main(argv: list[str] | None = None) -> int:
         sp.add_argument("--out", default=None)
         sp.add_argument("--published", default=None, help="check-deadline: JSON written by ledger_remote publish (server commit time)")
         sp.add_argument("--default-branch-ref", default="origin/main")
+        sp.add_argument("--lane", default="control", choices=sorted(LANES), help="sealing lane: `control` (strict T-60, unchanged) or `t45` (availability-rule study); each has its own protocol and ledger")
     a = ap.parse_args(argv)
     if a.cmd in ("seal", "watch") and a.now and not a.dry_run:
         print("::error::--now is accepted only with --dry-run: a live run uses the wall clock (a forged clock would write permanent markers / enablement)", file=sys.stderr)
         return 2
     now = _now(a)
-    study, base = X.load_study(), CFG.load()
+    study_path = lane_study_path(a.lane)
+    study, base = (X.load_study() if a.lane == "control" else X.load_lane(study_path)), CFG.load()
     if a.cmd == "plan":
         pl = plan(a.context, a.seals, now, study)
         if a.out:
@@ -652,7 +678,7 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         games = schedule_games(a.context, now)
         clocks = {"board_commit": X.board_commit_index(a.board_repo or a.market, a.board_ref), "forecast_commit": X.forecast_commit_index(a.archive, a.archive, a.forecast_ref)}
-        rep = seal_games(games, a.archive, a.market, a.seals, now, study, base, clocks, code_info(a.code_repo), dry_run=a.dry_run,
+        rep = seal_games(games, a.archive, a.market, a.seals, now, study, base, clocks, code_info(a.code_repo, study_path), dry_run=a.dry_run,
                          extra_inputs={"projection_data_head": git(a.archive, "rev-parse", "HEAD"), "data_archive_head": git(a.board_repo or a.market, "rev-parse", "HEAD")})
         if a.out:
             json.dump(rep, open(a.out, "w"), indent=1, sort_keys=True)
@@ -660,7 +686,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1 if any(e["error"] != "ALREADY_SEALED_NOOP" for e in rep["errors"]) else 0
     if a.cmd == "evaluate":
         games = schedule_games(a.context, now, all_history=True) if a.context else None
-        rep = evaluate(a.seals, a.archive, a.market, now, study, base, code_repo=a.code_repo, default_branch_ref=a.default_branch_ref, schedule=games)
+        bc = X.board_commit_index(a.board_repo or a.market, a.board_ref) if (a.board_repo or a.market) and X.board_rule_id(study) == "latest_committed_by_decision" else None
+        rep = evaluate(a.seals, a.archive, a.market, now, study, base, code_repo=a.code_repo, default_branch_ref=a.default_branch_ref, schedule=games, board_commits=bc)
         txt = json.dumps(rep, indent=1, sort_keys=True, default=str)
         if a.out:
             open(a.out, "w").write(txt)

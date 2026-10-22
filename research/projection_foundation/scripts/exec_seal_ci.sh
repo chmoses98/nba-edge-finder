@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Helpers for .github/workflows/exec-shadow-seal.yml (Issue #53 sealed pre-tip ledger; RESEARCH ONLY).
-#   exec_seal_ci.sh mount_seals <dir>                 the ledger branch `exec-shadow-seals` (the ONLY branch this pipeline writes)
+#   exec_seal_ci.sh mount_seals <dir> [branch]        a ledger branch: `exec-shadow-seals` (control, default) or `exec-shadow-seals-t45` (the only branches this pipeline writes)
 #   exec_seal_ci.sh mount_context <base> [now_iso]    data-archive, depth 1 + the last three days of context/schedule only (~1 s: the idle gate)
 #   exec_seal_ci.sh mount_inputs <base> [now_iso]     deepen the capture history and add the Kalshi boards of the last two UTC days to data-archive and mount projection-data (forecasts, read-only)
 # This script never pushes. New seals / markers are published by nba.paper.ledger_remote (GitHub Git Data API: server-side commit time, fast-forward only, additions only),
@@ -10,18 +10,18 @@ set -euo pipefail
 BRANCH=exec-shadow-seals
 
 cmd_mount_seals() {
-  local dir="$1" rc=0
+  local dir="$1" br="${2:-$BRANCH}" rc=0
   rm -rf "$dir"; git worktree prune
-  git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1 || rc=$?
+  git ls-remote --exit-code --heads origin "$br" >/dev/null 2>&1 || rc=$?
   if [ "$rc" = 0 ]; then
-    git fetch origin "$BRANCH"
-    git worktree add -f "$dir" "origin/$BRANCH"
-    git -C "$dir" checkout -q -B "$BRANCH"
+    git fetch origin "$br"
+    git worktree add -f "$dir" "origin/$br"
+    git -C "$dir" checkout -q -B "$br"
   elif [ "$rc" = 2 ]; then                      # ls-remote: no matching ref -> the ledger is bootstrapped by the first publish
-    echo "branch $BRANCH does not exist yet"
+    echo "branch $br does not exist yet"
     mkdir -p "$dir"
     git -C "$dir" init -q
-    git -C "$dir" checkout -q --orphan "$BRANCH"
+    git -C "$dir" checkout -q --orphan "$br"
   else
     echo "::error::cannot list the remote (ls-remote rc=$rc): refusing to treat an error as a missing ledger"
     return 1
@@ -70,5 +70,5 @@ case "${1:-}" in
   mount_seals) shift; cmd_mount_seals "$@" ;;
   mount_context) shift; cmd_mount_context "$@" ;;
   mount_inputs) shift; cmd_mount_inputs "$@" ;;
-  *) echo "usage: $0 mount_seals <dir> | mount_context <base> [now] | mount_inputs <base> [now]" >&2; exit 2 ;;
+  *) echo "usage: $0 mount_seals <dir> [branch] | mount_context <base> [now] | mount_inputs <base> [now]" >&2; exit 2 ;;
 esac

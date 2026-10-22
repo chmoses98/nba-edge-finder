@@ -63,6 +63,31 @@ def study_sha(path: str | Path | None = None) -> str:
     return hashlib.sha256(Path(path or STUDY_PATH).read_bytes()).hexdigest()
 
 
+def load_lane(path: str | Path) -> dict:
+    """A study file of another sealing lane (e.g. the T-45 availability study) with its own sha256 attached. The control study is loaded by `load_study()` as before."""
+    d = load_study(path)
+    d["_path"], d["_sha256"] = str(path), study_sha(path)
+    return d
+
+
+def protocol_sha(study: dict) -> str:
+    """sha256 of the protocol file that defines `study` (the control's own file unless the study came from `load_lane`)."""
+    return study.get("_sha256") or study_sha()
+
+
+def strategy_id(study: dict) -> str:
+    """The primary strategy of a study: the control's constant unless the study names its own (`primary_strategy`)."""
+    return study.get("primary_strategy") or STRATEGY
+
+
+def strategy_id_of(study: dict) -> str:
+    return strategy_id(study)
+
+
+def board_rule_id(study: dict) -> str:
+    return study["checkpoint"].get("board_rule_id") or "observed_and_committed_by_checkpoint"
+
+
 def base_protocol_ok(study: dict) -> tuple[bool, str]:
     """The pinned digest of the original protocol: the study must not run against a base file that has been edited."""
     got = CFG.config_sha()
@@ -250,7 +275,7 @@ def select(cands: list[dict], study: dict, base: dict, *, strategy_id: str = STR
 
     Order of events (the exposure order): checkpoints chronologically; within one checkpoint instant (all games that share it) per thesis the eligible side
     with the highest `ev_key` (ties: lower price, ticker, side), then admission by descending `ev_key` through the ONE ledger."""
-    scfg = study["strategies"][STRATEGY]                      # the JRM variant shares these rules by construction (differs_only_in)
+    scfg = study["strategies"][strategy_id_of(study)]         # the JRM variant shares these rules by construction (differs_only_in)
     led = ledger or Ledger(study["exposure"])
     cs = cands if prepared else [prepare(r, study, base) for r in cands]
     verified = clocks is not None and clocks.get("board_commit") is not None and clocks.get("forecast_commit") is not None
