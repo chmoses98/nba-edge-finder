@@ -326,19 +326,24 @@ def forecast_archive_index_from(fc_records: list[dict], gf_records: list[dict]) 
 
 
 def board_commit_index(repo: str, ref: str = "origin/data-archive") -> dict[str, str]:
-    """capture tick (UTC ISO, as in `board_observed_utc`) -> git commit time of the commit that archived it on the capture branch (an independent clock).
-    Commit subjects are 'capture: <run> at <tick>'. History older than the fetched depth is simply absent (-> BOARD_ARCHIVE_UNVERIFIED)."""
+    """capture tick (UTC ISO, exactly as the chain reader derives it from the FILE NAME stamp) -> git commit time of the commit that ADDED that tick's checkpoint / delta file
+    to the capture branch. Path-based, not commit-subject-based: subjects differ from the file stamps by 1-3 s on ~23% of ticks (measured), and a path is unique.
+    History older than the fetched depth is simply absent (-> BOARD_ARCHIVE_UNVERIFIED)."""
     import re
     import subprocess
-    out = subprocess.run(["git", "-C", repo, "log", ref, "--format=%cI|%s"], capture_output=True, text=True, check=True).stdout
+    out = subprocess.run(["git", "-C", repo, "log", ref, "--diff-filter=A", "--no-renames", "--name-only", "--format=@@%cI", "--", "kalshi/markets", "kalshi/markets_delta"],
+                         capture_output=True, text=True, check=True).stdout
     idx: dict[str, str] = {}
+    cur = None
     for line in out.splitlines():
-        t, _, subj = line.partition("|")
-        m = re.match(r"capture: \S+ at (\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ)", subj)
-        if m:
-            c = MK.iso(MK.parse_ts(t))
-            if m.group(1) not in idx or c < idx[m.group(1)]:
-                idx[m.group(1)] = c
+        if line.startswith("@@"):
+            cur = MK.iso(MK.parse_ts(line[2:]))
+            continue
+        m = re.search(r"kalshi_markets(?:_delta)?_(\d{8}T\d{6}Z)_", line)
+        if m and cur:
+            tick = MK.iso(datetime.strptime(m.group(1), "%Y%m%dT%H%M%SZ").replace(tzinfo=MK.timezone.utc))
+            if tick not in idx or cur < idx[tick]:
+                idx[tick] = cur
     return idx
 
 

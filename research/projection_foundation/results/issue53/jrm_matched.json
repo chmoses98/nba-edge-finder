@@ -116,23 +116,26 @@
   },
   "eligible_vs_blocked": {
    "any_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 1812,
     "DEPTH_CONFLICT_ORDERBOOK": 8,
-    "EV_BELOW_THRESHOLD": 567,
-    "GATE_STATUS": 516,
-    "INSUFFICIENT_DEPTH": 9,
-    "QUALITY_GATE:EXTREME_PRICE": 23,
-    "QUALITY_GATE:NO_SIZE": 9,
-    "QUALITY_GATE:SPREAD_WIDE": 8,
-    "SPREAD_WIDE_STRICT": 74
+    "EV_BELOW_THRESHOLD": 2083,
+    "GATE_STATUS": 1732,
+    "INSUFFICIENT_DEPTH": 12,
+    "LOW_P_PLAY": 64,
+    "QUALITY_GATE:EXTREME_PRICE": 59,
+    "QUALITY_GATE:NO_SIZE": 12,
+    "QUALITY_GATE:SPREAD_WIDE": 36,
+    "SPREAD_WIDE_STRICT": 220
    },
-   "blocked_sides": 611,
-   "candidate_sides": 620,
+   "blocked_sides": 2423,
+   "candidate_sides": 2432,
    "eligible_not_traded_reason": {
     "EXPOSURE_CAP:TEAM_GAME": 2,
     "NOT_BEST_IN_THESIS": 4
    },
    "eligible_sides": 9,
    "primary_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 1812,
     "DEPTH_CONFLICT_ORDERBOOK": 8,
     "ELIGIBLE": 9,
     "EV_BELOW_THRESHOLD": 77,
@@ -189,7 +192,7 @@
    "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
   },
   "label": "jrm_matched_games",
-  "n_candidate_sides": 620,
+  "n_candidate_sides": 2432,
   "overall": {
    "cash_outlay": 1.4700000000000002,
    "hit_rate": 0.6666666666666666,
@@ -272,14 +275,38 @@
    "espn:401909090": {
     "reason": "OK",
     "snapshot": "jrm_v2_uniform/20261021T000501Z_jrm_v2.json.gz"
+   },
+   "espn:401909091": {
+    "reason": "OK",
+    "snapshot": "jrm_v2_uniform/20261021T221532Z_jrm_v2.json.gz"
+   },
+   "espn:401909834": {
+    "reason": "FEED_MISMATCH",
+    "snapshot": null
+   },
+   "espn:401909835": {
+    "reason": "FEED_MISMATCH",
+    "snapshot": null
+   },
+   "espn:401909836": {
+    "reason": "OK",
+    "snapshot": "jrm_v2_uniform/20261021T221532Z_jrm_v2.json.gz"
+   },
+   "espn:401909837": {
+    "reason": "OK",
+    "snapshot": "jrm_v2_uniform/20261021T221532Z_jrm_v2.json.gz"
    }
   },
   "matched_games": [
-   "espn:401909090"
+   "espn:401909090",
+   "espn:401909091",
+   "espn:401909836",
+   "espn:401909837"
   ],
   "row_status": {
-   "COVERED": 416,
-   "GAME_LEVEL_UNCHANGED": 612,
+   "COVERED": 1616,
+   "FEED_MISMATCH": 852,
+   "GAME_LEVEL_UNCHANGED": 1632,
    "NO_SNAPSHOT_FOR_GAME": 774
   }
  },
@@ -466,40 +493,40 @@
   "common_contracts_covered": {
    "by_side": {
     "NO": {
-     "mean_d_ev": -0.011344846461343393,
-     "mean_d_p_model": -0.011344846461343393,
-     "n": 208
+     "mean_d_ev": 0.0006689153130979841,
+     "mean_d_p_model": 0.0006689153130979841,
+     "n": 808
     },
     "YES": {
-     "mean_d_ev": 0.011344846461343391,
-     "mean_d_p_model": 0.011344846461343391,
-     "n": 208
+     "mean_d_ev": -0.0006689153130979847,
+     "mean_d_p_model": -0.0006689153130979858,
+     "n": 808
     }
    },
-   "mean_abs_d_p_model": 0.02647038123475433,
-   "mean_d_ev": -1.4344828743654365e-18,
-   "mean_d_p_model": -9.75781955236954e-19,
-   "mean_ratio_minutes": 1.082045080003699,
-   "n_sides": 416
+   "mean_abs_d_p_model": 0.03676727119999361,
+   "mean_d_ev": 3.2204024925312013e-19,
+   "mean_d_p_model": 2.146934995020801e-21,
+   "mean_ratio_minutes": 1.0760593921571173,
+   "n_sides": 1616
   },
   "coverage": {
-   "candidate_sides": 620,
-   "covered_by_jrm_row": 416,
-   "covered_share": 0.6709677419354839,
+   "candidate_sides": 2432,
+   "covered_by_jrm_row": 1616,
+   "covered_share": 0.6644736842105263,
    "status_counts": {
-    "COVERED": 416,
-    "GAME_LEVEL_UNCHANGED": 204
+    "COVERED": 1616,
+    "GAME_LEVEL_UNCHANGED": 816
    }
   },
   "decision_matrix_candidate_sides": {
    "both_bet": 1,
    "jrm_only": 2,
-   "neither": 615,
+   "neither": 2427,
    "v1_only": 2
   },
   "downstream": "archive_scale_approximation",
   "neither_breakdown": {
-   "blocked_in_both": 607,
+   "blocked_in_both": 2419,
    "eligible_in_either_not_selected": 8
   },
   "status": "OK",
@@ -728,11 +755,14 @@
   }
  ],
  "population": {
-  "candidate_sides": 620,
+  "candidate_sides": 2432,
   "matched_games": [
-   "espn:401909090"
+   "espn:401909090",
+   "espn:401909091",
+   "espn:401909836",
+   "espn:401909837"
   ],
-  "n_games": 1,
+  "n_games": 4,
   "note": "both portfolios rebuilt on the SAME candidate rows with fresh single ledgers; V1 on the full archive is in exec_shadow.json"
  },
  "prospective_gate": {
@@ -746,7 +776,7 @@
   "status": "INSUFFICIENT_SAMPLE",
   "verdict_owner": "PR #45 evaluate_prospective.py (not recomputed or relaxed here; this study only tracks the game count)"
  },
- "run_id": "4be3c29b5ed9de96",
+ "run_id": "f4f7ab85a666eebb",
  "schema": "issue53.jrm_matched.v1",
  "snapshots_rejected": [
   {
@@ -831,15 +861,37 @@
     "espn:401909842"
    ],
    "sha256_verified": true
+  },
+  {
+   "archived_utc": "2026-10-21T22:15:32Z",
+   "branch_commit_utc": "2026-10-21T22:15:32Z",
+   "feed_generated_utc": "2026-10-21T21:42:02Z",
+   "file": "jrm_v2_uniform/20261021T221532Z_jrm_v2.json.gz",
+   "games": [
+    "espn:401909091",
+    "espn:401909092",
+    "espn:401909093",
+    "espn:401909094",
+    "espn:401909834",
+    "espn:401909835",
+    "espn:401909836",
+    "espn:401909837",
+    "espn:401909838",
+    "espn:401909839",
+    "espn:401909840",
+    "espn:401909841",
+    "espn:401909842"
+   ],
+   "sha256_verified": true
   }
  ],
  "star_unders": {
   "definition": "star = frozen conditional minutes >= 28.0",
   "interpretation_rule": "Supportive evidence for 'incumbent normalization creates artificial star unders' would be: JRM minutes systematically ABOVE the frozen published minutes for stars AND the V1 NO bets disappearing under JRM AND (once outcomes exist at scale) JRM minutes being the closer forecast. With the sample here none of this can be concluded; the numbers above are descriptive.",
-  "n_covered_player_games": 12,
-  "n_star_player_games": 1,
-  "stars_mean_minutes_ratio_jrm_over_frozen": 1.0428954423592494,
-  "stars_share_jrm_minutes_higher": 1.0,
+  "n_covered_player_games": 48,
+  "n_star_player_games": 8,
+  "stars_mean_minutes_ratio_jrm_over_frozen": 1.0326874551079313,
+  "stars_share_jrm_minutes_higher": 0.75,
   "status": "OK",
   "v1_NO_covered": {
    "jrm_minutes_higher": 3,
@@ -1111,17 +1163,19 @@
   },
   "eligible_vs_blocked": {
    "any_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 1812,
     "DEPTH_CONFLICT_ORDERBOOK": 8,
-    "EV_BELOW_THRESHOLD": 554,
-    "GATE_STATUS": 516,
-    "INSUFFICIENT_DEPTH": 9,
-    "QUALITY_GATE:EXTREME_PRICE": 23,
-    "QUALITY_GATE:NO_SIZE": 9,
-    "QUALITY_GATE:SPREAD_WIDE": 8,
-    "SPREAD_WIDE_STRICT": 74
+    "EV_BELOW_THRESHOLD": 2085,
+    "GATE_STATUS": 1732,
+    "INSUFFICIENT_DEPTH": 12,
+    "LOW_P_PLAY": 64,
+    "QUALITY_GATE:EXTREME_PRICE": 59,
+    "QUALITY_GATE:NO_SIZE": 12,
+    "QUALITY_GATE:SPREAD_WIDE": 36,
+    "SPREAD_WIDE_STRICT": 220
    },
-   "blocked_sides": 607,
-   "candidate_sides": 620,
+   "blocked_sides": 2419,
+   "candidate_sides": 2432,
    "eligible_not_traded_reason": {
     "EXPOSURE_CAP:PLAYER_GAME": 1,
     "EXPOSURE_CAP:TEAM_GAME": 2,
@@ -1129,6 +1183,7 @@
    },
    "eligible_sides": 13,
    "primary_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 1812,
     "DEPTH_CONFLICT_ORDERBOOK": 8,
     "ELIGIBLE": 13,
     "EV_BELOW_THRESHOLD": 73,
@@ -1184,7 +1239,7 @@
    "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
   },
   "label": "v1_matched_games",
-  "n_candidate_sides": 620,
+  "n_candidate_sides": 2432,
   "overall": {
    "cash_outlay": 1.54,
    "hit_rate": 0.6666666666666666,

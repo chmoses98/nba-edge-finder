@@ -28,7 +28,7 @@ cd research/projection_foundation && PYTHONPATH=../../src python -m nba.paper.st
 | run + summary | `study53.py` | `python -m nba.paper.study53` |
 | tests | `tests/test_issue53_*.py`, `tests/issue53_synth.py` | synthetic world driven by the REAL engine and settlement code |
 
-### Protocol v2.0.0 (`exec_shadow_config_v2.json`), owner decisions of 2026-10-21 on PR #54
+### Protocol v2.0.1 (`exec_shadow_config_v2.json`), owner decisions of 2026-10-21 on PR #54
 * **Strict T-60 cut-off kept** (decision 1): a board and a forecast must be observed/generated **and committed** to their archive branches at/before the checkpoint.
   No grace window, no later horizon, no fallback to an earlier archived tick. BOS@DET stays `NO_TRADE`.
 * **Sealed pre-tip ledger replaces reconstruction as the only source of prospective evidence** (decision 2, the review's finding): v1.1.0 keyed `prospective` off the
@@ -39,6 +39,12 @@ cd research/projection_foundation && PYTHONPATH=../../src python -m nba.paper.st
   Selection rules, strategy ids and thresholds are unchanged (copied from `PF_EDGE_STRICT_V1`, never tuned). If the PR is merged and the schedule first runs after
   the start, the start must be amended again (a seal is counted only if the protocol file's commit on the default branch precedes it).
 * **Exact JRM through the full engine as an isolated dry run** (decision 3), see below; the archive-scale approximation stays separately labelled.
+* **v2.0.1 (second review, still before any collection and before the start): the amendments are in the protocol's `amendments` log.** Window opens checkpoint + **600 s** (was
+  360 s: the measured capture lag over 150 real ticks is median 213 s, p90 357 s, **max 502 s**, so 360 s sealed some games before their own board had reached the branch);
+  seal commits are created through the **GitHub Git Data API** so the commit time is GitHub's clock, not the runner's (see below); board commit times are read **by file path**
+  (commit subjects differ from the file stamps by 1-3 s on ~23% of ticks); the board must be the **latest tick observed at/before the checkpoint in the final archive**
+  (`NOT_LATEST_TICK_AT_CHECKPOINT`), the tip unchanged since the seal, no seal modified/deleted/duplicated after being added. No rule, threshold or strategy id changed; the
+  start stays 2026-10-24T06:00Z.
 
 Rules of the executable portfolio (unchanged from v1): one checkpoint per game (a missing / stale / after-checkpoint / not-yet-archived board is `NO_TRADE` for the whole
 game); side-specific ask (NO = 1 - YES bid, size = YES bid size), displayed size >= order, sampled-order-book conflict blocks (`DEPTH_CONFLICT_ORDERBOOK`), 1 cent
@@ -47,17 +53,24 @@ settlement is the paper system's (Kalshi result, DNP at the scalar / last fair p
 positive lower bound under both game- and player-game-clustered bootstraps; JRM's 20-game gate is tracked separately and decided by PR #45's script.
 
 ## Sealed pre-tip ledger (`nba/paper/exec_seal.py`, `.github/workflows/exec-shadow-seal.yml`)
-**What a seal is.** A read-only job runs after a game's T-60 archive cut-off + 6 minutes (capture ticks reach the capture branch ~3.4 minutes after observation) and
+**What a seal is.** A read-only job runs after a game's T-60 archive cut-off + 10 minutes (measured capture lag: median 213 s, p90 357 s, max 502 s) and
 at least 10 minutes before tip, evaluates the game with the frozen rules **from the raw archives, not from upstream paper-decision rows**, and appends an immutable seal to
-its own branch `exec-shadow-seals` (the only branch it writes; additions only, enforced by `guard_diff`). A seal records: strategy id, protocol sha256, code sha and
+its own branch `exec-shadow-seals` (the only branch it writes; additions only: the publisher sends only new blobs on top of the current head and aborts if an existing path would change). A seal records: strategy id, protocol sha256, code sha and
 dirtiness, ref/event/run id, data refs, the market tick (observed time, commit time, gap) and the forecast ids with commit times, the decision and reasons of **every**
 candidate side (hashed file), the selected decisions with prices and sizes, the exposure ledger before/after, the computation time and source hashes. Games with no board,
 no forecasts, a late board commit or no tradeable contract are sealed `NO_TRADE` with the reason; a game whose window closes unsealed gets a `MISSED` marker, a red run and
 an alert issue (`nba-exec-shadow-alert`) and is **never sealed late as if on time**. Games whose window opened before the ledger was first enabled are `BEFORE_ENABLED`.
 
+**Who writes the ledger, and with whose clock.** Three jobs. `compute` has `contents: read` only (it runs the research code and can write nothing) and hands the new files over as
+an artifact. `publish` (`contents: write`; schedule / manual non-dry runs on the default branch only; stdlib-only code, `nba/paper/ledger_remote.py`) creates the commit through the
+Git Data API with **no client-supplied dates** and moves the ref **fast-forward only** (`force: false`), retrying on top of the new head if it lost a race; it then re-checks through
+the server that the commit is on the branch (durable) and that its **server commit time precedes each seal's deadline** (otherwise exit 5: late, uncounted, alert). `alert`
+(`issues: write`) opens / updates the alert issue. No job runs `git push` or `git commit`. The API path can only run from the default branch, so it is unverified until merge
+(the publisher is unit-tested against an in-memory fake of the API; pull-request runs are dry); the burn-in before the start date exists to prove it.
+
 **What counts** (`verify_seal`, offline, post-game): body and candidate-file hashes match; protocol sha256/version match; computed inside
-[start, tip - 10 min] and not before the window opened; the seal commit's independent git commit time on the ledger branch is not before the computation and not after the
-deadline; code sha reachable from the default branch (a pull-request or branch run can never be counted); protocol file committed on the default branch before the start;
+[start, tip - 10 min] and not before the window opened; the seal's **adding commit** (exactly one; never modified or deleted afterwards; working-tree bytes equal to that commit) has a
+server commit time not before the computation and not after the deadline; the sealed board is the latest tick observed at/before the checkpoint in the final archive and the tip is unchanged; code sha reachable from the default branch (a pull-request or branch run can never be counted); protocol file committed on the default branch before the start;
 independent clocks recorded; not a dry run. Anything else is listed with its reason and is uncounted. **Postgame, `exec_seal.evaluate` joins the paper settlement
 (Kalshi result first, box score second, DNP at the fair price) to the counted sealed trades and never recomputes a selection**; every scheduled game appears as
 SEALED_COUNTED / SEALED_UNCOUNTED / MISSED / NO_SEAL_RECORD / NOT_DUE.
@@ -67,16 +80,15 @@ reading any upstream decision row: BOS@DET `NO_TRADE` (board committed 18:02:15Z
 (`results/issue53/dress_rehearsal/`). That agreement is a consistency check of the sealer, not a result.
 
 **Cadence, cost and reliability.** Cron every 5 minutes during UTC 16:00-03:55 (season months): each run is a ~20-30 s *plan* (schedule snapshot + ledger, a blobless
-history fetch of the capture branch); boards and forecasts are mounted only when a window is open, then the seal step takes ~10 s of compute. A 44-minute window gives ~9
+history fetch of the capture branch); boards and forecasts are mounted only when a window is open, then the seal step takes ~10 s of compute. A 40-minute window (checkpoint + 10 min to tip - 10 min) gives ~8
 attempts per game; concurrency serialises runs and the helper is idempotent per game. Residual risk, stated plainly: GitHub's scheduler is not a clock (the repo's own notes record
-hours of missing cron delivery on opening day). The design is therefore fail-closed: a missed window is uncounted, loud, and recorded, never papered over. I did not touch the
+hours of missing cron delivery on opening day). The design is therefore fail-closed: a missed window is uncounted, loud, and recorded, never papered over. Nothing alerts if the cron stops entirely (a dead-man check would be a second scheduler; not added without your approval). I did not touch the
 ticker; if you later want stronger delivery, the existing ticker pattern (self-renewing job) can dispatch `workflow_dispatch` of this workflow without changing the study.
-Expected loss of games to archive lag: with ticks every 5-15 minutes and ~3.4 minutes lag, the last tick before T-60 is committed in time only when it was observed more
-than ~3.4 minutes before the checkpoint, so a sizeable share of games will be `NO_TRADE` by construction (1 of 3 on opening night). That slows the 200-decision / 40-game
+Expected loss of games to archive lag: the last tick before T-60 is committed in time only when it was observed more than its lag (median 213 s) before the checkpoint, so a large share of games is `NO_TRADE` by construction: in the retrospective application **6 of the 8 games already due** (088, 091, 834-837) fail only because their T-60 board was committed 203-220 s after the checkpoint. That slows the 200-decision / 40-game
 target and is the price of the strict rule; every seal records the tick gap and commit margin so this can be quantified without any change to the rule.
 
 **Safe proposed cadence.** (1) Merge only on your approval; the first live run stamps `ENABLED_UTC`. (2) 2026-10-22..23: burn-in (seals are produced and verified but, by the
-start rule, uncounted). (3) Run `python -m nba.paper.study53 --seals <ledger checkout> --context ... --code-repo ...` any morning for the daily page; weekly for the report.
+start rule, uncounted). (3) Run `python -m nba.paper.study53 --seals <ledger checkout> --context ... --market ... --code-repo ...` any morning for the daily page; weekly for the report.
 (4) Before 2026-10-24T06:00Z confirm in the burn-in that games show SEALED_UNCOUNTED with only BEFORE_PROSPECTIVE_START as the reason, then the start stands; otherwise amend it.
 
 ## Exact JRM dry run (`nba/paper/jrm_exact.py`, `.github/workflows/jrm-exact-dryrun.yml`)
@@ -88,7 +100,9 @@ finish), and the matched market selections contract by contract. Isolation: `con
 throw-away copy used, PR #45 merged only inside the runner at a pinned SHA (fails if the branch moved), runs only on manual dispatch or a PR carrying the label
 `jrm-exact-dryrun`, 40-minute timeout, never scheduled. Tests inject stub engines; guards on the workflow files are tests too.
 
-## Findings (retrospective, descriptive; archive state `projection-data` 8ce75b5, `minutes-shadow-archive` c38f874)
+## Findings (retrospective, descriptive)
+Section A and the OKC@SAS numbers were fixed on the opening-night archive state and do not change. The regenerated `results/issue53/` (run `f4f7ab85a666eebb`, archive state fetched
+2026-10-22) now also covers the games that were played since (091, 834-837 are due; 838+ are `NOT_DUE`); the figures quoted below say which state they come from.
 
 ### A. The seven opening-night bets
 * Reproduced exactly: **7 decisions, 2 games, net P&L $1.39, entry cost $3.40 (sum of quoted asks), ROI 40.882%**; matches the archived scorecard and the
@@ -107,7 +121,8 @@ throw-away copy used, PR #45 merged only inside the runner at a pinned SHA (fail
 * **3 trades in 1 game** (OKC@SAS): $0.46 net P&L, ROI on cash outlay 29.9%, 2 of 3 wins, CLV +0.33c mean (3 valid). **No interval is defined (< 5 games);
   status `INSUFFICIENT_SAMPLE`; prospective: `NO_DATA` (0/200 decisions, 0/40 games).**
 * **BOS@DET (088) is `NO_TRADE`**: its T-60 board (observed 17:58:51Z) reached the capture branch at 18:02:15Z, after the 18:00:00Z checkpoint. Without
-  the independent-clock rule the same frozen rules would trade 6 contracts in 2 games for $0.83. The rule is the issue's "generated AND archived before the
+  the independent-clock rule the same frozen rules would trade 6 contracts in 2 games for $0.83 on that evening, and **21 contracts in 5 games (net $0.83) over all 8 games due so far**: 6 of those 8
+  games (088, 091, 834-837) are `NO_TRADE` only because their T-60 board reached the capture branch 203-220 s after the checkpoint. The rule is the issue's "generated AND archived before the
   decision" applied to the market side; it decides outcomes here only by 2 minutes of archive latency, which is itself a finding (3.4 min typical lag).
 * **NYK@PHI (089) is `NO_TRADE`**: 512 sides blocked by the PASS-only gate, 85 by quote-quality, 21 by order-book depth conflict. The PASS-only gate fails for 1,554 of the 1,802 T-60 sides (86%). Other blockers: spread, extreme price, thin displayed size, sampled-book conflict; capped / not-best sides are listed.
 * Contemporaneous cross-check at T-60: **NO_DATA** - the nearest contemporaneous run to the checkpoint was 41 / 85 / 92 minutes before tip, outside the 45-75
@@ -115,11 +130,11 @@ throw-away copy used, PR #45 merged only inside the runner at a pinned SHA (fail
 * Examples of `NO_TRADE` with large nominal edges and the reason each was blocked are in `exec_shadow.json` (`no_trade_examples`).
 
 ### C. Frozen vs JRM, matched (archive-scale approximation, retrospective)
-* Eligible, same-feed, pre-tip JRM snapshots exist for **one** settled game (OKC@SAS, snapshot `20261021T000501Z`, feed 23:56:30Z, archived 00:05:01Z, commit
+* (Regenerated state: three further games matched a snapshot, but the gate still counts 1 settled eligible game.) Eligible, same-feed, pre-tip JRM snapshots exist for **one** settled game (OKC@SAS, snapshot `20261021T000501Z`, feed 23:56:30Z, archived 00:05:01Z, commit
   00:05:21Z). `jrm_v1/` and `jrm_v2/` (variance-weighted) are rejected (`REGISTER_NOT_ELIGIBLE`); BOS@DET and NYK@PHI predate any JRM snapshot
   (`NO_SNAPSHOT_FOR_GAME`). **JRM gate: 1 / 20 eligible settled games -> `INSUFFICIENT_SAMPLE`; no promotion and no conclusion.**
-* Same candidate rows, same ledger order: V1-only 2, JRM-only 2, both 1, neither 615 (607 blocked in both). On the 416 covered sides JRM minutes are on
-  average 8.2% higher than the frozen published minutes; mean change in P(NO) -0.011. Settled P&L of the contracts only V1 took: +$0.11; only JRM took:
+* Same candidate rows, same ledger order (regenerated state, 4 matched games, 1 settled): V1-only 2, JRM-only 2, both 1, neither 2,427. On the 1,616 covered sides JRM minutes are on
+  average 7.6% higher than the frozen published minutes; mean change in P(NO) +0.0007 (opening-night state: 416 sides, +8.2%, -0.011). Settled P&L of the contracts only V1 took: +$0.11; only JRM took:
   +$0.18; both: +$0.35. One game: no inference.
 * Of the original seven, 3 (the OKC@SAS rows) had an eligible matched snapshot at their T-90 decision. JRM raises minutes for all three (J. Williams
   26.5 -> 29.4, SGA 33.6 -> 35.0), EV net falls 0.133 -> 0.076 and 0.156 -> 0.112 for the two points rungs and stays ~0.166 for the threes rung; all three would
@@ -130,12 +145,13 @@ throw-away copy used, PR #45 merged only inside the runner at a pinned SHA (fail
 
 ## Outstanding risks and limits
 1. **Sample.** 2-3 retrospective games, 0 prospective. Nothing here supports value or JRM promotion.
-2. **JRM downstream is an approximation** (`p_ge(scale=r)` on the archived frozen pmf). Rates, usage redistribution and the participation gate are not re-estimated; the real test needs `PF_NBA_MINUTES_ENGINE=jrm` on the live feed (not run: no workflow was dispatched).
+2. **JRM downstream is an approximation** (`p_ge(scale=r)` on the archived frozen pmf). Rates, usage redistribution and the participation gate are not re-estimated; the real test needs `PF_NBA_MINUTES_ENGINE=jrm` on the live feed (the isolated workflow exists; not yet run).
 3. **Archive latency.** Boards are committed ~3.4 min after observation; whether a T-60 game is tradeable can hinge on that. The rule is frozen as written;
    changing it (e.g. a 6-minute margin on the checkpoint) is a new protocol version, not a patch.
 4. **Replay vs live.** The primary checkpoint runs only exist as as-of replays (computed after the fact, within the information rules). Genuinely contemporaneous coverage near T-60 was absent on opening night.
 5. `depth_at_entry` is optional evidence; 53 sides show size on the board but 0 at the ask in the sampled book (treated as a conflict, not a fill).
 6. Fee model uses the series multiplier from the board row; DNP outcomes settle at `modeled_last_valid_mid` until an authoritative scalar is archived (none occurred).
-7. `board_commit_index` trusts the capture branch's commit-subject convention (`capture: <run> at <tick>`) and only covers the fetched history depth; ticks outside it are `BOARD_ARCHIVE_UNVERIFIED`.
+7. `board_commit_index` is path-based (the commit that added the tick's file) and only covers the fetched history depth; ticks outside it are `BOARD_ARCHIVE_UNVERIFIED`.
 8. JRM eligibility is the PR #45 register; this study additionally requires both snapshot clocks >= 5 minutes before the decision instant, the same feed as the frozen decision, and an identical rebuilt frozen probability (otherwise the player is `FROZEN_INPUT_MISMATCH`, not a JRM effect).
-9. Scope: the new modules are not scheduled anywhere; evidence accrues only when someone runs `study53` on new archive state (owner decision, see PR).
+9. Scope: the seal workflow is schedulable only from the default branch, i.e. after your merge; nothing runs before. The exact-JRM dry run needs network and the PR #45 code, so it runs only in Actions (label `jrm-exact-dryrun` or manual dispatch); the harness is tested here with stub engines only.
+10. The Git Data API publication path, the 5-minute cron's real delivery rate and the real capture lag at seal time can only be observed after merge (burn-in).

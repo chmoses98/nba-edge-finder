@@ -36,7 +36,6 @@ from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
-import pandas as pd
 
 from . import config as CFG
 from . import engine as EN
@@ -46,7 +45,6 @@ from . import probability as PR
 from . import run as RUN
 from . import schema as S
 from . import settle as SE
-from . import stats as ST
 
 SCHEMA = "issue53.exec_seal.v1"
 MODE = "sealed_pretip_asof"
@@ -98,7 +96,7 @@ def code_info(repo: str, study_path: str | None = None) -> dict[str, Any]:
     path = study_path or str(X.STUDY_PATH)
     rel = os.path.relpath(path, git(repo, "rev-parse", "--show-toplevel") or repo)
     return {"sha": git(repo, "rev-parse", "HEAD") or None, "dirty": bool(git(repo, "status", "--porcelain", "--untracked-files=no")),
-            "ref": os.environ.get("GITHUB_REF"), "event": os.environ.get("GITHUB_EVENT_NAME"), "workflow": os.environ.get("GITHUB_WORKFLOW"),
+            "ref": os.environ.get("GITHUB_REF"), "default_branch": os.environ.get("DEFAULT_BRANCH"), "event": os.environ.get("GITHUB_EVENT_NAME"), "workflow": os.environ.get("GITHUB_WORKFLOW"),
             "run_id": os.environ.get("GITHUB_RUN_ID"), "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
             "protocol_path": rel, "protocol_effective_commit_utc": (lambda t: MK.iso(MK.parse_ts(t)) if t else None)(git(repo, "log", "-1", "--format=%cI", "--", rel))}
 
@@ -110,13 +108,13 @@ def _stamp(path: str) -> datetime | None:
     return datetime.strptime(m.group(1), "%Y%m%dT%H%M%SZ").replace(tzinfo=UTC) if m else None
 
 
-def schedule_games(context_dir: str, now: datetime, season_types: tuple[str, ...] = ("regular",), lookback_h: float = 6.0, horizon_h: float = 48.0,
-                   snapshot_span_h: float = 36.0) -> list[dict]:
+def schedule_games(context_dir: str, now: datetime | None, season_types: tuple[str, ...] = ("regular",), lookback_h: float = 6.0, horizon_h: float = 48.0,
+                   snapshot_span_h: float = 36.0, all_history: bool = False) -> list[dict]:
     """Games from the ESPN schedule snapshots of the capture branch observed at or before `now` within the last `snapshot_span_h` hours; the LATEST observation of a game
     wins (a postponed / moved tip is followed), and a game that has dropped out of the newest snapshot (finished, other ET day) is still known from an earlier one.
     Independent of our forecasts: a game without forecasts is still a game we owe a status."""
     files = [(st, p) for p in glob.glob(os.path.join(context_dir, "context", "schedule", "dt=*", "context_schedule_*.jsonl.gz"))
-             if (st := _stamp(p)) is not None and now - timedelta(hours=snapshot_span_h) <= st <= now]
+             if (st := _stamp(p)) is not None and (all_history or (now - timedelta(hours=snapshot_span_h) <= st <= now))]
     out: dict[str, dict] = {}
     for st, p in sorted(files, key=lambda x: (x[0], x[1])):
         raw = open(p, "rb").read()
@@ -125,12 +123,15 @@ def schedule_games(context_dir: str, now: datetime, season_types: tuple[str, ...
             if not line.strip():
                 continue
             r = json.loads(line)
-            if r.get("season_type") not in season_types or not r.get("start_time_utc"):
+            if r.get("season_type") not in season_types:
+                continue
+            if not r.get("start_time_utc"):
+                out.pop(r["game_id"], None)                     # tip withdrawn (postponed / unscheduled): the stale earlier tip must not be sealed
                 continue
             out[r["game_id"]] = {"game_id": r["game_id"], "start_utc": MK.iso(MK.parse_ts(r["start_time_utc"])), "home": r["home_tricode"], "away": r["away_tricode"],
                                  "game_date_et": r.get("game_date_et"), "schedule_file": os.path.basename(p), "schedule_sha256": digest,
                                  "schedule_observed_utc": r.get("_observed_at_utc"), "status": r.get("status")}
-    keep = [g for g in out.values() if now - timedelta(hours=lookback_h) <= MK.parse_ts(g["start_utc"]) <= now + timedelta(hours=horizon_h)]
+    keep = [g for g in out.values() if all_history or now - timedelta(hours=lookback_h) <= MK.parse_ts(g["start_utc"]) <= now + timedelta(hours=horizon_h)]
     return sorted(keep, key=lambda g: (g["start_utc"], g["game_id"]))
 
 
@@ -159,8 +160,8 @@ def mark_enabled(seal_dir: str, now: datetime) -> None:
 
 def game_state(now: datetime, game: dict, study: dict, sealed: set[str], missed: set[str], enabled: datetime | None = None) -> str:
     w = window(game, study)
-    if enabled is not None and w["opens"] < enabled and game["game_id"] not in sealed:
-        return "BEFORE_ENABLED"
+    if game["game_id"] not in sealed and ((enabled is not None and w["opens"] < enabled) or (enabled is None and now > w["closes"])):
+        return "BEFORE_ENABLED"                              # the ledger was not enabled (yet) when this window ran: not ours, never MISSED
     if game["game_id"] in sealed:
         return "SEALED"
     if game["game_id"] in missed:
@@ -204,7 +205,7 @@ def ledger_from_seals(seal_dir: str, study: dict) -> X.Ledger:
     led = X.Ledger(study["exposure"])
     rows = []
     for body, _ in iter_seals(seal_dir):
-        if body.get("dry_run") or body.get("status") != "TRADED":
+        if body.get("dry_run") or body.get("status") != "TRADED" or body.get("protocol_sha256") != X.study_sha() or body.get("strategy_id") != X.STRATEGY:
             continue
         for pos in body.get("selected") or []:
             rows.append((body["checkpoint_utc"], body["game"]["game_id"], pos))
@@ -254,25 +255,25 @@ def seal_games(games: list[dict], archive: str, market: str, seal_dir: str, now:
     ledger_before = _ledger_state(ledger)
     prepared_all: list[dict] = []
     meta: dict[str, dict] = {}
-    for g in due:
+    def one(g: dict) -> None:
         w = window(g, study)
         cp = w["checkpoint"]
         m: dict[str, Any] = {"game": g, "w": w, "reason": None, "board": None}
         meta[g["game_id"]] = m
         gm = MK.Game.from_dict({"game_id": g["game_id"], "start_utc": g["start_utc"], "home": g["home"], "away": g["away"], "game_date_et": g.get("game_date_et")})
-        tick, board, why = _book_rows(market, cp, 1800)
+        tick, board, why = _book_rows(market, cp, int(study["checkpoint"].get("max_board_gap_s", 1800)))
         m["board"] = {"tick_observed_utc": _iso(tick), "gap_s": None if tick is None else (cp - tick).total_seconds()}
         if why:
             m["reason"] = why
-            continue
+            return
         bc = (clocks.get("board_commit") or {}).get(MK.iso(tick))
         m["board"]["commit_utc"] = bc
         if bc is None:
             m["reason"] = "BOARD_ARCHIVE_UNVERIFIED"
-            continue
+            return
         if MK.parse_ts(bc) > cp:
             m["reason"] = "BOARD_COMMITTED_AFTER_CHECKPOINT"
-            continue
+            return
         # forecasts: only records committed to projection-data at/before the checkpoint can exist for this decision
         fc_ok = [r for r in fc_rec if r.get("game_id") == g["game_id"] and fcm.get(r.get("forecast_id")) and MK.parse_ts(fcm[r["forecast_id"]]) <= cp]
         gf_ok = [r for r in gf_rec if r.get("game_id") == g["game_id"] and gcm.get(r.get("game_forecast_id")) and MK.parse_ts(gcm[r["game_forecast_id"]]) <= cp]
@@ -280,7 +281,7 @@ def seal_games(games: list[dict], archive: str, market: str, seal_dir: str, now:
                           "n_player_records_late_or_unverified": sum(1 for r in fc_rec if r.get("game_id") == g["game_id"]) - len(fc_ok)}
         if not fc_ok:
             m["reason"] = "NO_FORECASTS_COMMITTED_BY_CHECKPOINT"
-            continue
+            return
         gi = MK.GameIndex([gm])
         ob = MK.ChainReader(market, "orderbooks")
         rows, cov = MK.snapshot_rows(board, gi, gm, "T-60", cp, tick, book=RUN._book_at(ob, {}, tick))
@@ -293,12 +294,21 @@ def seal_games(games: list[dict], archive: str, market: str, seal_dir: str, now:
         m["n_rows"] = len(rows)
         if not sides:
             m["reason"] = "NO_EVALUABLE_CONTRACTS"
-            continue
+            return
         for c in sides:
             p = X.prepare({**c, "settled": False}, study, base)
             p["game_ref"] = g["game_id"]
             prepared_all.append(p)
         m["fc_ids"] = sorted({i for r in fc_ok for i in [r.get("forecast_id")] if i} | {r.get("game_forecast_id") for r in gf_ok if r.get("game_forecast_id")})
+
+    for g in list(due):
+        try:
+            one(g)
+        except Exception as e:  # noqa: BLE001  one bad game must not take the other due games down; it is retried on the next tick (and becomes MISSED if the window closes)
+            rep["errors"].append({"game_id": g["game_id"], "error": f"{type(e).__name__}: {str(e)[:160]}"})
+            meta.pop(g["game_id"], None)
+            due.remove(g)
+            prepared_all[:] = [c for c in prepared_all if c.get("game_ref") != g["game_id"]]
     fa = X.forecast_archive_index_from(fc_rec, gf_rec)
     selected_all = X.select(prepared_all, study, base, forecast_archive=fa, prepared=True, clocks=clocks, ledger=ledger) if prepared_all else []
     by_game: dict[str, list[dict]] = defaultdict(list)
@@ -387,22 +397,64 @@ def mark_missed(games: list[dict], seal_dir: str, now: datetime, study: dict, *,
 
 
 # ================================================================================================ verification (post-game, offline)
-def seal_commit_times(seal_dir: str) -> dict[str, str]:
-    """relative path -> independent git commit time of the commit that ADDED it to the ledger branch."""
-    if not os.path.isdir(os.path.join(seal_dir, ".git")) and not git(seal_dir, "rev-parse", "--git-dir"):
+def seal_history(seal_dir: str) -> dict[str, list[tuple[str, str, str]]]:
+    """relative path -> [(status A|M|D, commit sha, commit time)] over the WHOLE ledger history of seals/ and missed/ (renames reported as D + A). An empty dict when the directory
+    is not a git checkout: nothing is then verifiable and nothing counts."""
+    if not git(seal_dir, "rev-parse", "--git-dir"):
         return {}
-    out = subprocess.run(["git", "-C", seal_dir, "log", "--diff-filter=A", "--name-only", "--format=@@%cI", "--", "seals", "missed"], capture_output=True, text=True).stdout
+    out = subprocess.run(["git", "-C", seal_dir, "log", "--name-status", "--no-renames", "--format=@@%H|%cI", "--", "seals", "missed"], capture_output=True, text=True).stdout
     cur, res = None, {}
     for line in out.splitlines():
         if line.startswith("@@"):
-            cur = MK.iso(MK.parse_ts(line[2:]))
-        elif line.strip():
-            res[line.strip()] = cur
+            sha, _, t = line[2:].partition("|")
+            cur = (sha, MK.iso(MK.parse_ts(t)))
+        elif line.strip() and cur:
+            st, _, path = line.partition("\t")
+            res.setdefault(path.strip(), []).append((st[:1], cur[0], cur[1]))
     return res
 
 
-def verify_seal(body: dict, path_rel: str, commit_times: dict[str, str], study: dict, *, protocol_sha: str, seal_dir: str, code_reachable: bool | None) -> tuple[bool, list[str]]:
-    """(counted, reasons). Every failure is listed; counted only with an empty list."""
+def seal_commit_times(seal_dir: str) -> dict[str, str]:
+    """relative path -> commit time of the (single) commit that ADDED it. Kept for callers that only need the add time."""
+    return {p: ev[-1][2] for p, ev in seal_history(seal_dir).items() if ev and ev[-1][0] == "A"}
+
+
+def _blob(seal_dir: str, sha: str, rel: str) -> bytes | None:
+    r = subprocess.run(["git", "-C", seal_dir, "show", f"{sha}:{rel}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+
+
+def _history_problems(seal_dir: str, rel: str, hist: dict) -> tuple[list[str], str | None]:
+    """(problems, add commit time) for one ledger path: exactly one A, never touched again, working-tree bytes identical to the adding commit."""
+    ev = hist.get(rel) or []
+    why = []
+    if not ev:
+        return ["NO_INDEPENDENT_COMMIT_TIME"], None
+    adds = [e for e in ev if e[0] == "A"]
+    if len(adds) != 1:
+        why.append("ADDED_MORE_THAN_ONCE" if adds else "NEVER_ADDED")
+    if any(e[0] != "A" for e in ev):
+        why.append("MODIFIED_OR_DELETED_AFTER_ADD")
+    if adds:
+        try:
+            now_bytes = open(os.path.join(seal_dir, rel), "rb").read()
+        except OSError:
+            now_bytes = None
+        if now_bytes is None or _blob(seal_dir, adds[0][1], rel) != now_bytes:
+            why.append("BYTES_DIFFER_FROM_ADDING_COMMIT")
+    return why, (adds[0][2] if adds else None)
+
+
+def verify_seal(body: dict, path_rel: str, hist: dict, study: dict, *, protocol_sha: str, seal_dir: str, code_reachable: bool | None,
+                final_ticks: list[str] | None = None, final_tip: str | None = None) -> tuple[bool, list[str]]:
+    """(counted, reasons). Every failure is listed; counted only with an empty list. Never raises on a malformed seal."""
+    try:
+        return _verify(body, path_rel, hist, study, protocol_sha, seal_dir, code_reachable, final_ticks, final_tip)
+    except Exception as e:  # noqa: BLE001
+        return False, [f"MALFORMED_SEAL:{type(e).__name__}"]
+
+
+def _verify(body, path_rel, hist, study, protocol_sha, seal_dir, code_reachable, final_ticks, final_tip):
     why: list[str] = []
     sc = study["sealing"]
     if body.get("_unreadable"):
@@ -411,12 +463,16 @@ def verify_seal(body: dict, path_rel: str, commit_times: dict[str, str], study: 
         why.append("SCHEMA")
     if body.get("body_sha256") != body_sha(body):
         why.append("BODY_HASH_MISMATCH")
-    cf = os.path.join(os.path.dirname(os.path.join(seal_dir, path_rel)), body.get("candidates", {}).get("file", ""))
+    cfile = body.get("candidates", {}).get("file", "")
+    cf_rel = os.path.join(os.path.dirname(path_rel), cfile)
     try:
-        if sha256(open(cf, "rb").read()) != body["candidates"]["sha256"]:
+        if sha256(open(os.path.join(seal_dir, cf_rel), "rb").read()) != body["candidates"]["sha256"]:
             why.append("CANDIDATES_HASH_MISMATCH")
     except (OSError, KeyError):
         why.append("CANDIDATES_FILE_MISSING")
+    h1, add_time = _history_problems(seal_dir, path_rel, hist)
+    h2, _ = _history_problems(seal_dir, cf_rel, hist)
+    why += h1 + [f"CANDIDATES_{x}" for x in h2 if x != "NO_INDEPENDENT_COMMIT_TIME"]
     if body.get("dry_run"):
         why.append("DRY_RUN_SEAL")
     if body.get("protocol_sha256") != protocol_sha or body.get("study_version") != study["version"]:
@@ -431,20 +487,17 @@ def verify_seal(body: dict, path_rel: str, commit_times: dict[str, str], study: 
         why.append("BEFORE_PROSPECTIVE_START")
     if comp is not None and (comp < opens or comp > deadline):
         why.append("COMPUTED_OUTSIDE_WINDOW")
-    ct = commit_times.get(path_rel)
-    if ct is None:
-        why.append("NO_INDEPENDENT_COMMIT_TIME")
-    else:
-        ctt = MK.parse_ts(ct)
+    if add_time is not None:
+        ctt = MK.parse_ts(add_time)
         if comp is not None and ctt < comp - timedelta(seconds=120):
             why.append("COMMIT_BEFORE_COMPUTATION")          # a seal cannot be committed before it was computed
         if ctt > deadline:
-            why.append("COMMITTED_AFTER_DEADLINE")
+            why.append("COMMITTED_AFTER_DEADLINE")           # the commit time is the SERVER clock of the API commit (see ledger_remote)
     code = body.get("code") or {}
     if not code.get("sha") or code.get("dirty"):
         why.append("CODE_UNPINNED_OR_DIRTY")
-    ref = code.get("ref") or ""
-    if not ref.startswith("refs/heads/") or code.get("event") not in ("schedule", "workflow_dispatch"):
+    ref, dflt = code.get("ref") or "", code.get("default_branch")
+    if not dflt or ref != f"refs/heads/{dflt}" or code.get("event") not in ("schedule", "workflow_dispatch"):
         why.append("NOT_A_DEFAULT_BRANCH_RUN")
     if code_reachable is not True:
         why.append("CODE_NOT_REACHABLE_FROM_DEFAULT_BRANCH" if code_reachable is False else "CODE_REACHABILITY_UNVERIFIED")
@@ -455,6 +508,18 @@ def verify_seal(body: dict, path_rel: str, commit_times: dict[str, str], study: 
         why.append("INDEPENDENT_CLOCKS_NOT_RECORDED")
     if body.get("status") == "TRADED" and not (body.get("board") or {}).get("commit_utc"):
         why.append("BOARD_COMMIT_NOT_RECORDED")
+    # the sealed board must be the latest tick OBSERVED at/before the checkpoint in the FINAL archive (an earlier tick = a forbidden fallback)
+    st = (body.get("board") or {}).get("tick_observed_utc")
+    if final_ticks is None:
+        why.append("LATEST_TICK_UNVERIFIED")
+    else:
+        lo = cp - timedelta(seconds=int(study["checkpoint"].get("max_board_gap_s", 1800)))
+        cands = [t for t in final_ticks if lo <= MK.parse_ts(t) <= cp]
+        latest = max(cands, key=MK.parse_ts) if cands else None
+        if latest != st:
+            why.append("NOT_LATEST_TICK_AT_CHECKPOINT")
+    if final_tip is not None and MK.parse_ts(final_tip) != tip:
+        why.append("TIP_CHANGED_AFTER_SEAL")
     return not why, why
 
 
@@ -542,38 +607,58 @@ def _closing(reader: MK.ChainReader, ticker: str, tip: datetime) -> dict:
 # ================================================================================================ evaluation
 def evaluate(seal_dir: str, archive: str | None, market: str | None, now: datetime, study: dict, base: dict, *, code_repo: str | None = None,
              default_branch_ref: str = "origin/main", schedule: list[dict] | None = None) -> dict[str, Any]:
-    """Verify every seal, join settlements to the COUNTED trades, and report every scheduled game (sealed / missed / not sealed). Selections are read, never recomputed."""
+    """Verify every seal, join settlements to the COUNTED trades, and report every scheduled game (sealed / missed / duplicate / not sealed). Selections are read,
+    never recomputed. `market` (the final capture archive) is needed to prove the sealed tick was the latest tick at the checkpoint; without it nothing counts."""
     protocol_sha = X.study_sha()
-    cts = seal_commit_times(seal_dir)
+    hist = seal_history(seal_dir)
+    final_ticks = [MK.iso(t) for t in MK.ChainReader(market, "markets").ticks()] if market else None
+    sched = {g["game_id"]: g for g in (schedule or [])}
     games: dict[str, dict] = {}
+    dups: list[dict] = []
     all_cs: list[dict] = []
     counted_trades: list[dict] = []
+    loaded = []
     for body, p in iter_seals(seal_dir):
         rel = os.path.relpath(p, seal_dir)
+        add = next((e for e in (hist.get(rel) or []) if e[0] == "A"), None)
+        loaded.append((add[2] if add else "9999", rel, body))
+    first_of_game: dict[str, str] = {}
+    for _, rel, body in sorted(loaded, key=lambda x: (x[0], x[1])):         # the earliest-ADDED seal of a game is the only candidate to count
+        gid = (body.get("game") or {}).get("game_id")
+        if gid and gid not in first_of_game:
+            first_of_game[gid] = rel
+    for add_t, rel, body in sorted(loaded, key=lambda x: (x[0], x[1])):
+        gid = (body.get("game") or {}).get("game_id")
+        if body.get("_unreadable") or not gid or not isinstance(body.get("candidates"), dict):
+            games[rel] = {"game_id": rel, "status": "UNREADABLE_SEAL", "counted": False, "category": "SEALED_UNCOUNTED", "uncounted_reasons": ["MALFORMED_SEAL"]}
+            continue
+        if first_of_game.get(gid) != rel:
+            dups.append({"game_id": gid, "path": rel, "category": "DUPLICATE_UNCOUNTED", "counted": False, "uncounted_reasons": ["DUPLICATE_SEAL"]})
+            continue
         reach = None
-        if code_repo and not body.get("_unreadable"):
+        if code_repo:
             sha = (body.get("code") or {}).get("sha")
             if sha:
                 r = subprocess.run(["git", "-C", code_repo, "merge-base", "--is-ancestor", sha, default_branch_ref], capture_output=True)
                 reach = (r.returncode == 0) if r.returncode in (0, 1) else None
-        ok, why = verify_seal(body, rel, cts, study, protocol_sha=protocol_sha, seal_dir=seal_dir, code_reachable=reach)
-        if body.get("_unreadable"):
-            games[rel] = {"status": "UNREADABLE_SEAL", "counted": False, "reasons": why}
-            continue
-        gid = body["game"]["game_id"]
-        games[gid] = {"game_id": gid, "status": body["status"], "game_reason": body.get("game_reason"), "counted": ok, "uncounted_reasons": why, "seal_id": body["seal_id"],
-                      "seal_commit_utc": cts.get(rel), "computed_utc": body.get("computed_utc"), "tip_utc": body["game"]["start_utc"], "board": body.get("board"),
-                      "n_trades": body["candidates"]["n_trades"], "category": "SEALED_COUNTED" if ok else "SEALED_UNCOUNTED"}
+        ok, why = verify_seal(body, rel, hist, study, protocol_sha=protocol_sha, seal_dir=seal_dir, code_reachable=reach, final_ticks=final_ticks,
+                              final_tip=(sched.get(gid) or {}).get("start_utc"))
+        games[gid] = {"game_id": gid, "status": body.get("status"), "game_reason": body.get("game_reason"), "counted": ok, "uncounted_reasons": why, "seal_id": body.get("seal_id"),
+                      "seal_commit_utc": add_t if add_t != "9999" else None, "computed_utc": body.get("computed_utc"), "tip_utc": body["game"].get("start_utc"),
+                      "board": body.get("board"), "n_trades": body["candidates"].get("n_trades"), "category": "SEALED_COUNTED" if ok else "SEALED_UNCOUNTED"}
         try:
             rows = [hydrate(r, body, study, ok) for r in load_candidates(seal_dir, body, rel)]
-        except OSError:
+        except (OSError, ValueError, KeyError):
             rows = []
         all_cs += rows
         if ok:
             counted_trades += [c for c in rows if c["decision"] == "TRADE"]
     for p in glob.glob(os.path.join(seal_dir, "missed", "*.json")):
-        m = json.load(open(p))
-        games.setdefault(m["game_id"], {"game_id": m["game_id"], "status": "MISSED", "counted": False, "tip_utc": m["tip_utc"], "category": "MISSED", "reason": m["reason"]})
+        try:
+            m = json.load(open(p))
+            games.setdefault(m["game_id"], {"game_id": m["game_id"], "status": "MISSED", "counted": False, "tip_utc": m.get("tip_utc"), "category": "MISSED", "reason": m.get("reason")})
+        except (OSError, ValueError, KeyError):
+            games.setdefault(p, {"game_id": p, "status": "UNREADABLE_MARKER", "counted": False, "category": "MISSED"})
     for g in schedule or []:
         if g["game_id"] not in games:
             w = window(g, study)
@@ -583,16 +668,16 @@ def evaluate(seal_dir: str, archive: str | None, market: str | None, now: dateti
     counted_all = [c for c in all_cs if c["prospective"]]
     metrics = X.portfolio_metrics(counted_all, study, label="sealed_prospective", clocks_verified=True) if counted_all else \
         {"status": "NO_DATA", "reason": "no COUNTED sealed decisions yet", "label": "sealed_prospective"}
-    cats = Counter(g.get("category") for g in games.values())
+    cats = Counter(g.get("category") for g in list(games.values()) + dups)
     return {"schema": "issue53.sealed_evaluation.v1", "protocol_sha256": protocol_sha, "study_version": study["version"], "prospective_start_utc": study["prospective_start_utc"],
-            "n_seals_read": sum(1 for _ in iter_seals(seal_dir)), "games": sorted(games.values(), key=lambda g: (g.get("tip_utc") or "", g.get("game_id") or "")),
+            "n_seals_read": len(loaded), "games": sorted(games.values(), key=lambda g: (g.get("tip_utc") or "", g.get("game_id") or "")), "duplicates": dups,
             "game_counts": dict(cats), "settlement_join": settle, "metrics": metrics,
             "counted_trades": [{k: c.get(k) for k in ("game_id", "player_name", "family", "k", "side", "ticker", "price", "effective_entry_exec", "ev_net_exec", "won", "net_pnl", "settled", "seal_id")}
                                for c in counted_trades],
             "progress": {"counted_trades": len(counted_trades), "counted_trades_settled": sum(1 for c in counted_trades if c["settled"]),
                          "counted_games_traded": len({c["game_id"] for c in counted_trades}), "required_decisions": study["evidence"]["min_decisions"],
                          "required_games": study["evidence"]["min_games"]},
-            "rule": "selections are those sealed before tip; a missing / late / unverifiable seal is uncounted; nothing is recomputed from later archive state"}
+            "rule": "selections are those sealed before tip; a missing / late / unverifiable / duplicate seal is uncounted; nothing is recomputed from later archive state"}
 
 
 # ================================================================================================ CLI
@@ -616,8 +701,12 @@ def main(argv: list[str] | None = None) -> int:
         sp.add_argument("--forecast-ref", default="origin/projection-data")
         sp.add_argument("--dry-run", action="store_true")
         sp.add_argument("--out", default=None)
+        sp.add_argument("--published", default=None, help="check-deadline: JSON written by ledger_remote publish (server commit time)")
         sp.add_argument("--default-branch-ref", default="origin/main")
     a = ap.parse_args(argv)
+    if a.cmd in ("seal", "watch") and a.now and not a.dry_run:
+        print("::error::--now is accepted only with --dry-run: a live run uses the wall clock (a forged clock would write permanent markers / enablement)", file=sys.stderr)
+        return 2
     now = _now(a)
     study, base = X.load_study(), CFG.load()
     if a.cmd == "plan":
@@ -630,14 +719,20 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "watch":
         games = schedule_games(a.context, now)
+        if not a.dry_run:
+            mark_enabled(a.seals, now)                         # first run ever: windows that closed before this moment are BEFORE_ENABLED, never MISSED
         miss = mark_missed(games, a.seals, now, study, dry_run=a.dry_run)
         print(json.dumps({"missed_now": [m["game_id"] for m in miss]}, indent=1))
         return 3 if miss else 0
     if a.cmd == "check-deadline":
         # after the push: every sealed game of the report must have been durably pushed before its deadline (otherwise the seal is LATE: uncounted, loud)
         rep = json.load(open(a.out))
-        late = [x["game_id"] for x in rep.get("sealed", []) if not rep.get("dry_run") and now > MK.parse_ts(x["deadline_utc"])]
-        print(json.dumps({"checked_at": _iso(now), "late": late}))
+        at = now
+        if a.published:
+            pub = json.load(open(a.published))
+            at = MK.parse_ts(pub["commit_utc"])                 # the SERVER commit time of the API commit
+        late = [x["game_id"] for x in rep.get("sealed", []) if not rep.get("dry_run") and at > MK.parse_ts(x["deadline_utc"])]
+        print(json.dumps({"checked_at": _iso(at), "late": late}))
         return 5 if late else 0
     if a.cmd == "seal":
         ok, why = X.base_protocol_ok(study)
@@ -651,9 +746,9 @@ def main(argv: list[str] | None = None) -> int:
         if a.out:
             json.dump(rep, open(a.out, "w"), indent=1, sort_keys=True)
         print(json.dumps(rep, indent=1, sort_keys=True, default=str))
-        return 1 if rep["errors"] and not all(e["error"] == "ALREADY_SEALED_NOOP" for e in rep["errors"]) else 0
+        return 1 if any(e["error"] != "ALREADY_SEALED_NOOP" for e in rep["errors"]) else 0
     if a.cmd == "evaluate":
-        games = schedule_games(a.context, now, lookback_h=24 * 14) if a.context else None
+        games = schedule_games(a.context, now, all_history=True) if a.context else None
         rep = evaluate(a.seals, a.archive, a.market, now, study, base, code_repo=a.code_repo, default_branch_ref=a.default_branch_ref, schedule=games)
         txt = json.dumps(rep, indent=1, sort_keys=True, default=str)
         if a.out:

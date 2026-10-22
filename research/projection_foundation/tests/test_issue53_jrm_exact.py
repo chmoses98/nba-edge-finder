@@ -75,7 +75,13 @@ def test_identical_engines_give_an_identity_comparison(pair):
     rep = JX.compare(same, str(T.FIXARCH), NOW, CFG.load(), X.load_study())
     m = rep["selections"]["paired"]["decision_matrix_candidate_sides"]
     assert m["v1_only"] == 0 and m["jrm_only"] == 0 and m["both_bet"] > 0 and rep["minutes_difference"]["mean_abs"] == 0.0
+    assert rep["engine_check"]["status"] == "ENGINE_NOT_SWITCHED" and "ENGINE_NOT_SWITCHED" in JX.markdown(rep)          # an identity is flagged, not reported as a JRM result
     assert rep["selections"]["paired"]["common_contracts_covered"]["mean_abs_d_p_model"] == pytest.approx(0.0, abs=1e-12)
+
+
+def test_a_real_difference_passes_the_engine_check(pair):
+    rep = JX.compare(pair, str(T.FIXARCH), NOW, CFG.load(), X.load_study())
+    assert rep["engine_check"]["status"] == "OK" and "ENGINE_NOT_SWITCHED" not in JX.markdown(rep)
 
 
 def test_no_board_is_reported_not_forced(pair, tmp_path):

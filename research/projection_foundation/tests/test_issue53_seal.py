@@ -25,7 +25,7 @@ UTC = timezone.utc
 GAME_ROW = {"game_id": "espn:401909088", "season_type": "regular", "game_date_et": "2026-10-20", "start_time_utc": "2026-10-20T19:00:00Z", "home_tricode": "DET",
             "away_tricode": "BOS", "status": "scheduled", "_observed_at_utc": "2026-10-20T12:00:00Z"}
 GAME2_ROW = {**GAME_ROW, "game_id": "espn:401909089", "start_time_utc": "2026-10-20T23:00:00Z", "home_tricode": "NYK", "away_tricode": "PHI"}
-CODE = {"sha": "a" * 40, "dirty": False, "ref": "refs/heads/main", "event": "schedule", "workflow": "exec-shadow-seal", "run_id": "1", "protocol_effective_commit_utc": "2026-10-18T00:00:00Z"}
+CODE = {"sha": "a" * 40, "dirty": False, "ref": "refs/heads/main", "default_branch": "main", "event": "schedule", "workflow": "exec-shadow-seal", "run_id": "1", "protocol_effective_commit_utc": "2026-10-18T00:00:00Z"}
 
 
 def t(s):
@@ -82,13 +82,15 @@ def run_seal(world, seals, now, study, clk=None, **kw):
 # ------------------------------------------------------------------------------------------------------------------ windows / plan
 def test_window_opens_after_the_archive_lag_and_closes_before_tip(world, study, tmp_path):
     seals = newseals(tmp_path)
+    (seals / "ENABLED_UTC").write_text("2026-10-20T00:00:00Z\n")                                    # live since before this game's window
     states = {}
-    for hhmm in ("17:59", "18:05", "18:06", "18:30", "18:50", "18:51", "19:05"):
+    for hhmm in ("17:59", "18:05", "18:09", "18:10", "18:30", "18:50", "18:51", "19:05"):
         pl = SL.plan(world["ctx"], str(seals), t(f"2026-10-20T{hhmm}:00Z"), study)
         states[hhmm] = {g["game_id"][-3:]: g["state"] for g in pl["games"]}.get("088")
-    assert states == {"17:59": "NOT_DUE", "18:05": "NOT_DUE", "18:06": "OPEN", "18:30": "OPEN", "18:50": "OPEN", "18:51": "WINDOW_CLOSED_UNSEALED", "19:05": "WINDOW_CLOSED_UNSEALED"}
+    assert states == {"17:59": "NOT_DUE", "18:05": "NOT_DUE", "18:09": "NOT_DUE", "18:10": "OPEN", "18:30": "OPEN", "18:50": "OPEN", "18:51": "WINDOW_CLOSED_UNSEALED", "19:05": "WINDOW_CLOSED_UNSEALED"}
+    assert SL.plan(world["ctx"], str(seals), t("2026-10-20T18:09:59Z"), study)["due"] is False                           # measured capture lag: median 213 s, p90 357 s, max 502 s -> 600 s margin
     g = SL.window(SL.schedule_games(world["ctx"], t("2026-10-20T18:30:00Z"))[0], study)
-    assert (g["checkpoint"], g["opens"], g["closes"]) == (t("2026-10-20T18:00:00Z"), t("2026-10-20T18:06:00Z"), t("2026-10-20T18:50:00Z"))
+    assert (g["checkpoint"], g["opens"], g["closes"]) == (t("2026-10-20T18:00:00Z"), t("2026-10-20T18:10:00Z"), t("2026-10-20T18:50:00Z"))
     assert SL.plan(world["ctx"], str(seals), t("2026-10-20T18:30:00Z"), study)["due"] is True
     assert SL.plan(world["ctx"], str(seals), t("2026-10-20T17:00:00Z"), study)["due"] is False
 
@@ -159,6 +161,7 @@ def test_unverifiable_board_and_late_or_missing_forecast_commits_are_no_trade(wo
 
 def test_a_closed_window_is_missed_never_sealed_late(world, study, tmp_path):
     seals = newseals(tmp_path)
+    (seals / "ENABLED_UTC").write_text("2026-10-20T00:00:00Z\n")                                    # the ledger was already live when the window opened
     late = t("2026-10-20T18:51:00Z")
     rep = run_seal(world, seals, late, study)
     assert rep["due"] == [] and not list(Path(seals).rglob("*.json"))                              # past the deadline: no seal is produced
@@ -200,12 +203,23 @@ def sealed_repo(world, study, tmp_path, commit_at="2026-10-20T18:21:00Z", **kw):
     return seals
 
 
+def real_code(tmp_path):
+    """A git repo whose `main` holds the sealer's code commit: seals are created with that sha from the start (never amended afterwards)."""
+    repo = tmp_path / "code"
+    repo.mkdir()
+    git(repo, "init", "-q", "-b", "main")
+    commit_all(repo, "2026-10-18T00:00:00Z", "code")
+    return repo, {**CODE, "sha": git(repo, "rev-parse", "HEAD").strip()}
+
+
 def verdict(seals, study, mutate=None, code_reachable=True):
     (body, p), = list(SL.iter_seals(str(seals)))
     rel = os.path.relpath(p, seals)
     if mutate:
         mutate(body)
-    return SL.verify_seal(body, rel, SL.seal_commit_times(str(seals)), study, protocol_sha=X.study_sha(), seal_dir=str(seals), code_reachable=code_reachable)
+    ticks = [MK.iso(x) for x in MK.ChainReader(str(T.FIXARCH), "markets").ticks()]
+    return SL.verify_seal(body, rel, SL.seal_history(str(seals)), study, protocol_sha=X.study_sha(), seal_dir=str(seals), code_reachable=code_reachable, final_ticks=ticks,
+                          final_tip="2026-10-20T19:00:00Z")
 
 
 def test_a_clean_pretip_seal_counts(world, study, tmp_path):
@@ -264,7 +278,7 @@ def test_postgame_evaluation_joins_settlements_to_the_sealed_ledger_and_changes_
     # outcomes: every player scores 18 points / 7 rebounds ... only the contracts decide who wins; no market archive after tip -> DNP/CLV pending, box-derived result
     monkeypatch.setattr(SL.SE, "_latest_outcomes", lambda root: {(r["game_id"], r["entity_id"], fam): {"actual": 18.0, "participated": True, "observed_utc": "2026-10-20T23:00:00Z"}
                                                                  for r in world["fc"] for fam in ("points", "rebounds", "assists", "threes", "pra")})
-    rep = SL.evaluate(str(seals), world["pd"], None, t("2026-10-21T08:00:00Z"), study, CFG.load(), code_repo=None, schedule=SL.schedule_games(world["ctx"], t("2026-10-20T18:30:00Z")))
+    rep = SL.evaluate(str(seals), world["pd"], str(T.FIXARCH), t("2026-10-21T08:00:00Z"), study, CFG.load(), code_repo=None, schedule=SL.schedule_games(world["ctx"], t("2026-10-20T18:30:00Z")))
     g = {x["game_id"]: x for x in rep["games"]}
     assert g["espn:401909088"]["category"] == "SEALED_UNCOUNTED" and "CODE_REACHABILITY_UNVERIFIED" in g["espn:401909088"]["uncounted_reasons"]    # no code repo -> not counted
     assert rep["progress"]["counted_trades"] == 0 and rep["metrics"]["status"] == "NO_DATA"
@@ -273,23 +287,14 @@ def test_postgame_evaluation_joins_settlements_to_the_sealed_ledger_and_changes_
 
 
 def test_counted_sealed_trades_get_a_settlement_and_feed_the_metrics(world, study, tmp_path, monkeypatch):
-    seals = sealed_repo(world, study, tmp_path)
     monkeypatch.setattr(SL.SE, "_latest_outcomes", lambda root: {(r["game_id"], r["entity_id"], fam): {"actual": 18.0, "participated": True, "observed_utc": "2026-10-20T23:00:00Z"}
                                                                  for r in world["fc"] for fam in ("points", "rebounds", "assists", "threes", "pra")})
-    # a git repo whose default branch contains the sealer's recorded commit makes the code reachable
-    code_repo = tmp_path / "code"
-    code_repo.mkdir()
-    git(code_repo, "init", "-q", "-b", "main")
-    commit_all(code_repo, "2026-10-19T00:00:00Z", "code")
-    sha = git(code_repo, "rev-parse", "HEAD").strip()
-    for p in Path(seals).rglob("*__*.json"):
-        b = json.load(open(p))
-        b["code"]["sha"] = sha
-        b["body_sha256"] = SL.body_sha(b)
-        p.write_text(json.dumps(b, indent=1, sort_keys=True))
-    commit_all(seals, "2026-10-20T18:21:30Z", "amend-before-count (test fixture only)")                # the fixture re-seals with the real sha; commit time still in window
-    rep = SL.evaluate(str(seals), world["pd"], None, t("2026-10-21T08:00:00Z"), study, CFG.load(), code_repo=str(code_repo), default_branch_ref="main")
-    g = rep["games"][0]
+    (tmp_path / "s").mkdir()
+    code_repo, code = real_code(tmp_path)
+    seals = sealed_repo(world, study, tmp_path / "s", code=code)
+    rep = SL.evaluate(str(seals), world["pd"], str(T.FIXARCH), t("2026-10-21T08:00:00Z"), study, CFG.load(), code_repo=str(code_repo), default_branch_ref="main",
+                      schedule=SL.schedule_games(world["ctx"], t("2026-10-20T18:30:00Z")))
+    g = next(x for x in rep["games"] if x["game_id"] == "espn:401909088")
     assert g["category"] == "SEALED_COUNTED", g
     assert rep["progress"]["counted_trades"] == g["n_trades"] > 0
     assert rep["progress"]["counted_trades_settled"] == g["n_trades"] and rep["metrics"]["status"] == "OK"
@@ -321,36 +326,150 @@ def test_study53_run_counts_a_verified_seal_and_nothing_else(world, study, tmp_p
     monkeypatch.setattr(SL.SE, "_latest_outcomes", lambda root: {(r["game_id"], r["entity_id"], fam): {"actual": 18.0, "participated": True, "observed_utc": "2026-10-20T23:00:00Z"}
                                                                  for r in world["fc"] for fam in ("points", "rebounds", "assists", "threes", "pra")})
     (tmp_path / "s").mkdir()
-    seals = sealed_repo(world, study, tmp_path / "s")
-    code_repo = tmp_path / "code"
-    code_repo.mkdir()
-    git(code_repo, "init", "-q", "-b", "main")
-    commit_all(code_repo, "2026-10-18T00:00:00Z", "code")
-    sha = git(code_repo, "rev-parse", "HEAD").strip()
-    for p in Path(seals).rglob("*__*.json"):
-        b = json.load(open(p))
-        b["code"]["sha"] = sha
-        b["body_sha256"] = SL.body_sha(b)
-        p.write_text(json.dumps(b, indent=1, sort_keys=True))
-    commit_all(seals, "2026-10-20T18:21:30Z", "fixture amend")
+    code_repo, code = real_code(tmp_path)
+    seals = sealed_repo(world, study, tmp_path / "s", code=code)
     monkeypatch.setattr(study53.X, "load_study", lambda path=None: study)
-    study53.run(world["pd"], None, str(tmp_path / "o"), "2026-10-20", now=t("2026-10-21T08:00:00Z"), seals=str(seals), context=world["ctx"], code_repo=str(code_repo),
-                default_branch_ref="main")
+    study53.run(world["pd"], None, str(tmp_path / "o"), "2026-10-20", now=t("2026-10-21T08:00:00Z"), seals=str(seals), context=world["ctx"], market=str(T.FIXARCH),
+                code_repo=str(code_repo), default_branch_ref="main")
     B = json.load(open(tmp_path / "o" / "exec_shadow.json"))
     assert B["prospective"]["source"] == "sealed_pretip_ledger" and B["prospective"]["status"] == "OK"
     assert B["progress_to_evidence_minimums"]["prospective_decisions"] == B["sealed_ledger"]["progress"]["counted_trades"] > 0
     assert B["sealed_ledger"]["game_counts"].get("SEALED_COUNTED") == 1
 
 
-def test_check_deadline_flags_a_seal_pushed_after_its_deadline(world, study, tmp_path, capsys):
+def test_check_deadline_flags_a_seal_published_after_its_deadline(world, study, tmp_path, capsys):
     seals = newseals(tmp_path)
     rep = run_seal(world, seals, t("2026-10-20T18:20:00Z"), study)
     f = tmp_path / "rep.json"
     f.write_text(json.dumps(rep))
     assert rep["sealed"][0]["deadline_utc"] == "2026-10-20T18:50:00Z"
-    assert SL.main(["check-deadline", "--seals", str(seals), "--out", str(f), "--now", "2026-10-20T18:49:59Z"]) == 0
-    assert SL.main(["check-deadline", "--seals", str(seals), "--out", str(f), "--now", "2026-10-20T18:50:01Z"]) == 5
+
+    def check(commit_utc):
+        pub = tmp_path / "pub.json"
+        pub.write_text(json.dumps({"commit_utc": commit_utc}))
+        return SL.main(["check-deadline", "--seals", str(seals), "--out", str(f), "--published", str(pub)])
+    assert check("2026-10-20T18:49:59Z") == 0 and check("2026-10-20T18:50:01Z") == 5                  # the SERVER commit time decides, not the runner's clock
     assert "espn:401909088" in capsys.readouterr().out
     rep["dry_run"] = True
     f.write_text(json.dumps(rep))
-    assert SL.main(["check-deadline", "--seals", str(seals), "--out", str(f), "--now", "2026-10-20T19:30:00Z"]) == 0          # dry runs push nothing, nothing to be late
+    assert check("2026-10-20T19:30:00Z") == 0                                                       # dry runs publish nothing, nothing to be late
+
+
+# ------------------------------------------------------------------------------------------------------------------ second-review gaps
+def rehash_and_write(path, mutate):
+    b = json.load(open(path))
+    mutate(b)
+    b["body_sha256"] = SL.body_sha(b)
+    Path(path).write_text(json.dumps(b, indent=1, sort_keys=True))
+
+
+def test_a_seal_modified_or_deleted_after_it_was_added_is_uncounted(world, study, tmp_path):
+    seals = sealed_repo(world, study, tmp_path)
+    (body, p), = list(SL.iter_seals(str(seals)))
+    rel = os.path.relpath(p, seals)
+    rehash_and_write(p, lambda b: b["selected"].clear())                                           # a self-consistent rewrite (hash recomputed) ...
+    commit_all(seals, "2026-10-20T18:30:00Z", "rewrite")                                           # ... committed later
+    ok, why = verdict(seals, study)
+    assert not ok and "MODIFIED_OR_DELETED_AFTER_ADD" in why and "BYTES_DIFFER_FROM_ADDING_COMMIT" in why
+    Path(p).unlink()
+    commit_all(seals, "2026-10-20T18:31:00Z", "delete")
+    problems, add_time = SL._history_problems(str(seals), rel, SL.seal_history(str(seals)))
+    assert "MODIFIED_OR_DELETED_AFTER_ADD" in problems and add_time == "2026-10-20T18:21:00Z"
+
+
+def test_a_second_seal_for_the_same_game_is_a_duplicate_and_only_the_earliest_counts(world, study, tmp_path, monkeypatch):
+    monkeypatch.setattr(SL.SE, "_latest_outcomes", lambda root: {})
+    code_repo, code = real_code(tmp_path)
+    (tmp_path / "s").mkdir()
+    seals = sealed_repo(world, study, tmp_path / "s", code=code)
+    (body, p), = list(SL.iter_seals(str(seals)))
+    dup = Path(p).with_name(Path(p).name.replace("__", "__dup"))
+    dup.write_bytes(Path(p).read_bytes())
+    commit_all(seals, "2026-10-20T18:40:00Z", "second seal for the same game")
+    rep = SL.evaluate(str(seals), world["pd"], str(T.FIXARCH), t("2026-10-21T08:00:00Z"), study, CFG.load(), code_repo=str(code_repo), default_branch_ref="main")
+    assert [d["category"] for d in rep["duplicates"]] == ["DUPLICATE_UNCOUNTED"] and rep["game_counts"]["SEALED_COUNTED"] == 1
+    assert rep["progress"]["counted_trades"] == body["candidates"]["n_trades"]                      # the duplicate adds nothing
+
+
+def test_a_live_run_rejects_a_clock_override_and_a_dry_run_accepts_it(world, study, tmp_path, capsys):
+    seals = newseals(tmp_path)
+    args = ["--seals", str(seals), "--context", world["ctx"], "--now", "2026-10-20T18:20:00Z"]
+    assert SL.main(["watch", *args]) == 2 and SL.main(["seal", *args, "--archive", world["pd"], "--market", str(T.FIXARCH)]) == 2
+    assert not (seals / "ENABLED_UTC").exists() and not (seals / "missed").exists()                  # a forged clock wrote no enablement, no marker
+    assert SL.main(["watch", *args, "--dry-run"]) == 0
+
+
+def test_schedule_games_honours_the_real_clock_and_all_history(world):
+    ids = lambda now, **kw: sorted(g["game_id"][-3:] for g in SL.schedule_games(world["ctx"], now, **kw))      # noqa: E731
+    assert ids(t("2026-10-20T18:30:00Z")) == ["088", "089"]
+    assert ids(t("2026-10-21T08:00:00Z")) == []                                                    # both tipped more than 6 h ago
+    assert ids(None, all_history=True) == ["088", "089"] and ids(t("2026-10-21T08:00:00Z"), all_history=True) == ["088", "089"]
+
+
+def test_a_withdrawn_game_and_a_moved_tip_follow_the_latest_schedule_snapshot(world, tmp_path):
+    ctx = tmp_path / "c"
+    d = ctx / "context/schedule/dt=2026-10-20"
+    d.mkdir(parents=True)
+    rows1 = [GAME_ROW, GAME2_ROW]
+    rows2 = [{**GAME_ROW, "start_time_utc": "2026-10-20T19:30:00Z", "_observed_at_utc": "2026-10-20T14:00:00Z"}, {**GAME2_ROW, "start_time_utc": None, "_observed_at_utc": "2026-10-20T14:00:00Z"}]
+    for stamp, rows in (("20261020T120000Z", rows1), ("20261020T140000Z", rows2)):
+        (d / f"context_schedule_{stamp}_x.jsonl.gz").write_bytes(gzip.compress("\n".join(json.dumps(r) for r in rows).encode()))
+    g = SL.schedule_games(str(ctx), t("2026-10-20T15:00:00Z"))
+    assert [(x["game_id"][-3:], x["start_utc"]) for x in g] == [("088", "2026-10-20T19:30:00Z")]
+
+
+def test_a_malformed_seal_file_never_crashes_the_evaluation_and_never_counts(world, study, tmp_path):
+    seals = sealed_repo(world, study, tmp_path)
+    (seals / "seals/2026-10-20/garbage__x.json").write_text("{not json")
+    (seals / "seals/2026-10-20/odd__y.json").write_text(json.dumps({"schema": SL.SCHEMA, "game": {"game_id": "espn:1"}, "candidates": "oops"}))
+    commit_all(seals, "2026-10-20T18:41:00Z", "junk")
+    rep = SL.evaluate(str(seals), world["pd"], str(T.FIXARCH), t("2026-10-21T08:00:00Z"), study, CFG.load(), code_repo=None)
+    assert rep["n_seals_read"] == 3 and rep["progress"]["counted_trades"] == 0
+    assert sum(1 for g in rep["games"] if "MALFORMED_SEAL" in g.get("uncounted_reasons", [])) == 2
+
+
+def test_one_failing_game_does_not_stop_the_other_due_games(world, study, tmp_path, monkeypatch):
+    ctx = tmp_path / "c"
+    d = ctx / "context/schedule/dt=2026-10-20"
+    d.mkdir(parents=True)
+    (d / "context_schedule_20261020T120000Z_x.jsonl.gz").write_bytes(gzip.compress("\n".join(json.dumps(r) for r in (GAME_ROW, {**GAME2_ROW, "start_time_utc": "2026-10-20T19:00:00Z"})).encode()))
+    real = SL.EN.candidates_for
+    calls = {"n": 0}
+
+    def first_fails(rows, fc, gfc, players, **kw):                  # game 088 (the only one with a board in the fixture) blows up; 089 has no board -> sealed NO_TRADE without scoring
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise RuntimeError("boom")
+        return real(rows, fc, gfc, players, **kw)
+    monkeypatch.setattr(SL.EN, "candidates_for", first_fails)
+    seals = newseals(tmp_path)
+    now = t("2026-10-20T18:20:00Z")
+    rep = SL.seal_games(SL.schedule_games(str(ctx), now), world["pd"], str(T.FIXARCH), str(seals), now, study, CFG.load(), world["clk"], CODE)
+    assert len(rep["due"]) == 2 and len(rep["errors"]) == 1 and "boom" in json.dumps(rep["errors"]) and [x["game_id"] for x in rep["sealed"]] == ["espn:401909089"]
+    assert not any("401909088" in str(p) for p in Path(seals).rglob("*.json"))                      # the failed game left no half-written seal; it is retried on the next tick
+
+
+def test_a_later_archived_tick_before_the_checkpoint_or_a_moved_tip_makes_the_seal_uncounted(world, study, tmp_path):
+    seals = sealed_repo(world, study, tmp_path)
+    (body, p), = list(SL.iter_seals(str(seals)))
+    rel = os.path.relpath(p, seals)
+    ticks = [MK.iso(x) for x in MK.ChainReader(str(T.FIXARCH), "markets").ticks()]
+    hist = SL.seal_history(str(seals))
+
+    def v(**kw):
+        return SL.verify_seal(body, rel, hist, study, protocol_sha=X.study_sha(), seal_dir=str(seals), code_reachable=True, **kw)
+    assert v(final_ticks=ticks, final_tip="2026-10-20T19:00:00Z") == (True, [])
+    assert "NOT_LATEST_TICK_AT_CHECKPOINT" in v(final_ticks=ticks + ["2026-10-20T17:59:30Z"], final_tip="2026-10-20T19:00:00Z")[1]       # the archive later turned out to hold a newer tick
+    assert "TIP_CHANGED_AFTER_SEAL" in v(final_ticks=ticks, final_tip="2026-10-20T19:30:00Z")[1]
+    assert "LATEST_TICK_UNVERIFIED" in v(final_ticks=None, final_tip="2026-10-20T19:00:00Z")[1]
+
+
+def test_the_exposure_replay_ignores_seals_of_another_protocol_strategy_or_dry_run(world, study, tmp_path):
+    seals = sealed_repo(world, study, tmp_path)
+    (body, p), = list(SL.iter_seals(str(seals)))
+    assert SL.ledger_from_seals(str(seals), study).theses
+    for mut in (lambda b: b.update(protocol_sha256="0" * 64), lambda b: b.update(strategy_id="PF_EDGE_STRICT_V1"), lambda b: b.update(dry_run=True)):
+        orig = Path(p).read_bytes()
+        rehash_and_write(p, mut)
+        assert not SL.ledger_from_seals(str(seals), study).theses
+        Path(p).write_bytes(orig)

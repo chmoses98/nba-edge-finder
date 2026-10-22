@@ -26,7 +26,7 @@ import shutil
 import sys
 from argparse import Namespace
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
 
 import numpy as np
@@ -39,7 +39,6 @@ from . import markets as MK
 from . import probability as PR
 from . import run as RUN
 from . import schema as S
-from . import stats as ST
 
 MODE = "exact_jrm_dry_run"
 LABEL = "exact_jrm_dry_run"
@@ -169,6 +168,9 @@ def compare(res: dict[str, dict], market: str, now: datetime, base: dict, study:
                         "minutes_frozen": ef["minutes_mean"], "minutes_jrm": ej["minutes_mean"], "ratio": ej["minutes_mean"] / ef["minutes_mean"] if ef["minutes_mean"] else None,
                         "gate_frozen": ef["gate"].get("points"), "gate_jrm": ej["gate"].get("points")})
     out["players"] = players
+    # the engine switch must have changed something: a JRM table identical to the frozen one means PF_NBA_MINUTES_ENGINE did not take effect (not a finding about JRM)
+    identical = bool(players) and all(abs(p["minutes_jrm"] - p["minutes_frozen"]) < 1e-9 and p["p_play_jrm"] == p["p_play_frozen"] for p in players)
+    out["engine_check"] = {"status": "ENGINE_NOT_SWITCHED" if identical else "OK", "minutes_tables_identical": identical, "n_players": len(players)}
     if players:
         d = np.array([p["minutes_jrm"] - p["minutes_frozen"] for p in players])
         out["minutes_difference"] = {"n": len(players), "mean": float(d.mean()), "mean_abs": float(np.abs(d).mean()), "share_jrm_higher": float((d > 0).mean()),
@@ -211,6 +213,9 @@ def markdown(rep: dict) -> str:
     if md:
         L.append(f"- minutes (conditional mean) JRM - frozen: mean {md['mean']:+.2f}, mean |diff| {md['mean_abs']:.2f}, JRM higher for {100 * md['share_jrm_higher']:.0f}% of {md['n']} players; "
                  f"frozen stars >= 28 min: n={md['stars_ge_28_frozen']['n']}, mean JRM/frozen {md['stars_ge_28_frozen']['mean_ratio']}")
+    ec = rep.get("engine_check") or {}
+    if ec.get("status") == "ENGINE_NOT_SWITCHED":
+        L.append("- **ENGINE_NOT_SWITCHED: the JRM minutes are identical to the frozen minutes; the comparison below is an identity and says nothing about JRM**")
     s = rep.get("selections", {})
     if s.get("status") == "OK":
         L.append(f"- same board ({rep['market']['board_observed_utc']}), same strict rules: decision matrix {json.dumps(s['paired']['decision_matrix_candidate_sides'])}; "
@@ -232,7 +237,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--workdir", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--now", default=None)
-    ap.add_argument("--window-hours", type=float, default=30.0)
+    ap.add_argument("--window-hours", type=float, default=30.0)         # the workflow default is the same
     ap.add_argument("--season-types", default="regular")
     a = ap.parse_args(argv)
     from nba.live import run as LR
@@ -255,6 +260,9 @@ def main(argv: list[str] | None = None) -> int:
         summ = os.environ.get("GITHUB_STEP_SUMMARY")
         if summ:
             open(summ, "a").write(markdown(rep))
+        if (rep.get("engine_check") or {}).get("status") == "ENGINE_NOT_SWITCHED":
+            print("::error::ENGINE_NOT_SWITCHED: PF_NBA_MINUTES_ENGINE=jrm produced the frozen minutes")
+            return 6
     except JrmUnavailable as e:
         print(f"::error::{e}")
         json.dump({"schema": "issue53.jrm_exact.v1", "status": "JRM_ENGINE_UNAVAILABLE", "reason": str(e)}, open(os.path.join(a.out, "jrm_exact_dryrun.json"), "w"))

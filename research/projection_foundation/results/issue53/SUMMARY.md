@@ -1,4 +1,4 @@
-# Issue #53 research summary (run `4be3c29b5ed9de96`)
+# Issue #53 research summary (run `f4f7ab85a666eebb`)
 
 **Research only. No orders, no wagering authority, no deployment, no model activation.** Everything below that precedes `prospective_start_utc` = 2026-10-24T06:00:00Z is RETROSPECTIVE and DESCRIPTIVE; a handful of games is not evidence of an edge.
 
@@ -13,14 +13,14 @@
 - sealed pre-tip ledger (the ONLY source of prospective evidence): **NOT_SUPPLIED**
 - prospective: **NO_DATA** - no sealed pre-tip ledger supplied; reconstruction can never be prospective
 - retrospective application of the frozen rules: 3 trades in 1 games (3 settled), net P&L $0.46, ROI on cash outlay 29.9%, hit rate 66.7%; no interval is defined (< 5 games).
-- candidate sides 1802: eligible 13, blocked 1789; primary reasons {"GATE_STATUS": 985, "BOARD_ARCHIVED_AFTER_CHECKPOINT": 564, "EV_BELOW_THRESHOLD": 73, "QUALITY_GATE:SPREAD_WIDE": 57, "QUALITY_GATE:EXTREME_PRICE": 43, "DEPTH_CONFLICT_ORDERBOOK": 29, "QUALITY_GATE:NO_SIZE": 25, "SPREAD_WIDE_STRICT": 13, "ELIGIBLE": 13}
-- the same rules WITHOUT the independent-clock requirement would trade 6 in 2 games (net P&L $0.83); the difference is boards committed to the capture branch only after the checkpoint (lag per game: 088 204s AFTER, 089 203s, 090 209s).
-- independent clocks: {"status": "VERIFIED", "board_ref": "origin/data-archive", "forecast_ref": "origin/projection-data", "board_ticks_indexed": 156, "board_ticks_earliest": "2026-10-20T16:06:07Z", "forecast_ids_indexed": 35786}
-- games: 088=NO_TRADE, 089=NO_TRADE, 090=TRADED, 834=NOT_DUE, 835=NOT_DUE, 091=NOT_DUE, 836=NOT_DUE, 837=NOT_DUE, 838=NOT_DUE, 839=NOT_DUE, 840=NOT_DUE, 092=NOT_DUE, 841=NOT_DUE, 842=NOT_DUE, 093=NOT_DUE, 094=NOT_DUE
+- candidate sides 4874: eligible 13, blocked 4861; primary reasons {"BOARD_ARCHIVED_AFTER_CHECKPOINT": 3636, "GATE_STATUS": 985, "EV_BELOW_THRESHOLD": 73, "QUALITY_GATE:SPREAD_WIDE": 57, "QUALITY_GATE:EXTREME_PRICE": 43, "DEPTH_CONFLICT_ORDERBOOK": 29, "QUALITY_GATE:NO_SIZE": 25, "SPREAD_WIDE_STRICT": 13, "ELIGIBLE": 13}
+- the same rules WITHOUT the independent-clock requirement would trade 21 in 5 games (net P&L $0.83); the difference is boards committed to the capture branch only after the checkpoint (lag per game: 088 204s AFTER, 089 203s, 090 209s, 091 217s AFTER, 834 220s AFTER, 835 220s AFTER, 836 217s AFTER, 837 217s AFTER).
+- independent clocks: {"status": "VERIFIED", "board_ref": "origin/data-archive", "forecast_ref": "origin/projection-data", "board_ticks_indexed": 2068, "board_ticks_earliest": "2026-09-18T07:36:03Z", "forecast_ids_indexed": 41209}
+- games: 088=NO_TRADE, 089=NO_TRADE, 090=TRADED, 834=NO_TRADE, 835=NO_TRADE, 091=NO_TRADE, 836=NO_TRADE, 837=NO_TRADE, 838=NOT_DUE, 839=NOT_DUE, 840=NOT_DUE, 092=NOT_DUE, 841=NOT_DUE, 842=NOT_DUE, 093=NOT_DUE, 094=NOT_DUE
 - progress to the evidence minimum: 0/200 prospective decisions, 0/40 games (reconstructions never count; counted from the verified sealed ledger only).
 
 ## 3. Matched JRM what-if (archive-scale APPROXIMATION; the exact engine comparison is the isolated dry run, see jrm-exact-dryrun)
-- matched games: 1; decision matrix over candidate sides: {"both_bet": 1, "v1_only": 2, "jrm_only": 2, "neither": 615}; downstream = archive_scale_approximation.
+- matched games: 4; decision matrix over candidate sides: {"both_bet": 1, "v1_only": 2, "jrm_only": 2, "neither": 2427}; downstream = archive_scale_approximation.
 - JRM prospective gate (tracked separately, verdict owned by PR #45): 1/20 eligible settled games -> **INSUFFICIENT_SAMPLE**.
 
 ## 4. Three-way table (separately labelled)
@@ -47,12 +47,12 @@
   "decision_matrix": {
    "both_bet": 1,
    "jrm_only": 2,
-   "neither": 615,
+   "neither": 2427,
    "v1_only": 2
   },
   "jrm_net_pnl": 0.53,
   "label": "PF_EDGE_STRICT_T60_EXEC_JRM_V1 vs V1 on the same candidate rows (archive_scale_approximation; RETROSPECTIVE)",
-  "matched_games": 1,
+  "matched_games": 4,
   "status": "OK",
   "v1_net_pnl": 0.46
  }

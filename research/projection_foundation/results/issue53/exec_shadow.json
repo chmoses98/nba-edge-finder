@@ -26,6 +26,41 @@
    "checkpoint_utc": "2026-10-21T00:30:00Z",
    "committed_after_checkpoint": false,
    "lag_s": 209.0
+  },
+  "espn:401909091": {
+   "board_committed_utc": "2026-10-21T22:31:20Z",
+   "board_observed_utc": "2026-10-21T22:27:43Z",
+   "checkpoint_utc": "2026-10-21T22:30:00Z",
+   "committed_after_checkpoint": true,
+   "lag_s": 217.0
+  },
+  "espn:401909834": {
+   "board_committed_utc": "2026-10-21T22:03:23Z",
+   "board_observed_utc": "2026-10-21T21:59:43Z",
+   "checkpoint_utc": "2026-10-21T22:00:00Z",
+   "committed_after_checkpoint": true,
+   "lag_s": 220.0
+  },
+  "espn:401909835": {
+   "board_committed_utc": "2026-10-21T22:03:23Z",
+   "board_observed_utc": "2026-10-21T21:59:43Z",
+   "checkpoint_utc": "2026-10-21T22:00:00Z",
+   "committed_after_checkpoint": true,
+   "lag_s": 220.0
+  },
+  "espn:401909836": {
+   "board_committed_utc": "2026-10-21T22:31:20Z",
+   "board_observed_utc": "2026-10-21T22:27:43Z",
+   "checkpoint_utc": "2026-10-21T22:30:00Z",
+   "committed_after_checkpoint": true,
+   "lag_s": 217.0
+  },
+  "espn:401909837": {
+   "board_committed_utc": "2026-10-21T22:31:20Z",
+   "board_observed_utc": "2026-10-21T22:27:43Z",
+   "checkpoint_utc": "2026-10-21T22:30:00Z",
+   "committed_after_checkpoint": true,
+   "lag_s": 217.0
   }
  },
  "comparator_retrospective_without_independent_clocks": {
@@ -34,23 +69,34 @@
     "cash_outlay": 3.1700000000000004,
     "hit_rate": 0.6666666666666666,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 2,
-    "n_player_games": 4,
+    "n_games": 5,
+    "n_player_games": 16,
     "n_settled": 6,
-    "n_trades": 6,
+    "n_trades": 21,
     "roi_on_cash_outlay": 0.2618296529968454,
     "total_net_pnl": 0.8300000000000001
    }
   },
   "by_edge_bucket": {
+   "0.06-0.10": {
+    "cash_outlay": null,
+    "hit_rate": null,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 3,
+    "n_settled": 0,
+    "n_trades": 3,
+    "roi_on_cash_outlay": null,
+    "total_net_pnl": null
+   },
    "0.10-0.15": {
     "cash_outlay": 0.6,
     "hit_rate": 1.0,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 1,
-    "n_player_games": 1,
+    "n_games": 3,
+    "n_player_games": 4,
     "n_settled": 1,
-    "n_trades": 1,
+    "n_trades": 5,
     "roi_on_cash_outlay": 0.6666666666666667,
     "total_net_pnl": 0.4
    },
@@ -58,23 +104,45 @@
     "cash_outlay": 2.5700000000000003,
     "hit_rate": 0.6,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 2,
-    "n_player_games": 4,
+    "n_games": 4,
+    "n_player_games": 9,
     "n_settled": 5,
-    "n_trades": 5,
+    "n_trades": 10,
     "roi_on_cash_outlay": 0.16731517509727625,
     "total_net_pnl": 0.43
+   },
+   ">=0.25": {
+    "cash_outlay": null,
+    "hit_rate": null,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 2,
+    "n_player_games": 2,
+    "n_settled": 0,
+    "n_trades": 3,
+    "roi_on_cash_outlay": null,
+    "total_net_pnl": null
    }
   },
   "by_family": {
+   "player_assists": {
+    "cash_outlay": null,
+    "hit_rate": null,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 3,
+    "n_player_games": 5,
+    "n_settled": 0,
+    "n_trades": 5,
+    "roi_on_cash_outlay": null,
+    "total_net_pnl": null
+   },
    "player_points": {
     "cash_outlay": 1.9300000000000002,
     "hit_rate": 0.5,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 2,
-    "n_player_games": 4,
+    "n_games": 4,
+    "n_player_games": 9,
     "n_settled": 4,
-    "n_trades": 4,
+    "n_trades": 9,
     "roi_on_cash_outlay": 0.0362694300518135,
     "total_net_pnl": 0.07000000000000006
    },
@@ -82,10 +150,10 @@
     "cash_outlay": 0.59,
     "hit_rate": 1.0,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 1,
-    "n_player_games": 1,
+    "n_games": 4,
+    "n_player_games": 5,
     "n_settled": 1,
-    "n_trades": 1,
+    "n_trades": 5,
     "roi_on_cash_outlay": 0.6949152542372882,
     "total_net_pnl": 0.41
    },
@@ -93,10 +161,10 @@
     "cash_outlay": 0.65,
     "hit_rate": 1.0,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 1,
-    "n_player_games": 1,
+    "n_games": 2,
+    "n_player_games": 2,
     "n_settled": 1,
-    "n_trades": 1,
+    "n_trades": 2,
     "roi_on_cash_outlay": 0.5384615384615384,
     "total_net_pnl": 0.35
    }
@@ -106,10 +174,10 @@
     "cash_outlay": 1.54,
     "hit_rate": 0.6666666666666666,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 1,
-    "n_player_games": 2,
+    "n_games": 3,
+    "n_player_games": 9,
     "n_settled": 3,
-    "n_trades": 3,
+    "n_trades": 12,
     "roi_on_cash_outlay": 0.2987012987012987,
     "total_net_pnl": 0.46
    },
@@ -117,10 +185,10 @@
     "cash_outlay": 1.6300000000000001,
     "hit_rate": 0.6666666666666666,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 1,
-    "n_player_games": 2,
+    "n_games": 2,
+    "n_player_games": 7,
     "n_settled": 3,
-    "n_trades": 3,
+    "n_trades": 9,
     "roi_on_cash_outlay": 0.22699386503067484,
     "total_net_pnl": 0.37
    }
@@ -130,12 +198,23 @@
     "cash_outlay": 3.1700000000000004,
     "hit_rate": 0.6666666666666666,
     "n_dnp_settled_at_fair_price": 0,
-    "n_games": 2,
-    "n_player_games": 4,
+    "n_games": 5,
+    "n_player_games": 15,
     "n_settled": 6,
-    "n_trades": 6,
+    "n_trades": 20,
     "roi_on_cash_outlay": 0.2618296529968454,
     "total_net_pnl": 0.8300000000000001
+   },
+   "YES": {
+    "cash_outlay": null,
+    "hit_rate": null,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 0,
+    "n_trades": 1,
+    "roi_on_cash_outlay": null,
+    "total_net_pnl": null
    }
   },
   "clv_cents": {
@@ -155,8 +234,8 @@
    "z": null
   },
   "computation_lag_s": {
-   "max": 3423.0,
-   "mean": 2325.5,
+   "max": 3469.0,
+   "mean": 2422.285714285714,
    "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
   },
   "dnp": {
@@ -165,34 +244,35 @@
   },
   "eligible_vs_blocked": {
    "any_block_reason": {
-    "DEPTH_CONFLICT_ORDERBOOK": 53,
-    "EV_BELOW_THRESHOLD": 1593,
-    "GATE_STATUS": 1554,
-    "INSUFFICIENT_DEPTH": 30,
-    "QUALITY_GATE:EXTREME_PRICE": 60,
-    "QUALITY_GATE:NO_SIZE": 30,
-    "QUALITY_GATE:SPREAD_WIDE": 116,
-    "SPREAD_WIDE_STRICT": 280
+    "DEPTH_CONFLICT_ORDERBOOK": 79,
+    "EV_BELOW_THRESHOLD": 4226,
+    "GATE_STATUS": 3634,
+    "INSUFFICIENT_DEPTH": 35,
+    "LOW_P_PLAY": 76,
+    "QUALITY_GATE:EXTREME_PRICE": 134,
+    "QUALITY_GATE:NO_SIZE": 35,
+    "QUALITY_GATE:SPREAD_WIDE": 164,
+    "SPREAD_WIDE_STRICT": 506
    },
-   "blocked_sides": 1774,
-   "candidate_sides": 1802,
+   "blocked_sides": 4771,
+   "candidate_sides": 4874,
    "eligible_not_traded_reason": {
-    "EXPOSURE_CAP:PLAYER_GAME": 2,
-    "EXPOSURE_CAP:TEAM_GAME": 6,
-    "NOT_BEST_IN_THESIS": 14
+    "EXPOSURE_CAP:PLAYER_GAME": 5,
+    "EXPOSURE_CAP:TEAM_GAME": 23,
+    "NOT_BEST_IN_THESIS": 54
    },
-   "eligible_sides": 28,
+   "eligible_sides": 103,
    "primary_block_reason": {
-    "DEPTH_CONFLICT_ORDERBOOK": 49,
-    "ELIGIBLE": 28,
-    "EV_BELOW_THRESHOLD": 155,
-    "GATE_STATUS": 1345,
-    "QUALITY_GATE:EXTREME_PRICE": 54,
-    "QUALITY_GATE:NO_SIZE": 30,
-    "QUALITY_GATE:SPREAD_WIDE": 115,
-    "SPREAD_WIDE_STRICT": 26
+    "DEPTH_CONFLICT_ORDERBOOK": 74,
+    "ELIGIBLE": 103,
+    "EV_BELOW_THRESHOLD": 934,
+    "GATE_STATUS": 3339,
+    "QUALITY_GATE:EXTREME_PRICE": 126,
+    "QUALITY_GATE:NO_SIZE": 35,
+    "QUALITY_GATE:SPREAD_WIDE": 161,
+    "SPREAD_WIDE_STRICT": 102
    },
-   "trades": 6
+   "trades": 21
   },
   "evidence_status": {
    "authority": "none; never a value claim below the minimums",
@@ -212,46 +292,52 @@
   "exposure_concentration": {
    "max_trades_per_player_game": 2,
    "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
-   "players_with_multiple_trades": 2,
-   "share_NO": 1.0,
+   "players_with_multiple_trades": 5,
+   "share_NO": 0.9523809523809523,
    "share_of_notional_by_family": {
-    "player_points": 0.6065573770491803,
-    "player_pra": 0.18688524590163932,
-    "player_threes": 0.2065573770491803
+    "player_assists": 0.23068552774755172,
+    "player_points": 0.3786724700761698,
+    "player_pra": 0.25680087051142547,
+    "player_threes": 0.13384113166485312
    },
    "share_of_notional_by_game": {
-    "espn:401909088": 0.5147540983606557,
-    "espn:401909090": 0.4852459016393442
+    "espn:401909088": 0.1708378672470076,
+    "espn:401909090": 0.16104461371055495,
+    "espn:401909091": 0.13275299238302504,
+    "espn:401909834": 0.2763873775843308,
+    "espn:401909837": 0.2589771490750816
    },
    "share_of_notional_by_player": {
-    "espn:4278073": 0.08852459016393442,
-    "espn:4432166": 0.36065573770491804,
-    "espn:4593803": 0.3967213114754098,
-    "espn:4684742": 0.15409836065573768
+    "espn:3032977": 0.08487486398258978,
+    "espn:4395724": 0.10663764961915126,
+    "espn:4431680": 0.06964091403699674,
+    "espn:4432166": 0.11969532100108815,
+    "espn:4593803": 0.13166485310119697
    },
    "share_of_notional_by_side": {
-    "NO": 0.9999999999999999
+    "NO": 0.9815016322089227,
+    "YES": 0.01849836779107726
    }
   },
   "independent_units": {
-   "n_decisions": 6,
-   "n_games": 2,
-   "n_player_games": 4,
+   "n_decisions": 21,
+   "n_games": 5,
+   "n_player_games": 16,
    "n_settled_decisions": 6,
-   "n_theses": 6,
+   "n_theses": 21,
    "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
   },
   "label": "retrospective_descriptive_no_clock_check",
-  "n_candidate_sides": 1802,
+  "n_candidate_sides": 4874,
   "note": "same rules WITHOUT requiring the board / forecast to have been committed to the data branches before the checkpoint: shows what the independent-clock rule removes",
   "overall": {
    "cash_outlay": 3.1700000000000004,
    "hit_rate": 0.6666666666666666,
    "n_dnp_settled_at_fair_price": 0,
-   "n_games": 2,
-   "n_player_games": 4,
+   "n_games": 5,
+   "n_player_games": 16,
    "n_settled": 6,
-   "n_trades": 6,
+   "n_trades": 21,
    "roi_on_cash_outlay": 0.2618296529968454,
    "total_net_pnl": 0.8300000000000001
   },
@@ -333,26 +419,26 @@
     "within_window": false
    },
    "espn:401909091": {
-    "minutes_to_tip": 106.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 32.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    },
    "espn:401909092": {
-    "minutes_to_tip": 256.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 182.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    },
    "espn:401909093": {
-    "minutes_to_tip": 1516.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 1442.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    },
    "espn:401909094": {
-    "minutes_to_tip": 1666.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 1592.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    },
@@ -369,49 +455,57 @@
     "within_window": false
    },
    "espn:401909836": {
-    "minutes_to_tip": 106.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 32.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    },
    "espn:401909837": {
-    "minutes_to_tip": 106.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 32.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    },
    "espn:401909838": {
-    "minutes_to_tip": 136.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
-    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
-    "within_window": false
+    "live_only": 0,
+    "live_trades": 0,
+    "minutes_to_tip": 62.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
+    "replay_only": 0,
+    "replay_trades_same_game": 0,
+    "same_contracts": 0,
+    "within_window": true
    },
    "espn:401909839": {
-    "minutes_to_tip": 136.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
-    "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
-    "within_window": false
+    "live_only": 0,
+    "live_trades": 0,
+    "minutes_to_tip": 62.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
+    "replay_only": 0,
+    "replay_trades_same_game": 0,
+    "same_contracts": 0,
+    "within_window": true
    },
    "espn:401909840": {
-    "minutes_to_tip": 166.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 92.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    },
    "espn:401909841": {
-    "minutes_to_tip": 256.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 182.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    },
    "espn:401909842": {
-    "minutes_to_tip": 286.4,
-    "nearest_run_as_of": "2026-10-21T21:43:37Z",
+    "minutes_to_tip": 212.7,
+    "nearest_run_as_of": "2026-10-21T22:57:17Z",
     "status": "NO_DATA: nearest contemporaneous run is outside the comparison window",
     "within_window": false
    }
   },
-  "status": "NO_DATA",
+  "status": "OK",
   "window_minutes_to_tip": [
    45.0,
    75.0
@@ -706,6 +800,13 @@
    "n": 630
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 27.299999999999997,
+   "game_id": "espn:401909091",
+   "minutes_to_tip": 32.7,
+   "n": 630
+  },
+  {
    "as_of_utc": "2026-10-20T21:34:50Z",
    "dist_to_checkpoint_min": 1645.2,
    "game_id": "espn:401909092",
@@ -755,6 +856,13 @@
    "n": 514
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 122.69999999999999,
+   "game_id": "espn:401909092",
+   "minutes_to_tip": 182.7,
+   "n": 556
+  },
+  {
    "as_of_utc": "2026-10-21T18:16:27Z",
    "dist_to_checkpoint_min": 1663.5,
    "game_id": "espn:401909093",
@@ -769,10 +877,24 @@
    "n": 594
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 1382.7,
+   "game_id": "espn:401909093",
+   "minutes_to_tip": 1442.7,
+   "n": 594
+  },
+  {
    "as_of_utc": "2026-10-21T21:43:37Z",
    "dist_to_checkpoint_min": 1606.4,
    "game_id": "espn:401909094",
    "minutes_to_tip": 1666.4,
+   "n": 374
+  },
+  {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 1532.7,
+   "game_id": "espn:401909094",
+   "minutes_to_tip": 1592.7,
    "n": 374
   },
   {
@@ -839,6 +961,13 @@
    "n": 654
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 57.3,
+   "game_id": "espn:401909834",
+   "minutes_to_tip": 2.7,
+   "n": 654
+  },
+  {
    "as_of_utc": "2026-10-20T18:19:13Z",
    "dist_to_checkpoint_min": 1660.8,
    "game_id": "espn:401909835",
@@ -899,6 +1028,13 @@
    "dist_to_checkpoint_min": 16.400000000000006,
    "game_id": "espn:401909835",
    "minutes_to_tip": 76.4,
+   "n": 606
+  },
+  {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 57.3,
+   "game_id": "espn:401909835",
+   "minutes_to_tip": 2.7,
    "n": 606
   },
   {
@@ -965,6 +1101,13 @@
    "n": 520
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 27.299999999999997,
+   "game_id": "espn:401909836",
+   "minutes_to_tip": 32.7,
+   "n": 520
+  },
+  {
    "as_of_utc": "2026-10-20T18:19:13Z",
    "dist_to_checkpoint_min": 1690.8,
    "game_id": "espn:401909837",
@@ -1025,6 +1168,13 @@
    "dist_to_checkpoint_min": 46.400000000000006,
    "game_id": "espn:401909837",
    "minutes_to_tip": 106.4,
+   "n": 662
+  },
+  {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 27.299999999999997,
+   "game_id": "espn:401909837",
+   "minutes_to_tip": 32.7,
    "n": 662
   },
   {
@@ -1091,6 +1241,13 @@
    "n": 594
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 2.700000000000003,
+   "game_id": "espn:401909838",
+   "minutes_to_tip": 62.7,
+   "n": 594
+  },
+  {
    "as_of_utc": "2026-10-20T18:19:13Z",
    "dist_to_checkpoint_min": 1720.8,
    "game_id": "espn:401909839",
@@ -1154,6 +1311,13 @@
    "n": 692
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 2.700000000000003,
+   "game_id": "espn:401909839",
+   "minutes_to_tip": 62.7,
+   "n": 694
+  },
+  {
    "as_of_utc": "2026-10-20T19:25:51Z",
    "dist_to_checkpoint_min": 1684.2,
    "game_id": "espn:401909840",
@@ -1210,6 +1374,13 @@
    "n": 634
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 32.7,
+   "game_id": "espn:401909840",
+   "minutes_to_tip": 92.7,
+   "n": 634
+  },
+  {
    "as_of_utc": "2026-10-20T21:34:50Z",
    "dist_to_checkpoint_min": 1645.2,
    "game_id": "espn:401909841",
@@ -1259,6 +1430,13 @@
    "n": 616
   },
   {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 122.69999999999999,
+   "game_id": "espn:401909841",
+   "minutes_to_tip": 182.7,
+   "n": 634
+  },
+  {
    "as_of_utc": "2026-10-20T21:34:50Z",
    "dist_to_checkpoint_min": 1675.2,
    "game_id": "espn:401909842",
@@ -1306,15 +1484,22 @@
    "game_id": "espn:401909842",
    "minutes_to_tip": 286.4,
    "n": 524
+  },
+  {
+   "as_of_utc": "2026-10-21T22:57:17Z",
+   "dist_to_checkpoint_min": 152.7,
+   "game_id": "espn:401909842",
+   "minutes_to_tip": 212.7,
+   "n": 556
   }
  ],
  "data_integrity": {
   "decisions_asof_at_or_after_tip_excluded": 0,
-  "decisions_bad_identity_excluded": 20689,
+  "decisions_bad_identity_excluded": 25995,
   "decisions_duplicate_ids_dropped": 0,
   "decisions_forecast_after_asof_excluded": 0,
-  "decisions_invalid_price_excluded": 3606,
-  "decisions_raw": 244177,
+  "decisions_invalid_price_excluded": 3612,
+  "decisions_raw": 298689,
   "decisions_replay_excluded": 0,
   "paper_corrections_applied": 0,
   "paper_settlements_orphaned": 0,
@@ -1366,60 +1551,60 @@
    "checkpoint_utc": "2026-10-21T22:00:00Z",
    "game_id": "espn:401909834",
    "game_start_utc": "2026-10-21T23:00:00Z",
-   "n_candidate_sides": 0,
+   "n_candidate_sides": 654,
    "n_eligible": 0,
    "n_trades": 0,
    "prospective": false,
-   "reason": null,
-   "status": "NOT_DUE"
+   "reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT=654",
+   "status": "NO_TRADE"
   },
   {
    "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:00:00Z",
    "game_id": "espn:401909835",
    "game_start_utc": "2026-10-21T23:00:00Z",
-   "n_candidate_sides": 0,
+   "n_candidate_sides": 606,
    "n_eligible": 0,
    "n_trades": 0,
    "prospective": false,
-   "reason": null,
-   "status": "NOT_DUE"
+   "reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT=606",
+   "status": "NO_TRADE"
   },
   {
    "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:30:00Z",
    "game_id": "espn:401909091",
    "game_start_utc": "2026-10-21T23:30:00Z",
-   "n_candidate_sides": 0,
+   "n_candidate_sides": 630,
    "n_eligible": 0,
    "n_trades": 0,
    "prospective": false,
-   "reason": null,
-   "status": "NOT_DUE"
+   "reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT=630",
+   "status": "NO_TRADE"
   },
   {
    "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:30:00Z",
    "game_id": "espn:401909836",
    "game_start_utc": "2026-10-21T23:30:00Z",
-   "n_candidate_sides": 0,
+   "n_candidate_sides": 520,
    "n_eligible": 0,
    "n_trades": 0,
    "prospective": false,
-   "reason": null,
-   "status": "NOT_DUE"
+   "reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT=520",
+   "status": "NO_TRADE"
   },
   {
    "after_prospective_start": false,
    "checkpoint_utc": "2026-10-21T22:30:00Z",
    "game_id": "espn:401909837",
    "game_start_utc": "2026-10-21T23:30:00Z",
-   "n_candidate_sides": 0,
+   "n_candidate_sides": 662,
    "n_eligible": 0,
    "n_trades": 0,
    "prospective": false,
-   "reason": null,
-   "status": "NOT_DUE"
+   "reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT=662",
+   "status": "NO_TRADE"
   },
   {
    "after_prospective_start": false,
@@ -1520,13 +1705,49 @@
  ],
  "independent_clocks": {
   "board_ref": "origin/data-archive",
-  "board_ticks_earliest": "2026-10-20T16:06:07Z",
-  "board_ticks_indexed": 156,
-  "forecast_ids_indexed": 35786,
+  "board_ticks_earliest": "2026-09-18T07:36:03Z",
+  "board_ticks_indexed": 2068,
+  "forecast_ids_indexed": 41209,
   "forecast_ref": "origin/projection-data",
   "status": "VERIFIED"
  },
  "no_trade_examples": [
+  {
+   "all_blockers": [
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT",
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.4722874614001151,
+   "ev_net_v1_basis": 0.4759704614001151,
+   "family": "player_points",
+   "game_id": "espn:401909835",
+   "k": 20.0,
+   "player": "Tyler Herro",
+   "price": 0.36,
+   "primary_reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT",
+   "side": "NO",
+   "spread": 0.01,
+   "top_size": 26.0
+  },
+  {
+   "all_blockers": [
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT",
+    "GATE_STATUS"
+   ],
+   "decision": "NO_TRADE",
+   "ev_net_exec": 0.4388146649692666,
+   "ev_net_v1_basis": 0.4456896649692666,
+   "family": "player_assists",
+   "game_id": "espn:401909835",
+   "k": 8.0,
+   "player": "Trae Young",
+   "price": 0.24,
+   "primary_reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT",
+   "side": "NO",
+   "spread": 0.02,
+   "top_size": 2.0
+  },
   {
    "all_blockers": [
     "GATE_STATUS"
@@ -1560,42 +1781,6 @@
    "side": "NO",
    "spread": 0.03,
    "top_size": 144.61
-  },
-  {
-   "all_blockers": [
-    "BOARD_ARCHIVED_AFTER_CHECKPOINT",
-    "GATE_STATUS"
-   ],
-   "decision": "NO_TRADE",
-   "ev_net_exec": 0.3382650376015564,
-   "ev_net_v1_basis": 0.3413320376015564,
-   "family": "player_points",
-   "game_id": "espn:401909088",
-   "k": 25.0,
-   "player": "Jayson Tatum",
-   "price": 0.4,
-   "primary_reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT",
-   "side": "NO",
-   "spread": 0.01,
-   "top_size": 6075.0
-  },
-  {
-   "all_blockers": [
-    "BOARD_ARCHIVED_AFTER_CHECKPOINT",
-    "GATE_STATUS"
-   ],
-   "decision": "NO_TRADE",
-   "ev_net_exec": 0.3243784250552725,
-   "ev_net_v1_basis": 0.3269414250552725,
-   "family": "player_pra",
-   "game_id": "espn:401909088",
-   "k": 40.0,
-   "player": "Jayson Tatum",
-   "price": 0.46,
-   "primary_reason": "BOARD_ARCHIVED_AFTER_CHECKPOINT",
-   "side": "NO",
-   "spread": 0.01,
-   "top_size": 22.15
   },
   {
    "all_blockers": [
@@ -1847,18 +2032,19 @@
   },
   "eligible_vs_blocked": {
    "any_block_reason": {
-    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 564,
-    "DEPTH_CONFLICT_ORDERBOOK": 53,
-    "EV_BELOW_THRESHOLD": 1593,
-    "GATE_STATUS": 1554,
-    "INSUFFICIENT_DEPTH": 30,
-    "QUALITY_GATE:EXTREME_PRICE": 60,
-    "QUALITY_GATE:NO_SIZE": 30,
-    "QUALITY_GATE:SPREAD_WIDE": 116,
-    "SPREAD_WIDE_STRICT": 280
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 3636,
+    "DEPTH_CONFLICT_ORDERBOOK": 79,
+    "EV_BELOW_THRESHOLD": 4226,
+    "GATE_STATUS": 3634,
+    "INSUFFICIENT_DEPTH": 35,
+    "LOW_P_PLAY": 76,
+    "QUALITY_GATE:EXTREME_PRICE": 134,
+    "QUALITY_GATE:NO_SIZE": 35,
+    "QUALITY_GATE:SPREAD_WIDE": 164,
+    "SPREAD_WIDE_STRICT": 506
    },
-   "blocked_sides": 1789,
-   "candidate_sides": 1802,
+   "blocked_sides": 4861,
+   "candidate_sides": 4874,
    "eligible_not_traded_reason": {
     "EXPOSURE_CAP:PLAYER_GAME": 1,
     "EXPOSURE_CAP:TEAM_GAME": 2,
@@ -1866,7 +2052,7 @@
    },
    "eligible_sides": 13,
    "primary_block_reason": {
-    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 564,
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 3636,
     "DEPTH_CONFLICT_ORDERBOOK": 29,
     "ELIGIBLE": 13,
     "EV_BELOW_THRESHOLD": 73,
@@ -1922,7 +2108,7 @@
    "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
   },
   "label": "retrospective_descriptive",
-  "n_candidate_sides": 1802,
+  "n_candidate_sides": 4874,
   "opening_hour_effect": {
    "buckets": {
     ">6h": {
@@ -2008,13 +2194,13 @@
   "status": "OK",
   "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1"
  },
- "run_id": "4be3c29b5ed9de96",
+ "run_id": "f4f7ab85a666eebb",
  "schema": "issue53.exec_shadow.v1",
  "sealed_ledger": {
   "status": "NOT_SUPPLIED"
  },
  "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1",
- "study_config_sha256": "2192f9e4ea251989417831f58c05a6aaecd841ece2d5dbd9d83349b0c1748fb4",
+ "study_config_sha256": "f84e4067436e2515ea7f35f7417a4e9e66ad69f62ae66ea004a7c6c23244c3e8",
  "study_id": "ISSUE53_EXEC_SHADOW_V1",
  "trades": [
   {

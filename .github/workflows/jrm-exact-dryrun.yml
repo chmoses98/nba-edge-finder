@@ -81,11 +81,11 @@ jobs:
           WIN: ${{ github.event.inputs.window_hours }}
         run: |
           python -m nba.paper.jrm_exact --archive "$RUNNER_TEMP/m/projection-data" --context "$RUNNER_TEMP/m/data-archive" --market "$RUNNER_TEMP/m/data-archive" \
-            --pit "$RUNNER_TEMP/m/pit" --shadow "$RUNNER_TEMP/m/shadow" --out "$RUNNER_TEMP/jrm_exact" --window-hours "${WIN:-96}"
+            --pit "$RUNNER_TEMP/m/pit" --shadow "$RUNNER_TEMP/m/shadow" --out "$RUNNER_TEMP/jrm_exact" --window-hours "${WIN:-30}"
       - name: Isolation check (the mounted branches must be unchanged)
         run: |
           for d in projection-data data-archive shadow pit; do
-            if [ -d "$RUNNER_TEMP/m/$d" ] && [ -n "$(git -C "$RUNNER_TEMP/m/$d" status --porcelain 2>/dev/null | grep -v '^??' || true)" ]; then echo "::error::$d was modified"; exit 1; fi
+            if [ -d "$RUNNER_TEMP/m/$d" ] && [ -n "$(git -C "$RUNNER_TEMP/m/$d" status --porcelain 2>/dev/null || true)" ]; then echo "::error::$d was modified"; exit 1; fi
           done
           echo "mounted branches unchanged"
       - uses: actions/upload-artifact@v4

@@ -60,7 +60,7 @@ def test_original_protocol_is_pinned_and_the_new_study_has_its_own_ids(ctx):
     ok, why = X.base_protocol_ok(ctx["study"])
     assert ok, why
     s = ctx["study"]
-    assert s["version"] == "2.0.0" and not set(s["strategies"]) & set(S.STRATEGIES)               # new identifiers only: V1 is never reused or modified
+    assert s["version"] == "2.0.1" and not set(s["strategies"]) & set(S.STRATEGIES)               # new identifiers only: V1 is never reused or modified
     assert s["checkpoint"]["horizon"] == "T-60" and s["checkpoint"]["prospective_decision_modes"] == ["sealed_pretip_asof"]
     assert "asof_replay" in s["checkpoint"]["allowed_decision_modes"] and "asof_replay" not in s["checkpoint"]["prospective_decision_modes"]
     assert utc(s["prospective_start_utc"]) > utc(s["declared_utc"]) and s["prospective_start_utc"] > "2026-10-22T06:00:00Z"        # a NEW, later start
@@ -413,14 +413,23 @@ def test_a_board_or_forecast_committed_after_the_checkpoint_is_not_available_to_
 
 
 def test_clock_indexes_are_read_from_git_history(tmp_path):
+    """Path-based: the commit SUBJECT is deliberately wrong here (measured: subjects differ from the file stamps by 1-3 s on ~23% of ticks)."""
     repo = tmp_path / "cap"
     repo.mkdir()
     git(repo, "init", "-q")
-    for tick, when in (("2026-10-20T17:58:51Z", "2026-10-20T18:02:15+00:00"), ("2026-10-20T18:05:51Z", "2026-10-20T18:09:23+00:00")):
-        (repo / "f.txt").write_text(tick)
+    for tick, subj, when in (("20261020T175851Z", "capture: 123 at 2026-10-20T17:58:52Z", "2026-10-20T18:02:15+00:00"),
+                             ("20261020T180551Z", "capture: 123 at 2026-10-20T18:05:50Z", "2026-10-20T18:09:23+00:00")):
+        f = repo / "kalshi/markets/dt=2026-10-20" / f"kalshi_markets_{tick}_abc.jsonl.gz"
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(tick)
+        (repo / "kalshi/markets_delta/dt=2026-10-20").mkdir(parents=True, exist_ok=True)
+        (repo / f"kalshi/markets_delta/dt=2026-10-20/kalshi_markets_delta_{tick}_abc.jsonl.gz").write_text(tick)
         git(repo, "add", "-A")
-        git(repo, "commit", "-q", "-m", f"capture: 123 at {tick}", env={"GIT_COMMITTER_DATE": when, "GIT_AUTHOR_DATE": when})
-    git(repo, "commit", "-q", "--allow-empty", "-m", "worker: 123 gen 1 acquired lease")                       # non-capture commits are ignored
+        git(repo, "commit", "-q", "-m", subj, env={"GIT_COMMITTER_DATE": when, "GIT_AUTHOR_DATE": when})
+    (repo / "context").mkdir()
+    (repo / "context/kalshi_markets_20261020T190000Z_x.txt").write_text("not a board")                          # outside the board directories: ignored
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "-m", "worker: 123 gen 1 acquired lease", env={"GIT_COMMITTER_DATE": "2026-10-20T19:00:00+00:00", "GIT_AUTHOR_DATE": "2026-10-20T19:00:00+00:00"})
     idx = X.board_commit_index(str(repo), "HEAD")
     assert idx == {"2026-10-20T17:58:51Z": "2026-10-20T18:02:15Z", "2026-10-20T18:05:51Z": "2026-10-20T18:09:23Z"}
 

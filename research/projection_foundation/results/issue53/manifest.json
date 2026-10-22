@@ -1,8 +1,8 @@
 {
  "authority": "research_only",
  "inputs": {
-  "minutes_shadow_archive_ref": "c38f874d93a5005501d82a8b2aa3b07b58723795",
-  "projection_data_ref": "8ce75b5144b4d5c5d95b81a0c4e31be8e08959a1"
+  "minutes_shadow_archive_ref": null,
+  "projection_data_ref": null
  },
  "network": false,
  "orders_placed": 0,
@@ -12,13 +12,14 @@
   "attribution_2026-10-20.md",
   "dress_rehearsal",
   "exec_shadow.json",
-  "jrm_matched.json"
+  "jrm_matched.json",
+  "manifest.json"
  ],
  "paper_config_sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
  "read_only": true,
- "run_id": "4be3c29b5ed9de96",
+ "run_id": "f4f7ab85a666eebb",
  "schema": "issue53.manifest.v1",
- "study_config_sha256": "2192f9e4ea251989417831f58c05a6aaecd841ece2d5dbd9d83349b0c1748fb4",
+ "study_config_sha256": "f84e4067436e2515ea7f35f7417a4e9e66ad69f62ae66ea004a7c6c23244c3e8",
  "three_way": {
   "1_original_frozen_strategy_selection": {
    "entry_cost": 3.4,
@@ -40,12 +41,12 @@
    "decision_matrix": {
     "both_bet": 1,
     "jrm_only": 2,
-    "neither": 615,
+    "neither": 2427,
     "v1_only": 2
    },
    "jrm_net_pnl": 0.53,
    "label": "PF_EDGE_STRICT_T60_EXEC_JRM_V1 vs V1 on the same candidate rows (archive_scale_approximation; RETROSPECTIVE)",
-   "matched_games": 1,
+   "matched_games": 4,
    "status": "OK",
    "v1_net_pnl": 0.46
   }

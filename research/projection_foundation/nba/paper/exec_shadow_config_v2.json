@@ -1,6 +1,6 @@
 {
   "config_id": "nba_exec_shadow_config",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "study_id": "ISSUE53_EXEC_SHADOW_V1",
   "issue": "chmoses98/nba-edge-finder#53",
   "declared_utc": "2026-10-21T23:45:00Z",
@@ -37,7 +37,8 @@
       "sealed_pretip_asof"
     ],
     "board_rule": "the board of a game is the latest capture tick OBSERVED at or before the checkpoint; it must also be COMMITTED to the capture branch at or before the checkpoint (git commit time). If it is not, the game is NO_TRADE. No fallback to an earlier archived tick, no grace window (owner decision 2026-10-21).",
-    "forecast_rule": "player and game forecasts must be generated, self-archived AND committed to projection-data at or before the checkpoint; the engine's as-of rule (generated <= board time) is unchanged"
+    "forecast_rule": "player and game forecasts must be generated, self-archived AND committed to projection-data at or before the checkpoint; the engine's as-of rule (generated <= board time) is unchanged",
+    "max_board_gap_s": 1800
   },
   "execution": {
     "side_price_basis": "ask",
@@ -122,26 +123,30 @@
   "sealing": {
     "ledger_branch": "exec-shadow-seals",
     "schema": "issue53.exec_seal.v1",
-    "earliest_after_checkpoint_s": 360,
-    "earliest_note": "capture ticks reach the capture branch ~3.4 min after observation (192-211 s measured on opening night); the sealer waits until the cut-off history is stable",
+    "earliest_after_checkpoint_s": 600,
+    "earliest_note": "measured tick-to-commit lag on the capture branch: median 213 s, p90 357 s, max 502 s (150 real ticks 2026-10-20..22); 600 s covers the maximum observed with margin",
     "deadline_before_tip_s": 600,
     "deadline_note": "a seal must be committed to the ledger branch at least 10 minutes before tip; later = LATE (uncounted)",
-    "window_s_total_for_a_60_minute_checkpoint": 2640,
+    "window_s_total_for_a_60_minute_checkpoint": 2400,
     "missed_marker": "a game with no seal after its window is recorded as MISSED (uncounted, alert); never sealed late as if on time",
     "counted_iff": [
       "seal verifies (sha256 of body and of the candidate file)",
-      "seal.protocol_sha256 equals this file's sha256 and seal.study_version == 2.0.0",
-      "seal.computed_utc >= prospective_start_utc and seal.checkpoint_utc >= prospective_start_utc",
-      "the seal commit's INDEPENDENT commit time on the ledger branch is >= seal.computed_utc - 120 s (not backdated) and <= tip - deadline_before_tip_s",
-      "seal.code_sha is reachable from the default branch and the protocol file's commit on the default branch precedes prospective_start_utc",
-      "independent archive clocks were supplied and the board/forecast commit times were recorded in the seal"
+      "protocol_sha256 equals this file's sha256 and study_version equals its version",
+      "computed_utc >= prospective_start_utc, checkpoint_utc >= prospective_start_utc, computed inside [checkpoint + earliest_after_checkpoint_s, tip - deadline_before_tip_s]",
+      "the seal and its candidate file are each ADDED exactly once on the ledger branch, never modified/deleted/renamed afterwards, and byte-identical to the adding commit",
+      "the adding commit's SERVER commit time is >= computed_utc - 120 s and <= tip - deadline_before_tip_s",
+      "it is the first (earliest-added) seal of its game; later duplicates are DUPLICATE_UNCOUNTED",
+      "the sealed tick is the latest capture tick observed at/before the checkpoint in the final archive, and the tip in the seal equals the final schedule's tip",
+      "run from the default branch by schedule/workflow_dispatch; code sha reachable from the default branch; protocol file committed on the default branch before prospective_start_utc",
+      "independent clocks recorded in the seal"
     ],
     "never": [
       "recompute a sealed selection from later archive state",
       "count a seal produced by a branch/PR workflow run",
       "overwrite, edit or delete a seal"
     ],
-    "cadence": "cron every 5 minutes during game hours (cheap plan step; the seal step runs only when a window is open, ~9 attempts per 44-minute window), workflow_dispatch fallback, concurrency-serialised, idempotent per game"
+    "cadence": "cron every 5 minutes during game hours (cheap plan step; the seal step runs only when a window is open, ~9 attempts per 44-minute window), workflow_dispatch fallback, concurrency-serialised, idempotent per game",
+    "commit_clock": "the seal commit is created through the GitHub Git Data API (no client-supplied dates): its commit time is the SERVER clock at creation, independent of the runner clock; a failed or late publish simply leaves no seal"
   },
   "jrm_exact": {
     "status": "ISOLATED_DRY_RUN_ONLY",
@@ -156,5 +161,14 @@
       "staking or trading route"
     ],
     "approximation_label": "archive_scale_approximation (jrm_matched.py) stays separately labelled and is never presented as exact JRM"
-  }
+  },
+  "amended_utc": "2026-10-22T00:40:00Z",
+  "amendments": [
+    {
+      "version": "2.0.1",
+      "utc": "2026-10-22T00:40:00Z",
+      "before_any_prospective_data": true,
+      "changes": "After a second independent review, before the first seal existed and before the 2026-10-24T06:00Z start: (1) earliest_after_checkpoint_s 360 -> 600 because the measured tick-to-commit lag on the capture branch has median 213 s, p90 357 s, max 502 s over 150 real ticks (a 360 s margin let ~9% of ticks arrive after the sealer looked, i.e. an implicit fallback to an earlier tick); (2) board commit times are indexed by capture FILE path, not commit subject (subjects differ from file stamps by 1-3 s on ~23% of ticks); (3) seal commits are created through the GitHub API so the commit time is SERVER-side, not the runner clock; (4) a counted seal must be the only add of its path, never modified/deleted/renamed afterwards, byte-identical to its adding commit, the first seal of its game, on the latest tick observed at the checkpoint, and with an unchanged tip. No selection rule or threshold changed; start date unchanged."
+    }
+  ]
 }

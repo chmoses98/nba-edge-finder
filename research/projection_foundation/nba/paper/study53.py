@@ -126,7 +126,7 @@ def run(archive: str, msa: str | None, out: str, attribution_day: str = "2026-10
     cv = clocks is not None
     # PROSPECTIVE evidence is ONLY the verified sealed pre-tip ledger. A reconstruction (everything below) is never prospective, however late or early it is run.
     if seals:
-        sched = SL.schedule_games(context, now, lookback_h=24 * 21, horizon_h=48) if context else None
+        sched = SL.schedule_games(context, None, all_history=True) if context else None
         ev = SL.evaluate(seals, archive, market, now, study, base, code_repo=code_repo, default_branch_ref=default_branch_ref, schedule=sched)
         B["sealed_ledger"] = _num({k: v for k, v in ev.items() if k != "counted_trades"} | {"counted_trades": ev["counted_trades"]})
         B["prospective"] = ev["metrics"] if ev["metrics"].get("status") == "OK" else {"status": "NO_DATA", "reason": "no COUNTED sealed decision yet", "label": "prospective",
