@@ -210,6 +210,31 @@ def stage_settle(a, now: datetime) -> dict:
     return s
 
 
+MAX_LIVE_SKEW_H = 1.0   # a run whose clock is further than this from the wall clock is a replay: it is never audited against live rosters
+
+
+def _roster_audit(archive: str, now: datetime, work: str) -> dict | None:
+    """The same-slate roster audit (nba/live/roster_audit.py) of the feed this run just published, so the activation check can judge D5 on one
+    document and one run instead of a manually supplied file. The audit carries the feed's digest, so it cannot vouch for any other feed, and
+    it is written beside the feed (`runs/nba/roster_audit.json`, a rewritable current view) for the verifiers. Skipped for a replay (live rosters
+    say nothing about recorded data) and never fatal: with no audit, D5 simply stays PENDING."""
+    if abs((datetime.now(timezone.utc) - now).total_seconds()) / 3600 > MAX_LIVE_SKEW_H or os.environ.get("PF_SKIP_ROSTER_AUDIT") == "1":
+        print("roster audit: skipped (replayed clock or PF_SKIP_ROSTER_AUDIT=1)")
+        return None
+    if not os.path.exists(os.path.join(archive, "projections", "nba", "latest.json")):
+        return None
+    try:
+        from . import roster_audit as RA
+        res = RA.run_audit(archive)
+    except Exception as e:  # noqa: BLE001
+        warn(f"roster audit failed: {type(e).__name__}: {e}")
+        return None
+    _write_json(os.path.join(archive, "runs", "nba", "roster_audit.json"), res)
+    _write_json(os.path.join(work, "roster_audit.json"), res)
+    print(f"roster audit: feed {res['feed_generated_utc']} · {res['genuine_roster_errors']} error(s) · sources {res['sources']['espn_rosters']}")
+    return res
+
+
 def stage_score(a, now: datetime, work: str) -> dict:
     ref = pr.reference_from_summary(json.load(open(SUMMARY_JSON)))
     stt = _state(work)
@@ -240,7 +265,8 @@ def stage_score(a, now: datetime, work: str) -> dict:
     # never promotes anything: the promotion is a decision in SIFT, see nba/live/activation_check.py)
     try:
         from . import activation_check as AC
-        rep = AC.evaluate(a.archive, now)
+        audit = _roster_audit(a.archive, now, work)
+        rep = AC.evaluate(a.archive, now, audit)
         _write_json(os.path.join(work, "activation_readiness.json"), rep)
         out["activation"] = {"verdict": rep["verdict"], "remaining": len(rep["remaining"])}
         md.append(AC.markdown(rep))
