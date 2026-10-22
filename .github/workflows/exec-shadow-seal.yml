@@ -1,27 +1,29 @@
 name: exec-shadow-seal
 # Issue #53 (owner direction on PR #54): SEALED PRE-TIP LEDGER of the executable T-60 shadow study. RESEARCH ONLY: no orders, no staking, no account access, no secrets.
 #   * After each game's T-60 archive cut-off (+10 min for capture lag, measured p90 6 min / max 8 min) and at least 10 min before tip, evaluate the game with the frozen rules and
-#     append an immutable seal (TRADE / NO_TRADE + reasons + inputs + hashes) to the `exec-shadow-seals` branch. This is the ONLY branch the workflow writes.
-#   * Three jobs. `compute` has contents:read (it can write nothing) and hands the new files over as an artifact. `publish` (contents:write, schedule / manual non-dry runs on the
-#     default branch only) commits them through the GitHub Git Data API: the commit time is GitHub's clock, not the runner's, and the ref moves fast-forward only.
-#     `alert` (issues:write) opens / updates the alert issue. No job runs `git push`.
+#     append an immutable seal (TRADE / NO_TRADE + reasons + inputs + hashes) to the `exec-shadow-seals` branch. This is the ONLY branch the workflow writes, and only through
+#     nba.paper.ledger_remote (GitHub Git Data API: server-side commit time, fast-forward only, additions only). Nothing here runs `git push` or `git commit`.
 #   * Post-game research joins settlements to that ledger and never recomputes a selection (nba.paper.exec_seal.evaluate).
-#   * Cheap: a 5-minute cron whose first step is a ~20 s plan (schedule + ledger only). Boards / forecasts are mounted only when a window is open. A 44-minute window gives
-#     ~9 chances per game; a game whose window closes unsealed gets a MISSED marker and a red run + alert issue (never sealed late as if on time).
-#   * Only runs from the default branch can produce COUNTED seals (verified offline: code sha must be reachable from main). Pull-request runs are always dry (nothing pushed).
+#   * WHY A CHAIN AND NOT A 5-MINUTE CRON. This repository measured its own schedule delivery at ~4% (capture_worker.yml: 34 runs of 864 expected, gaps of 2-3 h). A seal window is
+#     40 minutes, so a cron-driven sealer would miss most games. Like capture-worker / nba-ticker, one run owns the cadence (a poll every 90 s, ~280 minutes) and dispatches its
+#     successor; cron is only the bootstrap. A delivered cron costs a ~15 s stdlib gate (no dependency install); the chain starts only when a seal window is open or opens within 6 h.
+#   * Dead-man: nba-watchdog (the repo's ops monitor / `nba-ops-alert` issue) alerts when a window is open or imminent and no run of this workflow is alive, or when a window closed
+#     with neither a seal nor a MISSED marker, or on any MISSED marker (nba.paper.seal_monitor).
+#   * Only runs from the default branch can produce COUNTED seals (verified offline: code sha must be reachable from main). Pull-request runs and dry dispatches perform ONE
+#     rehearsal iteration on a fixed past instant and publish nothing.
 #   * Does not touch the live ticker, capture worker, projection-foundation, the paper protocol, or any original archive.
 on:
   schedule:
-    # NBA tips ~17:00-03:00 UTC; windows open tip-54 min and close tip-10 min -> 16:00-03:55 UTC. Months as in the other NBA workflows.
-    - cron: "*/5 16-23,0-3 * 10-12,1-6 *"
+    # BOOTSTRAP ONLY (see above). Hours 12-03 UTC cover weekend-afternoon tips through late west-coast games; season months as in the other NBA workflows.
+    - cron: "*/5 12-23,0-3 * 10-12,1-6 *"
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "evaluate and report only; nothing is pushed (default true for manual runs)"
+        description: "one rehearsal iteration; nothing is published or dispatched (default true for manual runs)"
         type: boolean
         default: true
       now:
-        description: "dry run only: clock override (ISO, UTC); blank = wall clock"
+        description: "dry run only: clock override (ISO, UTC); blank = a fixed rehearsal instant on real archived data"
         default: ""
   pull_request:
     paths:
@@ -29,6 +31,10 @@ on:
       - "research/projection_foundation/nba/paper/exec_seal.py"
       - "research/projection_foundation/nba/paper/exec_shadow.py"
       - "research/projection_foundation/nba/paper/exec_shadow_config_v2.json"
+      - "research/projection_foundation/nba/paper/seal_windows.py"
+      - "research/projection_foundation/nba/paper/seal_chain.py"
+      - "research/projection_foundation/nba/paper/seal_monitor.py"
+      - "research/projection_foundation/nba/paper/ledger_remote.py"
       - "research/projection_foundation/scripts/exec_seal_ci.sh"
 
 permissions:
@@ -42,33 +48,23 @@ env:
   PF_DIR: research/projection_foundation
   PY: "3.13"
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+  REHEARSAL_NOW: "2026-10-21T01:00:00Z"        # OKC@SAS window (opens 00:40Z, closes 01:20Z, tip 01:30Z) on real archived data: the dry iteration exercises the whole path
 
 concurrency:
-  group: exec-shadow-seal
+  # ONE live chain at a time (a delivered cron while the chain runs queues as its natural successor). Rehearsals never wait behind it.
+  group: exec-shadow-seal-${{ (github.event_name == 'pull_request' && format('pr-{0}', github.run_id)) || (github.event.inputs.dry_run == 'true' && format('dry-{0}', github.run_id)) || 'live' }}
   cancel-in-progress: false
 
 jobs:
-  compute:
+  tick:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 300
     permissions:
-      contents: read
-    outputs:
-      dry: ${{ steps.mode.outputs.dry }}
-      due: ${{ steps.plan.outputs.due }}
-      has_new: ${{ steps.export.outputs.has_new }}
-      missed: ${{ steps.watch.outputs.rc }}
+      contents: write        # used ONLY by nba.paper.ledger_remote (Git Data API, ledger layout only) via PUBLISH_TOKEN
+      actions: write         # used ONLY to dispatch the successor
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 1 }
-      - name: History without blobs (the protocol file's commit time and code reachability are read from history)
-        run: git fetch --filter=blob:none --unshallow origin || git fetch --filter=blob:none origin
-      - uses: actions/setup-python@v5
-        with: { python-version: "${{ env.PY }}", cache: pip }
-      - name: Install (compute stack only)
-        run: |
-          pip install -q numpy==2.5.3 pandas==3.0.5 scipy==1.18.1 pyarrow==26.0.0 pydantic==2.13.5 httpx==0.28.1 pyyaml==6.0.1 orjson==3.13.0 pypdf==6.17.0
-          pip install -q -e . --no-deps
       - name: Mode
         id: mode
         env:
@@ -80,134 +76,52 @@ jobs:
           # a counted seal can only come from the default branch
           if [ "$DRY" = false ] && [ "$GITHUB_REF" != "refs/heads/$DEFAULT_BRANCH" ]; then DRY=true; echo "::notice::not the default branch: forcing dry run"; fi
           echo "dry=$DRY" >> "$GITHUB_OUTPUT"
-      - name: Mount the ledger branch and the schedule context
-        run: |
-          bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$RUNNER_TEMP/seals"
-          bash $PF_DIR/scripts/exec_seal_ci.sh mount_context "$RUNNER_TEMP/m"
-      - name: Plan (is any seal window open?)
-        id: plan
-        working-directory: research/projection_foundation
+      - name: Idle gate (standard library only, no install)
+        id: gate
         env:
-          NOW: ${{ steps.mode.outputs.dry == 'true' && github.event.inputs.now || '' }}
-        run: |
-          python -m nba.paper.exec_seal plan --context "$RUNNER_TEMP/m/data-archive" --seals "$RUNNER_TEMP/seals" --out "$RUNNER_TEMP/plan.json" ${NOW:+--now "$NOW"} | tee -a "$GITHUB_OUTPUT"
-          { echo "### plan"; echo '```json'; python -c "import json,sys;d=json.load(open('$RUNNER_TEMP/plan.json'));print(json.dumps({'now':d['now'],'counts':d['counts']}))"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - name: Mount boards and forecasts (only when a window is open)
-        if: steps.plan.outputs.due == 'true'
-        run: bash $PF_DIR/scripts/exec_seal_ci.sh mount_inputs "$RUNNER_TEMP/m"
-      - name: Seal the open windows
-        id: seal
-        if: steps.plan.outputs.due == 'true'
-        continue-on-error: true
-        working-directory: research/projection_foundation
-        env:
-          NOW: ${{ steps.mode.outputs.dry == 'true' && github.event.inputs.now || '' }}
           DRY: ${{ steps.mode.outputs.dry }}
+          NOW_IN: ${{ github.event.inputs.now }}
         run: |
-          python -m nba.paper.exec_seal seal --archive "$RUNNER_TEMP/m/projection-data" --market "$RUNNER_TEMP/m/data-archive" --context "$RUNNER_TEMP/m/data-archive" \
-            --board-repo "$RUNNER_TEMP/m/data-archive" --seals "$RUNNER_TEMP/seals" --code-repo "$GITHUB_WORKSPACE" --out "$RUNNER_TEMP/seal_report.json" \
-            ${NOW:+--now "$NOW"} $([ "$DRY" = true ] && echo --dry-run)
-          { echo "### seal report"; echo '```json'; cat "$RUNNER_TEMP/seal_report.json"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - name: Mark windows that closed unsealed (MISSED)
-        id: watch
-        if: always() && steps.plan.outputs.needs_watch == 'true'
-        working-directory: research/projection_foundation
+          NOW=""
+          if [ "$DRY" = true ]; then NOW="${NOW_IN:-$REHEARSAL_NOW}"; fi
+          mkdir -p "$RUNNER_TEMP/work"
+          if [ "$DRY" = true ]; then rm -rf "$RUNNER_TEMP/work/seals"; mkdir -p "$RUNNER_TEMP/work/seals"; git init -q "$RUNNER_TEMP/work/seals"
+          else bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$RUNNER_TEMP/work/seals"; fi
+          bash $PF_DIR/scripts/exec_seal_ci.sh mount_context "$RUNNER_TEMP/work/m" $NOW
+          python3 $PF_DIR/nba/paper/seal_windows.py gate --context "$RUNNER_TEMP/work/m/data-archive" --seals "$RUNNER_TEMP/work/seals" --horizon-h 6 ${NOW:+--now "$NOW"} | tee -a "$GITHUB_OUTPUT"
+          if [ "$DRY" = true ]; then echo "active=true" >> "$GITHUB_OUTPUT"; fi     # rehearsals always run their one iteration
+          echo "now=$NOW" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        if: ${{ !cancelled() && steps.gate.outputs.active == 'true' }}
+        with: { python-version: "${{ env.PY }}", cache: pip }
+      - name: Install (compute stack only; once per chain, not per poll)
+        if: ${{ !cancelled() && steps.gate.outputs.active == 'true' }}
+        run: |
+          pip install -q numpy==2.5.3 pandas==3.0.5 scipy==1.18.1 pyarrow==26.0.0 pydantic==2.13.5 httpx==0.28.1 pyyaml==6.0.1 orjson==3.13.0 pypdf==6.17.0
+          pip install -q -e . --no-deps
+      - name: History without blobs (the protocol file's commit time and code reachability are read from history)
+        if: ${{ !cancelled() && steps.gate.outputs.active == 'true' }}
+        run: git fetch --filter=blob:none --unshallow origin || git fetch --filter=blob:none origin
+      - name: Seal chain
+        id: chain
+        if: ${{ !cancelled() && steps.gate.outputs.active == 'true' }}
+        working-directory: ${{ github.workspace }}
         env:
-          NOW: ${{ steps.mode.outputs.dry == 'true' && github.event.inputs.now || '' }}
           DRY: ${{ steps.mode.outputs.dry }}
+          NOW: ${{ steps.gate.outputs.now }}
+          PUBLISH_TOKEN: ${{ github.token }}          # reaches only the publisher and the successor dispatch (nba.paper.seal_chain)
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          set +e
-          python -m nba.paper.exec_seal watch --context "$RUNNER_TEMP/m/data-archive" --seals "$RUNNER_TEMP/seals" ${NOW:+--now "$NOW"} $([ "$DRY" = true ] && echo --dry-run) | tee "$RUNNER_TEMP/watch.json"
-          rc=${PIPESTATUS[0]}
-          echo "rc=$rc" >> "$GITHUB_OUTPUT"
-          if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then echo "::error::watch failed (rc=$rc)"; exit 1; fi
-          exit 0
-      - name: Export the new ledger files (additions only)
-        id: export
-        if: always() && steps.mode.outputs.dry == 'false'
-        run: |
-          python $PF_DIR/nba/paper/ledger_remote.py export --seals "$RUNNER_TEMP/seals" --dir "$RUNNER_TEMP/new" | tee "$RUNNER_TEMP/export.json" 
-          if [ -n "$(find "$RUNNER_TEMP/new" -type f 2>/dev/null | head -1)" ]; then echo "has_new=true" >> "$GITHUB_OUTPUT"; else echo "has_new=false" >> "$GITHUB_OUTPUT"; fi
-      - name: Hand-over artifact (new ledger files + reports)
-        if: always()
+          python3 $PF_DIR/nba/paper/seal_chain.py --work "$RUNNER_TEMP/work" --repo-root "$GITHUB_WORKSPACE" --repo "$GITHUB_REPOSITORY" \
+            --default-branch "$DEFAULT_BRANCH" $([ "$DRY" = true ] && echo "--dry-run ${NOW:+--now $NOW}") 2>&1 | tee "$RUNNER_TEMP/work/chain.log"
+      - name: Evidence (reports; the ledger commits carry the server timestamps)
+        if: ${{ always() && steps.gate.outputs.active == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: exec-shadow-seal-${{ github.run_id }}
           path: |
-            ${{ runner.temp }}/new
-            ${{ runner.temp }}/seal_report.json
-            ${{ runner.temp }}/plan.json
-            ${{ runner.temp }}/watch.json
+            ${{ runner.temp }}/work/chain.log
+            ${{ runner.temp }}/work/seal_report.json
+            ${{ runner.temp }}/work/publish.json
           retention-days: 90
           if-no-files-found: ignore
-      - name: Fail the run if sealing errored (observable; fail-closed)
-        if: steps.seal.outcome == 'failure'
-        run: |
-          echo "::error::sealing errored for at least one game (see the seal report); no seal is created for an errored game"
-          exit 1
-
-  publish:
-    # contents:write lives ONLY here, and only for real runs on the default branch. The job runs no repository code besides the stdlib-only publisher.
-    needs: compute
-    if: always() && needs.compute.outputs.has_new == 'true' && needs.compute.outputs.dry == 'false' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    outputs:
-      rc: ${{ steps.pub.outputs.rc }}
-    steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 1, sparse-checkout: "research/projection_foundation/nba/paper/ledger_remote.py", sparse-checkout-cone-mode: false }
-      - uses: actions/download-artifact@v4
-        with:
-          name: exec-shadow-seal-${{ github.run_id }}
-          path: ${{ runner.temp }}/handover
-      - name: Publish through the Git Data API (server-side commit time, fast-forward only, additions only) and verify durability + deadline
-        id: pub
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set +e
-          python research/projection_foundation/nba/paper/ledger_remote.py publish --dir "$RUNNER_TEMP/handover/new" --report "$RUNNER_TEMP/handover/seal_report.json" --out "$RUNNER_TEMP/publish.json"
-          rc=$?
-          echo "rc=$rc" >> "$GITHUB_OUTPUT"
-          { echo "### publish"; echo '```json'; cat "$RUNNER_TEMP/publish.json" 2>/dev/null; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-          [ "$rc" = 0 ] || echo "::error::publish rc=$rc (1 = not durable, 5 = a seal was committed after its pre-tip deadline: uncounted)"
-          exit $rc
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: exec-shadow-publish-${{ github.run_id }}
-          path: ${{ runner.temp }}/publish.json
-          retention-days: 90
-          if-no-files-found: ignore
-
-  alert:
-    needs: [compute, publish]
-    if: always() && github.event_name != 'pull_request' && needs.compute.outputs.dry == 'false' && (needs.compute.outputs.missed == '3' || (needs.publish.result != 'success' && needs.publish.result != 'skipped') || needs.compute.result == 'failure')
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    permissions:
-      issues: write
-    steps:
-      - name: Open / update the alert issue (nba-exec-shadow-alert)
-        uses: actions/github-script@v7
-        env:
-          MISSED: ${{ needs.compute.outputs.missed }}
-          PUBLISH: ${{ needs.publish.result }}
-          COMPUTE: ${{ needs.compute.result }}
-        with:
-          script: |
-            const label = 'nba-exec-shadow-alert';
-            try { await github.rest.issues.getLabel({...context.repo, name: label}); }
-            catch (e) { await github.rest.issues.createLabel({...context.repo, name: label, color: 'fbca04', description: 'Issue #53 sealed ledger: a game window closed unsealed or a publish failed'}); }
-            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const parts = [];
-            if (process.env.MISSED === '3') parts.push('a game window closed without a seal (uncounted; never sealed late)');
-            if (!['success', 'skipped', ''].includes(process.env.PUBLISH)) parts.push(`publish ${process.env.PUBLISH} (seals not durable, or committed after their pre-tip deadline)`);
-            if (process.env.COMPUTE === 'failure') parts.push('compute failed (a game may be unsealed)');
-            const body = `Issue #53 sealed ledger: ${parts.join('; ')}.\n\n_run: ${run}_`;
-            const open = await github.rest.issues.listForRepo({...context.repo, state: 'open', labels: label, per_page: 1});
-            if (open.data[0]) { await github.rest.issues.createComment({...context.repo, issue_number: open.data[0].number, body}); }
-            else { await github.rest.issues.create({...context.repo, title: 'Issue #53 sealed ledger: missed seal or failed publish', labels: [label], body}); }

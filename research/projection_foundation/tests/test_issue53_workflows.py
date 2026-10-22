@@ -17,31 +17,53 @@ def load(p):
     return d
 
 
-def test_the_seal_workflow_is_cheap_bounded_least_privilege_and_pull_requests_are_dry():
+def test_the_seal_workflow_is_a_self_renewing_chain_gated_by_a_dependency_free_check_and_pull_requests_are_dry():
     wf = load(SEAL)
     assert wf["permissions"] == {"contents": "read"}
     crons = [s["cron"] for s in wf["on"]["schedule"]]
-    assert crons == ["*/5 16-23,0-3 * 10-12,1-6 *"]                                       # every 5 minutes, game hours only, season months only
-    assert wf["concurrency"] == {"group": "exec-shadow-seal", "cancel-in-progress": False}
+    assert crons == ["*/5 12-23,0-3 * 10-12,1-6 *"]                                           # bootstrap only: the repo measured ~4% cron delivery
     jobs = wf["jobs"]
-    assert set(jobs) == {"compute", "publish", "alert"} and all(j["timeout-minutes"] <= 15 for j in jobs.values())
-    # least privilege: the job that runs the research code can write NOTHING; write access exists only in the stdlib-only publisher and issues only in the alert job
-    assert jobs["compute"]["permissions"] == {"contents": "read"}
-    assert jobs["publish"]["permissions"] == {"contents": "write"} and jobs["alert"]["permissions"] == {"issues": "write"}
-    cond = jobs["publish"]["if"]
-    assert "github.event.repository.default_branch" in cond and "'schedule'" in cond and "'workflow_dispatch'" in cond and "pull_request" not in cond
-    assert "dry == 'false'" in cond                                                         # dry runs never reach the publisher
-    assert "pull_request" in jobs["alert"]["if"]                                            # ... and never open issues
+    assert set(jobs) == {"tick"} and jobs["tick"]["timeout-minutes"] <= 300
+    # the ONLY write permissions: contents (Git Data API publisher, ledger layout only) and actions (successor dispatch); no issues, no secrets
+    assert jobs["tick"]["permissions"] == {"contents": "write", "actions": "write"}
+    grp = wf["concurrency"]["group"]
+    assert wf["concurrency"]["cancel-in-progress"] is False and "'live'" in grp and "pull_request" in grp and "dry-" in grp       # one live chain; rehearsals never queue behind it
     txt = SEAL.read_text()
+    steps = jobs["tick"]["steps"]
+    names = [x.get("name", x.get("uses", "")) for x in steps]
+    gate_i = next(i for i, n in enumerate(names) if n.startswith("Idle gate"))
+    py_i = next(i for i, x in enumerate(steps) if "setup-python" in str(x.get("uses", "")))
+    pip_i = next(i for i, x in enumerate(steps) if "pip install" in str(x.get("run", "")))
+    assert gate_i < py_i < pip_i                                                              # the gate runs before any interpreter setup or install
+    assert "python3 $PF_DIR/nba/paper/seal_windows.py gate" in txt and "pip" not in steps[gate_i]["run"]
+    for i in (py_i, pip_i) + tuple(i for i, n in enumerate(names) if n.startswith(("Seal chain", "History"))):
+        assert "steps.gate.outputs.active == 'true'" in steps[i]["if"]                       # an idle poll stops after the gate
     assert '"$EVENT" = pull_request' in txt and "forcing dry run" in txt                          # pull requests and non-default branches are dry
+    chain = steps[next(i for i, n in enumerate(names) if n.startswith("Seal chain"))]
+    assert chain["env"]["PUBLISH_TOKEN"] == "${{ github.token }}" and "GH_TOKEN" not in chain["env"] and "GITHUB_TOKEN" not in chain["env"]
+    assert "--dry-run" in chain["run"] and "seal_chain.py" in chain["run"]
     code = "\n".join(l for l in txt.splitlines() if not l.lstrip().startswith("#"))
-    for forbidden in ("projection-foundation.yml", "nba-ticker", "capture-worker", "secrets.", "git push", "git commit", "--force", "force: true"):
+    for forbidden in ("projection-foundation.yml", "nba-ticker", "capture-worker", "secrets.", "git push", "git commit", "--force", "force: true", "issues:"):
         assert forbidden not in code
-    # the clock override is honoured only for dry runs (a live run uses the wall clock)
-    assert code.count("steps.mode.outputs.dry == 'true' && github.event.inputs.now || ''") == 3
-    # a watch failure other than 'missed' (rc 3) is an error; sealing errors fail the run; the publisher runs even when compute failed late
-    assert 'if [ "$rc" != 0 ] && [ "$rc" != 3 ]' in txt and "steps.seal.outcome == 'failure'" in txt
-    assert "needs.compute.outputs.has_new == 'true'" in cond and "always()" in cond
+
+
+def test_the_chain_code_never_pushes_and_the_token_is_scoped_to_two_commands():
+    src = (ROOT / "research/projection_foundation/nba/paper/seal_chain.py").read_text()
+    code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+    for forbidden in ("git push", "git commit", "--force", "force=True"):
+        assert forbidden not in code
+    assert code.count("token=True") == 1 and code.count("token_env()") == 3                  # def + publisher + successor dispatch
+    lr = (ROOT / "research/projection_foundation/nba/paper/ledger_remote.py").read_text()
+    assert '"force": False' in lr and "ALLOWED = " in lr
+
+
+def test_the_watchdog_workflow_reads_the_seal_chain_without_widening_its_writes():
+    wf = load(WF / "nba-watchdog.yml")
+    assert wf["permissions"] == {"contents": "read", "issues": "write", "actions": "read"}
+    txt = (WF / "nba-watchdog.yml").read_text()
+    seal = next(x for x in wf["jobs"]["watch"]["steps"] if x.get("id") == "seal")
+    assert seal["continue-on-error"] is True                                                  # the existing checks never depend on the new inputs
+    assert "gh run list --workflow exec-shadow-seal.yml" in txt and "--seals" in txt and "git push" not in txt
 
 
 def test_the_seal_helper_never_pushes_and_distinguishes_a_missing_ledger_from_an_error():
@@ -90,3 +112,13 @@ def test_the_jrm_default_is_untouched_by_these_workflows():
         assert "PF_NBA_MINUTES_ENGINE: jrm" not in p.read_text()                           # set per call inside jrm_exact.project_pair only
     live = (WF / "projection-foundation.yml").read_text()
     assert "PF_NBA_MINUTES_ENGINE" not in live or "dry run only" in live
+
+
+def test_the_selftest_workflow_is_manual_and_can_only_reach_the_throwaway_branch():
+    wf = load(WF / "exec-shadow-selftest.yml")
+    assert set(wf["on"]) == {"workflow_dispatch"} and wf["permissions"] == {"contents": "write"}
+    txt = (WF / "exec-shadow-selftest.yml").read_text()
+    code = "\n".join(l for l in txt.splitlines() if not l.lstrip().startswith("#"))
+    assert "ledger_remote.py selftest" in code and "git push" not in code and "refs/heads/main" not in code and "exec-shadow-seals " not in code
+    lr = (ROOT / "research/projection_foundation/nba/paper/ledger_remote.py").read_text()
+    assert 'SELFTEST_BRANCH = "exec-shadow-seals-selftest"' in lr and "selftest only ever writes the throw-away branch" in lr

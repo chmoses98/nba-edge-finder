@@ -102,101 +102,12 @@ def code_info(repo: str, study_path: str | None = None) -> dict[str, Any]:
 
 
 # ================================================================================================ schedule + windows
-def _stamp(path: str) -> datetime | None:
-    import re
-    m = re.search(r"context_schedule_(\d{8}T\d{6}Z)", os.path.basename(path))
-    return datetime.strptime(m.group(1), "%Y%m%dT%H%M%SZ").replace(tzinfo=UTC) if m else None
-
-
-def schedule_games(context_dir: str, now: datetime | None, season_types: tuple[str, ...] = ("regular",), lookback_h: float = 6.0, horizon_h: float = 48.0,
-                   snapshot_span_h: float = 36.0, all_history: bool = False) -> list[dict]:
-    """Games from the ESPN schedule snapshots of the capture branch observed at or before `now` within the last `snapshot_span_h` hours; the LATEST observation of a game
-    wins (a postponed / moved tip is followed), and a game that has dropped out of the newest snapshot (finished, other ET day) is still known from an earlier one.
-    Independent of our forecasts: a game without forecasts is still a game we owe a status."""
-    files = [(st, p) for p in glob.glob(os.path.join(context_dir, "context", "schedule", "dt=*", "context_schedule_*.jsonl.gz"))
-             if (st := _stamp(p)) is not None and (all_history or (now - timedelta(hours=snapshot_span_h) <= st <= now))]
-    out: dict[str, dict] = {}
-    for st, p in sorted(files, key=lambda x: (x[0], x[1])):
-        raw = open(p, "rb").read()
-        digest = sha256(raw)
-        for line in gzip.decompress(raw).decode().splitlines():
-            if not line.strip():
-                continue
-            r = json.loads(line)
-            if r.get("season_type") not in season_types:
-                continue
-            if not r.get("start_time_utc"):
-                out.pop(r["game_id"], None)                     # tip withdrawn (postponed / unscheduled): the stale earlier tip must not be sealed
-                continue
-            out[r["game_id"]] = {"game_id": r["game_id"], "start_utc": MK.iso(MK.parse_ts(r["start_time_utc"])), "home": r["home_tricode"], "away": r["away_tricode"],
-                                 "game_date_et": r.get("game_date_et"), "schedule_file": os.path.basename(p), "schedule_sha256": digest,
-                                 "schedule_observed_utc": r.get("_observed_at_utc"), "status": r.get("status")}
-    keep = [g for g in out.values() if all_history or now - timedelta(hours=lookback_h) <= MK.parse_ts(g["start_utc"]) <= now + timedelta(hours=horizon_h)]
-    return sorted(keep, key=lambda g: (g["start_utc"], g["game_id"]))
-
-
-def window(game: dict, study: dict) -> dict[str, datetime]:
-    tip = MK.parse_ts(game["start_utc"])
-    cp = X.checkpoint_of(tip, study)
-    sc = study["sealing"]
-    return {"tip": tip, "checkpoint": cp, "opens": cp + timedelta(seconds=sc["earliest_after_checkpoint_s"]), "closes": tip - timedelta(seconds=sc["deadline_before_tip_s"])}
-
-
-def enabled_utc(seal_dir: str) -> datetime | None:
-    """When the ledger was first enabled (file `ENABLED_UTC`, written by the first live run). Games whose window opened earlier were never ours to seal."""
-    p = os.path.join(seal_dir, "ENABLED_UTC")
-    try:
-        return MK.parse_ts(open(p).read().strip())
-    except (OSError, ValueError):
-        return None
-
-
-def mark_enabled(seal_dir: str, now: datetime) -> None:
-    p = os.path.join(seal_dir, "ENABLED_UTC")
-    if not os.path.exists(p):
-        with open(p, "x") as f:
-            f.write(MK.iso(now) + "\n")
-
-
-def game_state(now: datetime, game: dict, study: dict, sealed: set[str], missed: set[str], enabled: datetime | None = None) -> str:
-    w = window(game, study)
-    if game["game_id"] not in sealed and ((enabled is not None and w["opens"] < enabled) or (enabled is None and now > w["closes"])):
-        return "BEFORE_ENABLED"                              # the ledger was not enabled (yet) when this window ran: not ours, never MISSED
-    if game["game_id"] in sealed:
-        return "SEALED"
-    if game["game_id"] in missed:
-        return "MISSED"
-    if now < w["opens"]:
-        return "NOT_DUE"
-    if now <= w["closes"]:
-        return "OPEN"
-    return "WINDOW_CLOSED_UNSEALED"
-
-
-def list_sealed(seal_dir: str) -> tuple[set[str], set[str]]:
-    sealed, missed = set(), set()
-    for p in glob.glob(os.path.join(seal_dir, "seals", "*", "*.json")):
-        sealed.add(os.path.basename(p).split("__")[0].replace("_", ":", 1))
-    for p in glob.glob(os.path.join(seal_dir, "missed", "*.json")):
-        missed.add(os.path.basename(p)[:-5].replace("_", ":", 1))
-    return sealed, missed
-
-
-def gid_file(gid: str) -> str:
-    return gid.replace(":", "_", 1)
+# Standard-library module shared with the idle gate and the liveness monitor (see seal_windows.py): ONE implementation of "is a game owed a seal now?".
+from .seal_windows import (_stamp, enabled_utc, game_state, gid_file, list_sealed, mark_enabled, plan as _plan, schedule_games, window)  # noqa: E402,F401
 
 
 def plan(context_dir: str, seal_dir: str, now: datetime, study: dict) -> dict[str, Any]:
-    games = schedule_games(context_dir, now)
-    sealed, missed = list_sealed(seal_dir)
-    en = enabled_utc(seal_dir)
-    rows = []
-    for g in games:
-        w = window(g, study)
-        rows.append({"game_id": g["game_id"], "tip_utc": g["start_utc"], "checkpoint_utc": _iso(w["checkpoint"]), "opens_utc": _iso(w["opens"]), "closes_utc": _iso(w["closes"]),
-                     "state": game_state(now, g, study, sealed, missed, en)})
-    c = Counter(r["state"] for r in rows)
-    return {"now": _iso(now), "games": rows, "counts": dict(c), "due": bool(c.get("OPEN")), "needs_watch": bool(c.get("WINDOW_CLOSED_UNSEALED"))}
+    return _plan(context_dir, seal_dir, now, study)
 
 
 # ================================================================================================ sealing

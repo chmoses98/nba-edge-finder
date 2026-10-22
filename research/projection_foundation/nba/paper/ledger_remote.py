@@ -22,6 +22,7 @@ import re
 import subprocess
 import sys
 import time
+from datetime import timedelta
 from typing import Any, Callable
 
 ALLOWED = ("seals/", "missed/")
@@ -166,16 +167,90 @@ def late_games(report: dict, commit_utc: str) -> list[str]:
     return sorted(x["game_id"] for x in report.get("sealed", []) if p(commit_utc) > p(x["deadline_utc"]))
 
 
+SELFTEST_BRANCH = "exec-shadow-seals-selftest"
+
+
+def selftest(api: Callable, repo: str, *, branch: str = SELFTEST_BRANCH, now: Callable | None = None, sleep: Callable[[float], None] = time.sleep) -> dict[str, Any]:
+    """Controlled real-API check of the publication path on a THROW-AWAY branch (never the ledger, never `main`). Returns {"ok": bool, "checks": {...}}.
+
+    Checks: bootstrap of a missing branch; server-side commit time close to the local clock and equal author / committer dates (no client dates were sent); an identical
+    resubmission is a no-op; different content at an existing path is refused; paths outside the layout are refused; a non-fast-forward ref update is refused by the server;
+    the deadline comparison uses the server commit time; durability. The branch is deleted at the end so the next run bootstraps again."""
+    from datetime import datetime, timezone
+    now = now or (lambda: datetime.now(timezone.utc))
+    if branch != SELFTEST_BRANCH:
+        raise Conflict("selftest only ever writes the throw-away branch")
+    checks: dict[str, Any] = {}
+
+    def p(ts: str) -> datetime:
+        return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    try:
+        api("DELETE", f"repos/{repo}/git/refs/heads/{branch}")                 # start clean (404 = nothing to delete)
+    except ApiError as e:
+        if e.status not in (404, 422):
+            raise
+    body = json.dumps({"selftest": True, "t": now().isoformat()}).encode()
+    f = {"seals/selftest/a.json": body}
+    t0 = now()
+    r1 = publish(api, repo, branch, f, "exec-shadow selftest", sleep=sleep)
+    t1 = now()
+    checks["bootstrap_and_publish"] = r1["status"] == "PUBLISHED" and r1["bootstrapped"] is True
+    ct = p(r1["commit_utc"])
+    checks["server_time_within_60s_of_runner_clock"] = (t0.timestamp() - 60) <= ct.timestamp() <= (t1.timestamp() + 60)
+    checks["server_time_skew_s"] = round(ct.timestamp() - t0.timestamp(), 1)
+    checks["author_date_equals_committer_date"] = r1["author_date"] == r1["commit_utc"]
+    checks["durable"] = verify_durable(api, repo, branch, r1["commit_sha"])
+    checks["identical_resubmission_is_noop"] = publish(api, repo, branch, f, "again", sleep=sleep)["status"] == "NOTHING_TO_PUBLISH"
+    try:
+        publish(api, repo, branch, {"seals/selftest/a.json": b"different"}, "overwrite", sleep=sleep)
+        checks["overwrite_refused"] = False
+    except Conflict:
+        checks["overwrite_refused"] = True
+    try:
+        publish(api, repo, branch, {".github/workflows/x.yml": b"x"}, "outside", sleep=sleep)
+        checks["outside_layout_refused"] = False
+    except Conflict:
+        checks["outside_layout_refused"] = True
+    r2 = publish(api, repo, branch, {"seals/selftest/b.json": b"2"}, "second", sleep=sleep)
+    checks["second_publish_fast_forward"] = r2["status"] == "PUBLISHED" and r2["parent"] == r1["commit_sha"]
+    try:                                                                        # the server must refuse to move the ref back (non-fast-forward, force false)
+        api("PATCH", f"repos/{repo}/git/refs/heads/{branch}", {"sha": r1["commit_sha"], "force": False})
+        checks["non_fast_forward_refused_by_server"] = False
+    except ApiError as e:
+        checks["non_fast_forward_refused_by_server"] = e.status in (409, 422)
+    rep = {"sealed": [{"game_id": "selftest", "deadline_utc": (ct - timedelta(seconds=1)).strftime("%Y-%m-%dT%H:%M:%SZ")}]}
+    checks["deadline_flags_a_seal_committed_after_it"] = late_games(rep, r1["commit_utc"]) == ["selftest"]
+    rep["sealed"][0]["deadline_utc"] = (ct + timedelta(minutes=10)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    checks["deadline_passes_a_seal_committed_before_it"] = late_games(rep, r1["commit_utc"]) == []
+    tree = api("GET", f"repos/{repo}/git/trees/{api('GET', f'repos/{repo}/git/commits/' + api('GET', f'repos/{repo}/git/ref/heads/{branch}')['object']['sha'])['tree']['sha']}?recursive=1")
+    checks["nothing_deleted"] = {"seals/selftest/a.json", "seals/selftest/b.json"} <= {e["path"] for e in tree.get("tree", [])}
+    try:
+        api("DELETE", f"repos/{repo}/git/refs/heads/{branch}")
+        checks["cleanup"] = True
+    except ApiError:
+        checks["cleanup"] = False
+    ok = all(v is True for k, v in checks.items() if k != "server_time_skew_s")
+    return {"ok": ok, "checks": checks, "commit_utc": r1["commit_utc"], "runner_utc": t0.strftime("%Y-%m-%dT%H:%M:%SZ")}
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["export", "publish"])
+    ap.add_argument("cmd", choices=["export", "publish", "selftest"])
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
     ap.add_argument("--branch", default="exec-shadow-seals")
     ap.add_argument("--seals", help="export: ledger worktree")
-    ap.add_argument("--dir", required=True, help="export: output dir; publish: directory of new files")
+    ap.add_argument("--dir", default=None, help="export: output dir; publish: directory of new files")
     ap.add_argument("--report", default=None, help="publish: seal_report.json of the compute job (deadlines)")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv)
+    if a.cmd == "selftest":
+        res = selftest(gh_api, a.repo)
+        print(json.dumps(res, indent=1, sort_keys=True))
+        if a.out:
+            json.dump(res, open(a.out, "w"), indent=1, sort_keys=True)
+        return 0 if res["ok"] else 1
+    if not a.dir:
+        ap.error("--dir is required")
     if a.cmd == "export":
         files = export(a.seals, a.dir)
         print(json.dumps({"new_files": sorted(files)}, indent=1))

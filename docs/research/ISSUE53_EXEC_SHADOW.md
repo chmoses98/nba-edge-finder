@@ -61,12 +61,13 @@ candidate side (hashed file), the selected decisions with prices and sizes, the 
 no forecasts, a late board commit or no tradeable contract are sealed `NO_TRADE` with the reason; a game whose window closes unsealed gets a `MISSED` marker, a red run and
 an alert issue (`nba-exec-shadow-alert`) and is **never sealed late as if on time**. Games whose window opened before the ledger was first enabled are `BEFORE_ENABLED`.
 
-**Who writes the ledger, and with whose clock.** Three jobs. `compute` has `contents: read` only (it runs the research code and can write nothing) and hands the new files over as
-an artifact. `publish` (`contents: write`; schedule / manual non-dry runs on the default branch only; stdlib-only code, `nba/paper/ledger_remote.py`) creates the commit through the
-Git Data API with **no client-supplied dates** and moves the ref **fast-forward only** (`force: false`), retrying on top of the new head if it lost a race; it then re-checks through
-the server that the commit is on the branch (durable) and that its **server commit time precedes each seal's deadline** (otherwise exit 5: late, uncounted, alert). `alert`
-(`issues: write`) opens / updates the alert issue. No job runs `git push` or `git commit`. The API path can only run from the default branch, so it is unverified until merge
-(the publisher is unit-tested against an in-memory fake of the API; pull-request runs are dry); the burn-in before the start date exists to prove it.
+**Who writes the ledger, and with whose clock.** One workflow job (`.github/workflows/exec-shadow-seal.yml`, driver `nba/paper/seal_chain.py`) holds `contents: write` and
+`actions: write` (successor dispatch); the publish token is handed **only** to `nba/paper/ledger_remote.py publish` and to the successor dispatch, never to the sealing subprocesses
+(tests pin this). The publisher creates the commit through the Git Data API with **no client-supplied dates** and moves the ref **fast-forward only** (`force: false`), retrying on
+top of the new head if it lost a race, sends only new blobs under `seals/`, `missed/`, `ENABLED_UTC`, aborts if an existing path would change, then re-checks through the server
+that the commit is on the branch (durable) and that its **server commit time precedes each seal's deadline** (otherwise exit 5: late, uncounted, red run). No step runs
+`git push` or `git commit`. (An earlier draft split compute / publish into separate jobs; a long-lived chain must publish inside the loop, so the separation is by process and
+token scope instead of by job.)
 
 **What counts** (`verify_seal`, offline, post-game): body and candidate-file hashes match; protocol sha256/version match; computed inside
 [start, tip - 10 min] and not before the window opened; the seal's **adding commit** (exactly one; never modified or deleted afterwards; working-tree bytes equal to that commit) has a
@@ -79,15 +80,20 @@ SEALED_COUNTED / SEALED_UNCOUNTED / MISSED / NO_SEAL_RECORD / NOT_DUE.
 reading any upstream decision row: BOS@DET `NO_TRADE` (board committed 18:02:15Z > 18:00Z), NYK@PHI `NO_TRADE` (gate/quality/depth), OKC@SAS **the same 3 contracts at the same prices**
 (`results/issue53/dress_rehearsal/`). That agreement is a consistency check of the sealer, not a result.
 
-**Cadence, cost and reliability.** Cron every 5 minutes during UTC 16:00-03:55 (season months): each run is a ~20-30 s *plan* (schedule snapshot + ledger, a blobless
-history fetch of the capture branch); boards and forecasts are mounted only when a window is open, then the seal step takes ~10 s of compute. A 40-minute window (checkpoint + 10 min to tip - 10 min) gives ~8
-attempts per game; concurrency serialises runs and the helper is idempotent per game. Residual risk, stated plainly: GitHub's scheduler is not a clock (the repo's own notes record
-hours of missing cron delivery on opening day). The design is therefore fail-closed: a missed window is uncounted, loud, and recorded, never papered over. Nothing alerts if the cron stops entirely (a dead-man check would be a second scheduler; not added without your approval). I did not touch the
-ticker; if you later want stronger delivery, the existing ticker pattern (self-renewing job) can dispatch `workflow_dispatch` of this workflow without changing the study.
-Expected loss of games to archive lag: the last tick before T-60 is committed in time only when it was observed more than its lag (median 213 s) before the checkpoint, so a large share of games is `NO_TRADE` by construction: in the retrospective application **6 of the 8 games already due** (088, 091, 834-837) fail only because their T-60 board was committed 203-220 s after the checkpoint. That slows the 200-decision / 40-game
+**Cadence, cost and reliability.** The repository MEASURED its own scheduled-workflow delivery (`capture_worker.yml`: 34 runs of 864 expected, 3.9%, gaps of 2-3 h), so a 5-minute
+cron cannot seal a 40-minute window reliably. The sealer is therefore a **self-renewing chain** like `capture-worker` / `nba-ticker`: one run (~280 min) polls every 90 s (about 25
+attempts per window), dispatches its successor at ~250 min, and ends when nothing is open, closing or opening within 6 h; cron (`*/5`, UTC 12:00-03:55, season months) is only the
+bootstrap, and a cron delivered while the chain is running queues as its natural successor (one live concurrency group; rehearsals have their own). **Idle cost:** a delivered
+cron runs a stdlib-only gate (depth-1 blobless fetch of the capture branch ~1 s + 0.1 s of Python, no `setup-python`, no `pip install`; the old design installed ~690 MB 144 times a day);
+dependencies are installed once per chain and only when a window is open or within 6 h. A game day costs roughly one chain of runner time from ~6 h before the first window to the last
+window, comparable to the existing long-lived workers; an off day costs nothing but delivered crons' ~15 s. Fail-closed: a missed window gets a MISSED marker and a red run, is
+uncounted and never sealed late. **Dead-man:** the existing `nba-watchdog` (opens the `nba-ops-alert` issue) now also evaluates `nba/paper/seal_monitor.py`: CRITICAL when a window is
+open or opens within 45 min and no run of the workflow is queued / running / finished within 20 min (`SEAL_CHAIN_DEAD`), when a window closed 10+ min ago with neither a seal nor a MISSED
+marker (`SEAL_UNMARKED_WINDOW`), and on any MISSED marker in the last 36 h (`SEAL_MISSED`). Residual risk, stated plainly: the watchdog is itself a cron workflow (`12,42 * * * *`), so
+a platform-wide scheduler outage would silence both; there is no second platform. Expected loss of games to archive lag: the last tick before T-60 is committed in time only when it was observed more than its lag (median 213 s) before the checkpoint, so a large share of games is `NO_TRADE` by construction: in the retrospective application **6 of the 8 games already due** (088, 091, 834-837) fail only because their T-60 board was committed 203-220 s after the checkpoint. That slows the 200-decision / 40-game
 target and is the price of the strict rule; every seal records the tick gap and commit margin so this can be quantified without any change to the rule.
 
-**Safe proposed cadence.** (1) Merge only on your approval; the first live run stamps `ENABLED_UTC`. (2) 2026-10-22..23: burn-in (seals are produced and verified but, by the
+**Safe proposed cadence.** (1) Merge (approved); the first live chain stamps `ENABLED_UTC` and publishes it. (2) 2026-10-22..23: burn-in (seals are produced and verified but, by the
 start rule, uncounted). (3) Run `python -m nba.paper.study53 --seals <ledger checkout> --context ... --market ... --code-repo ...` any morning for the daily page; weekly for the report.
 (4) Before 2026-10-24T06:00Z confirm in the burn-in that games show SEALED_UNCOUNTED with only BEFORE_PROSPECTIVE_START as the reason, then the start stands; otherwise amend it.
 

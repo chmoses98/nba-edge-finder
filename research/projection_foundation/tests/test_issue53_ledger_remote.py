@@ -61,6 +61,12 @@ class FakeApi:
                 raise LR.ApiError(422, "Reference already exists")
             self.refs[b] = body["sha"]
             return {}
+        if "/git/refs/heads/" in ep and method == "DELETE":
+            b = ep.split("/git/refs/heads/")[1]
+            if b not in self.refs:
+                raise LR.ApiError(422, "Reference does not exist")
+            del self.refs[b]
+            return {}
         if "/git/refs/heads/" in ep and method == "PATCH":
             b = ep.split("/git/refs/heads/")[1]
             assert body["force"] is False, "fast-forward only"
@@ -202,3 +208,28 @@ def test_export_and_load_dir_round_trip(tmp_path):
     out = tmp_path / "out"
     LR.export(str(led), str(out))
     assert LR.load_dir(str(out)) == {"seals/d/a.json": b"1", "missed/g.json": b"2", "ENABLED_UTC": b"2026-10-24T18:00:00Z\n"}
+
+
+def test_selftest_passes_on_a_faithful_api_and_only_touches_the_throwaway_branch():
+    api = FakeApi()
+    api.clock = "2026-10-24T18:20:00Z"
+    from datetime import datetime, timezone
+    res = LR.selftest(api, "o/n", now=lambda: datetime(2026, 10, 24, 18, 20, 0, tzinfo=timezone.utc), sleep=lambda s: None)
+    assert res["ok"], res
+    assert set(api.refs) == set()                                       # created, exercised and deleted
+    wrote = {c[1] for c in api.log if c[0] in ("POST", "PATCH", "DELETE") and "/git/refs" in c[1]}
+    assert all("exec-shadow-seals-selftest" in w or w.endswith("/git/refs") for w in wrote)
+    with pytest.raises(LR.Conflict):
+        LR.selftest(api, "o/n", branch="exec-shadow-seals")
+
+
+def test_selftest_fails_loudly_when_the_server_accepts_what_it_must_refuse():
+    class Lax(FakeApi):
+        def __call__(self, method, ep, body=None):
+            if method == "PATCH" and "/git/refs/heads/" in ep:           # a server that moves the ref backwards
+                self.refs[ep.split("/git/refs/heads/")[1]] = body["sha"]
+                return {}
+            return super().__call__(method, ep, body)
+    from datetime import datetime, timezone
+    res = LR.selftest(Lax(), "o/n", now=lambda: datetime(2026, 10, 24, 18, 20, 0, tzinfo=timezone.utc), sleep=lambda s: None)
+    assert res["ok"] is False and res["checks"]["non_fast_forward_refused_by_server"] is False
