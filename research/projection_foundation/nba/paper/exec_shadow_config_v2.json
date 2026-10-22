@@ -1,0 +1,174 @@
+{
+  "config_id": "nba_exec_shadow_config",
+  "version": "2.0.1",
+  "study_id": "ISSUE53_EXEC_SHADOW_V1",
+  "issue": "chmoses98/nba-edge-finder#53",
+  "declared_utc": "2026-10-21T23:45:00Z",
+  "prospective_start_utc": "2026-10-24T06:00:00Z",
+  "authority": "research_only",
+  "notes": "Protocol v2.0.0 of the NEW, additive, read-only study ISSUE53_EXEC_SHADOW. It does not modify PF_EDGE_STRICT_V1 or paper_config.json (pinned below by sha256). PROSPECTIVE EVIDENCE exists only as SEALED PRE-TIP ledger entries: a read-only job evaluates each game after the T-60 archive cutoff and before tip, and persists an immutable, independently timestamped seal (exec-shadow-seals branch) containing the TRADE/NO_TRADE decision, reasons, inputs and hashes. Post-game research JOINS settlements to the sealed ledger and never recomputes or changes a selection. A missing, late, unverifiable or protocol-mismatched seal is NO_DATA / uncounted, never prospective. Reconstruction from archives after the fact (study53 without a seal) is RETROSPECTIVE and descriptive, always. Changing any value means a new version and a new later start.",
+  "base_protocol": {
+    "path": "research/projection_foundation/nba/paper/paper_config.json",
+    "config_id": "nba_paper_config",
+    "version": "1.0.0",
+    "sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
+    "inherits": [
+      "quality",
+      "execution.fee_taker_multiplier",
+      "execution.fee_use_series_multiplier",
+      "thesis",
+      "game_model"
+    ],
+    "note": "quality gates (two-sided, active, top size, spread <= 0.15, price 0.03-0.97, no BLOCK gate), the fee multiplier and the thesis definitions are read from the pinned base file, not re-declared. A test fails if the base file's digest changes."
+  },
+  "checkpoint": {
+    "horizon": "T-60",
+    "minutes_before_tip": 60,
+    "allowed_decision_modes": [
+      "sealed_pretip_asof",
+      "asof_replay"
+    ],
+    "max_quote_age_s": 900,
+    "max_quote_age_note": "age of the board at the checkpoint (checkpoint - board_observed_utc); 900 s is the existing CLOSING_MAX_AGE_S constant of the paper system, chosen before any result was scored here and not tuned. The base 1800 s board-age gate also still applies.",
+    "board_after_checkpoint": "NO_TRADE (a board observed after the checkpoint is never used)",
+    "missing_or_stale_board": "NO_TRADE for the whole game (reason recorded per game); never replaced by another horizon, never backfilled",
+    "no_retroactive_best_horizon": true,
+    "prospective_decision_modes": [
+      "sealed_pretip_asof"
+    ],
+    "board_rule": "the board of a game is the latest capture tick OBSERVED at or before the checkpoint; it must also be COMMITTED to the capture branch at or before the checkpoint (git commit time). If it is not, the game is NO_TRADE. No fallback to an earlier archived tick, no grace window (owner decision 2026-10-21).",
+    "forecast_rule": "player and game forecasts must be generated, self-archived AND committed to projection-data at or before the checkpoint; the engine's as-of rule (generated <= board time) is unchanged",
+    "max_board_gap_s": 1800
+  },
+  "execution": {
+    "side_price_basis": "ask",
+    "slippage": 0.01,
+    "order_contracts": 1,
+    "min_displayed_size": 1.0,
+    "fee_rounding": "whole-order, round-up-to-cent taker fee (nba_edge.kalshi.fees) used BOTH for the entry decision (ev_net_exec) and for settlement",
+    "dnp_policy": "participation-aware: p_model prices the DNP leg at the decision-time mid; settlement values a DNP at the authoritative Kalshi scalar when archived, otherwise the LAST_VALID mid (flagged modeled_last_valid_mid); never a fee-free void",
+    "insufficient_displayed_depth": "the candidate is blocked (INSUFFICIENT_DEPTH) -> PASS / NO_TRADE; no partial fill is imagined and nothing is filled beyond the displayed top-of-book size"
+  },
+  "strategies": {
+    "PF_EDGE_STRICT_T60_EXEC_V1": {
+      "role": "candidate_shadow",
+      "version": "1.0.0",
+      "numeric_rules_copied_from": "PF_EDGE_STRICT_V1 v1.0.0 (verbatim values, not tuned)",
+      "min_ev_net": 0.06,
+      "ev_basis": "ev_net_exec = p_model - effective_entry - whole_order_integer_fee",
+      "quality_required": true,
+      "gate_statuses": [
+        "PASS"
+      ],
+      "min_p_play": 0.85,
+      "max_spread": 0.06,
+      "one_per_thesis": true,
+      "rule": "one fixed pretip checkpoint per game; PASS-only; one highest-net-EV contract per thesis; global chronological exposure ledger"
+    },
+    "PF_EDGE_STRICT_T60_EXEC_JRM_V1": {
+      "role": "counterfactual_variant",
+      "version": "1.0.0",
+      "matched_to": "PF_EDGE_STRICT_T60_EXEC_V1",
+      "differs_only_in": "p_play and the conditional stat probabilities of players covered by an ELIGIBLE, matched, pre-tip JRM snapshot (minutes/participation inputs and their downstream projection); everything else (contract, side, price, size, entry time, costs, filters, exposure order, matchup context, game-level projections) is identical",
+      "downstream": "p_cond' = P(X >= k / r) from the archived frozen pmf with r = minutes_given_play_jrm / frozen_published.minutes_given_play_after_gate (the paper engine's own mean-scale convention, probability.p_ge(scale=r)); p_play' = p_play_jrm; p_model' = p_play' * p_cond' + (1 - p_play') * m_side. Rates, usage redistribution and gate status are NOT re-estimated: this is an archive-only approximation, labelled as such in every output"
+    }
+  },
+  "exposure": {
+    "max_trades_per_thesis": 1,
+    "max_trades_per_player_game": 2,
+    "max_trades_per_team_game": 3,
+    "max_trades_per_game": 8,
+    "max_notional_per_game": 100.0,
+    "max_notional_per_day": 300.0,
+    "scope": "ONE global chronological ledger across all checkpoints and games (caps are never reset between horizon snapshots or runs); positions are admitted in decision-instant order, within an instant by descending ev_net_exec; a thesis already held can never be entered again"
+  },
+  "jrm_matching": {
+    "register": "minutes-shadow-archive:eligibility/REGISTER.jsonl",
+    "rules_owner": "PR chmoses98/nba-edge-finder#45 (minutes_rebuild/archive_rules.py F1-F5). Reused through the register, not re-implemented: the eligibility verdict is the register's.",
+    "required": [
+      "register row eligible_for_prospective_scoring == true AND the game in games_eligible",
+      "file sha256 equals the register / MANIFEST sha256 (changed-tree / edited file -> reject)",
+      "archived_utc AND branch_commit_utc at least 5 minutes before the decision instant (checkpoint) and before tip (post-tip / late -> reject)",
+      "feed_generated_utc equals the V1 decision's forecast_generated_utc (same feed, else NO_MATCH)",
+      "version v2, allocation recorded as uniform, row pregame == true"
+    ],
+    "reject_always": [
+      "jrm_v1/*",
+      "jrm_v2/* (variance-weighted variant, ERRATA.md)",
+      "any snapshot without a register row",
+      "any reconstruction after tip"
+    ],
+    "prospective_gate": {
+      "min_settled_games": 20,
+      "starter_guard": "established rotation players (JRM rank <= 8, p_jrm >= 0.5): MAE(JRM) - MAE(frozen) CI upper bound < +0.25 min",
+      "owner": "PR #45 evaluate_prospective.py (not recomputed or relaxed here; this study only tracks the game count)"
+    },
+    "promotion": "none: no model promotion, no activation of JRM or PR #47 is possible from this study"
+  },
+  "evidence": {
+    "min_decisions": 200,
+    "min_games": 40,
+    "primary_unit": "game (cluster); secondary: player-game",
+    "value_validation_requires": "n_decisions >= 200 AND n_games >= 40 AND lower 95% bound of ROI > 0 under BOTH game-clustered and player-game-clustered bootstraps",
+    "language": "never 'edge', 'profitable' or 'validated' below the minimums; first-week results are descriptive only"
+  },
+  "no_tuning": "No threshold above was chosen or changed after looking at 2026-10-20 / 2026-10-21 results. Any optimisation is a distinct FUTURE experiment with its own preregistration, prospective start and multiple-testing discipline.",
+  "supersedes": {
+    "version": "1.1.0",
+    "path": "research/projection_foundation/nba/paper/exec_shadow_config.json",
+    "sha256": "4b6d8fe6bae932504cbac6bbc8f9e75f5a382977447790693cff24a30b97cb56",
+    "reason": "Owner review of PR #54 (2026-10-21T23:33Z): a study run AFTER a game can reconstruct a portfolio from upstream pre-tip timestamps but cannot prove that the #53 choices were sealed before tip. v1.1.0 is kept byte-identical for the record; no prospective result was ever collected under it (its start 2026-10-22T06:00Z passed with no sealing path); NOTHING computed under v1.x counts as prospective.",
+    "unchanged": "strategy ids, every numeric selection rule, the strict T-60 archive cutoff (board and forecast observed/generated AND committed at/before the checkpoint; no grace window, no later horizon, no fallback to an earlier tick)"
+  },
+  "sealing": {
+    "ledger_branch": "exec-shadow-seals",
+    "schema": "issue53.exec_seal.v1",
+    "earliest_after_checkpoint_s": 600,
+    "earliest_note": "measured tick-to-commit lag on the capture branch: median 213 s, p90 357 s, max 502 s (150 real ticks 2026-10-20..22); 600 s covers the maximum observed with margin",
+    "deadline_before_tip_s": 600,
+    "deadline_note": "a seal must be committed to the ledger branch at least 10 minutes before tip; later = LATE (uncounted)",
+    "window_s_total_for_a_60_minute_checkpoint": 2400,
+    "missed_marker": "a game with no seal after its window is recorded as MISSED (uncounted, alert); never sealed late as if on time",
+    "counted_iff": [
+      "seal verifies (sha256 of body and of the candidate file)",
+      "protocol_sha256 equals this file's sha256 and study_version equals its version",
+      "computed_utc >= prospective_start_utc, checkpoint_utc >= prospective_start_utc, computed inside [checkpoint + earliest_after_checkpoint_s, tip - deadline_before_tip_s]",
+      "the seal and its candidate file are each ADDED exactly once on the ledger branch, never modified/deleted/renamed afterwards, and byte-identical to the adding commit",
+      "the adding commit's SERVER commit time is >= computed_utc - 120 s and <= tip - deadline_before_tip_s",
+      "it is the first (earliest-added) seal of its game; later duplicates are DUPLICATE_UNCOUNTED",
+      "the sealed tick is the latest capture tick observed at/before the checkpoint in the final archive, and the tip in the seal equals the final schedule's tip",
+      "run from the default branch by schedule/workflow_dispatch; code sha reachable from the default branch; protocol file committed on the default branch before prospective_start_utc",
+      "independent clocks recorded in the seal"
+    ],
+    "never": [
+      "recompute a sealed selection from later archive state",
+      "count a seal produced by a branch/PR workflow run",
+      "overwrite, edit or delete a seal"
+    ],
+    "cadence": "cron every 5 minutes during game hours (cheap plan step; the seal step runs only when a window is open, ~9 attempts per 44-minute window), workflow_dispatch fallback, concurrency-serialised, idempotent per game",
+    "commit_clock": "the seal commit is created through the GitHub Git Data API (no client-supplied dates): its commit time is the SERVER clock at creation, independent of the runner clock; a failed or late publish simply leaves no seal"
+  },
+  "jrm_exact": {
+    "status": "ISOLATED_DRY_RUN_ONLY",
+    "engine": "PR #45 opt-in PF_NBA_MINUTES_ENGINE=jrm (nba.project.project_slate(minutes_engine='jrm')), merged only inside the throw-away runner checkout at a pinned SHA",
+    "input_rule": "frozen and JRM are computed in ONE process from the same slate, availability observations, calibration and clock; the market board is the same",
+    "label": "exact_jrm_dry_run",
+    "never": [
+      "writes to projection-data or minutes-shadow-archive",
+      "replaces or adds forecast archives",
+      "production default switch",
+      "promotion of #45 / #47",
+      "staking or trading route"
+    ],
+    "approximation_label": "archive_scale_approximation (jrm_matched.py) stays separately labelled and is never presented as exact JRM"
+  },
+  "amended_utc": "2026-10-22T00:40:00Z",
+  "amendments": [
+    {
+      "version": "2.0.1",
+      "utc": "2026-10-22T00:40:00Z",
+      "before_any_prospective_data": true,
+      "changes": "After a second independent review, before the first seal existed and before the 2026-10-24T06:00Z start: (1) earliest_after_checkpoint_s 360 -> 600 because the measured tick-to-commit lag on the capture branch has median 213 s, p90 357 s, max 502 s over 150 real ticks (a 360 s margin let ~9% of ticks arrive after the sealer looked, i.e. an implicit fallback to an earlier tick); (2) board commit times are indexed by capture FILE path, not commit subject (subjects differ from file stamps by 1-3 s on ~23% of ticks); (3) seal commits are created through the GitHub API so the commit time is SERVER-side, not the runner clock; (4) a counted seal must be the only add of its path, never modified/deleted/renamed afterwards, byte-identical to its adding commit, the first seal of its game, on the latest tick observed at the checkpoint, and with an unchanged tip. No selection rule or threshold changed; start date unchanged."
+    }
+  ]
+}

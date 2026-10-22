@@ -181,11 +181,17 @@ def main(argv=None) -> int:
     ap.add_argument("--now", default=None)
     ap.add_argument("--season-types", default="regular")
     ap.add_argument("--expect-paper", action="store_true")
+    ap.add_argument("--seals", default=None, help="exec-shadow-seals checkout (Issue #53 sealed ledger): adds the seal-chain dead-man findings")
+    ap.add_argument("--seal-runs", default=None, help="JSON of `gh run list --workflow exec-shadow-seal.yml` (chain liveness)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--md", default=None)
     a = ap.parse_args(argv)
     now = parse_ts(a.now) if a.now else datetime.now(timezone.utc).replace(microsecond=0)
     rep = check(a.archive, a.context, now, tuple(a.season_types.split(",")), a.expect_paper)
+    if a.seals:
+        from nba.paper import seal_monitor as SM        # stdlib only; read-only
+        rep["findings"] += SM.check(a.context, a.seals, SM.load_runs(a.seal_runs), now)
+        rep["status"] = CRIT if any(x["severity"] == CRIT for x in rep["findings"]) else WARN if rep["findings"] else OK
     txt = markdown(rep)
     print(txt)
     if a.out:

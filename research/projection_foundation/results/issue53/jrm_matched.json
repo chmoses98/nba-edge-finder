@@ -1,0 +1,1311 @@
+{
+ "authority": "research_only",
+ "downstream": "archive_scale_approximation",
+ "jrm_on_matched_games": {
+  "by_decision_mode": {
+   "asof_replay": {
+    "cash_outlay": 1.4700000000000002,
+    "hit_rate": 0.6666666666666666,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 3,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.3605442176870748,
+    "total_net_pnl": 0.53
+   }
+  },
+  "by_edge_bucket": {
+   "0.10-0.15": {
+    "cash_outlay": 0.8200000000000001,
+    "hit_rate": 0.5,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 2,
+    "n_trades": 2,
+    "roi_on_cash_outlay": 0.2195121951219512,
+    "total_net_pnl": 0.18
+   },
+   "0.15-0.25": {
+    "cash_outlay": 0.65,
+    "hit_rate": 1.0,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.5384615384615384,
+    "total_net_pnl": 0.35
+   }
+  },
+  "by_family": {
+   "player_points": {
+    "cash_outlay": 0.8200000000000001,
+    "hit_rate": 0.5,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 2,
+    "n_trades": 2,
+    "roi_on_cash_outlay": 0.2195121951219512,
+    "total_net_pnl": 0.18
+   },
+   "player_threes": {
+    "cash_outlay": 0.65,
+    "hit_rate": 1.0,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.5384615384615384,
+    "total_net_pnl": 0.35
+   }
+  },
+  "by_quote_age": {
+   "120-300s": {
+    "cash_outlay": 1.4700000000000002,
+    "hit_rate": 0.6666666666666666,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 3,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.3605442176870748,
+    "total_net_pnl": 0.53
+   }
+  },
+  "by_side": {
+   "NO": {
+    "cash_outlay": 1.4700000000000002,
+    "hit_rate": 0.6666666666666666,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 3,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.3605442176870748,
+    "total_net_pnl": 0.53
+   }
+  },
+  "clv_cents": {
+   "ci95": [
+    null,
+    null
+   ],
+   "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+   "mean": -0.8333333333333334,
+   "n_clusters": 1,
+   "n_obs": 3,
+   "n_settled": 3,
+   "n_valid": 3,
+   "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+   "se": null,
+   "share_positive": 0.3333333333333333,
+   "z": null
+  },
+  "computation_lag_s": {
+   "max": 3423.0,
+   "mean": 3423.0,
+   "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
+  },
+  "dnp": {
+   "n_dnp": 0,
+   "sources": {}
+  },
+  "eligible_vs_blocked": {
+   "any_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 1812,
+    "DEPTH_CONFLICT_ORDERBOOK": 8,
+    "EV_BELOW_THRESHOLD": 2083,
+    "GATE_STATUS": 1732,
+    "INSUFFICIENT_DEPTH": 12,
+    "LOW_P_PLAY": 64,
+    "QUALITY_GATE:EXTREME_PRICE": 59,
+    "QUALITY_GATE:NO_SIZE": 12,
+    "QUALITY_GATE:SPREAD_WIDE": 36,
+    "SPREAD_WIDE_STRICT": 220
+   },
+   "blocked_sides": 2423,
+   "candidate_sides": 2432,
+   "eligible_not_traded_reason": {
+    "EXPOSURE_CAP:TEAM_GAME": 2,
+    "NOT_BEST_IN_THESIS": 4
+   },
+   "eligible_sides": 9,
+   "primary_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 1812,
+    "DEPTH_CONFLICT_ORDERBOOK": 8,
+    "ELIGIBLE": 9,
+    "EV_BELOW_THRESHOLD": 77,
+    "GATE_STATUS": 473,
+    "QUALITY_GATE:EXTREME_PRICE": 23,
+    "QUALITY_GATE:NO_SIZE": 9,
+    "QUALITY_GATE:SPREAD_WIDE": 8,
+    "SPREAD_WIDE_STRICT": 13
+   },
+   "trades": 3
+  },
+  "evidence_status": {
+   "authority": "none; never a value claim below the minimums",
+   "counted": "prospective AND settled decisions only",
+   "have": {
+    "decisions": 0,
+    "games": 0
+   },
+   "independent_clocks_verified": true,
+   "label": "INSUFFICIENT_SAMPLE",
+   "lower_cis_game_and_player_game": [],
+   "required": {
+    "decisions": 200,
+    "games": 40
+   }
+  },
+  "exposure_concentration": {
+   "max_trades_per_player_game": 1,
+   "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
+   "players_with_multiple_trades": 0,
+   "share_NO": 1.0,
+   "share_of_notional_by_family": {
+    "player_points": 0.5563380281690141,
+    "player_threes": 0.44366197183098594
+   },
+   "share_of_notional_by_game": {
+    "espn:401909090": 1.0
+   },
+   "share_of_notional_by_player": {
+    "espn:4222252": 0.471830985915493,
+    "espn:4278073": 0.08450704225352113,
+    "espn:4593803": 0.44366197183098594
+   },
+   "share_of_notional_by_side": {
+    "NO": 1.0
+   }
+  },
+  "independent_units": {
+   "n_decisions": 3,
+   "n_games": 1,
+   "n_player_games": 3,
+   "n_settled_decisions": 3,
+   "n_theses": 3,
+   "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
+  },
+  "label": "jrm_matched_games",
+  "n_candidate_sides": 2432,
+  "overall": {
+   "cash_outlay": 1.4700000000000002,
+   "hit_rate": 0.6666666666666666,
+   "n_dnp_settled_at_fair_price": 0,
+   "n_games": 1,
+   "n_player_games": 3,
+   "n_settled": 3,
+   "n_trades": 3,
+   "roi_on_cash_outlay": 0.3605442176870748,
+   "total_net_pnl": 0.53
+  },
+  "roi": {
+   "fees_per_contract_mean": 0.016666666666666666,
+   "max_drawdown": {
+    "final_equity": 0.53,
+    "max_drawdown": 0.13,
+    "n": 3,
+    "note": "dollars, 1 contract per position, ordered by tip time; a path statistic of a handful of games, not a risk estimate"
+   },
+   "mean_net_pnl_per_contract": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.17666666666666667,
+    "n_clusters": 1,
+    "n_obs": 3,
+    "se": null,
+    "z": null
+   },
+   "on_cash_outlay_effective_entry_plus_fee": {
+    "game_clustered": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "n_clusters": 1,
+     "n_obs": 3,
+     "ratio": 0.3605442176870748
+    },
+    "player_game_clustered": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "n_clusters": 3,
+     "n_obs": 3,
+     "ratio": 0.3605442176870748
+    }
+   },
+   "on_quoted_price_scorecard_compatible": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "n_clusters": 1,
+    "n_obs": 3,
+    "ratio": 0.38129496402877694
+   },
+   "slippage_per_contract": 0.01
+  },
+  "status": "OK",
+  "strategy_id": "PF_EDGE_STRICT_T60_EXEC_JRM_V1"
+ },
+ "label": "RETROSPECTIVE unless prospective gate reached",
+ "matching": {
+  "games": {
+   "espn:401909088": {
+    "reason": "NO_SNAPSHOT_FOR_GAME",
+    "snapshot": null
+   },
+   "espn:401909089": {
+    "reason": "NO_SNAPSHOT_FOR_GAME",
+    "snapshot": null
+   },
+   "espn:401909090": {
+    "reason": "OK",
+    "snapshot": "jrm_v2_uniform/20261021T000501Z_jrm_v2.json.gz"
+   },
+   "espn:401909091": {
+    "reason": "OK",
+    "snapshot": "jrm_v2_uniform/20261021T221532Z_jrm_v2.json.gz"
+   },
+   "espn:401909834": {
+    "reason": "FEED_MISMATCH",
+    "snapshot": null
+   },
+   "espn:401909835": {
+    "reason": "FEED_MISMATCH",
+    "snapshot": null
+   },
+   "espn:401909836": {
+    "reason": "OK",
+    "snapshot": "jrm_v2_uniform/20261021T221532Z_jrm_v2.json.gz"
+   },
+   "espn:401909837": {
+    "reason": "OK",
+    "snapshot": "jrm_v2_uniform/20261021T221532Z_jrm_v2.json.gz"
+   }
+  },
+  "matched_games": [
+   "espn:401909090",
+   "espn:401909091",
+   "espn:401909836",
+   "espn:401909837"
+  ],
+  "row_status": {
+   "COVERED": 1616,
+   "FEED_MISMATCH": 852,
+   "GAME_LEVEL_UNCHANGED": 1632,
+   "NO_SNAPSHOT_FOR_GAME": 774
+  }
+ },
+ "minutes_accuracy": {
+  "conditional_minutes": {
+   "bias_frozen": 0.919259259259259,
+   "bias_jrm": 1.462222222222222,
+   "crps_gauss_approx": {
+    "diff": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -0.7220856588269747,
+     "n_clusters": 1,
+     "n_obs": 27,
+     "se": null,
+     "z": null
+    },
+    "frozen_same_width": 4.153670942104751,
+    "jrm": 3.431585283277776,
+    "n": 27,
+    "note": "APPROXIMATE: Gaussian with sd = (p90-p10)/2.563 of the JRM snapshot applied to both means; not a CRPS of either model's own distribution"
+   },
+   "mae_diff_jrm_minus_frozen": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": -1.1540740740740734,
+    "n_clusters": 1,
+    "n_obs": 27,
+    "se": null,
+    "z": null
+   },
+   "mae_frozen": 6.102962962962962,
+   "mae_jrm": 4.948888888888889,
+   "note": "negative diff = JRM better; bias = prediction - actual"
+  },
+  "frame": "players of the registered eligible snapshot with a settled outcome; frozen = its own frozen_published (same feed, after gate)",
+  "n_games": 1,
+  "n_played": 27,
+  "n_player_games": 34,
+  "p_play": {
+   "brier_frozen": 0.04860783882352941,
+   "brier_jrm": 0.06731170029411765,
+   "diff_jrm_minus_frozen": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.01870386147058823,
+    "n_clusters": 1,
+    "n_obs": 34,
+    "se": null,
+    "z": null
+   },
+   "mean_p_frozen": 0.7343176470588235,
+   "mean_p_jrm": 0.6966676470588236,
+   "observed_play_rate": 0.7941176470588235
+  },
+  "status": "OK",
+  "unconditional_minutes": {
+   "bias_frozen": -0.18058982352941164,
+   "bias_jrm": 0.08882352941176487,
+   "mae_diff_jrm_minus_frozen": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": -1.259089588235294,
+    "n_clusters": 1,
+    "n_obs": 34,
+    "se": null,
+    "z": null
+   },
+   "mae_frozen": 4.928501352941176,
+   "mae_jrm": 3.6694117647058824
+  }
+ },
+ "original_seven_coverage": [
+  {
+   "contract": "Ausar Thompson: NO = fewer than 10 points (at most 9); contract strike 9.5",
+   "game_id": "espn:401909088",
+   "horizon": "T-90",
+   "match": "NO_SNAPSHOT_FOR_GAME",
+   "n": 1,
+   "player": "Ausar Thompson",
+   "snapshot": null
+  },
+  {
+   "contract": "Cade Cunningham: NO = fewer than 40 points+rebounds+assists (at most 39); contract strike 39.5",
+   "game_id": "espn:401909088",
+   "horizon": "T-90",
+   "match": "NO_SNAPSHOT_FOR_GAME",
+   "n": 2,
+   "player": "Cade Cunningham",
+   "snapshot": null
+  },
+  {
+   "contract": "Cade Cunningham: NO = fewer than 25 points (at most 24); contract strike 24.5",
+   "game_id": "espn:401909088",
+   "horizon": "T-90",
+   "match": "NO_SNAPSHOT_FOR_GAME",
+   "n": 3,
+   "player": "Cade Cunningham",
+   "snapshot": null
+  },
+  {
+   "contract": "Jalen Duren: YES = 30+ points+rebounds+assists (at least 30)",
+   "game_id": "espn:401909088",
+   "horizon": "LIVE",
+   "match": "NO_SNAPSHOT_FOR_GAME",
+   "n": 4,
+   "player": "Jalen Duren",
+   "snapshot": null
+  },
+  {
+   "contract": "Jalen Williams: NO = fewer than 2 made threes (at most 1); contract strike 1.5",
+   "ev_net_exec_frozen": 0.16592375692000008,
+   "ev_net_exec_jrm": 0.16704543847,
+   "game_id": "espn:401909090",
+   "horizon": "T-90",
+   "jrm_would_pass_ev_0.06": true,
+   "match": "OK",
+   "minutes_frozen": 26.48,
+   "minutes_jrm": 29.41,
+   "n": 5,
+   "note": "retrospective what-if on the original T-90 / LIVE selection, archive_scale_approximation",
+   "p_model_frozen": 0.8159237569200001,
+   "p_model_jrm": 0.81704543847,
+   "p_play_frozen": 0.9852,
+   "p_play_jrm": 0.9907,
+   "player": "Jalen Williams",
+   "rebuild_check_p_model": 0.8159237569200001,
+   "snapshot": "jrm_v2_uniform/20261020T230949Z_jrm_v2.json.gz"
+  },
+  {
+   "contract": "Jalen Williams: NO = fewer than 20 points (at most 19); contract strike 19.5",
+   "ev_net_exec_frozen": 0.13247683068669527,
+   "ev_net_exec_jrm": 0.0764472306869154,
+   "game_id": "espn:401909090",
+   "horizon": "T-90",
+   "jrm_would_pass_ev_0.06": true,
+   "match": "OK",
+   "minutes_frozen": 26.48,
+   "minutes_jrm": 29.41,
+   "n": 6,
+   "note": "retrospective what-if on the original T-90 / LIVE selection, archive_scale_approximation",
+   "p_model_frozen": 0.7324768306866952,
+   "p_model_jrm": 0.6764472306869154,
+   "p_play_frozen": 0.9852,
+   "p_play_jrm": 0.9907,
+   "player": "Jalen Williams",
+   "rebuild_check_p_model": 0.7324768306866952,
+   "snapshot": "jrm_v2_uniform/20261020T230949Z_jrm_v2.json.gz"
+  },
+  {
+   "contract": "Shai Gilgeous-Alexander: NO = fewer than 25 points (at most 24); contract strike 24.5",
+   "ev_net_exec_frozen": 0.15570788079546652,
+   "ev_net_exec_jrm": 0.11165793926310742,
+   "game_id": "espn:401909090",
+   "horizon": "T-90",
+   "jrm_would_pass_ev_0.06": true,
+   "match": "OK",
+   "minutes_frozen": 33.57,
+   "minutes_jrm": 35.0,
+   "n": 7,
+   "note": "retrospective what-if on the original T-90 / LIVE selection, archive_scale_approximation",
+   "p_model_frozen": 0.4457078807954665,
+   "p_model_jrm": 0.40165793926310744,
+   "p_play_frozen": 0.9907,
+   "p_play_jrm": 0.9943,
+   "player": "Shai Gilgeous-Alexander",
+   "rebuild_check_p_model": 0.4457078807954665,
+   "snapshot": "jrm_v2_uniform/20261020T230949Z_jrm_v2.json.gz"
+  }
+ ],
+ "paired": {
+  "common_contracts_covered": {
+   "by_side": {
+    "NO": {
+     "mean_d_ev": 0.0006689153130979841,
+     "mean_d_p_model": 0.0006689153130979841,
+     "n": 808
+    },
+    "YES": {
+     "mean_d_ev": -0.0006689153130979847,
+     "mean_d_p_model": -0.0006689153130979858,
+     "n": 808
+    }
+   },
+   "mean_abs_d_p_model": 0.03676727119999361,
+   "mean_d_ev": 3.2204024925312013e-19,
+   "mean_d_p_model": 2.146934995020801e-21,
+   "mean_ratio_minutes": 1.0760593921571173,
+   "n_sides": 1616
+  },
+  "coverage": {
+   "candidate_sides": 2432,
+   "covered_by_jrm_row": 1616,
+   "covered_share": 0.6644736842105263,
+   "status_counts": {
+    "COVERED": 1616,
+    "GAME_LEVEL_UNCHANGED": 816
+   }
+  },
+  "decision_matrix_candidate_sides": {
+   "both_bet": 1,
+   "jrm_only": 2,
+   "neither": 2427,
+   "v1_only": 2
+  },
+  "downstream": "archive_scale_approximation",
+  "neither_breakdown": {
+   "blocked_in_both": 2419,
+   "eligible_in_either_not_selected": 8
+  },
+  "status": "OK",
+  "thesis_level": {
+   "different_contract_same_thesis": 1,
+   "jrm_only_thesis": 1,
+   "same_contract_both": 1,
+   "theses_traded_by_either": 4,
+   "v1_only_thesis": 1
+  },
+  "traded_outcomes": {
+   "both_bet": {
+    "contracts": [
+     "Jalen Williams player_threes NO 2.0: +0.35"
+    ],
+    "mean_clv_cents": 0.5,
+    "n": 1,
+    "n_games": 1,
+    "net_pnl": 0.35,
+    "wins": 1
+   },
+   "jrm_only": {
+    "contracts": [
+     "Shai Gilgeous-Alexander player_points NO 20.0: -0.13",
+     "Isaiah Hartenstein player_points NO 10.0: +0.31"
+    ],
+    "mean_clv_cents": -1.5,
+    "n": 2,
+    "n_games": 1,
+    "net_pnl": 0.18,
+    "wins": 1
+   },
+   "v1_only": {
+    "contracts": [
+     "Shai Gilgeous-Alexander player_points NO 25.0: -0.29",
+     "Jalen Williams player_points NO 20.0: +0.40"
+    ],
+    "mean_clv_cents": 0.25,
+    "n": 2,
+    "n_games": 1,
+    "net_pnl": 0.11000000000000004,
+    "wins": 1
+   }
+  }
+ },
+ "pairs": [
+  {
+   "class": "both_bet",
+   "clv_cents": 0.5,
+   "covered": true,
+   "d_ev": 0.001121681550000031,
+   "d_p_model": 0.001121681550000031,
+   "decision_mode": "asof_replay",
+   "dnp": false,
+   "eligible_jrm": true,
+   "eligible_v1": true,
+   "ev_jrm": 0.16755529372000003,
+   "ev_v1": 0.16643361217,
+   "family": "player_threes",
+   "game_id": "espn:401909090",
+   "jrm_status": "COVERED",
+   "k": 2.0,
+   "minutes_frozen": 26.48,
+   "minutes_jrm": 29.4,
+   "net_pnl": 0.35,
+   "p_model_jrm": 0.81755529372,
+   "p_model_v1": 0.81643361217,
+   "p_play_jrm": 0.9932,
+   "p_play_v1": 0.9877,
+   "player": "Jalen Williams",
+   "price": 0.62,
+   "ratio_minutes": 1.1102719033232629,
+   "reason_jrm": "EV_ABOVE_THRESHOLD",
+   "reason_v1": "EV_ABOVE_THRESHOLD",
+   "settled": true,
+   "side": "NO",
+   "thesis_id": "espn:401909090|player|espn:4593803|threes",
+   "ticker": "KXNBA3PT-26OCT20OKCSAS-OKCJWILLIAMS8-2",
+   "tip": "2026-10-21T01:30:00+00:00",
+   "unit_id": "espn:401909090|espn:4593803",
+   "won": 1.0
+  },
+  {
+   "class": "jrm_only",
+   "clv_cents": -2.5,
+   "covered": true,
+   "d_ev": 0.00033925108847573937,
+   "d_p_model": 0.00033925108847573937,
+   "decision_mode": "asof_replay",
+   "dnp": false,
+   "eligible_jrm": true,
+   "eligible_v1": true,
+   "ev_jrm": 0.11667447060012946,
+   "ev_v1": 0.11633521951165372,
+   "family": "player_points",
+   "game_id": "espn:401909090",
+   "jrm_status": "COVERED",
+   "k": 20.0,
+   "minutes_frozen": 33.57,
+   "minutes_jrm": 35.01,
+   "net_pnl": -0.13,
+   "p_model_jrm": 0.24667447060012945,
+   "p_model_v1": 0.2463352195116537,
+   "p_play_jrm": 0.9944,
+   "p_play_v1": 0.9921,
+   "player": "Shai Gilgeous-Alexander",
+   "price": 0.11,
+   "ratio_minutes": 1.0428954423592494,
+   "reason_jrm": "EV_ABOVE_THRESHOLD",
+   "reason_v1": "NOT_BEST_IN_THESIS",
+   "settled": true,
+   "side": "NO",
+   "thesis_id": "espn:401909090|player|espn:4278073|points",
+   "ticker": "KXNBAPTS-26OCT20OKCSAS-OKCSGILGEOUSALEXANDER2-20",
+   "tip": "2026-10-21T01:30:00+00:00",
+   "unit_id": "espn:401909090|espn:4278073",
+   "won": 0.0
+  },
+  {
+   "class": "jrm_only",
+   "clv_cents": -0.5,
+   "covered": true,
+   "d_ev": -0.0004479668111236901,
+   "d_p_model": -0.0004479668111236901,
+   "decision_mode": "asof_replay",
+   "dnp": false,
+   "eligible_jrm": true,
+   "eligible_v1": true,
+   "ev_jrm": 0.10029997592219465,
+   "ev_v1": 0.10074794273331834,
+   "family": "player_points",
+   "game_id": "espn:401909090",
+   "jrm_status": "COVERED",
+   "k": 10.0,
+   "minutes_frozen": 20.81,
+   "minutes_jrm": 21.81,
+   "net_pnl": 0.31,
+   "p_model_jrm": 0.7902999759221947,
+   "p_model_v1": 0.7907479427333184,
+   "p_play_jrm": 0.9665,
+   "p_play_v1": 0.9697,
+   "player": "Isaiah Hartenstein",
+   "price": 0.66,
+   "ratio_minutes": 1.0480538202787122,
+   "reason_jrm": "EV_ABOVE_THRESHOLD",
+   "reason_v1": "EXPOSURE_CAP:TEAM_GAME",
+   "settled": true,
+   "side": "NO",
+   "thesis_id": "espn:401909090|player|espn:4222252|points",
+   "ticker": "KXNBAPTS-26OCT20OKCSAS-OKCIHARTENSTEIN55-10",
+   "tip": "2026-10-21T01:30:00+00:00",
+   "unit_id": "espn:401909090|espn:4222252",
+   "won": 1.0
+  },
+  {
+   "class": "v1_only",
+   "clv_cents": 0.5,
+   "covered": true,
+   "d_ev": -0.04430468902273234,
+   "d_p_model": -0.044304689022732324,
+   "decision_mode": "asof_replay",
+   "dnp": false,
+   "eligible_jrm": true,
+   "eligible_v1": true,
+   "ev_jrm": 0.11167268913128238,
+   "ev_v1": 0.15597737815401472,
+   "family": "player_points",
+   "game_id": "espn:401909090",
+   "jrm_status": "COVERED",
+   "k": 25.0,
+   "minutes_frozen": 33.57,
+   "minutes_jrm": 35.01,
+   "net_pnl": -0.29,
+   "p_model_jrm": 0.4016726891312824,
+   "p_model_v1": 0.4459773781540147,
+   "p_play_jrm": 0.9944,
+   "p_play_v1": 0.9921,
+   "player": "Shai Gilgeous-Alexander",
+   "price": 0.26,
+   "ratio_minutes": 1.0428954423592494,
+   "reason_jrm": "NOT_BEST_IN_THESIS",
+   "reason_v1": "EV_ABOVE_THRESHOLD",
+   "settled": true,
+   "side": "NO",
+   "thesis_id": "espn:401909090|player|espn:4278073|points",
+   "ticker": "KXNBAPTS-26OCT20OKCSAS-OKCSGILGEOUSALEXANDER2-25",
+   "tip": "2026-10-21T01:30:00+00:00",
+   "unit_id": "espn:401909090|espn:4278073",
+   "won": 0.0
+  },
+  {
+   "class": "v1_only",
+   "clv_cents": 0.0,
+   "covered": true,
+   "d_ev": -0.05617334825852684,
+   "d_p_model": -0.05617334825852682,
+   "decision_mode": "asof_replay",
+   "dnp": false,
+   "eligible_jrm": true,
+   "eligible_v1": true,
+   "ev_jrm": 0.07672846423563574,
+   "ev_v1": 0.13290181249416258,
+   "family": "player_points",
+   "game_id": "espn:401909090",
+   "jrm_status": "COVERED",
+   "k": 20.0,
+   "minutes_frozen": 26.48,
+   "minutes_jrm": 29.4,
+   "net_pnl": 0.4,
+   "p_model_jrm": 0.6767284642356357,
+   "p_model_v1": 0.7329018124941625,
+   "p_play_jrm": 0.9932,
+   "p_play_v1": 0.9877,
+   "player": "Jalen Williams",
+   "price": 0.57,
+   "ratio_minutes": 1.1102719033232629,
+   "reason_jrm": "EXPOSURE_CAP:TEAM_GAME",
+   "reason_v1": "EV_ABOVE_THRESHOLD",
+   "settled": true,
+   "side": "NO",
+   "thesis_id": "espn:401909090|player|espn:4593803|points",
+   "ticker": "KXNBAPTS-26OCT20OKCSAS-OKCJWILLIAMS8-20",
+   "tip": "2026-10-21T01:30:00+00:00",
+   "unit_id": "espn:401909090|espn:4593803",
+   "won": 1.0
+  }
+ ],
+ "population": {
+  "candidate_sides": 2432,
+  "matched_games": [
+   "espn:401909090",
+   "espn:401909091",
+   "espn:401909836",
+   "espn:401909837"
+  ],
+  "n_games": 4,
+  "note": "both portfolios rebuilt on the SAME candidate rows with fresh single ledgers; V1 on the full archive is in exec_shadow.json"
+ },
+ "prospective_gate": {
+  "eligible_settled_games": 1,
+  "games": [
+   "espn:401909090"
+  ],
+  "min_settled_games": 20,
+  "note": "this study only counts games; the verdict (primary + starter guard) is PR #45's evaluate_prospective.py. No promotion is possible from here.",
+  "starter_guard": "established rotation players (JRM rank <= 8, p_jrm >= 0.5): MAE(JRM) - MAE(frozen) CI upper bound < +0.25 min",
+  "status": "INSUFFICIENT_SAMPLE",
+  "verdict_owner": "PR #45 evaluate_prospective.py (not recomputed or relaxed here; this study only tracks the game count)"
+ },
+ "run_id": "f4f7ab85a666eebb",
+ "schema": "issue53.jrm_matched.v1",
+ "snapshots_rejected": [
+  {
+   "detail": [
+    "F1 version None is not the validated v2",
+    "F1 design_frozen_at is not the v2 freeze commit",
+    "F1 allocation not recorded (the file predates the field: variance-weighted variant, ERRATA.md)",
+    "F3 research/projection_foundation/minutes_rebuild/jrm.py@6af0202: level E False, default uniform False"
+   ],
+   "file": "jrm_v1/20261020T223327Z_jrm_v1.json.gz",
+   "reason": "REGISTER_NOT_ELIGIBLE"
+  },
+  {
+   "detail": [
+    "F1 allocation not recorded (the file predates the field: variance-weighted variant, ERRATA.md)",
+    "F3 research/projection_foundation/minutes_rebuild/jrm.py@9c232cf: level E True, default uniform False"
+   ],
+   "file": "jrm_v2/20261020T230246Z_jrm_v2.json.gz",
+   "reason": "REGISTER_NOT_ELIGIBLE"
+  }
+ ],
+ "snapshots_usable": [
+  {
+   "archived_utc": "2026-10-20T23:09:49Z",
+   "branch_commit_utc": "2026-10-20T23:09:49Z",
+   "feed_generated_utc": "2026-10-20T22:40:46Z",
+   "file": "jrm_v2_uniform/20261020T230949Z_jrm_v2.json.gz",
+   "games": [
+    "espn:401909090",
+    "espn:401909091",
+    "espn:401909092",
+    "espn:401909834",
+    "espn:401909835",
+    "espn:401909836",
+    "espn:401909837",
+    "espn:401909838",
+    "espn:401909839",
+    "espn:401909840",
+    "espn:401909841",
+    "espn:401909842"
+   ],
+   "sha256_verified": true
+  },
+  {
+   "archived_utc": "2026-10-21T00:05:01Z",
+   "branch_commit_utc": "2026-10-21T00:05:21Z",
+   "feed_generated_utc": "2026-10-20T23:56:30Z",
+   "file": "jrm_v2_uniform/20261021T000501Z_jrm_v2.json.gz",
+   "games": [
+    "espn:401909090",
+    "espn:401909091",
+    "espn:401909092",
+    "espn:401909834",
+    "espn:401909835",
+    "espn:401909836",
+    "espn:401909837",
+    "espn:401909838",
+    "espn:401909839",
+    "espn:401909840",
+    "espn:401909841",
+    "espn:401909842"
+   ],
+   "sha256_verified": true
+  },
+  {
+   "archived_utc": "2026-10-21T20:05:53Z",
+   "branch_commit_utc": "2026-10-21T20:05:53Z",
+   "feed_generated_utc": "2026-10-21T18:14:57Z",
+   "file": "jrm_v2_uniform/20261021T200553Z_jrm_v2.json.gz",
+   "games": [
+    "espn:401909091",
+    "espn:401909092",
+    "espn:401909093",
+    "espn:401909834",
+    "espn:401909835",
+    "espn:401909836",
+    "espn:401909837",
+    "espn:401909838",
+    "espn:401909839",
+    "espn:401909840",
+    "espn:401909841",
+    "espn:401909842"
+   ],
+   "sha256_verified": true
+  },
+  {
+   "archived_utc": "2026-10-21T22:15:32Z",
+   "branch_commit_utc": "2026-10-21T22:15:32Z",
+   "feed_generated_utc": "2026-10-21T21:42:02Z",
+   "file": "jrm_v2_uniform/20261021T221532Z_jrm_v2.json.gz",
+   "games": [
+    "espn:401909091",
+    "espn:401909092",
+    "espn:401909093",
+    "espn:401909094",
+    "espn:401909834",
+    "espn:401909835",
+    "espn:401909836",
+    "espn:401909837",
+    "espn:401909838",
+    "espn:401909839",
+    "espn:401909840",
+    "espn:401909841",
+    "espn:401909842"
+   ],
+   "sha256_verified": true
+  }
+ ],
+ "star_unders": {
+  "definition": "star = frozen conditional minutes >= 28.0",
+  "interpretation_rule": "Supportive evidence for 'incumbent normalization creates artificial star unders' would be: JRM minutes systematically ABOVE the frozen published minutes for stars AND the V1 NO bets disappearing under JRM AND (once outcomes exist at scale) JRM minutes being the closer forecast. With the sample here none of this can be concluded; the numbers above are descriptive.",
+  "n_covered_player_games": 48,
+  "n_star_player_games": 8,
+  "stars_mean_minutes_ratio_jrm_over_frozen": 1.0326874551079313,
+  "stars_share_jrm_minutes_higher": 0.75,
+  "status": "OK",
+  "v1_NO_covered": {
+   "jrm_minutes_higher": 3,
+   "n": 3,
+   "note": "a dropped contract is often replaced by another rung of the same player-stat thesis (one expression per thesis)",
+   "same_contract_dropped_by_jrm": 2,
+   "whole_thesis_dropped_by_jrm": 1
+  },
+  "v1_NO_trades": [
+   {
+    "covered": true,
+    "ev_jrm": 0.16755529372000003,
+    "ev_v1": 0.16643361217,
+    "family": "player_threes",
+    "k": 2.0,
+    "minutes_frozen": 26.48,
+    "minutes_jrm": 29.4,
+    "p_model_jrm": 0.81755529372,
+    "p_model_v1": 0.81643361217,
+    "player": "Jalen Williams",
+    "ratio": 1.1102719033232629,
+    "same_contract_still_bet_by_jrm": true,
+    "same_thesis_still_traded_by_jrm": true,
+    "won": 1.0
+   },
+   {
+    "covered": true,
+    "ev_jrm": 0.11167268913128238,
+    "ev_v1": 0.15597737815401472,
+    "family": "player_points",
+    "k": 25.0,
+    "minutes_frozen": 33.57,
+    "minutes_jrm": 35.01,
+    "p_model_jrm": 0.4016726891312824,
+    "p_model_v1": 0.4459773781540147,
+    "player": "Shai Gilgeous-Alexander",
+    "ratio": 1.0428954423592494,
+    "same_contract_still_bet_by_jrm": false,
+    "same_thesis_still_traded_by_jrm": true,
+    "won": 0.0
+   },
+   {
+    "covered": true,
+    "ev_jrm": 0.07672846423563574,
+    "ev_v1": 0.13290181249416258,
+    "family": "player_points",
+    "k": 20.0,
+    "minutes_frozen": 26.48,
+    "minutes_jrm": 29.4,
+    "p_model_jrm": 0.6767284642356357,
+    "p_model_v1": 0.7329018124941625,
+    "player": "Jalen Williams",
+    "ratio": 1.1102719033232629,
+    "same_contract_still_bet_by_jrm": false,
+    "same_thesis_still_traded_by_jrm": false,
+    "won": 1.0
+   }
+  ]
+ },
+ "stat_family_accuracy": {
+  "by_family": {
+   "player_assists": {
+    "brier_frozen": 0.1348441246072239,
+    "brier_jrm": 0.14347488387543092,
+    "diff_jrm_minus_frozen": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 0.00863075926820698,
+     "n_clusters": 1,
+     "n_obs": 86,
+     "se": null,
+     "z": null
+    },
+    "n_games": 1,
+    "n_sides": 86
+   },
+   "player_points": {
+    "brier_frozen": 0.13024743424404184,
+    "brier_jrm": 0.1355039380858895,
+    "diff_jrm_minus_frozen": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 0.005256503841847692,
+     "n_clusters": 1,
+     "n_obs": 82,
+     "se": null,
+     "z": null
+    },
+    "n_games": 1,
+    "n_sides": 82
+   },
+   "player_pra": {
+    "brier_frozen": 0.15844187604874255,
+    "brier_jrm": 0.17525572077531018,
+    "diff_jrm_minus_frozen": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": 0.01681384472656764,
+     "n_clusters": 1,
+     "n_obs": 40,
+     "se": null,
+     "z": null
+    },
+    "n_games": 1,
+    "n_sides": 40
+   },
+   "player_rebounds": {
+    "brier_frozen": 0.17856975418068335,
+    "brier_jrm": 0.17741641056322668,
+    "diff_jrm_minus_frozen": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -0.001153343617456652,
+     "n_clusters": 1,
+     "n_obs": 102,
+     "se": null,
+     "z": null
+    },
+    "n_games": 1,
+    "n_sides": 102
+   },
+   "player_threes": {
+    "brier_frozen": 0.1647329642512277,
+    "brier_jrm": 0.1564380041206474,
+    "diff_jrm_minus_frozen": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -0.008294960130580299,
+     "n_clusters": 1,
+     "n_obs": 106,
+     "se": null,
+     "z": null
+    },
+    "n_games": 1,
+    "n_sides": 106
+   }
+  },
+  "note": "Brier of the side-specific participation-aware p_model against the realised side win, played contracts only; rungs of one player-game are not independent",
+  "status": "OK"
+ },
+ "status": "OK",
+ "v1_on_matched_games": {
+  "by_decision_mode": {
+   "asof_replay": {
+    "cash_outlay": 1.54,
+    "hit_rate": 0.6666666666666666,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.2987012987012987,
+    "total_net_pnl": 0.46
+   }
+  },
+  "by_edge_bucket": {
+   "0.10-0.15": {
+    "cash_outlay": 0.6,
+    "hit_rate": 1.0,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.6666666666666667,
+    "total_net_pnl": 0.4
+   },
+   "0.15-0.25": {
+    "cash_outlay": 0.9400000000000001,
+    "hit_rate": 0.5,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 2,
+    "n_trades": 2,
+    "roi_on_cash_outlay": 0.06382978723404255,
+    "total_net_pnl": 0.06
+   }
+  },
+  "by_family": {
+   "player_points": {
+    "cash_outlay": 0.89,
+    "hit_rate": 0.5,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 2,
+    "n_trades": 2,
+    "roi_on_cash_outlay": 0.12359550561797758,
+    "total_net_pnl": 0.11000000000000004
+   },
+   "player_threes": {
+    "cash_outlay": 0.65,
+    "hit_rate": 1.0,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 1,
+    "n_settled": 1,
+    "n_trades": 1,
+    "roi_on_cash_outlay": 0.5384615384615384,
+    "total_net_pnl": 0.35
+   }
+  },
+  "by_quote_age": {
+   "120-300s": {
+    "cash_outlay": 1.54,
+    "hit_rate": 0.6666666666666666,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.2987012987012987,
+    "total_net_pnl": 0.46
+   }
+  },
+  "by_side": {
+   "NO": {
+    "cash_outlay": 1.54,
+    "hit_rate": 0.6666666666666666,
+    "n_dnp_settled_at_fair_price": 0,
+    "n_games": 1,
+    "n_player_games": 2,
+    "n_settled": 3,
+    "n_trades": 3,
+    "roi_on_cash_outlay": 0.2987012987012987,
+    "total_net_pnl": 0.46
+   }
+  },
+  "clv_cents": {
+   "ci95": [
+    null,
+    null
+   ],
+   "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+   "mean": 0.3333333333333333,
+   "n_clusters": 1,
+   "n_obs": 3,
+   "n_settled": 3,
+   "n_valid": 3,
+   "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+   "se": null,
+   "share_positive": 0.6666666666666666,
+   "z": null
+  },
+  "computation_lag_s": {
+   "max": 3423.0,
+   "mean": 3423.0,
+   "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
+  },
+  "dnp": {
+   "n_dnp": 0,
+   "sources": {}
+  },
+  "eligible_vs_blocked": {
+   "any_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 1812,
+    "DEPTH_CONFLICT_ORDERBOOK": 8,
+    "EV_BELOW_THRESHOLD": 2085,
+    "GATE_STATUS": 1732,
+    "INSUFFICIENT_DEPTH": 12,
+    "LOW_P_PLAY": 64,
+    "QUALITY_GATE:EXTREME_PRICE": 59,
+    "QUALITY_GATE:NO_SIZE": 12,
+    "QUALITY_GATE:SPREAD_WIDE": 36,
+    "SPREAD_WIDE_STRICT": 220
+   },
+   "blocked_sides": 2419,
+   "candidate_sides": 2432,
+   "eligible_not_traded_reason": {
+    "EXPOSURE_CAP:PLAYER_GAME": 1,
+    "EXPOSURE_CAP:TEAM_GAME": 2,
+    "NOT_BEST_IN_THESIS": 7
+   },
+   "eligible_sides": 13,
+   "primary_block_reason": {
+    "BOARD_ARCHIVED_AFTER_CHECKPOINT": 1812,
+    "DEPTH_CONFLICT_ORDERBOOK": 8,
+    "ELIGIBLE": 13,
+    "EV_BELOW_THRESHOLD": 73,
+    "GATE_STATUS": 473,
+    "QUALITY_GATE:EXTREME_PRICE": 23,
+    "QUALITY_GATE:NO_SIZE": 9,
+    "QUALITY_GATE:SPREAD_WIDE": 8,
+    "SPREAD_WIDE_STRICT": 13
+   },
+   "trades": 3
+  },
+  "evidence_status": {
+   "authority": "none; never a value claim below the minimums",
+   "counted": "prospective AND settled decisions only",
+   "have": {
+    "decisions": 0,
+    "games": 0
+   },
+   "independent_clocks_verified": true,
+   "label": "INSUFFICIENT_SAMPLE",
+   "lower_cis_game_and_player_game": [],
+   "required": {
+    "decisions": 200,
+    "games": 40
+   }
+  },
+  "exposure_concentration": {
+   "max_trades_per_player_game": 2,
+   "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
+   "players_with_multiple_trades": 1,
+   "share_NO": 1.0,
+   "share_of_notional_by_family": {
+    "player_points": 0.5743243243243243,
+    "player_threes": 0.42567567567567566
+   },
+   "share_of_notional_by_game": {
+    "espn:401909090": 1.0
+   },
+   "share_of_notional_by_player": {
+    "espn:4278073": 0.18243243243243246,
+    "espn:4593803": 0.8175675675675675
+   },
+   "share_of_notional_by_side": {
+    "NO": 1.0
+   }
+  },
+  "independent_units": {
+   "n_decisions": 3,
+   "n_games": 1,
+   "n_player_games": 2,
+   "n_settled_decisions": 3,
+   "n_theses": 3,
+   "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
+  },
+  "label": "v1_matched_games",
+  "n_candidate_sides": 2432,
+  "overall": {
+   "cash_outlay": 1.54,
+   "hit_rate": 0.6666666666666666,
+   "n_dnp_settled_at_fair_price": 0,
+   "n_games": 1,
+   "n_player_games": 2,
+   "n_settled": 3,
+   "n_trades": 3,
+   "roi_on_cash_outlay": 0.2987012987012987,
+   "total_net_pnl": 0.46
+  },
+  "roi": {
+   "fees_per_contract_mean": 0.02,
+   "max_drawdown": {
+    "final_equity": 0.46,
+    "max_drawdown": 0.29,
+    "n": 3,
+    "note": "dollars, 1 contract per position, ordered by tip time; a path statistic of a handful of games, not a risk estimate"
+   },
+   "mean_net_pnl_per_contract": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "mean": 0.15333333333333335,
+    "n_clusters": 1,
+    "n_obs": 3,
+    "se": null,
+    "z": null
+   },
+   "on_cash_outlay_effective_entry_plus_fee": {
+    "game_clustered": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "n_clusters": 1,
+     "n_obs": 3,
+     "ratio": 0.2987012987012987
+    },
+    "player_game_clustered": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "n_clusters": 2,
+     "n_obs": 3,
+     "ratio": 0.2987012987012987
+    }
+   },
+   "on_quoted_price_scorecard_compatible": {
+    "ci95": [
+     null,
+     null
+    ],
+    "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+    "n_clusters": 1,
+    "n_obs": 3,
+    "ratio": 0.31724137931034485
+   },
+   "slippage_per_contract": 0.01
+  },
+  "status": "OK",
+  "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1"
+ }
+}

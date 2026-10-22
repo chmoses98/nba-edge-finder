@@ -1,0 +1,36 @@
+name: exec-shadow-selftest
+# Issue #53: controlled REAL test of the sealed-ledger publication path (nba.paper.ledger_remote) against the GitHub Git Data API. RESEARCH ONLY.
+# Manual dispatch only. It writes ONE throw-away branch, `exec-shadow-seals-selftest` (created, exercised and deleted by the script; the module refuses any other branch name),
+# never the real ledger, never `main`, never a data branch. It checks: bootstrap of a missing branch; server-side commit time vs the runner clock; no client-supplied dates;
+# identical re-submission is a no-op; overwrite / out-of-layout paths are refused; the server refuses a non-fast-forward ref update; the deadline comparison; durability.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write        # the same scope the real publisher uses; exercised on the throw-away branch only
+
+concurrency:
+  group: exec-shadow-selftest
+  cancel-in-progress: false
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - name: Publication self-test (stdlib only, no install)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -o pipefail
+          python3 research/projection_foundation/nba/paper/ledger_remote.py selftest --repo "$GITHUB_REPOSITORY" --out "$RUNNER_TEMP/selftest.json" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exec-shadow-selftest-${{ github.run_id }}
+          path: ${{ runner.temp }}/selftest.json
+          retention-days: 90
+          if-no-files-found: ignore
