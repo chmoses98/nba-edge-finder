@@ -2,46 +2,46 @@
  "comparisons": {
   "vs_cheapest_price": {
    "ci95_game_clustered": [
-    0.00121,
-    0.10225
+    0.01234,
+    0.08133
    ],
-   "mean_pnl_diff_best_minus_comparator": 0.05496,
-   "n_games": 3,
-   "n_theses": 904,
+   "mean_pnl_diff_best_minus_comparator": 0.04702,
+   "n_games": 14,
+   "n_theses": 4144,
    "reading": "descriptive only: below the preregistered minimums (40 games, 200 decisions)",
-   "share_same_selection": 0.206,
+   "share_same_selection": 0.28,
    "status": "INSUFFICIENT_SAMPLE"
   },
   "vs_highest_win_probability": {
    "ci95_game_clustered": [
-    0.00134,
-    0.09714
+    0.00619,
+    0.106
    ],
-   "mean_pnl_diff_best_minus_comparator": 0.05301,
-   "n_games": 3,
-   "n_theses": 904,
+   "mean_pnl_diff_best_minus_comparator": 0.04994,
+   "n_games": 14,
+   "n_theses": 4144,
    "reading": "descriptive only: below the preregistered minimums (40 games, 200 decisions)",
-   "share_same_selection": 0.061,
+   "share_same_selection": 0.057,
    "status": "INSUFFICIENT_SAMPLE"
   },
   "vs_other_expressions": {
    "ci95_game_clustered": [
-    0.01816,
-    0.09985
+    0.06052,
+    0.1345
    ],
-   "mean_pnl_diff_best_minus_comparator": 0.07295,
-   "n_games": 3,
-   "n_theses": 900,
+   "mean_pnl_diff_best_minus_comparator": 0.09628,
+   "n_games": 14,
+   "n_theses": 4138,
    "reading": "descriptive only: below the preregistered minimums (40 games, 200 decisions)",
    "status": "INSUFFICIENT_SAMPLE"
   }
  },
  "independence": "game-clustered; theses of one game are correlated and share a cluster; expressions of one thesis are one exposure",
- "mean_net_pnl_best_per_thesis": 0.07021,
- "n_games": 3,
- "n_no_trade": 6211,
- "n_theses_scored": 904,
- "n_theses_with_best": 1929,
- "n_unsettled": 1025,
+ "mean_net_pnl_best_per_thesis": 0.02404,
+ "n_games": 14,
+ "n_no_trade": 12029,
+ "n_theses_scored": 4144,
+ "n_theses_with_best": 4277,
+ "n_unsettled": 133,
  "status": "OK"
 }
