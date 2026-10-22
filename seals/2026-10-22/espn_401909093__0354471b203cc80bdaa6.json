@@ -1,0 +1,84 @@
+{
+ "board": {
+  "commit_utc": "2026-10-22T22:00:36Z",
+  "gap_s": 365.0,
+  "tick_observed_utc": "2026-10-22T21:53:55Z"
+ },
+ "body_sha256": "1146ed8c68d490cafc3dbab604a6f02f920dd866edb83bc021a66e09477cdee1",
+ "candidates": {
+  "file": "espn_401909093__candidates.jsonl.gz",
+  "n_eligible": 0,
+  "n_sides": 0,
+  "n_trades": 0,
+  "primary_reason_histogram": {},
+  "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+ },
+ "checkpoint_utc": "2026-10-22T22:00:00Z",
+ "clocks": {
+  "board_commit_index_ticks": 2161,
+  "forecast_commit_index_ids": 40022
+ },
+ "code": {
+  "default_branch": "main",
+  "dirty": false,
+  "event": "workflow_dispatch",
+  "protocol_effective_commit_utc": "2026-10-22T00:26:15Z",
+  "protocol_path": "research/projection_foundation/nba/paper/exec_shadow_config_v2.json",
+  "ref": "refs/heads/main",
+  "run_attempt": "1",
+  "run_id": "39850078264",
+  "sha": "90a5af19da473dbf090fbc8c46d914b9c4128fd8",
+  "workflow": "exec-shadow-seal"
+ },
+ "computed_utc": "2026-10-22T22:11:08Z",
+ "decision_mode": "sealed_pretip_asof",
+ "dry_run": false,
+ "forecast_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+ "forecasts": null,
+ "game": {
+  "away": "CLE",
+  "game_date_et": "2026-10-22",
+  "game_id": "espn:401909093",
+  "home": "PHI",
+  "schedule_file": "context_schedule_20261022T215025Z_39833008690.jsonl.gz",
+  "schedule_observed_utc": "2026-10-22T21:50:25Z",
+  "schedule_sha256": "fd67ac566175fd628cb577961926963ad5806f3b588519f608465460a3c29890",
+  "start_utc": "2026-10-22T23:00:00Z"
+ },
+ "game_reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+ "inputs": {
+  "coverage": null,
+  "data_archive_head": "bbbe044ca65db3434c7dc3d229257a5580607801",
+  "n_snapshot_rows": null,
+  "projection_data_head": "51b31966a34513da55231b1398123f52a23fd093"
+ },
+ "ledger_after": {
+  "n_game": {},
+  "n_team": {},
+  "n_unit": {},
+  "notional_day": {},
+  "notional_game": {},
+  "theses": []
+ },
+ "ledger_before": {
+  "n_game": {},
+  "n_team": {},
+  "n_unit": {},
+  "notional_day": {},
+  "notional_game": {},
+  "theses": []
+ },
+ "paper_config_sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
+ "protocol_sha256": "f84e4067436e2515ea7f35f7417a4e9e66ad69f62ae66ea004a7c6c23244c3e8",
+ "schema": "issue53.exec_seal.v1",
+ "seal_id": "0354471b203cc80bdaa6",
+ "selected": [],
+ "status": "NO_TRADE",
+ "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1",
+ "study_id": "ISSUE53_EXEC_SHADOW_V1",
+ "study_version": "2.0.1",
+ "window": {
+  "closes_utc": "2026-10-22T22:50:00Z",
+  "opens_utc": "2026-10-22T22:10:00Z"
+ }
+}
