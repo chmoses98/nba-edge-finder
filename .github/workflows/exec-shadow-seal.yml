@@ -11,6 +11,7 @@ name: exec-shadow-seal
 #     with neither a seal nor a MISSED marker, or on any MISSED marker (nba.paper.seal_monitor).
 #   * Only runs from the default branch can produce COUNTED seals (verified offline: code sha must be reachable from main). Pull-request runs and dry dispatches perform ONE
 #     rehearsal iteration on a fixed past instant and publish nothing.
+#   * Lanes: the same chain can seal a second, separately preregistered study (`t45`, own protocol / ledger branch / counts) - no extra scheduler. It is OFF in SEAL_LANES until approved.
 #   * Does not touch the live ticker, capture worker, projection-foundation, the paper protocol, or any original archive.
 on:
   schedule:
@@ -31,6 +32,7 @@ on:
       - "research/projection_foundation/nba/paper/exec_seal.py"
       - "research/projection_foundation/nba/paper/exec_shadow.py"
       - "research/projection_foundation/nba/paper/exec_shadow_config_v2.json"
+      - "research/projection_foundation/nba/paper/exec_shadow_config_t45_v1.json"
       - "research/projection_foundation/nba/paper/seal_windows.py"
       - "research/projection_foundation/nba/paper/seal_chain.py"
       - "research/projection_foundation/nba/paper/seal_monitor.py"
@@ -48,6 +50,10 @@ env:
   PF_DIR: research/projection_foundation
   PY: "3.13"
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+  # Sealing lanes. `control` = the original strict T-60 study. `t45` = the separately preregistered T-45 availability study (exec_shadow_config_t45_v1.json; own ledger branch, own
+  # evidence counts). Adding t45 to SEAL_LANES is the ACTIVATION step and needs the owner's approval; the rehearsal below exercises both lanes dry on real archived data.
+  SEAL_LANES: "control"
+  REHEARSAL_LANES: "control,t45"
   REHEARSAL_NOW: "2026-10-21T01:00:00Z"        # OKC@SAS window (opens 00:40Z, closes 01:20Z, tip 01:30Z) on real archived data: the dry iteration exercises the whole path
 
 concurrency:
@@ -83,13 +89,22 @@ jobs:
           NOW_IN: ${{ github.event.inputs.now }}
         run: |
           NOW=""
-          if [ "$DRY" = true ]; then NOW="${NOW_IN:-$REHEARSAL_NOW}"; fi
+          LANES="$SEAL_LANES"
+          if [ "$DRY" = true ]; then NOW="${NOW_IN:-$REHEARSAL_NOW}"; LANES="$REHEARSAL_LANES"; fi
           mkdir -p "$RUNNER_TEMP/work"
-          if [ "$DRY" = true ]; then rm -rf "$RUNNER_TEMP/work/seals"; mkdir -p "$RUNNER_TEMP/work/seals"; git init -q "$RUNNER_TEMP/work/seals"
-          else bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$RUNNER_TEMP/work/seals"; fi
           bash $PF_DIR/scripts/exec_seal_ci.sh mount_context "$RUNNER_TEMP/work/m" $NOW
-          python3 $PF_DIR/nba/paper/seal_windows.py gate --context "$RUNNER_TEMP/work/m/data-archive" --seals "$RUNNER_TEMP/work/seals" --horizon-h 6 ${NOW:+--now "$NOW"} | tee -a "$GITHUB_OUTPUT"
-          if [ "$DRY" = true ]; then echo "active=true" >> "$GITHUB_OUTPUT"; fi     # rehearsals always run their one iteration
+          ACTIVE=false
+          for L in ${LANES//,/ }; do
+            D="$RUNNER_TEMP/work/seals"; [ "$L" = control ] || D="$RUNNER_TEMP/work/seals_$L"
+            if [ "$DRY" = true ]; then rm -rf "$D"; mkdir -p "$D"; git init -q "$D"
+            else bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$D" "$(python3 $PF_DIR/nba/paper/seal_windows.py branch --lane "$L")"; fi
+            OUT=$(python3 $PF_DIR/nba/paper/seal_windows.py gate --lane "$L" --context "$RUNNER_TEMP/work/m/data-archive" --seals "$D" --horizon-h 6 ${NOW:+--now "$NOW"})
+            echo "[$L] $(echo "$OUT" | tr '\n' ' ')"
+            if echo "$OUT" | grep -q '^active=true'; then ACTIVE=true; fi
+          done
+          if [ "$DRY" = true ]; then ACTIVE=true; fi     # rehearsals always run their one iteration
+          echo "active=$ACTIVE" >> "$GITHUB_OUTPUT"
+          echo "lanes=$LANES" >> "$GITHUB_OUTPUT"
           echo "now=$NOW" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v5
         if: ${{ !cancelled() && steps.gate.outputs.active == 'true' }}
@@ -109,11 +124,12 @@ jobs:
         env:
           DRY: ${{ steps.mode.outputs.dry }}
           NOW: ${{ steps.gate.outputs.now }}
+          LANES: ${{ steps.gate.outputs.lanes }}
           PUBLISH_TOKEN: ${{ github.token }}          # reaches only the publisher and the successor dispatch (nba.paper.seal_chain)
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           python3 $PF_DIR/nba/paper/seal_chain.py --work "$RUNNER_TEMP/work" --repo-root "$GITHUB_WORKSPACE" --repo "$GITHUB_REPOSITORY" \
-            --default-branch "$DEFAULT_BRANCH" $([ "$DRY" = true ] && echo "--dry-run ${NOW:+--now $NOW}") 2>&1 | tee "$RUNNER_TEMP/work/chain.log"
+            --default-branch "$DEFAULT_BRANCH" --lanes "$LANES" $([ "$DRY" = true ] && echo "--dry-run ${NOW:+--now $NOW}") 2>&1 | tee "$RUNNER_TEMP/work/chain.log"
       - name: Evidence (reports; the ledger commits carry the server timestamps)
         if: ${{ always() && steps.gate.outputs.active == 'true' }}
         uses: actions/upload-artifact@v4
@@ -121,7 +137,7 @@ jobs:
           name: exec-shadow-seal-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/work/chain.log
-            ${{ runner.temp }}/work/seal_report.json
-            ${{ runner.temp }}/work/publish.json
+            ${{ runner.temp }}/work/seal_report*.json
+            ${{ runner.temp }}/work/publish*.json
           retention-days: 90
           if-no-files-found: ignore

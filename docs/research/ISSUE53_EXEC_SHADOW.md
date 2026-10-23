@@ -106,6 +106,10 @@ finish), and the matched market selections contract by contract. Isolation: `con
 throw-away copy used, PR #45 merged only inside the runner at a pinned SHA (fails if the branch moved), runs only on manual dispatch or a PR carrying the label
 `jrm-exact-dryrun`, 40-minute timeout, never scheduled. Tests inject stub engines; guards on the workflow files are tests too.
 
+## Follow-up: T-45 availability study (proposed, not active)
+`docs/research/ISSUE53_T45_AVAILABILITY.md` documents the archive-latency diagnosis (the control's exclusions are set by tick spacing and commit lag, not by the checkpoint minute) and a
+separately preregistered T-45 study on its own ledger branch. This control protocol, its ledger, start date and evidence counts are unchanged.
+
 ## Findings (retrospective, descriptive)
 Section A and the OKC@SAS numbers were fixed on the opening-night archive state and do not change. The regenerated `results/issue53/` (run `f4f7ab85a666eebb`, archive state fetched
 2026-10-22) now also covers the games that were played since (091, 834-837 are due; 838+ are `NOT_DUE`); the figures quoted below say which state they come from.

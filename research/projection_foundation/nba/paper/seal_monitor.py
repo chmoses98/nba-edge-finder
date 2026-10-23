@@ -47,8 +47,10 @@ def chain_alive(runs: list[dict], now: datetime, grace_min: float = 20.0) -> tup
 
 
 def check(context_dir: str, seal_dir: str, runs: list[dict] | None, now: datetime, study: dict | None = None, *, lead_min: float = 45.0, grace_min: float = 20.0,
-          missed_lookback_h: float = 36.0) -> list[dict[str, Any]]:
-    study = study or SW.load_study()
+          missed_lookback_h: float = 36.0, lane: str = "control", liveness: bool = True) -> list[dict[str, Any]]:
+    """Findings for ONE lane's ledger. `liveness=False` (second and later lanes) skips the chain-alive check, which the first lane already reports for the shared chain."""
+    study = study or SW.load_study(SW.lane_study_path(lane))
+    tag = "" if lane == "control" else f"[{lane}] "
     f: list[dict[str, Any]] = []
     games = SW.schedule_games(context_dir, now)
     sealed, missed = SW.list_sealed(seal_dir)
@@ -57,7 +59,7 @@ def check(context_dir: str, seal_dir: str, runs: list[dict] | None, now: datetim
     for g in games:
         w = SW.window(g, study)
         st = SW.game_state(now, g, study, sealed, missed, en)
-        label = f"{g.get('away')}@{g.get('home')} {g['start_utc']}"
+        label = f"{tag}{g.get('away')}@{g.get('home')} {g['start_utc']}"
         if st == "OPEN" or (st == "NOT_DUE" and w["opens"] - now <= timedelta(minutes=lead_min)):
             open_or_soon = True
         if st == "WINDOW_CLOSED_UNSEALED" and now - w["closes"] >= timedelta(minutes=10) and now - w["tip"] <= timedelta(hours=12):
@@ -66,6 +68,8 @@ def check(context_dir: str, seal_dir: str, runs: list[dict] | None, now: datetim
         if st == "MISSED" and now - w["tip"] <= timedelta(hours=missed_lookback_h):
             f.append({"severity": CRIT, "code": "SEAL_MISSED", "game_id": g["game_id"],
                       "detail": f"{label}: seal window closed unsealed (MISSED marker); the game is uncounted and was never sealed late"})
+    if not liveness:
+        return f
     if runs is None:
         if open_or_soon:
             f.append({"severity": WARN, "code": "SEAL_RUNS_UNKNOWN", "detail": "workflow run list unavailable; chain liveness not verified"})

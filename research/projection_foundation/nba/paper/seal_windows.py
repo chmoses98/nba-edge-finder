@@ -5,7 +5,8 @@ Everything that decides "is a game owed a seal right now?" lives here, so that
   * the gate runs on the bare runner interpreter, before any dependency is installed: an idle poll costs a ~1 s depth-1 blobless fetch and ~0.1 s of Python, not a 20 s
     install (repo note: the conductor's wake used to install ~690 MB, 144 times a day, to read five timestamps).
 
-    python research/projection_foundation/nba/paper/seal_windows.py gate --context <data-archive> --seals <ledger> [--now ISO] [--horizon-h 14]
+    python research/projection_foundation/nba/paper/seal_windows.py gate --context <data-archive> --seals <ledger> [--lane control|t45] [--now ISO] [--horizon-h 14]
+    python research/projection_foundation/nba/paper/seal_windows.py branch --lane t45          # the lane's ledger branch
 
 `gate` prints `active=true|false` (a game whose seal window is open now or opens within the horizon, or one whose window closed unsealed and still needs its MISSED marker),
 `due`, `needs_watch` and the next window opening, as `key=value` lines for $GITHUB_OUTPUT.
@@ -25,7 +26,23 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 UTC = timezone.utc
-STUDY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "exec_shadow_config_v2.json")
+HERE = os.path.dirname(os.path.abspath(__file__))
+STUDY_PATH = os.path.join(HERE, "exec_shadow_config_v2.json")
+# Sealing lanes. Each lane is a separately preregistered study with its OWN protocol file, strategy id and ledger BRANCH, so evidence is never mixed. The control lane is the
+# original strict T-60 study (unchanged); `t45` is the availability-rule study added afterwards (see exec_shadow_config_t45_v1.json). Which lanes a live chain runs is chosen by
+# the workflow (`--lanes`); a lane that is not listed there is never sealed.
+LANES: dict[str, dict[str, str]] = {
+    "control": {"study": "exec_shadow_config_v2.json", "branch": "exec-shadow-seals"},
+    "t45": {"study": "exec_shadow_config_t45_v1.json", "branch": "exec-shadow-seals-t45"},
+}
+
+
+def lane_study_path(lane: str) -> str:
+    return os.path.join(HERE, LANES[lane]["study"])
+
+
+def lane_branch(lane: str) -> str:
+    return LANES[lane]["branch"]
 
 
 def parse_ts(x: str) -> datetime:
@@ -162,15 +179,21 @@ def gate(context_dir: str, seal_dir: str, now: datetime, study: dict, horizon_h:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["gate", "plan"])
-    ap.add_argument("--context", required=True)
-    ap.add_argument("--seals", required=True)
+    ap.add_argument("cmd", choices=["gate", "plan", "branch"])
+    ap.add_argument("--lane", default="control", choices=sorted(LANES))
+    ap.add_argument("--context", default=None)
+    ap.add_argument("--seals", default=None)
     ap.add_argument("--now", default=None)
     ap.add_argument("--horizon-h", type=float, default=14.0)
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv)
+    if a.cmd == "branch":
+        print(lane_branch(a.lane))
+        return 0
+    if not a.context or not a.seals:
+        ap.error("--context and --seals are required")
     now = parse_ts(a.now) if a.now else datetime.now(UTC).replace(microsecond=0)
-    study = load_study()
+    study = load_study(lane_study_path(a.lane))
     res = gate(a.context, a.seals, now, study, a.horizon_h) if a.cmd == "gate" else plan(a.context, a.seals, now, study)
     if a.out:
         json.dump(res, open(a.out, "w"), indent=1, sort_keys=True)

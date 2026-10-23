@@ -122,3 +122,22 @@ def test_the_selftest_workflow_is_manual_and_can_only_reach_the_throwaway_branch
     assert "ledger_remote.py selftest" in code and "git push" not in code and "refs/heads/main" not in code and "exec-shadow-seals " not in code
     lr = (ROOT / "research/projection_foundation/nba/paper/ledger_remote.py").read_text()
     assert 'SELFTEST_BRANCH = "exec-shadow-seals-selftest"' in lr and "selftest only ever writes the throw-away branch" in lr
+
+
+def test_the_t45_lane_is_rehearsed_dry_but_not_enabled_live_without_approval():
+    wf = load(SEAL)
+    env = wf["env"]
+    assert env["SEAL_LANES"] == "control"                                    # ACTIVATION of the T-45 study = adding t45 here, in an approved PR
+    assert set(env["REHEARSAL_LANES"].split(",")) == {"control", "t45"}      # the dry PR rehearsal exercises both lanes on real archived data
+    txt = SEAL.read_text()
+    steps = wf["jobs"]["tick"]["steps"]
+    chain = next(s for s in steps if str(s.get("name", "")).startswith("Seal chain"))
+    assert '--lanes "$LANES"' in chain["run"] and "steps.gate.outputs.lanes" in chain["env"]["LANES"]
+    gate = next(s for s in steps if str(s.get("name", "")).startswith("Idle gate"))
+    assert 'LANES="$SEAL_LANES"' in gate["run"] and 'LANES="$REHEARSAL_LANES"' in gate["run"] and "pip" not in gate["run"]
+    assert "exec-shadow-seals-t45" not in txt or "seal_windows.py branch" in txt          # the branch name comes from the one table (seal_windows.LANES), not from the YAML
+
+
+def test_watchdog_reads_the_t45_ledger_best_effort():
+    txt = (WF / "nba-watchdog.yml").read_text()
+    assert "exec-shadow-seals-t45" in txt and "--seals-t45" in txt and "|| echo" in txt

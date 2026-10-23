@@ -1,0 +1,2325 @@
+{
+ "authority": "research_only",
+ "caveats": [
+  "a handful of games: no interval, no inference; the coverage columns are mechanics, the P&L columns are anecdotes",
+  "the availability rule trades on a board that is on average ~8 minutes old at the decision instant (executability block); the control's board is younger but loses most games to commit latency",
+  "T-45 differs from the control in two things (offset AND board rule); the matched comparators (T-60 available, T-45 strict) separate them",
+  "settled P&L, CLV and drift use the final archives; none of it was available to the selection",
+  "retrospective reconstruction runs the sealer at the first minute of each window with commit-time filters, so it reproduces what a live sealer would have written; it is still uncounted"
+ ],
+ "games_from": "2026-10-20",
+ "generated_utc": "2026-10-22T14:43:29Z",
+ "lanes": {
+  "comparator_T45_strict": {
+   "coverage": {
+    "classes": {
+     "EVALUATED_NO_TRADE": 1,
+     "EXCLUDED_ARCHIVE_LATENCY": 9,
+     "TRADED": 4
+    },
+    "decision_instants": 9,
+    "decision_instants_with_a_usable_board": 4,
+    "excluded_by_archive_latency": 9,
+    "games": 14,
+    "games_traded": 4,
+    "games_with_a_decision_evaluated": 5,
+    "instants_note": "games that tip at the same time share one decision instant and therefore one board: their exclusion is perfectly correlated, so the number of independent coverage observations is the number of distinct instants",
+    "per_game": [
+     {
+      "board_age_s": 129.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909088",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-20T19:00:00Z"
+     },
+     {
+      "board_age_s": 361.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909089",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=541; QUALITY_GATE:SPREAD_WIDE=38; QUALITY_GATE:EXTREME_PRICE=19; DEPTH_CONFLICT_ORDERBOOK=18",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-20T23:00:00Z"
+     },
+     {
+      "board_age_s": 313.0,
+      "class": "TRADED",
+      "game_id": "espn:401909090",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T01:30:00Z"
+     },
+     {
+      "board_age_s": 77.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909834",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:00:00Z"
+     },
+     {
+      "board_age_s": 77.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909835",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:00:00Z"
+     },
+     {
+      "board_age_s": 17.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909091",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 17.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909836",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 17.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909837",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 114.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909838",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:00:00Z"
+     },
+     {
+      "board_age_s": 114.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909839",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:00:00Z"
+     },
+     {
+      "board_age_s": 114.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909840",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:30:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909092",
+      "n_trades": 6,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:00:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909841",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:00:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909842",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:30:00Z"
+     }
+    ],
+    "share_evaluated": 0.357
+   },
+   "errors": [],
+   "executability": {
+    "ask_drift_cents": {
+     "mean": 1.4,
+     "p10": -1.0,
+     "p90": 1.0
+    },
+    "board_age_at_decision_s": {
+     "median": 724.0,
+     "n": 15,
+     "p90": 724.0
+    },
+    "n_with_a_later_board": 15,
+    "note": "drift is observed AFTER the decision and never used in a selection; adverse = the ask moved up before the next board",
+    "share_adverse": 0.2
+   },
+   "label": "comparator_T45_strict",
+   "metrics": {
+    "by_decision_mode": {
+     "sealed_pretip_asof": {
+      "cash_outlay": 7.0299999999999985,
+      "hit_rate": 0.5333333333333333,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 4,
+      "n_player_games": 10,
+      "n_settled": 15,
+      "n_trades": 15,
+      "roi_on_cash_outlay": 0.13798008534850645,
+      "total_net_pnl": 0.9700000000000002
+     }
+    },
+    "by_edge_bucket": {
+     "0.06-0.10": {
+      "cash_outlay": 1.36,
+      "hit_rate": 1.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": 1.2058823529411764,
+      "total_net_pnl": 1.64
+     },
+     "0.10-0.15": {
+      "cash_outlay": 1.12,
+      "hit_rate": 0.6666666666666666,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 3,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": 0.7857142857142857,
+      "total_net_pnl": 0.8800000000000001
+     },
+     "0.15-0.25": {
+      "cash_outlay": 3.96,
+      "hit_rate": 0.375,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 7,
+      "n_settled": 8,
+      "n_trades": 8,
+      "roi_on_cash_outlay": -0.24242424242424243,
+      "total_net_pnl": -0.96
+     },
+     ">=0.25": {
+      "cash_outlay": 0.59,
+      "hit_rate": 0.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_settled": 1,
+      "n_trades": 1,
+      "roi_on_cash_outlay": -1.0,
+      "total_net_pnl": -0.59
+     }
+    },
+    "by_family": {
+     "player_assists": {
+      "cash_outlay": 1.7999999999999998,
+      "hit_rate": 0.25,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 4,
+      "n_settled": 4,
+      "n_trades": 4,
+      "roi_on_cash_outlay": -0.4444444444444445,
+      "total_net_pnl": -0.7999999999999999
+     },
+     "player_points": {
+      "cash_outlay": 2.5700000000000003,
+      "hit_rate": 0.6666666666666666,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 6,
+      "n_settled": 6,
+      "n_trades": 6,
+      "roi_on_cash_outlay": 0.5564202334630349,
+      "total_net_pnl": 1.43
+     },
+     "player_pra": {
+      "cash_outlay": 1.61,
+      "hit_rate": 0.3333333333333333,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 3,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": -0.3788819875776398,
+      "total_net_pnl": -0.6100000000000001
+     },
+     "player_threes": {
+      "cash_outlay": 1.05,
+      "hit_rate": 1.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_settled": 2,
+      "n_trades": 2,
+      "roi_on_cash_outlay": 0.9047619047619047,
+      "total_net_pnl": 0.95
+     }
+    },
+    "by_quote_age": {
+     "300-900s": {
+      "cash_outlay": 7.0299999999999985,
+      "hit_rate": 0.5333333333333333,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 4,
+      "n_player_games": 10,
+      "n_settled": 15,
+      "n_trades": 15,
+      "roi_on_cash_outlay": 0.13798008534850645,
+      "total_net_pnl": 0.9700000000000002
+     }
+    },
+    "by_side": {
+     "NO": {
+      "cash_outlay": 6.109999999999999,
+      "hit_rate": 0.4166666666666667,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 8,
+      "n_settled": 12,
+      "n_trades": 12,
+      "roi_on_cash_outlay": -0.18166939443535188,
+      "total_net_pnl": -1.1099999999999999
+     },
+     "YES": {
+      "cash_outlay": 0.9199999999999999,
+      "hit_rate": 1.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 1,
+      "n_player_games": 2,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": 2.2608695652173916,
+      "total_net_pnl": 2.08
+     }
+    },
+    "clv_cents": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -1.2666666666666666,
+     "n_clusters": 4,
+     "n_obs": 15,
+     "n_settled": 15,
+     "n_valid": 15,
+     "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+     "se": null,
+     "share_positive": 0.06666666666666667,
+     "z": null
+    },
+    "computation_lag_s": {
+     "max": 1384.0,
+     "mean": 1301.8,
+     "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
+    },
+    "dnp": {
+     "n_dnp": 0,
+     "sources": {}
+    },
+    "eligible_vs_blocked": {
+     "any_block_reason": {
+      "DEPTH_CONFLICT_ORDERBOOK": 21,
+      "EV_BELOW_THRESHOLD": 2660,
+      "GATE_STATUS": 2246,
+      "INSUFFICIENT_DEPTH": 12,
+      "LOW_P_PLAY": 238,
+      "QUALITY_GATE:EXTREME_PRICE": 89,
+      "QUALITY_GATE:NO_SIZE": 12,
+      "QUALITY_GATE:SPREAD_WIDE": 160,
+      "SPREAD_WIDE_STRICT": 428
+     },
+     "blocked_sides": 2923,
+     "candidate_sides": 2992,
+     "eligible_not_traded_reason": {
+      "EXPOSURE_CAP:PLAYER_GAME": 4,
+      "EXPOSURE_CAP:TEAM_GAME": 18,
+      "NOT_BEST_IN_THESIS": 32
+     },
+     "eligible_sides": 69,
+     "primary_block_reason": {
+      "DEPTH_CONFLICT_ORDERBOOK": 21,
+      "ELIGIBLE": 69,
+      "EV_BELOW_THRESHOLD": 412,
+      "GATE_STATUS": 2070,
+      "LOW_P_PLAY": 83,
+      "QUALITY_GATE:EXTREME_PRICE": 83,
+      "QUALITY_GATE:NO_SIZE": 12,
+      "QUALITY_GATE:SPREAD_WIDE": 159,
+      "SPREAD_WIDE_STRICT": 83
+     },
+     "trades": 15
+    },
+    "evidence_status": {
+     "authority": "none; never a value claim below the minimums",
+     "counted": "prospective AND settled decisions only",
+     "have": {
+      "decisions": 0,
+      "games": 0
+     },
+     "independent_clocks_verified": false,
+     "label": "INSUFFICIENT_SAMPLE",
+     "lower_cis_game_and_player_game": [],
+     "required": {
+      "decisions": 200,
+      "games": 40
+     }
+    },
+    "exposure_concentration": {
+     "max_trades_per_player_game": 2,
+     "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
+     "players_with_multiple_trades": 5,
+     "share_NO": 0.8,
+     "share_of_notional_by_family": {
+      "player_assists": 0.2555720653789004,
+      "player_points": 0.36404160475482905,
+      "player_pra": 0.2303120356612184,
+      "player_threes": 0.150074294205052
+     },
+     "share_of_notional_by_game": {
+      "espn:401909090": 0.22288261515601782,
+      "espn:401909092": 0.4130757800891531,
+      "espn:401909841": 0.1277860326894502,
+      "espn:401909842": 0.23625557206537887
+     },
+     "share_of_notional_by_player": {
+      "espn:3155942": 0.1575037147102526,
+      "espn:4066457": 0.150074294205052,
+      "espn:4431736": 0.09806835066864783,
+      "espn:4593803": 0.1812778603268945,
+      "espn:6589": 0.16493313521545316
+     },
+     "share_of_notional_by_side": {
+      "NO": 0.8722139673105498,
+      "YES": 0.1277860326894502
+     }
+    },
+    "independent_units": {
+     "n_decisions": 15,
+     "n_games": 4,
+     "n_player_games": 10,
+     "n_settled_decisions": 15,
+     "n_theses": 15,
+     "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
+    },
+    "label": "comparator_T45_strict",
+    "n_candidate_sides": 2992,
+    "overall": {
+     "cash_outlay": 7.0299999999999985,
+     "hit_rate": 0.5333333333333333,
+     "n_dnp_settled_at_fair_price": 0,
+     "n_games": 4,
+     "n_player_games": 10,
+     "n_settled": 15,
+     "n_trades": 15,
+     "roi_on_cash_outlay": 0.13798008534850645,
+     "total_net_pnl": 0.9700000000000002
+    },
+    "roi": {
+     "fees_per_contract_mean": 0.02,
+     "max_drawdown": {
+      "final_equity": 0.9700000000000002,
+      "max_drawdown": 1.65,
+      "n": 15,
+      "note": "dollars, 1 contract per position, ordered by tip time; a path statistic of a handful of games, not a risk estimate"
+     },
+     "mean_net_pnl_per_contract": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.06466666666666668,
+      "n_clusters": 4,
+      "n_obs": 15,
+      "se": null,
+      "z": null
+     },
+     "on_cash_outlay_effective_entry_plus_fee": {
+      "game_clustered": {
+       "ci95": [
+        null,
+        null
+       ],
+       "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+       "n_clusters": 4,
+       "n_obs": 15,
+       "ratio": 0.13798008534850645
+      },
+      "player_game_clustered": {
+       "ci95": [
+        -0.4819453263821817,
+        0.8693049065420552
+       ],
+       "n_clusters": 10,
+       "n_obs": 15,
+       "ratio": 0.1379800853485064
+      }
+     },
+     "on_quoted_price_scorecard_compatible": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "n_clusters": 4,
+      "n_obs": 15,
+      "ratio": 0.14741641337386022
+     },
+     "slippage_per_contract": 0.01
+    },
+    "status": "OK",
+    "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1"
+   },
+   "predicted_ev": {
+    "mean_ev_net_exec": 0.171,
+    "mean_p_model": 0.6397,
+    "n_trades": 15,
+    "note": "predicted by the model at the decision instant, before any outcome",
+    "sum_ev_net_exec": 2.5649
+   },
+   "prospective_start_utc": "2026-10-24T06:00:00Z",
+   "protocol_version": "2.0.1",
+   "settled": {
+    "clv_cents": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -1.2666666666666666,
+     "n_clusters": 4,
+     "n_obs": 15,
+     "n_settled": 15,
+     "n_valid": 15,
+     "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+     "se": null,
+     "share_positive": 0.06666666666666667,
+     "z": null
+    },
+    "evidence_status": {
+     "authority": "none; never a value claim below the minimums",
+     "counted": "prospective AND settled decisions only",
+     "have": {
+      "decisions": 0,
+      "games": 0
+     },
+     "independent_clocks_verified": false,
+     "label": "INSUFFICIENT_SAMPLE",
+     "lower_cis_game_and_player_game": [],
+     "required": {
+      "decisions": 200,
+      "games": 40
+     }
+    },
+    "hit_rate": 0.5333333333333333,
+    "n_decisions": 15,
+    "n_games": 4,
+    "n_settled": 15,
+    "net_pnl": 0.9700000000000002,
+    "roi_on_cash_outlay": 0.13798008534850645
+   },
+   "settlement_join": {
+    "SETTLED_box_score_derived": 15
+   },
+   "source": "RETROSPECTIVE_COMPARATOR",
+   "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1",
+   "study_id": "ISSUE53_EXEC_SHADOW_V1"
+  },
+  "comparator_T60_available": {
+   "coverage": {
+    "classes": {
+     "EVALUATED_NO_TRADE": 5,
+     "TRADED": 9
+    },
+    "decision_instants": 9,
+    "decision_instants_with_a_usable_board": 9,
+    "excluded_by_archive_latency": 0,
+    "games": 14,
+    "games_traded": 9,
+    "games_with_a_decision_evaluated": 14,
+    "instants_note": "games that tip at the same time share one decision instant and therefore one board: their exclusion is perfectly correlated, so the number of independent coverage observations is the number of distinct instants",
+    "per_game": [
+     {
+      "board_age_s": 489.0,
+      "class": "TRADED",
+      "game_id": "espn:401909088",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-20T19:00:00Z"
+     },
+     {
+      "board_age_s": 301.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909089",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=512; QUALITY_GATE:SPREAD_WIDE=49; DEPTH_CONFLICT_ORDERBOOK=21; QUALITY_GATE:EXTREME_PRICE=20",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-20T23:00:00Z"
+     },
+     {
+      "board_age_s": 253.0,
+      "class": "TRADED",
+      "game_id": "espn:401909090",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T01:30:00Z"
+     },
+     {
+      "board_age_s": 437.0,
+      "class": "TRADED",
+      "game_id": "espn:401909834",
+      "n_trades": 6,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T23:00:00Z"
+     },
+     {
+      "board_age_s": 437.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909835",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=571; QUALITY_GATE:EXTREME_PRICE=14; QUALITY_GATE:SPREAD_WIDE=14; DEPTH_CONFLICT_ORDERBOOK=7",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:00:00Z"
+     },
+     {
+      "board_age_s": 557.0,
+      "class": "TRADED",
+      "game_id": "espn:401909091",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 557.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909836",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=507; QUALITY_GATE:EXTREME_PRICE=7; QUALITY_GATE:SPREAD_WIDE=6",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 557.0,
+      "class": "TRADED",
+      "game_id": "espn:401909837",
+      "n_trades": 6,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 617.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909838",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=576; QUALITY_GATE:EXTREME_PRICE=11; QUALITY_GATE:SPREAD_WIDE=5; QUALITY_GATE:NO_SIZE=2",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:00:00Z"
+     },
+     {
+      "board_age_s": 617.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909839",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=640; QUALITY_GATE:SPREAD_WIDE=30; QUALITY_GATE:EXTREME_PRICE=20; QUALITY_GATE:NO_SIZE=4",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:00:00Z"
+     },
+     {
+      "board_age_s": 414.0,
+      "class": "TRADED",
+      "game_id": "espn:401909840",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T00:30:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909092",
+      "n_trades": 6,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:00:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909841",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:00:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909842",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:30:00Z"
+     }
+    ],
+    "share_evaluated": 1.0
+   },
+   "errors": [],
+   "executability": {
+    "ask_drift_cents": {
+     "mean": 1.36,
+     "p10": 0.0,
+     "p90": 1.0
+    },
+    "board_age_at_decision_s": {
+     "median": 557.0,
+     "n": 36,
+     "p90": 724.0
+    },
+    "n_with_a_later_board": 36,
+    "note": "drift is observed AFTER the decision and never used in a selection; adverse = the ask moved up before the next board",
+    "share_adverse": 0.167
+   },
+   "label": "comparator_T60_available",
+   "metrics": {
+    "by_decision_mode": {
+     "sealed_pretip_asof": {
+      "cash_outlay": 16.6,
+      "hit_rate": 0.4722222222222222,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 9,
+      "n_player_games": 26,
+      "n_settled": 36,
+      "n_trades": 36,
+      "roi_on_cash_outlay": 0.024096385542168693,
+      "total_net_pnl": 0.40000000000000036
+     }
+    },
+    "by_edge_bucket": {
+     "0.06-0.10": {
+      "cash_outlay": 3.74,
+      "hit_rate": 0.75,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 4,
+      "n_player_games": 7,
+      "n_settled": 8,
+      "n_trades": 8,
+      "roi_on_cash_outlay": 0.60427807486631,
+      "total_net_pnl": 2.26
+     },
+     "0.10-0.15": {
+      "cash_outlay": 1.87,
+      "hit_rate": 0.6,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 4,
+      "n_settled": 5,
+      "n_trades": 5,
+      "roi_on_cash_outlay": 0.60427807486631,
+      "total_net_pnl": 1.13
+     },
+     "0.15-0.25": {
+      "cash_outlay": 9.410000000000002,
+      "hit_rate": 0.3157894736842105,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 7,
+      "n_player_games": 16,
+      "n_settled": 19,
+      "n_trades": 19,
+      "roi_on_cash_outlay": -0.3623804463336875,
+      "total_net_pnl": -3.41
+     },
+     ">=0.25": {
+      "cash_outlay": 1.58,
+      "hit_rate": 0.5,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_settled": 4,
+      "n_trades": 4,
+      "roi_on_cash_outlay": 0.2658227848101267,
+      "total_net_pnl": 0.42000000000000026
+     }
+    },
+    "by_family": {
+     "player_assists": {
+      "cash_outlay": 5.169999999999999,
+      "hit_rate": 0.36363636363636365,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 7,
+      "n_player_games": 11,
+      "n_settled": 11,
+      "n_trades": 11,
+      "roi_on_cash_outlay": -0.22630560928433271,
+      "total_net_pnl": -1.17
+     },
+     "player_points": {
+      "cash_outlay": 4.47,
+      "hit_rate": 0.45454545454545453,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 6,
+      "n_player_games": 11,
+      "n_settled": 11,
+      "n_trades": 11,
+      "roi_on_cash_outlay": 0.11856823266219241,
+      "total_net_pnl": 0.53
+     },
+     "player_pra": {
+      "cash_outlay": 4.07,
+      "hit_rate": 0.5,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 6,
+      "n_player_games": 8,
+      "n_settled": 8,
+      "n_trades": 8,
+      "roi_on_cash_outlay": -0.017199017199017213,
+      "total_net_pnl": -0.07000000000000006
+     },
+     "player_rebounds": {
+      "cash_outlay": 0.71,
+      "hit_rate": 0.5,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_settled": 2,
+      "n_trades": 2,
+      "roi_on_cash_outlay": 0.4084507042253522,
+      "total_net_pnl": 0.29000000000000004
+     },
+     "player_threes": {
+      "cash_outlay": 2.18,
+      "hit_rate": 0.75,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_settled": 4,
+      "n_trades": 4,
+      "roi_on_cash_outlay": 0.37614678899082565,
+      "total_net_pnl": 0.82
+     }
+    },
+    "by_quote_age": {
+     "120-300s": {
+      "cash_outlay": 1.54,
+      "hit_rate": 0.6666666666666666,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 1,
+      "n_player_games": 2,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": 0.2987012987012987,
+      "total_net_pnl": 0.46
+     },
+     "300-900s": {
+      "cash_outlay": 15.06,
+      "hit_rate": 0.45454545454545453,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 8,
+      "n_player_games": 24,
+      "n_settled": 33,
+      "n_trades": 33,
+      "roi_on_cash_outlay": -0.0039840637450199385,
+      "total_net_pnl": -0.060000000000000275
+     }
+    },
+    "by_side": {
+     "NO": {
+      "cash_outlay": 14.800000000000002,
+      "hit_rate": 0.43333333333333335,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 8,
+      "n_player_games": 22,
+      "n_settled": 30,
+      "n_trades": 30,
+      "roi_on_cash_outlay": -0.12162162162162159,
+      "total_net_pnl": -1.7999999999999998
+     },
+     "YES": {
+      "cash_outlay": 1.8,
+      "hit_rate": 0.6666666666666666,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 4,
+      "n_player_games": 5,
+      "n_settled": 6,
+      "n_trades": 6,
+      "roi_on_cash_outlay": 1.2222222222222223,
+      "total_net_pnl": 2.2
+     }
+    },
+    "clv_cents": {
+     "ci95": [
+      -0.6970454545454546,
+      2.7334027777777776
+     ],
+     "mean": 0.9583333333333334,
+     "n_clusters": 9,
+     "n_obs": 36,
+     "n_settled": 36,
+     "n_valid": 36,
+     "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+     "se": 0.8989221137215857,
+     "share_positive": 0.3888888888888889,
+     "z": 1.0660916209589972
+    },
+    "computation_lag_s": {
+     "max": 1084.0,
+     "mean": 909.75,
+     "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
+    },
+    "dnp": {
+     "n_dnp": 0,
+     "sources": {}
+    },
+    "eligible_vs_blocked": {
+     "any_block_reason": {
+      "DEPTH_CONFLICT_ORDERBOOK": 77,
+      "EV_BELOW_THRESHOLD": 7405,
+      "GATE_STATUS": 6474,
+      "INSUFFICIENT_DEPTH": 74,
+      "LOW_P_PLAY": 458,
+      "QUALITY_GATE:EXTREME_PRICE": 232,
+      "QUALITY_GATE:NO_SIZE": 74,
+      "QUALITY_GATE:SPREAD_WIDE": 370,
+      "SPREAD_WIDE_STRICT": 1026
+     },
+     "blocked_sides": 8365,
+     "candidate_sides": 8534,
+     "eligible_not_traded_reason": {
+      "EXPOSURE_CAP:PLAYER_GAME": 9,
+      "EXPOSURE_CAP:TEAM_GAME": 42,
+      "NOT_BEST_IN_THESIS": 82
+     },
+     "eligible_sides": 169,
+     "primary_block_reason": {
+      "DEPTH_CONFLICT_ORDERBOOK": 70,
+      "ELIGIBLE": 169,
+      "EV_BELOW_THRESHOLD": 1368,
+      "GATE_STATUS": 5986,
+      "LOW_P_PLAY": 115,
+      "QUALITY_GATE:EXTREME_PRICE": 217,
+      "QUALITY_GATE:NO_SIZE": 74,
+      "QUALITY_GATE:SPREAD_WIDE": 361,
+      "SPREAD_WIDE_STRICT": 174
+     },
+     "trades": 36
+    },
+    "evidence_status": {
+     "authority": "none; never a value claim below the minimums",
+     "counted": "prospective AND settled decisions only",
+     "have": {
+      "decisions": 0,
+      "games": 0
+     },
+     "independent_clocks_verified": false,
+     "label": "INSUFFICIENT_SAMPLE",
+     "lower_cis_game_and_player_game": [],
+     "required": {
+      "decisions": 200,
+      "games": 40
+     }
+    },
+    "exposure_concentration": {
+     "max_trades_per_player_game": 2,
+     "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
+     "players_with_multiple_trades": 10,
+     "share_NO": 0.8333333333333334,
+     "share_of_notional_by_family": {
+      "player_assists": 0.31151667715544373,
+      "player_points": 0.2680931403398364,
+      "player_pra": 0.24606670862177477,
+      "player_rebounds": 0.04216488357457521,
+      "player_threes": 0.13215859030837007
+     },
+     "share_of_notional_by_game": {
+      "espn:401909092": 0.18691000629326623,
+      "espn:401909834": 0.144115796098175,
+      "espn:401909837": 0.1478917558212713,
+      "espn:401909840": 0.10069225928256768,
+      "espn:401909842": 0.10006293266205162
+     },
+     "share_of_notional_by_player": {
+      "espn:3155942": 0.06670862177470109,
+      "espn:4432166": 0.06670862177470109,
+      "espn:4593803": 0.0761485210824418,
+      "espn:6442": 0.07048458149779738,
+      "espn:6589": 0.06985525487728131
+     },
+     "share_of_notional_by_side": {
+      "NO": 0.8936438011327881,
+      "YES": 0.10635619886721209
+     }
+    },
+    "independent_units": {
+     "n_decisions": 36,
+     "n_games": 9,
+     "n_player_games": 26,
+     "n_settled_decisions": 36,
+     "n_theses": 36,
+     "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
+    },
+    "label": "comparator_T60_available",
+    "n_candidate_sides": 8534,
+    "overall": {
+     "cash_outlay": 16.6,
+     "hit_rate": 0.4722222222222222,
+     "n_dnp_settled_at_fair_price": 0,
+     "n_games": 9,
+     "n_player_games": 26,
+     "n_settled": 36,
+     "n_trades": 36,
+     "roi_on_cash_outlay": 0.024096385542168693,
+     "total_net_pnl": 0.40000000000000036
+    },
+    "roi": {
+     "fees_per_contract_mean": 0.019722222222222228,
+     "max_drawdown": {
+      "final_equity": 0.3999999999999999,
+      "max_drawdown": 1.65,
+      "n": 36,
+      "note": "dollars, 1 contract per position, ordered by tip time; a path statistic of a handful of games, not a risk estimate"
+     },
+     "mean_net_pnl_per_contract": {
+      "ci95": [
+       -0.15666666666666668,
+       0.21557499999999988
+      ],
+      "mean": 0.01111111111111112,
+      "n_clusters": 9,
+      "n_obs": 36,
+      "se": 0.09384393693311059,
+      "z": 0.11839988255214419
+     },
+     "on_cash_outlay_effective_entry_plus_fee": {
+      "game_clustered": {
+       "ci95": [
+        -0.3338573207513222,
+        0.4949669522066728
+       ],
+       "n_clusters": 9,
+       "n_obs": 36,
+       "ratio": 0.02409638554216866
+      },
+      "player_game_clustered": {
+       "ci95": [
+        -0.37543508091624733,
+        0.39446866788166457
+       ],
+       "n_clusters": 26,
+       "n_obs": 36,
+       "ratio": 0.024096385542168707
+      }
+     },
+     "on_quoted_price_scorecard_compatible": {
+      "ci95": [
+       -0.3579410868370104,
+       0.5333534136546184
+      ],
+      "n_clusters": 9,
+      "n_obs": 36,
+      "ratio": 0.025756600128782982
+     },
+     "slippage_per_contract": 0.01
+    },
+    "status": "OK",
+    "strategy_id": "PF_EDGE_STRICT_T45_AVAIL_V1"
+   },
+   "predicted_ev": {
+    "mean_ev_net_exec": 0.1787,
+    "mean_p_model": 0.6398,
+    "n_trades": 36,
+    "note": "predicted by the model at the decision instant, before any outcome",
+    "sum_ev_net_exec": 6.4343
+   },
+   "prospective_start_utc": "2026-10-27T06:00:00Z",
+   "protocol_version": "1.0.0",
+   "settled": {
+    "clv_cents": {
+     "ci95": [
+      -0.6970454545454546,
+      2.7334027777777776
+     ],
+     "mean": 0.9583333333333334,
+     "n_clusters": 9,
+     "n_obs": 36,
+     "n_settled": 36,
+     "n_valid": 36,
+     "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+     "se": 0.8989221137215857,
+     "share_positive": 0.3888888888888889,
+     "z": 1.0660916209589972
+    },
+    "evidence_status": {
+     "authority": "none; never a value claim below the minimums",
+     "counted": "prospective AND settled decisions only",
+     "have": {
+      "decisions": 0,
+      "games": 0
+     },
+     "independent_clocks_verified": false,
+     "label": "INSUFFICIENT_SAMPLE",
+     "lower_cis_game_and_player_game": [],
+     "required": {
+      "decisions": 200,
+      "games": 40
+     }
+    },
+    "hit_rate": 0.4722222222222222,
+    "n_decisions": 36,
+    "n_games": 9,
+    "n_settled": 36,
+    "net_pnl": 0.40000000000000036,
+    "roi_on_cash_outlay": 0.024096385542168693
+   },
+   "settlement_join": {
+    "SETTLED_box_score_derived": 36
+   },
+   "source": "RETROSPECTIVE_COMPARATOR",
+   "strategy_id": "PF_EDGE_STRICT_T45_AVAIL_V1",
+   "study_id": "ISSUE53_EXEC_SHADOW_T45_AVAIL_V1"
+  },
+  "control_T60_strict": {
+   "coverage": {
+    "classes": {
+     "EVALUATED_NO_TRADE": 1,
+     "EXCLUDED_ARCHIVE_LATENCY": 9,
+     "TRADED": 4
+    },
+    "decision_instants": 9,
+    "decision_instants_with_a_usable_board": 4,
+    "excluded_by_archive_latency": 9,
+    "games": 14,
+    "games_traded": 4,
+    "games_with_a_decision_evaluated": 5,
+    "instants_note": "games that tip at the same time share one decision instant and therefore one board: their exclusion is perfectly correlated, so the number of independent coverage observations is the number of distinct instants",
+    "per_game": [
+     {
+      "board_age_s": 69.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909088",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-20T19:00:00Z"
+     },
+     {
+      "board_age_s": 301.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909089",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=512; QUALITY_GATE:SPREAD_WIDE=49; DEPTH_CONFLICT_ORDERBOOK=21; QUALITY_GATE:EXTREME_PRICE=20",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-20T23:00:00Z"
+     },
+     {
+      "board_age_s": 253.0,
+      "class": "TRADED",
+      "game_id": "espn:401909090",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T01:30:00Z"
+     },
+     {
+      "board_age_s": 17.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909834",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:00:00Z"
+     },
+     {
+      "board_age_s": 17.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909835",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:00:00Z"
+     },
+     {
+      "board_age_s": 137.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909091",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 137.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909836",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 137.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909837",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 175.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909838",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:00:00Z"
+     },
+     {
+      "board_age_s": 175.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909839",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:00:00Z"
+     },
+     {
+      "board_age_s": 114.0,
+      "class": "EXCLUDED_ARCHIVE_LATENCY",
+      "game_id": "espn:401909840",
+      "n_trades": 0,
+      "reason": "BOARD_COMMITTED_AFTER_CHECKPOINT",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:30:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909092",
+      "n_trades": 6,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:00:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909841",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:00:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909842",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:30:00Z"
+     }
+    ],
+    "share_evaluated": 0.357
+   },
+   "errors": [],
+   "executability": {
+    "ask_drift_cents": {
+     "mean": 0.07,
+     "p10": 0.0,
+     "p90": 0.0
+    },
+    "board_age_at_decision_s": {
+     "median": 724.0,
+     "n": 15,
+     "p90": 724.0
+    },
+    "n_with_a_later_board": 15,
+    "note": "drift is observed AFTER the decision and never used in a selection; adverse = the ask moved up before the next board",
+    "share_adverse": 0.067
+   },
+   "label": "control_T60_strict",
+   "metrics": {
+    "by_decision_mode": {
+     "sealed_pretip_asof": {
+      "cash_outlay": 7.199999999999998,
+      "hit_rate": 0.5333333333333333,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 4,
+      "n_player_games": 10,
+      "n_settled": 15,
+      "n_trades": 15,
+      "roi_on_cash_outlay": 0.11111111111111117,
+      "total_net_pnl": 0.8000000000000003
+     }
+    },
+    "by_edge_bucket": {
+     "0.06-0.10": {
+      "cash_outlay": 1.8800000000000003,
+      "hit_rate": 1.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 3,
+      "n_settled": 4,
+      "n_trades": 4,
+      "roi_on_cash_outlay": 1.127659574468085,
+      "total_net_pnl": 2.12
+     },
+     "0.10-0.15": {
+      "cash_outlay": 0.82,
+      "hit_rate": 1.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_settled": 2,
+      "n_trades": 2,
+      "roi_on_cash_outlay": 1.4390243902439028,
+      "total_net_pnl": 1.1800000000000002
+     },
+     "0.15-0.25": {
+      "cash_outlay": 3.91,
+      "hit_rate": 0.25,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 7,
+      "n_settled": 8,
+      "n_trades": 8,
+      "roi_on_cash_outlay": -0.48849104859335035,
+      "total_net_pnl": -1.91
+     },
+     ">=0.25": {
+      "cash_outlay": 0.59,
+      "hit_rate": 0.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_settled": 1,
+      "n_trades": 1,
+      "roi_on_cash_outlay": -1.0,
+      "total_net_pnl": -0.59
+     }
+    },
+    "by_family": {
+     "player_assists": {
+      "cash_outlay": 1.7999999999999998,
+      "hit_rate": 0.25,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 4,
+      "n_settled": 4,
+      "n_trades": 4,
+      "roi_on_cash_outlay": -0.4444444444444445,
+      "total_net_pnl": -0.7999999999999999
+     },
+     "player_points": {
+      "cash_outlay": 2.24,
+      "hit_rate": 0.6,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 5,
+      "n_settled": 5,
+      "n_trades": 5,
+      "roi_on_cash_outlay": 0.33928571428571425,
+      "total_net_pnl": 0.76
+     },
+     "player_pra": {
+      "cash_outlay": 1.6,
+      "hit_rate": 0.3333333333333333,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 3,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": -0.37500000000000006,
+      "total_net_pnl": -0.6000000000000001
+     },
+     "player_threes": {
+      "cash_outlay": 1.56,
+      "hit_rate": 1.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": 0.923076923076923,
+      "total_net_pnl": 1.44
+     }
+    },
+    "by_quote_age": {
+     "120-300s": {
+      "cash_outlay": 1.54,
+      "hit_rate": 0.6666666666666666,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 1,
+      "n_player_games": 2,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": 0.2987012987012987,
+      "total_net_pnl": 0.46
+     },
+     "300-900s": {
+      "cash_outlay": 5.659999999999999,
+      "hit_rate": 0.5,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 8,
+      "n_settled": 12,
+      "n_trades": 12,
+      "roi_on_cash_outlay": 0.060070671378091856,
+      "total_net_pnl": 0.33999999999999986
+     }
+    },
+    "by_side": {
+     "NO": {
+      "cash_outlay": 6.279999999999999,
+      "hit_rate": 0.4166666666666667,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 8,
+      "n_settled": 12,
+      "n_trades": 12,
+      "roi_on_cash_outlay": -0.20382165605095545,
+      "total_net_pnl": -1.28
+     },
+     "YES": {
+      "cash_outlay": 0.9199999999999999,
+      "hit_rate": 1.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 1,
+      "n_player_games": 2,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": 2.2608695652173916,
+      "total_net_pnl": 2.08
+     }
+    },
+    "clv_cents": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -1.0333333333333334,
+     "n_clusters": 4,
+     "n_obs": 15,
+     "n_settled": 15,
+     "n_valid": 15,
+     "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+     "se": null,
+     "share_positive": 0.2,
+     "z": null
+    },
+    "computation_lag_s": {
+     "max": 1384.0,
+     "mean": 1289.8,
+     "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
+    },
+    "dnp": {
+     "n_dnp": 0,
+     "sources": {}
+    },
+    "eligible_vs_blocked": {
+     "any_block_reason": {
+      "DEPTH_CONFLICT_ORDERBOOK": 30,
+      "EV_BELOW_THRESHOLD": 2687,
+      "GATE_STATUS": 2246,
+      "INSUFFICIENT_DEPTH": 56,
+      "LOW_P_PLAY": 238,
+      "QUALITY_GATE:EXTREME_PRICE": 96,
+      "QUALITY_GATE:NO_SIZE": 56,
+      "QUALITY_GATE:SPREAD_WIDE": 216,
+      "SPREAD_WIDE_STRICT": 548
+     },
+     "blocked_sides": 2928,
+     "candidate_sides": 2992,
+     "eligible_not_traded_reason": {
+      "EXPOSURE_CAP:PLAYER_GAME": 4,
+      "EXPOSURE_CAP:TEAM_GAME": 16,
+      "NOT_BEST_IN_THESIS": 29
+     },
+     "eligible_sides": 64,
+     "primary_block_reason": {
+      "DEPTH_CONFLICT_ORDERBOOK": 29,
+      "ELIGIBLE": 64,
+      "EV_BELOW_THRESHOLD": 376,
+      "GATE_STATUS": 1987,
+      "LOW_P_PLAY": 76,
+      "QUALITY_GATE:EXTREME_PRICE": 85,
+      "QUALITY_GATE:NO_SIZE": 56,
+      "QUALITY_GATE:SPREAD_WIDE": 211,
+      "SPREAD_WIDE_STRICT": 108
+     },
+     "trades": 15
+    },
+    "evidence_status": {
+     "authority": "none; never a value claim below the minimums",
+     "counted": "prospective AND settled decisions only",
+     "have": {
+      "decisions": 0,
+      "games": 0
+     },
+     "independent_clocks_verified": false,
+     "label": "INSUFFICIENT_SAMPLE",
+     "lower_cis_game_and_player_game": [],
+     "required": {
+      "decisions": 200,
+      "games": 40
+     }
+    },
+    "exposure_concentration": {
+     "max_trades_per_player_game": 2,
+     "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
+     "players_with_multiple_trades": 5,
+     "share_NO": 0.8,
+     "share_of_notional_by_family": {
+      "player_assists": 0.24927536231884054,
+      "player_points": 0.31014492753623185,
+      "player_pra": 0.22318840579710142,
+      "player_threes": 0.21739130434782605
+     },
+     "share_of_notional_by_game": {
+      "espn:401909090": 0.21449275362318837,
+      "espn:401909092": 0.43043478260869555,
+      "espn:401909841": 0.12463768115942027,
+      "espn:401909842": 0.2304347826086956
+     },
+     "share_of_notional_by_player": {
+      "espn:3155942": 0.15362318840579708,
+      "espn:4066457": 0.14492753623188404,
+      "espn:4431736": 0.09565217391304345,
+      "espn:4593803": 0.17536231884057968,
+      "espn:6589": 0.16086956521739126
+     },
+     "share_of_notional_by_side": {
+      "NO": 0.8753623188405796,
+      "YES": 0.12463768115942027
+     }
+    },
+    "independent_units": {
+     "n_decisions": 15,
+     "n_games": 4,
+     "n_player_games": 10,
+     "n_settled_decisions": 15,
+     "n_theses": 15,
+     "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
+    },
+    "label": "control_T60_strict",
+    "n_candidate_sides": 2992,
+    "overall": {
+     "cash_outlay": 7.199999999999998,
+     "hit_rate": 0.5333333333333333,
+     "n_dnp_settled_at_fair_price": 0,
+     "n_games": 4,
+     "n_player_games": 10,
+     "n_settled": 15,
+     "n_trades": 15,
+     "roi_on_cash_outlay": 0.11111111111111117,
+     "total_net_pnl": 0.8000000000000003
+    },
+    "roi": {
+     "fees_per_contract_mean": 0.02,
+     "max_drawdown": {
+      "final_equity": 0.8000000000000003,
+      "max_drawdown": 1.65,
+      "n": 15,
+      "note": "dollars, 1 contract per position, ordered by tip time; a path statistic of a handful of games, not a risk estimate"
+     },
+     "mean_net_pnl_per_contract": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "mean": 0.05333333333333335,
+      "n_clusters": 4,
+      "n_obs": 15,
+      "se": null,
+      "z": null
+     },
+     "on_cash_outlay_effective_entry_plus_fee": {
+      "game_clustered": {
+       "ci95": [
+        null,
+        null
+       ],
+       "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+       "n_clusters": 4,
+       "n_obs": 15,
+       "ratio": 0.11111111111111117
+      },
+      "player_game_clustered": {
+       "ci95": [
+        -0.4778272079543258,
+        0.76
+       ],
+       "n_clusters": 10,
+       "n_obs": 15,
+       "ratio": 0.11111111111111112
+      }
+     },
+     "on_quoted_price_scorecard_compatible": {
+      "ci95": [
+       null,
+       null
+      ],
+      "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+      "n_clusters": 4,
+      "n_obs": 15,
+      "ratio": 0.11851851851851852
+     },
+     "slippage_per_contract": 0.01
+    },
+    "status": "OK",
+    "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1"
+   },
+   "predicted_ev": {
+    "mean_ev_net_exec": 0.1651,
+    "mean_p_model": 0.6451,
+    "n_trades": 15,
+    "note": "predicted by the model at the decision instant, before any outcome",
+    "sum_ev_net_exec": 2.4768
+   },
+   "prospective_start_utc": "2026-10-24T06:00:00Z",
+   "protocol_version": "2.0.1",
+   "settled": {
+    "clv_cents": {
+     "ci95": [
+      null,
+      null
+     ],
+     "ci_status": "TOO_FEW_CLUSTERS (<5 games)",
+     "mean": -1.0333333333333334,
+     "n_clusters": 4,
+     "n_obs": 15,
+     "n_settled": 15,
+     "n_valid": 15,
+     "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+     "se": null,
+     "share_positive": 0.2,
+     "z": null
+    },
+    "evidence_status": {
+     "authority": "none; never a value claim below the minimums",
+     "counted": "prospective AND settled decisions only",
+     "have": {
+      "decisions": 0,
+      "games": 0
+     },
+     "independent_clocks_verified": false,
+     "label": "INSUFFICIENT_SAMPLE",
+     "lower_cis_game_and_player_game": [],
+     "required": {
+      "decisions": 200,
+      "games": 40
+     }
+    },
+    "hit_rate": 0.5333333333333333,
+    "n_decisions": 15,
+    "n_games": 4,
+    "n_settled": 15,
+    "net_pnl": 0.8000000000000003,
+    "roi_on_cash_outlay": 0.11111111111111117
+   },
+   "settlement_join": {
+    "SETTLED_box_score_derived": 15
+   },
+   "source": "RETROSPECTIVE_RECONSTRUCTION",
+   "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1",
+   "study_id": "ISSUE53_EXEC_SHADOW_V1"
+  },
+  "t45_T45_available": {
+   "coverage": {
+    "classes": {
+     "EVALUATED_NO_TRADE": 5,
+     "TRADED": 9
+    },
+    "decision_instants": 9,
+    "decision_instants_with_a_usable_board": 9,
+    "excluded_by_archive_latency": 0,
+    "games": 14,
+    "games_traded": 9,
+    "games_with_a_decision_evaluated": 14,
+    "instants_note": "games that tip at the same time share one decision instant and therefore one board: their exclusion is perfectly correlated, so the number of independent coverage observations is the number of distinct instants",
+    "per_game": [
+     {
+      "board_age_s": 549.0,
+      "class": "TRADED",
+      "game_id": "espn:401909088",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-20T19:00:00Z"
+     },
+     {
+      "board_age_s": 361.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909089",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=541; QUALITY_GATE:SPREAD_WIDE=38; QUALITY_GATE:EXTREME_PRICE=19; DEPTH_CONFLICT_ORDERBOOK=18",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-20T23:00:00Z"
+     },
+     {
+      "board_age_s": 313.0,
+      "class": "TRADED",
+      "game_id": "espn:401909090",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T01:30:00Z"
+     },
+     {
+      "board_age_s": 497.0,
+      "class": "TRADED",
+      "game_id": "espn:401909834",
+      "n_trades": 6,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T23:00:00Z"
+     },
+     {
+      "board_age_s": 497.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909835",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=572; QUALITY_GATE:EXTREME_PRICE=15; QUALITY_GATE:SPREAD_WIDE=10; DEPTH_CONFLICT_ORDERBOOK=7",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:00:00Z"
+     },
+     {
+      "board_age_s": 317.0,
+      "class": "TRADED",
+      "game_id": "espn:401909091",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 317.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909836",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=498; QUALITY_GATE:SPREAD_WIDE=14; QUALITY_GATE:EXTREME_PRICE=8",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 317.0,
+      "class": "TRADED",
+      "game_id": "espn:401909837",
+      "n_trades": 6,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-21T23:30:00Z"
+     },
+     {
+      "board_age_s": 775.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909838",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=536; QUALITY_GATE:SPREAD_WIDE=45; QUALITY_GATE:EXTREME_PRICE=12; QUALITY_GATE:NO_SIZE=1",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:00:00Z"
+     },
+     {
+      "board_age_s": 775.0,
+      "class": "EVALUATED_NO_TRADE",
+      "game_id": "espn:401909839",
+      "n_trades": 0,
+      "reason": "GATE_STATUS=611; QUALITY_GATE:SPREAD_WIDE=55; QUALITY_GATE:EXTREME_PRICE=24; QUALITY_GATE:NO_SIZE=4",
+      "status": "NO_TRADE",
+      "tip_utc": "2026-10-22T00:00:00Z"
+     },
+     {
+      "board_age_s": 414.0,
+      "class": "TRADED",
+      "game_id": "espn:401909840",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T00:30:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909092",
+      "n_trades": 6,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:00:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909841",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:00:00Z"
+     },
+     {
+      "board_age_s": 724.0,
+      "class": "TRADED",
+      "game_id": "espn:401909842",
+      "n_trades": 3,
+      "reason": "",
+      "status": "TRADED",
+      "tip_utc": "2026-10-22T02:30:00Z"
+     }
+    ],
+    "share_evaluated": 1.0
+   },
+   "errors": [],
+   "executability": {
+    "ask_drift_cents": {
+     "mean": 0.61,
+     "p10": -1.0,
+     "p90": 1.0
+    },
+    "board_age_at_decision_s": {
+     "median": 497.0,
+     "n": 36,
+     "p90": 724.0
+    },
+    "n_with_a_later_board": 36,
+    "note": "drift is observed AFTER the decision and never used in a selection; adverse = the ask moved up before the next board",
+    "share_adverse": 0.167
+   },
+   "label": "t45_T45_available",
+   "metrics": {
+    "by_decision_mode": {
+     "sealed_pretip_asof": {
+      "cash_outlay": 16.610000000000003,
+      "hit_rate": 0.4166666666666667,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 9,
+      "n_player_games": 27,
+      "n_settled": 36,
+      "n_trades": 36,
+      "roi_on_cash_outlay": -0.09692956050571944,
+      "total_net_pnl": -1.61
+     }
+    },
+    "by_edge_bucket": {
+     "0.06-0.10": {
+      "cash_outlay": 3.12,
+      "hit_rate": 0.5714285714285714,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 6,
+      "n_settled": 7,
+      "n_trades": 7,
+      "roi_on_cash_outlay": 0.282051282051282,
+      "total_net_pnl": 0.8799999999999999
+     },
+     "0.10-0.15": {
+      "cash_outlay": 2.9600000000000004,
+      "hit_rate": 0.42857142857142855,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 5,
+      "n_player_games": 7,
+      "n_settled": 7,
+      "n_trades": 7,
+      "roi_on_cash_outlay": 0.013513513513513523,
+      "total_net_pnl": 0.040000000000000036
+     },
+     "0.15-0.25": {
+      "cash_outlay": 8.96,
+      "hit_rate": 0.3333333333333333,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 7,
+      "n_player_games": 16,
+      "n_settled": 18,
+      "n_trades": 18,
+      "roi_on_cash_outlay": -0.33035714285714285,
+      "total_net_pnl": -2.96
+     },
+     ">=0.25": {
+      "cash_outlay": 1.57,
+      "hit_rate": 0.5,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_settled": 4,
+      "n_trades": 4,
+      "roi_on_cash_outlay": 0.2738853503184715,
+      "total_net_pnl": 0.43000000000000027
+     }
+    },
+    "by_family": {
+     "player_assists": {
+      "cash_outlay": 5.63,
+      "hit_rate": 0.3333333333333333,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 7,
+      "n_player_games": 12,
+      "n_settled": 12,
+      "n_trades": 12,
+      "roi_on_cash_outlay": -0.2895204262877442,
+      "total_net_pnl": -1.63
+     },
+     "player_points": {
+      "cash_outlay": 4.819999999999999,
+      "hit_rate": 0.5,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 6,
+      "n_player_games": 12,
+      "n_settled": 12,
+      "n_trades": 12,
+      "roi_on_cash_outlay": 0.24481327800829877,
+      "total_net_pnl": 1.18
+     },
+     "player_pra": {
+      "cash_outlay": 3.5700000000000003,
+      "hit_rate": 0.42857142857142855,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 5,
+      "n_player_games": 7,
+      "n_settled": 7,
+      "n_trades": 7,
+      "roi_on_cash_outlay": -0.1596638655462185,
+      "total_net_pnl": -0.5700000000000001
+     },
+     "player_rebounds": {
+      "cash_outlay": 0.9199999999999999,
+      "hit_rate": 0.0,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_settled": 2,
+      "n_trades": 2,
+      "roi_on_cash_outlay": -1.0,
+      "total_net_pnl": -0.9199999999999999
+     },
+     "player_threes": {
+      "cash_outlay": 1.67,
+      "hit_rate": 0.6666666666666666,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_settled": 3,
+      "n_trades": 3,
+      "roi_on_cash_outlay": 0.1976047904191617,
+      "total_net_pnl": 0.33
+     }
+    },
+    "by_quote_age": {
+     "300-900s": {
+      "cash_outlay": 16.610000000000003,
+      "hit_rate": 0.4166666666666667,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 9,
+      "n_player_games": 27,
+      "n_settled": 36,
+      "n_trades": 36,
+      "roi_on_cash_outlay": -0.09692956050571944,
+      "total_net_pnl": -1.61
+     }
+    },
+    "by_side": {
+     "NO": {
+      "cash_outlay": 15.320000000000002,
+      "hit_rate": 0.3870967741935484,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 8,
+      "n_player_games": 23,
+      "n_settled": 31,
+      "n_trades": 31,
+      "roi_on_cash_outlay": -0.21671018276762397,
+      "total_net_pnl": -3.3199999999999994
+     },
+     "YES": {
+      "cash_outlay": 1.29,
+      "hit_rate": 0.6,
+      "n_dnp_settled_at_fair_price": 0,
+      "n_games": 3,
+      "n_player_games": 4,
+      "n_settled": 5,
+      "n_trades": 5,
+      "roi_on_cash_outlay": 1.3255813953488371,
+      "total_net_pnl": 1.71
+     }
+    },
+    "clv_cents": {
+     "ci95": [
+      -1.106060606060606,
+      1.071536796536796
+     ],
+     "mean": 0.05555555555555555,
+     "n_clusters": 9,
+     "n_obs": 36,
+     "n_settled": 36,
+     "n_valid": 36,
+     "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+     "se": 0.5547791584920843,
+     "share_positive": 0.3055555555555556,
+     "z": 0.1001399470494857
+    },
+    "computation_lag_s": {
+     "max": 1084.0,
+     "mean": 869.75,
+     "note": "decided_utc - as_of_utc: how long after the information cut-off the decision row was actually computed (asof_replay)"
+    },
+    "dnp": {
+     "n_dnp": 0,
+     "sources": {}
+    },
+    "eligible_vs_blocked": {
+     "any_block_reason": {
+      "DEPTH_CONFLICT_ORDERBOOK": 84,
+      "EV_BELOW_THRESHOLD": 7450,
+      "GATE_STATUS": 6480,
+      "INSUFFICIENT_DEPTH": 25,
+      "LOW_P_PLAY": 458,
+      "QUALITY_GATE:EXTREME_PRICE": 239,
+      "QUALITY_GATE:NO_SIZE": 25,
+      "QUALITY_GATE:SPREAD_WIDE": 406,
+      "SPREAD_WIDE_STRICT": 1112
+     },
+     "blocked_sides": 8397,
+     "candidate_sides": 8562,
+     "eligible_not_traded_reason": {
+      "EXPOSURE_CAP:PLAYER_GAME": 8,
+      "EXPOSURE_CAP:TEAM_GAME": 42,
+      "NOT_BEST_IN_THESIS": 79
+     },
+     "eligible_sides": 165,
+     "primary_block_reason": {
+      "DEPTH_CONFLICT_ORDERBOOK": 75,
+      "ELIGIBLE": 165,
+      "EV_BELOW_THRESHOLD": 1366,
+      "GATE_STATUS": 5987,
+      "LOW_P_PLAY": 122,
+      "QUALITY_GATE:EXTREME_PRICE": 224,
+      "QUALITY_GATE:NO_SIZE": 25,
+      "QUALITY_GATE:SPREAD_WIDE": 399,
+      "SPREAD_WIDE_STRICT": 199
+     },
+     "trades": 36
+    },
+    "evidence_status": {
+     "authority": "none; never a value claim below the minimums",
+     "counted": "prospective AND settled decisions only",
+     "have": {
+      "decisions": 0,
+      "games": 0
+     },
+     "independent_clocks_verified": false,
+     "label": "INSUFFICIENT_SAMPLE",
+     "lower_cis_game_and_player_game": [],
+     "required": {
+      "decisions": 200,
+      "games": 40
+     }
+    },
+    "exposure_concentration": {
+     "max_trades_per_player_game": 2,
+     "note": "trades on one player-game share one outcome (points/PRA/threes of the same player are strongly correlated)",
+     "players_with_multiple_trades": 9,
+     "share_NO": 0.8611111111111112,
+     "share_of_notional_by_family": {
+      "player_assists": 0.33899371069182394,
+      "player_points": 0.28867924528301886,
+      "player_pra": 0.2157232704402516,
+      "player_rebounds": 0.055345911949685536,
+      "player_threes": 0.10125786163522013
+     },
+     "share_of_notional_by_game": {
+      "espn:401909088": 0.1069182389937107,
+      "espn:401909092": 0.17484276729559753,
+      "espn:401909834": 0.14528301886792455,
+      "espn:401909837": 0.15031446540880505,
+      "espn:401909842": 0.1
+     },
+     "share_of_notional_by_player": {
+      "espn:3155942": 0.06666666666666668,
+      "espn:4066457": 0.06352201257861635,
+      "espn:4593803": 0.07672955974842768,
+      "espn:4684742": 0.0729559748427673,
+      "espn:6589": 0.06981132075471698
+     },
+     "share_of_notional_by_side": {
+      "NO": 0.9245283018867925,
+      "YES": 0.07547169811320754
+     }
+    },
+    "independent_units": {
+     "n_decisions": 36,
+     "n_games": 9,
+     "n_player_games": 27,
+     "n_settled_decisions": 36,
+     "n_theses": 36,
+     "note": "rungs, sides and snapshots are never independent bets; the unit is the game (cluster) and the player-game"
+    },
+    "label": "t45_T45_available",
+    "n_candidate_sides": 8562,
+    "overall": {
+     "cash_outlay": 16.610000000000003,
+     "hit_rate": 0.4166666666666667,
+     "n_dnp_settled_at_fair_price": 0,
+     "n_games": 9,
+     "n_player_games": 27,
+     "n_settled": 36,
+     "n_trades": 36,
+     "roi_on_cash_outlay": -0.09692956050571944,
+     "total_net_pnl": -1.61
+    },
+    "roi": {
+     "fees_per_contract_mean": 0.019722222222222228,
+     "max_drawdown": {
+      "final_equity": -1.6099999999999997,
+      "max_drawdown": 3.57,
+      "n": 36,
+      "note": "dollars, 1 contract per position, ordered by tip time; a path statistic of a handful of games, not a risk estimate"
+     },
+     "mean_net_pnl_per_contract": {
+      "ci95": [
+       -0.21223333333333333,
+       0.15213068181818176
+      ],
+      "mean": -0.044722222222222226,
+      "n_clusters": 9,
+      "n_obs": 36,
+      "se": 0.09421198739785076,
+      "z": -0.47469779013750496
+     },
+     "on_cash_outlay_effective_entry_plus_fee": {
+      "game_clustered": {
+       "ci95": [
+        -0.43989963476556704,
+        0.3531996032068008
+       ],
+       "n_clusters": 9,
+       "n_obs": 36,
+       "ratio": -0.09692956050571946
+      },
+      "player_game_clustered": {
+       "ci95": [
+        -0.48350404391920976,
+        0.29872350631584543
+       ],
+       "n_clusters": 27,
+       "n_obs": 36,
+       "ratio": -0.09692956050571948
+      }
+     },
+     "on_quoted_price_scorecard_compatible": {
+      "ci95": [
+       -0.47015358629415693,
+       0.37995339645809423
+      ],
+      "n_clusters": 9,
+      "n_obs": 36,
+      "ratio": -0.10360360360360361
+     },
+     "slippage_per_contract": 0.01
+    },
+    "status": "OK",
+    "strategy_id": "PF_EDGE_STRICT_T45_AVAIL_V1"
+   },
+   "predicted_ev": {
+    "mean_ev_net_exec": 0.1769,
+    "mean_p_model": 0.6383,
+    "n_trades": 36,
+    "note": "predicted by the model at the decision instant, before any outcome",
+    "sum_ev_net_exec": 6.3672
+   },
+   "prospective_start_utc": "2026-10-27T06:00:00Z",
+   "protocol_version": "1.0.0",
+   "settled": {
+    "clv_cents": {
+     "ci95": [
+      -1.106060606060606,
+      1.071536796536796
+     ],
+     "mean": 0.05555555555555555,
+     "n_clusters": 9,
+     "n_obs": 36,
+     "n_settled": 36,
+     "n_valid": 36,
+     "note": "only trades with a VALID closing line (two-sided, <= 15 min before tip) count",
+     "se": 0.5547791584920843,
+     "share_positive": 0.3055555555555556,
+     "z": 0.1001399470494857
+    },
+    "evidence_status": {
+     "authority": "none; never a value claim below the minimums",
+     "counted": "prospective AND settled decisions only",
+     "have": {
+      "decisions": 0,
+      "games": 0
+     },
+     "independent_clocks_verified": false,
+     "label": "INSUFFICIENT_SAMPLE",
+     "lower_cis_game_and_player_game": [],
+     "required": {
+      "decisions": 200,
+      "games": 40
+     }
+    },
+    "hit_rate": 0.4166666666666667,
+    "n_decisions": 36,
+    "n_games": 9,
+    "n_settled": 36,
+    "net_pnl": -1.61,
+    "roi_on_cash_outlay": -0.09692956050571944
+   },
+   "settlement_join": {
+    "SETTLED_box_score_derived": 36
+   },
+   "source": "RETROSPECTIVE_RECONSTRUCTION",
+   "strategy_id": "PF_EDGE_STRICT_T45_AVAIL_V1",
+   "study_id": "ISSUE53_EXEC_SHADOW_T45_AVAIL_V1"
+  }
+ },
+ "n_games": 14,
+ "overlap": {
+  "contracts_both": 14,
+  "control_only": 1,
+  "games_control_only": 0,
+  "games_t45_only": 5,
+  "games_traded_both": 4,
+  "reading": "descriptive; each lane keeps its own ledger and exposure caps, so a shared contract is two separate shadow positions",
+  "t45_only": 22
+ },
+ "projection_accuracy_all_games": {
+  "by_family_challenger": {
+   "assists": {
+    "bias": -0.1824,
+    "crps": 0.9286,
+    "mae": 1.339,
+    "n": 322,
+    "n_games": 14,
+    "primary_metric": "crps"
+   },
+   "fga": {
+    "bias": -0.2446,
+    "crps": 2.1239,
+    "mae": 3.0166,
+    "n": 322,
+    "n_games": 14,
+    "primary_metric": "crps"
+   },
+   "minutes": {
+    "bias": -0.585,
+    "crps": 4.2094,
+    "mae": 5.9673,
+    "n": 322,
+    "n_games": 14,
+    "primary_metric": "crps"
+   },
+   "participation": {
+    "bias": 0.0683,
+    "brier": 0.1249,
+    "crps": 0.1249,
+    "mae": 0.2044,
+    "n": 485,
+    "n_games": 14,
+    "primary_metric": "brier"
+   },
+   "points": {
+    "bias": -0.4746,
+    "crps": 3.2794,
+    "mae": 4.6957,
+    "n": 322,
+    "n_games": 14,
+    "primary_metric": "crps"
+   },
+   "pra": {
+    "bias": -0.743,
+    "crps": 4.2993,
+    "mae": 6.0045,
+    "n": 322,
+    "n_games": 14,
+    "primary_metric": "crps"
+   },
+   "rebounds": {
+    "bias": -0.1943,
+    "crps": 1.2549,
+    "mae": 1.7988,
+    "n": 322,
+    "n_games": 14,
+    "primary_metric": "crps"
+   },
+   "threes": {
+    "bias": 0.0643,
+    "crps": 0.5367,
+    "mae": 0.8368,
+    "n": 322,
+    "n_games": 14,
+    "primary_metric": "crps"
+   }
+  },
+  "eligible_games_by_lane_status": {
+   "comparator_T45_strict": {
+    "EVALUATED_NO_TRADE": 1,
+    "EXCLUDED_ARCHIVE_LATENCY": 9,
+    "TRADED": 4
+   },
+   "comparator_T60_available": {
+    "EVALUATED_NO_TRADE": 5,
+    "TRADED": 9
+   },
+   "control_T60_strict": {
+    "EVALUATED_NO_TRADE": 1,
+    "EXCLUDED_ARCHIVE_LATENCY": 9,
+    "TRADED": 4
+   },
+   "t45_T45_available": {
+    "EVALUATED_NO_TRADE": 5,
+    "TRADED": 9
+   }
+  },
+  "games": [
+   "espn:401909088",
+   "espn:401909089",
+   "espn:401909090",
+   "espn:401909091",
+   "espn:401909092",
+   "espn:401909834",
+   "espn:401909835",
+   "espn:401909836",
+   "espn:401909837",
+   "espn:401909838",
+   "espn:401909839",
+   "espn:401909840",
+   "espn:401909841",
+   "espn:401909842"
+  ],
+  "independent_of_lanes": true,
+  "n_challenger_forecasts_scored": 2739,
+  "n_eligible_games": 14,
+  "rule": "the denominator is every game with settled forecasts. TRADED, EVALUATED_NO_TRADE, EXCLUDED_* and NO_SEAL games are all scored; a trade decision, a missing board or a lane exclusion never removes a game from the accuracy evaluation",
+  "scoring_version": "1.3.0",
+  "status": "OK"
+ },
+ "schema": "issue53.lane_comparison.v1",
+ "scope": "Retrospective reconstruction of both lanes' sealers over the games since 2026-10-20 on the final archives (uncounted, descriptive) plus two matched comparators that change one thing at a time; prospective, counted evidence is read only from each lane's own sealed ledger and is not available yet (control start 2026-10-24T06:00Z; T-45 start 2026-10-27T06:00Z, after approval)."
+}
