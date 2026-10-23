@@ -1,0 +1,144 @@
+{
+ "board": {
+  "commit_utc": "2026-10-23T18:59:36Z",
+  "gap_s": 233.0,
+  "tick_observed_utc": "2026-10-23T18:56:07Z"
+ },
+ "body_sha256": "b20409a3b276702cd2b676247ba86fc9d1d317319a0ec2359e2846bcc7844687",
+ "candidates": {
+  "file": "espn_401909848__candidates.jsonl.gz",
+  "n_eligible": 0,
+  "n_sides": 598,
+  "n_trades": 0,
+  "primary_reason_histogram": {
+   "DEPTH_CONFLICT_ORDERBOOK": 16,
+   "GATE_STATUS": 531,
+   "NO_EXECUTABLE_QUOTE": 18,
+   "QUALITY_GATE:EXTREME_PRICE": 12,
+   "QUALITY_GATE:NO_SIZE": 1,
+   "QUALITY_GATE:SPREAD_WIDE": 20
+  },
+  "sha256": "bcece656bc2f3fa86ebd8ca02fddf453f4f4e1c1eb57068afb315d5f9da0be3d"
+ },
+ "checkpoint_utc": "2026-10-23T19:00:00Z",
+ "clocks": {
+  "board_commit_index_ticks": 2268,
+  "forecast_commit_index_ids": 41446
+ },
+ "code": {
+  "default_branch": "main",
+  "dirty": false,
+  "event": "workflow_dispatch",
+  "protocol_effective_commit_utc": "2026-10-22T00:26:15Z",
+  "protocol_path": "research/projection_foundation/nba/paper/exec_shadow_config_v2.json",
+  "ref": "refs/heads/main",
+  "run_attempt": "1",
+  "run_id": "40004955099",
+  "sha": "90a5af19da473dbf090fbc8c46d914b9c4128fd8",
+  "workflow": "exec-shadow-seal"
+ },
+ "computed_utc": "2026-10-23T19:17:29Z",
+ "decision_mode": "sealed_pretip_asof",
+ "dry_run": false,
+ "forecast_ids_sha256": "c63ac151f054dedd680ea0a546a452f6d0bbc71392ddebfb0c7fb9c1f57dd6f4",
+ "forecasts": {
+  "n_game_records_used": 7,
+  "n_player_records_late_or_unverified": 0,
+  "n_player_records_used": 2105
+ },
+ "game": {
+  "away": "CHI",
+  "game_date_et": "2026-10-23",
+  "game_id": "espn:401909848",
+  "home": "MIL",
+  "schedule_file": "context_schedule_20261023T181816Z_39977505948.jsonl.gz",
+  "schedule_observed_utc": "2026-10-23T18:18:16Z",
+  "schedule_sha256": "cf9515ed02afd81a54ff04532c51de5f0ffce6790821d66785e39c8469f4ee84",
+  "start_utc": "2026-10-23T20:00:00Z"
+ },
+ "game_reason": "GATE_STATUS=531; QUALITY_GATE:SPREAD_WIDE=20; NO_EXECUTABLE_QUOTE=18; DEPTH_CONFLICT_ORDERBOOK=16",
+ "inputs": {
+  "coverage": {
+   "UNSUPPORTED_SERIES:KXNBA1HTEAMTOTAL": 22,
+   "UNSUPPORTED_SERIES:KXNBA2D": 4,
+   "UNSUPPORTED_SERIES:KXNBA3D": 1,
+   "UNSUPPORTED_SERIES:KXNBA3PTPROT": 53,
+   "UNSUPPORTED_SERIES:KXNBAASTPROT": 34,
+   "UNSUPPORTED_SERIES:KXNBABLK": 17,
+   "UNSUPPORTED_SERIES:KXNBAOT": 1,
+   "UNSUPPORTED_SERIES:KXNBAPTSLEADER": 15,
+   "UNSUPPORTED_SERIES:KXNBAPTSPROT": 44,
+   "UNSUPPORTED_SERIES:KXNBAREBPROT": 50,
+   "UNSUPPORTED_SERIES:KXNBASTL": 23,
+   "UNSUPPORTED_SERIES:KXNBASTOCK": 16,
+   "UNSUPPORTED_SERIES:KXNBAWINMARGIN": 8,
+   "markets": 497,
+   "quote:ONE_SIDED": 9,
+   "quote:TWO_SIDED": 488
+  },
+  "data_archive_head": "145608230600e35a027c90ce6fa43a1d980bd642",
+  "n_snapshot_rows": 497,
+  "projection_data_head": "93b8be88d17cc3892be4143dff617080aba3c1c8"
+ },
+ "ledger_after": {
+  "n_game": {
+   "espn:401909094": 3
+  },
+  "n_team": {
+   "espn:401909094|OKC": 3
+  },
+  "n_unit": {
+   "espn:401909094|espn:2991350": 1,
+   "espn:401909094|espn:4593803": 1,
+   "espn:401909094|espn:4683692": 1
+  },
+  "notional_day": {
+   "2026-10-22": 1.36
+  },
+  "notional_game": {
+   "espn:401909094": 1.36
+  },
+  "theses": [
+   "espn:401909094|player|espn:2991350|assists",
+   "espn:401909094|player|espn:4593803|points",
+   "espn:401909094|player|espn:4683692|threes"
+  ]
+ },
+ "ledger_before": {
+  "n_game": {
+   "espn:401909094": 3
+  },
+  "n_team": {
+   "espn:401909094|OKC": 3
+  },
+  "n_unit": {
+   "espn:401909094|espn:2991350": 1,
+   "espn:401909094|espn:4593803": 1,
+   "espn:401909094|espn:4683692": 1
+  },
+  "notional_day": {
+   "2026-10-22": 1.36
+  },
+  "notional_game": {
+   "espn:401909094": 1.36
+  },
+  "theses": [
+   "espn:401909094|player|espn:2991350|assists",
+   "espn:401909094|player|espn:4593803|points",
+   "espn:401909094|player|espn:4683692|threes"
+  ]
+ },
+ "paper_config_sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
+ "protocol_sha256": "f84e4067436e2515ea7f35f7417a4e9e66ad69f62ae66ea004a7c6c23244c3e8",
+ "schema": "issue53.exec_seal.v1",
+ "seal_id": "41fc8fd99fcf9530bddf",
+ "selected": [],
+ "status": "NO_TRADE",
+ "strategy_id": "PF_EDGE_STRICT_T60_EXEC_V1",
+ "study_id": "ISSUE53_EXEC_SHADOW_V1",
+ "study_version": "2.0.1",
+ "window": {
+  "closes_utc": "2026-10-23T19:50:00Z",
+  "opens_utc": "2026-10-23T19:10:00Z"
+ }
+}
