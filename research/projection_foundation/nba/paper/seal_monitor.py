@@ -46,6 +46,25 @@ def chain_alive(runs: list[dict], now: datetime, grace_min: float = 20.0) -> tup
     return False, "no run queued, in progress or recently finished"
 
 
+def stalled(runs: list[dict], now: datetime, stall_min: float = 10.0) -> str | None:
+    """A chain run exists but nothing is EXECUTING: no run in progress and the oldest queued (non-PR) run has been waiting more than `stall_min` minutes (hosted-runner queue delay at a
+    handover). A queued run counts as 'alive' for the dead-man check, which would otherwise hide exactly this gap."""
+    live = [r for r in runs if r.get("event") != "pull_request"]
+    if any(str(r.get("status", "")).lower() == "in_progress" for r in live):
+        return None
+    ages = []
+    for r in live:
+        if str(r.get("status", "")).lower() in ALIVE - {"in_progress"}:
+            t0 = None
+            for k in ("createdAt", "created_at", "startedAt", "run_started_at"):
+                if r.get(k):
+                    t0 = SW.parse_ts(r[k])
+                    break
+            if t0 is not None:
+                ages.append((now - t0).total_seconds() / 60.0)
+    return f"the only run(s) of the chain are queued (oldest {max(ages):.0f} min); nothing is executing" if ages and max(ages) >= stall_min else None
+
+
 def check(context_dir: str, seal_dir: str, runs: list[dict] | None, now: datetime, study: dict | None = None, *, lead_min: float = 45.0, grace_min: float = 20.0,
           missed_lookback_h: float = 36.0, lane: str = "control", liveness: bool = True) -> list[dict[str, Any]]:
     """Findings for ONE lane's ledger. `liveness=False` (second and later lanes) skips the chain-alive check, which the first lane already reports for the shared chain."""
@@ -75,6 +94,10 @@ def check(context_dir: str, seal_dir: str, runs: list[dict] | None, now: datetim
             f.append({"severity": WARN, "code": "SEAL_RUNS_UNKNOWN", "detail": "workflow run list unavailable; chain liveness not verified"})
     elif open_or_soon:
         alive, why = chain_alive(runs, now, grace_min)
+        any_open = any(SW.game_state(now, g, study, sealed, missed, en) == "OPEN" for g in games)
+        stall = stalled(runs, now) if any_open else None
+        if stall:
+            f.append({"severity": CRIT, "code": "SEAL_CHAIN_STALLED", "detail": f"a seal window is open and {stall} (runner-queue delay at a handover: games may be lost)"})
         if not alive:
             f.append({"severity": CRIT, "code": "SEAL_CHAIN_DEAD",
                       "detail": f"a seal window is open or opens within {int(lead_min)} min and the exec-shadow-seal chain has {why}"})

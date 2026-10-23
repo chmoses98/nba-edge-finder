@@ -5,7 +5,7 @@ name: exec-shadow-seal
 #     nba.paper.ledger_remote (GitHub Git Data API: server-side commit time, fast-forward only, additions only). Nothing here runs `git push` or `git commit`.
 #   * Post-game research joins settlements to that ledger and never recomputes a selection (nba.paper.exec_seal.evaluate).
 #   * WHY A CHAIN AND NOT A 5-MINUTE CRON. This repository measured its own schedule delivery at ~4% (capture_worker.yml: 34 runs of 864 expected, gaps of 2-3 h). A seal window is
-#     40 minutes, so a cron-driven sealer would miss most games. Like capture-worker / nba-ticker, one run owns the cadence (a poll every 90 s, ~280 minutes) and dispatches its
+#     40 minutes, so a cron-driven sealer would miss most games. Like capture-worker / nba-ticker, one run owns the cadence (a poll every 90 s, 240-335 minutes, handing over at a quiet moment) and dispatches its
 #     successor; cron is only the bootstrap. A delivered cron costs a ~15 s stdlib gate (no dependency install); the chain starts only when a seal window is open or opens within 6 h.
 #   * Dead-man: nba-watchdog (the repo's ops monitor / `nba-ops-alert` issue) alerts when a window is open or imminent and no run of this workflow is alive, or when a window closed
 #     with neither a seal nor a MISSED marker, or on any MISSED marker (nba.paper.seal_monitor).
@@ -64,7 +64,7 @@ concurrency:
 jobs:
   tick:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 350
     permissions:
       contents: write        # used ONLY by nba.paper.ledger_remote (Git Data API, ledger layout only) via PUBLISH_TOKEN
       actions: write         # used ONLY to dispatch the successor

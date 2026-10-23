@@ -29,11 +29,12 @@ UTC = timezone.utc
 HERE = os.path.dirname(os.path.abspath(__file__))
 STUDY_PATH = os.path.join(HERE, "exec_shadow_config_v2.json")
 # Sealing lanes. Each lane is a separately preregistered study with its OWN protocol file, strategy id and ledger BRANCH, so evidence is never mixed. The control lane is the
-# original strict T-60 study (unchanged); `t45` is the availability-rule study added afterwards (see exec_shadow_config_t45_v1.json). Which lanes a live chain runs is chosen by
+# original strict T-60 study (unchanged); `t60a` (T-60, availability board rule) is the primary new study, `t45` an exploratory inactive one. Which lanes a live chain runs is chosen by
 # the workflow (`--lanes`); a lane that is not listed there is never sealed.
 LANES: dict[str, dict[str, str]] = {
     "control": {"study": "exec_shadow_config_v2.json", "branch": "exec-shadow-seals"},
-    "t45": {"study": "exec_shadow_config_t45_v1.json", "branch": "exec-shadow-seals-t45"},
+    "t60a": {"study": "exec_shadow_config_t60a_v1.json", "branch": "exec-shadow-seals-t60a"},     # PRIMARY new experiment: T-60, board = latest tick observed AND committed by the checkpoint
+    "t45": {"study": "exec_shadow_config_t45_v1.json", "branch": "exec-shadow-seals-t45"},       # exploratory, inactive: kept for the record, never in the primary comparison
 }
 
 

@@ -23,7 +23,7 @@ def test_the_seal_workflow_is_a_self_renewing_chain_gated_by_a_dependency_free_c
     crons = [s["cron"] for s in wf["on"]["schedule"]]
     assert crons == ["*/5 12-23,0-3 * 10-12,1-6 *"]                                           # bootstrap only: the repo measured ~4% cron delivery
     jobs = wf["jobs"]
-    assert set(jobs) == {"tick"} and jobs["tick"]["timeout-minutes"] <= 300
+    assert set(jobs) == {"tick"} and jobs["tick"]["timeout-minutes"] <= 355
     # the ONLY write permissions: contents (Git Data API publisher, ledger layout only) and actions (successor dispatch); no issues, no secrets
     assert jobs["tick"]["permissions"] == {"contents": "write", "actions": "write"}
     grp = wf["concurrency"]["group"]

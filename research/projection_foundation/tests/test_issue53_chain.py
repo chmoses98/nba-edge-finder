@@ -179,6 +179,7 @@ class Fake:
         self.mono = 0.0
         self.remote = {"exec-shadow-seals": dict(self.rc.get("ledger_files") or {}), "exec-shadow-seals-t45": dict(self.rc.get("ledger_files_t45") or {})}
         self.dir_branch: dict[str, str] = {}
+        self.mark_missed: dict[str, datetime] = {}
 
     def kind(self, cmd):
         s = " ".join(map(str, cmd))
@@ -209,6 +210,12 @@ class Fake:
             seals = Path(cmd[cmd.index("--seals") + 1])
             (seals / "seals/2026-10-20").mkdir(parents=True, exist_ok=True)
             (seals / "seals/2026-10-20/espn_401909088__fake.json").write_text("{}")
+        if k == "exec_seal watch" and "--dry-run" not in cmd and self.mark_missed:                 # what the real watch does for a closed, unsealed window: a MISSED marker
+            seals = Path(cmd[cmd.index("--seals") + 1])
+            for gid, closes in self.mark_missed.items():
+                if self.now > closes:
+                    (seals / "missed").mkdir(exist_ok=True)
+                    (seals / f"missed/{SW.gid_file(gid)}.json").write_text("{}")
         if k == "ledger_remote.py export":                                      # additions = every file of the (fresh) ledger worktree that the remote does not have
             src, dst = Path(cmd[cmd.index("--seals") + 1]), Path(cmd[cmd.index("--dir") + 1])
             have = set(self.remote[self.dir_branch.get(str(src), "exec-shadow-seals")])
@@ -244,7 +251,7 @@ class Fake:
 
 
 def chain(tmp_path, fake, **kw):
-    a = argparse.Namespace(work=str(tmp_path / "work"), repo_root=str(tmp_path), repo="o/n", dry_run=False, now=None, interval_s=90.0, max_minutes=280.0, successor_at_min=250.0,
+    a = argparse.Namespace(work=str(tmp_path / "work"), repo_root=str(tmp_path), repo="o/n", dry_run=False, now=None, interval_s=90.0, max_minutes=335.0, successor_at_min=315.0, retire_after_min=240.0, quiet_lead_min=45.0,
                            horizon_h=6.0, default_branch="main", workflow_file="exec-shadow-seal.yml")
     for k, v in kw.items():
         setattr(a, k, v)
@@ -387,3 +394,82 @@ def test_a_dry_two_lane_rehearsal_publishes_nothing(tmp_path, env_token):
     chain(tmp_path, f, dry_run=True, now="2026-10-20T18:26:00Z", lanes="control,t45").run_chain()
     k = f.kinds()
     assert k.count("exec_seal seal") == 2 and not set(k) & {"mount_seals", "ledger_remote.py export", "ledger_remote.py publish", "workflow run"}
+
+
+# ------------------------------------------------------------------------------------------------------------------ handover at a quiet moment (owner request 2026-10-23)
+def games_ctx(root, specs):
+    """specs: [(tip_iso, game_id)] -> schedule snapshot with those games."""
+    rows = [{**GAME, "game_id": gid, "start_time_utc": tip} for tip, gid in specs]
+    return make_ctx(root, rows=rows)
+
+
+def run_handover(tmp_path, specs, start="2026-10-20T12:00:00Z", rc=None, marks=None, **kw):
+    ctx = games_ctx(tmp_path / "c", specs)
+    f = Fake(tmp_path, ctx, rc={"ledger_files": {"ENABLED_UTC": "2026-10-19T00:00:00Z\n"}, **(rc or {})})
+    f.now = t(start)
+    f.mark_missed = marks or {}
+    c = chain(tmp_path, f, max_minutes=335, successor_at_min=315, retire_after_min=240, quiet_lead_min=45, interval_s=90, **kw)
+    return c, f, c.run_chain()
+
+
+def test_the_chain_retires_at_the_first_quiet_moment_after_the_threshold_not_before(tmp_path, env_token):
+    c, f, rc = run_handover(tmp_path, [("2026-10-20T17:00:00Z", "espn:401909088"), ("2026-10-20T21:00:00Z", "espn:401909099")])
+    disp = [x for x in f.calls if x[0] == "workflow run"]
+    assert len(disp) == 1 and rc == 0
+    # started 12:00: at 240 min (16:00) the window 16:10-16:50 opens in 10 min -> NOT quiet, the chain stays; the game is sealed and published at ~16:10-16:12, nothing is left to seal
+    # and the next window is 4 h away -> the first quiet moment: the successor is dispatched and the chain ends. The runner-queue gap of the successor then falls in dead time.
+    assert t("2026-10-20T16:10:00Z") <= f.now < t("2026-10-20T16:20:00Z")
+    k = [x[0] for x in f.calls]
+    first_seal = k.index("exec_seal seal")
+    assert k.index("ledger_remote.py publish", first_seal) < k.index("workflow run")                     # sealed and durably published first, then handed over
+    assert not [x for x in f.calls[:first_seal] if x[0] == "workflow run"]                              # and never dispatched before the window was dealt with
+
+
+def test_the_chain_does_not_hand_over_while_a_window_is_open_or_imminent(tmp_path, env_token):
+    # a game that cannot be sealed by the fake (not id 088) keeps its window OPEN: no quiet moment during 16:10-16:50, so no retirement before 16:51
+    c, f, rc = run_handover(tmp_path, [("2026-10-20T17:00:00Z", "espn:401909055"), ("2026-10-20T21:00:00Z", "espn:401909099")], marks={"espn:401909055": t("2026-10-20T16:50:00Z")})
+    disp = [x for x in f.calls if x[0] == "workflow run"]
+    assert len(disp) == 1 and t("2026-10-20T16:50:00Z") < f.now < t("2026-10-20T17:00:00Z")           # the window closed unsealed (MISSED marker), then quiet
+
+
+def test_a_quiet_chain_still_runs_the_minimum_before_retiring(tmp_path, env_token):
+    c, f, rc = run_handover(tmp_path, [("2026-10-20T21:00:00Z", "espn:401909088")], start="2026-10-20T15:00:00Z")      # nothing before 20:10: quiet from the start
+    assert len([x for x in f.calls if x[0] == "workflow run"]) == 1
+    assert f.now >= t("2026-10-20T19:00:00Z")                                                           # not before retire_after_min (240 min after 15:00)
+    assert f.now < t("2026-10-20T19:05:00Z")
+
+
+def test_without_a_quiet_moment_the_successor_is_queued_by_315_and_the_chain_ends_at_the_hard_cap(tmp_path, env_token):
+    specs = [((t("2026-10-20T16:30:00Z") + timedelta(minutes=40 * i)).strftime("%Y-%m-%dT%H:%M:%SZ"), f"espn:4019092{i:02d}") for i in range(12)]      # windows run back to back
+    specs[0] = (specs[0][0], "espn:401909088")
+    c, f, rc = run_handover(tmp_path, specs)
+    disp_i = [i for i, x in enumerate(f.calls) if x[0] == "workflow run"]
+    assert len(disp_i) == 1
+    assert t("2026-10-20T17:14:00Z") <= f.now <= t("2026-10-20T17:38:00Z")                              # 12:00 + 335 min = 17:35
+    # the dispatch happened at the 315-minute mark (17:15), i.e. ~20 minutes before the end, not at the end
+    assert sum(1 for x in f.calls[:disp_i[0]] if x[0] == "mount_context") * 90 / 60 >= 300
+
+
+def test_a_failed_dispatch_is_retried_and_the_chain_keeps_sealing_until_it_succeeds(tmp_path, env_token):
+    c, f, rc = run_handover(tmp_path, [("2026-10-20T21:00:00Z", "espn:401909088")], start="2026-10-20T15:00:00Z", rc={"workflow run": [1, 1, 0]})
+    assert [x[0] for x in f.calls].count("workflow run") == 3 and rc == 1 and any("successor" in e for e in c.errors)
+    assert f.now > t("2026-10-20T19:00:00Z")
+
+
+def test_nothing_to_hand_over_to_ends_quietly(tmp_path, env_token):
+    c, f, rc = run_handover(tmp_path, [("2026-10-20T14:00:00Z", "espn:401909088")], rc={"ledger_files": {"ENABLED_UTC": "2026-10-19T00:00:00Z\n", "seals/2026-10-20/espn_401909088__x.json": "{}"}})
+    assert "workflow run" not in f.kinds() and rc == 0                                                  # the only game is sealed: inactive, no successor, ends at once
+
+
+# ------------------------------------------------------------------------------------------------------------------ stalled handover is visible to the dead-man check
+def test_monitor_flags_a_window_open_while_the_only_chain_run_is_still_queued(tmp_path):
+    ctx = make_ctx(tmp_path / "c")
+    led = ledger(tmp_path)
+    now = t("2026-10-20T18:30:00Z")                                                                     # window open
+    queued = [{"databaseId": 7, "status": "queued", "event": "workflow_dispatch", "createdAt": "2026-10-20T18:05:00Z"}]
+    f = SM.check(ctx, led, queued, now, STUDY)
+    assert codes(f) == ["SEAL_CHAIN_STALLED"] and f[0]["severity"] == "CRITICAL"
+    fresh = [{"databaseId": 7, "status": "queued", "event": "workflow_dispatch", "createdAt": "2026-10-20T18:25:00Z"}]
+    assert SM.check(ctx, led, fresh, now, STUDY) == []                                                  # a 5-minute wait is normal
+    assert SM.check(ctx, led, queued + [{"databaseId": 6, "status": "in_progress", "event": "schedule"}], now, STUDY) == []     # something is executing
+    assert SM.check(ctx, led, queued, t("2026-10-20T17:50:00Z"), STUDY) == []                           # no window open yet: waiting in the queue costs nothing
