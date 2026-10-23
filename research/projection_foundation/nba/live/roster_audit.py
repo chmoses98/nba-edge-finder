@@ -305,6 +305,13 @@ def availability_alignment(feed: dict, official: list[dict]) -> dict[str, Any]:
             "ruled_out_rows_not_blocked": ruled_out_not_blocked, "blocked_but_not_ruled_out": blocked_not_out}
 
 
+def feed_digest(feed: dict) -> str:
+    """Identity of a published feed: SHA-256 of its canonical JSON (sorted keys, no whitespace), so an audit is bound to the exact document
+    it audited, not merely to a timestamp that a re-publication could share."""
+    import hashlib
+    return hashlib.sha256(json.dumps(feed, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest()
+
+
 def audit(feed: dict, official: list[dict], espn: dict, nba: dict, tx: dict) -> dict[str, Any]:
     ms = minutes_structure(feed)
     nba = usable(nba, espn)
@@ -318,7 +325,7 @@ def audit(feed: dict, official: list[dict], espn: dict, nba: dict, tx: dict) -> 
     errors += [f"availability: {x}" for x in avail["misaligned"]]
     errors += [f"ruled-out row not blocked: {x}" for x in avail["ruled_out_rows_not_blocked"]]
     return {"schema": "sift.nba_roster_audit.v1", "feed_generated_utc": feed.get("generated_utc"), "slate": feed.get("slate_date"),
-            "checked_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "feed_sha256": feed_digest(feed), "checked_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "sources": {"espn_rosters": espn.get("status"), "independent_rosters": f"{nba.get('status')}; usable teams {sorted(nba.get('teams', {}))}; dropped as incomplete {nba.get('dropped_incomplete')}", "transactions": tx.get("status")},
             "minutes": {t: {k: v for k, v in m.items() if k != "players"} for t, m in ms.items()},
             "identity": ident, "availability": avail, "errors": errors, "genuine_roster_errors": len(errors),
@@ -354,24 +361,30 @@ def render(a: dict) -> str:
     return "\n".join(L)
 
 
-def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--archive", required=True)
-    ap.add_argument("--json", default=None)
-    ap.add_argument("--season", default=None, help="league roster season, e.g. 2026-27 (default: from the slate date)")
-    a = ap.parse_args(argv)
-    feed = load_feed(a.archive)
-    official = load_official(a.archive, feed.get("slate_date"))
-    get = http_fetcher()
+def run_audit(archive: str, season: str | None = None, get: Fetcher | None = None) -> dict[str, Any]:
+    """Audit the feed as the archive now holds it (`projections/nba/latest.json`), with the official-report observations the run archived.
+    The result carries the feed's digest, so it can only ever vouch for this exact document. `get` is injectable for tests."""
+    feed = load_feed(archive)
+    official = load_official(archive, feed.get("slate_date"))
+    get = get or http_fetcher()
     yr = int((feed.get("slate_date") or "2026-10-20")[:4])
-    season = a.season or (f"{yr}-{str(yr + 1)[2:]}" if int((feed.get("slate_date") or "2026-10-20")[5:7]) >= 8 else f"{yr - 1}-{str(yr)[2:]}")
+    season = season or (f"{yr}-{str(yr + 1)[2:]}" if int((feed.get("slate_date") or "2026-10-20")[5:7]) >= 8 else f"{yr - 1}-{str(yr)[2:]}")
     teams = sorted({p["team"] for p in feed["players"]})
     new_team_names = sorted({p["name"] for p in feed["players"] if p["family"] == "minutes" and any(x.startswith("New team") for x in p.get("adjustments", []))})
     indep = nba_rosters(get, teams, season)
     if not indep["teams"]:                       # the league host refuses cloud egress: fall back to a second, non-ESPN source
         alt = bbref_rosters(get, teams, yr + 1 if int((feed.get("slate_date") or "2026-10-20")[5:7]) >= 8 else yr)
         indep = {**alt, "status": f"basketball-reference: {alt['status']} (league host: {indep['status']})"}
-    res = audit(feed, official, espn_rosters(get), indep, espn_transactions(get, new_team_names))
+    return audit(feed, official, espn_rosters(get), indep, espn_transactions(get, new_team_names))
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--archive", required=True)
+    ap.add_argument("--json", default=None)
+    ap.add_argument("--season", default=None, help="league roster season, e.g. 2026-27 (default: from the slate date)")
+    a = ap.parse_args(argv)
+    res = run_audit(a.archive, a.season)
     print(render(res))
     if a.json:
         with open(a.json, "w") as f:
