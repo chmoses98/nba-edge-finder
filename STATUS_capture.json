@@ -1,36 +1,32 @@
 {
- "last_capture_utc": "2026-10-23T11:27:32Z",
- "n_markets": 14080,
+ "last_capture_utc": "2026-10-23T11:42:32Z",
+ "n_markets": 14081,
  "n_series": 300,
- "requests": 907,
+ "requests": 916,
  "run_id": "39938886236",
  "markets_written": {
-  "encoding": "delta",
-  "seq": 24,
-  "path": "kalshi/markets_delta/dt=2026-10-23/kalshi_markets_delta_20261023T112732Z_39938886236.json.gz",
-  "bytes": 85337,
-  "n_markets": 14080,
-  "n_changed": 4503,
-  "changed_pct": 31.982,
-  "board_sha256": "3dc284de628f2862b2a98eb958cf94d7fa5ebc4f72ea944d5cb7c3d75ba5edec"
+  "encoding": "checkpoint",
+  "reason": "chain reached 24 deltas (limit 24)",
+  "path": "kalshi/markets/dt=2026-10-23/kalshi_markets_20261023T114232Z_39938886236.jsonl.gz",
+  "bytes": 1188371,
+  "n_markets": 14081,
+  "board_sha256": "092591d3f69bbd32119d8c25945ce11bae2bc737fa81745f3915ba64600dcb1f"
  },
  "orderbooks_written": {
-  "encoding": "delta",
-  "seq": 24,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-23/kalshi_orderbooks_delta_20261023T112732Z_39938886236.json.gz",
-  "bytes": 38305,
+  "encoding": "checkpoint",
+  "reason": "chain reached 24 deltas (limit 24)",
+  "path": "kalshi/orderbooks/dt=2026-10-23/kalshi_orderbooks_20261023T114232Z_39938886236.jsonl.gz",
+  "bytes": 40158,
   "n_markets": 300,
-  "n_changed": 297,
-  "changed_pct": 99.0,
-  "board_sha256": "0950f8f8aafb8d5f6d2e490714ddcbdbbc800b7424cdc38d6e628d5e0df1f67c"
+  "board_sha256": "c839877fa14f54aa8d91e40544487031f18084497f568fcb54ddab293b6fe29d"
  },
  "by_status": {
-  "active": 14067,
-  "initialized": 13
+  "active": 14080,
+  "initialized": 1
  },
  "by_support": {
   "BUILDABLE": 2764,
-  "MODELABLE": 3430,
+  "MODELABLE": 3431,
   "RESEARCH": 1996,
   "UNMODELABLE": 1385,
   "UNRESOLVED": 4505
@@ -63,7 +59,7 @@
   "player_double_double": 54,
   "player_points": 509,
   "player_pra": 210,
-  "player_rebounds": 594,
+  "player_rebounds": 595,
   "player_steals": 63,
   "player_threes": 605,
   "player_triple_double": 16,
@@ -86,7 +82,7 @@
   "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 14067 live markets, cap 300"
+  "order books sampled by priority: 14080 live markets, cap 300"
  ],
  "alarm": true
 }
