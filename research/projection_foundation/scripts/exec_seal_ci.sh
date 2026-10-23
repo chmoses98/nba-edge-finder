@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Helpers for .github/workflows/exec-shadow-seal.yml (Issue #53 sealed pre-tip ledger; RESEARCH ONLY).
-#   exec_seal_ci.sh mount_seals <dir> [branch]        a ledger branch: `exec-shadow-seals` (control, default) or `exec-shadow-seals-t45` (the only branches this pipeline writes)
+#   exec_seal_ci.sh mount_seals <dir> [branch]        a ledger branch: `exec-shadow-seals` (control, default), `exec-shadow-seals-t60a` (the T-60 availability study) or `exec-shadow-seals-t45` (exploratory, inactive); the only branches this pipeline writes
 #   exec_seal_ci.sh mount_context <base> [now_iso]    data-archive, depth 1 + the last three days of context/schedule only (~1 s: the idle gate)
 #   exec_seal_ci.sh mount_inputs <base> [now_iso]     deepen the capture history and add the Kalshi boards of the last two UTC days to data-archive and mount projection-data (forecasts, read-only)
 # This script never pushes. New seals / markers are published by nba.paper.ledger_remote (GitHub Git Data API: server-side commit time, fast-forward only, additions only),

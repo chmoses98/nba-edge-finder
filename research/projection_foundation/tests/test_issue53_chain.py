@@ -177,7 +177,7 @@ class Fake:
     def __init__(self, tmp_path, ctx, rc=None):
         self.tmp, self.ctx, self.rc, self.calls, self.now = tmp_path, ctx, rc or {}, [], t("2026-10-20T18:00:00Z")
         self.mono = 0.0
-        self.remote = {"exec-shadow-seals": dict(self.rc.get("ledger_files") or {}), "exec-shadow-seals-t45": dict(self.rc.get("ledger_files_t45") or {})}
+        self.remote = {"exec-shadow-seals": dict(self.rc.get("ledger_files") or {}), "exec-shadow-seals-t45": dict(self.rc.get("ledger_files_t45") or {}), "exec-shadow-seals-t60a": dict(self.rc.get("ledger_files_t60a") or {})}
         self.dir_branch: dict[str, str] = {}
         self.mark_missed: dict[str, datetime] = {}
 

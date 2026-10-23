@@ -182,6 +182,7 @@ def main(argv=None) -> int:
     ap.add_argument("--season-types", default="regular")
     ap.add_argument("--expect-paper", action="store_true")
     ap.add_argument("--seals", default=None, help="exec-shadow-seals checkout (Issue #53 sealed ledger): adds the seal-chain dead-man findings")
+    ap.add_argument("--seals-t60a", default=None, help="exec-shadow-seals-t60a checkout (T-60 availability study ledger); only its window / MISSED findings are added")
     ap.add_argument("--seals-t45", default=None, help="exec-shadow-seals-t45 checkout (T-45 availability study ledger); only its window / MISSED findings are added")
     ap.add_argument("--seal-runs", default=None, help="JSON of `gh run list --workflow exec-shadow-seal.yml` (chain liveness)")
     ap.add_argument("--out", default=None)
@@ -192,6 +193,8 @@ def main(argv=None) -> int:
     if a.seals:
         from nba.paper import seal_monitor as SM        # stdlib only; read-only
         rep["findings"] += SM.check(a.context, a.seals, SM.load_runs(a.seal_runs), now)
+        if a.seals_t60a:
+            rep["findings"] += SM.check(a.context, a.seals_t60a, None, now, lane="t60a", liveness=False)
         if a.seals_t45:
             rep["findings"] += SM.check(a.context, a.seals_t45, None, now, lane="t45", liveness=False)
         rep["status"] = CRIT if any(x["severity"] == CRIT for x in rep["findings"]) else WARN if rep["findings"] else OK

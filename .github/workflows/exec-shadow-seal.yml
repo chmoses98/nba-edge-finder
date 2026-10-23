@@ -11,7 +11,8 @@ name: exec-shadow-seal
 #     with neither a seal nor a MISSED marker, or on any MISSED marker (nba.paper.seal_monitor).
 #   * Only runs from the default branch can produce COUNTED seals (verified offline: code sha must be reachable from main). Pull-request runs and dry dispatches perform ONE
 #     rehearsal iteration on a fixed past instant and publish nothing.
-#   * Lanes: the same chain can seal a second, separately preregistered study (`t45`, own protocol / ledger branch / counts) - no extra scheduler. It is OFF in SEAL_LANES until approved.
+#   * Lanes: the same chain can seal a second, separately preregistered study (`t60a`, the T-60 availability study: own protocol / ledger branch / counts) - no extra scheduler. It is OFF in
+#     SEAL_LANES until its activation PR (the exploratory, inactive `t45` lane is kept in the code but is never enabled).
 #   * Does not touch the live ticker, capture worker, projection-foundation, the paper protocol, or any original archive.
 on:
   schedule:
@@ -33,6 +34,7 @@ on:
       - "research/projection_foundation/nba/paper/exec_shadow.py"
       - "research/projection_foundation/nba/paper/exec_shadow_config_v2.json"
       - "research/projection_foundation/nba/paper/exec_shadow_config_t45_v1.json"
+      - "research/projection_foundation/nba/paper/exec_shadow_config_t60a_v1.json"
       - "research/projection_foundation/nba/paper/seal_windows.py"
       - "research/projection_foundation/nba/paper/seal_chain.py"
       - "research/projection_foundation/nba/paper/seal_monitor.py"
@@ -50,10 +52,11 @@ env:
   PF_DIR: research/projection_foundation
   PY: "3.13"
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-  # Sealing lanes. `control` = the original strict T-60 study. `t45` = the separately preregistered T-45 availability study (exec_shadow_config_t45_v1.json; own ledger branch, own
-  # evidence counts). Adding t45 to SEAL_LANES is the ACTIVATION step and needs the owner's approval; the rehearsal below exercises both lanes dry on real archived data.
+  # Sealing lanes. `control` = the original strict T-60 study. `t60a` = the separately preregistered T-60 availability study (exec_shadow_config_t60a_v1.json; own ledger branch, own
+  # evidence counts). Adding t60a to SEAL_LANES is the ACTIVATION step (a separate reviewed change after its dry run, publication and verification are demonstrated); the rehearsal
+  # below exercises both lanes dry on real archived data. The exploratory `t45` lane is never listed here.
   SEAL_LANES: "control"
-  REHEARSAL_LANES: "control,t45"
+  REHEARSAL_LANES: "control,t60a"
   REHEARSAL_NOW: "2026-10-21T01:00:00Z"        # OKC@SAS window (opens 00:40Z, closes 01:20Z, tip 01:30Z) on real archived data: the dry iteration exercises the whole path
 
 concurrency:

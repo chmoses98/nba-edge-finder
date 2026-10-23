@@ -1,17 +1,18 @@
 """Side-by-side comparison of the Issue #53 sealing lanes (RESEARCH ONLY; read-only; descriptive). Results of different lanes are NEVER pooled.
 
-Lanes: `control` = strict T-60 (observed tick must be committed by the checkpoint), `t45` = T-45 availability study (latest tick committed by the decision instant). Each lane has its
-own protocol, strategy id, ledger branch, evidence counts and start date. This module reports, per lane and next to each other: coverage and exclusions, predicted EV, closing-line
+Lanes: `control` = strict T-60 (the latest observed tick must also be committed by the checkpoint), `t60a` = the T-60 availability study (the PRIMARY new experiment: the same T-60
+checkpoint, the latest tick OBSERVED and COMMITTED by it - only the board-selection rule differs), `t45` = the T-45 availability study (EXPLORATORY, inactive; shown only with
+`--include-t45`, in its own section, never in the primary comparison). Each lane has its own protocol, strategy id, ledger branch, evidence counts and start date. This module reports, per lane and next to each other: coverage and exclusions, predicted EV, closing-line
 value, settled performance, executability (board age, price drift), the overlap of selections, and - independently of any lane, trade or market - the projection accuracy on every
 eligible game (TRADED, NO_TRADE and no-board games all stay in the denominator).
 
 Two sources of lane rows, always labelled:
   * PROSPECTIVE: the verified, counted seals of a lane's ledger (`exec_seal.evaluate`) - the only evidence;
   * RETROSPECTIVE reconstruction: the lane's own sealer run over past games on the final archives with the lane's commit-time filters (`reconstruct`). It is uncounted and descriptive; it
-    answers 'what coverage would the rule have had', never 'does it work'. It also runs two matched comparators (the other rule at the same offset) so a coverage change can be
-    attributed to the board rule rather than to the offset.
+    answers 'what coverage would the rule have had', never 'does it work'. Because control and t60a share the checkpoint and every number, the board rule is the ONLY difference, so
+    their paired differences are attributable to it; the exploratory T-45 lane also runs one matched comparator (T-45 with the strict rule).
 
-    python -m nba.paper.compare_lanes --archive <projection-data checkout> --market <data-archive checkout> --repo <git repo with origin/data-archive> --out results/issue53_t45
+    python -m nba.paper.compare_lanes --archive <projection-data checkout> --market <data-archive checkout> --repo <git repo with origin/data-archive> --out results/issue53_t60a [--include-t45]
 """
 from __future__ import annotations
 
@@ -167,12 +168,65 @@ def summarize(label: str, source: str, study: dict, bodies: list[dict], rows: li
     return out
 
 
-def overlap(a: list[dict], b: list[dict]) -> dict[str, Any]:
+def overlap(a: list[dict], b: list[dict], other: str = "t60a") -> dict[str, Any]:
     ka = {(c["game_id"], c["ticker"], c["side"]) for c in a}
     kb = {(c["game_id"], c["ticker"], c["side"]) for c in b}
     ga, gb = {k[0] for k in ka}, {k[0] for k in kb}
-    return {"contracts_both": len(ka & kb), "control_only": len(ka - kb), "t45_only": len(kb - ka), "games_traded_both": len(ga & gb), "games_control_only": len(ga - gb), "games_t45_only": len(gb - ga),
-            "reading": "descriptive; each lane keeps its own ledger and exposure caps, so a shared contract is two separate shadow positions"}
+    return {"contracts_both": len(ka & kb), "control_only": len(ka - kb), f"{other}_only": len(kb - ka), "games_traded_both": len(ga & gb), "games_control_only": len(ga - gb),
+            f"games_{other}_only": len(gb - ga), "reading": "descriptive; each lane keeps its own ledger and exposure caps, so a shared contract is two separate shadow positions"}
+
+
+def _per_game(rows: list[dict]) -> dict[str, dict[str, Any]]:
+    out: dict[str, dict[str, Any]] = {}
+    for c in trade_rows(rows):
+        g = out.setdefault(c["game_id"], {"trades": 0, "settled": 0, "pnl": 0.0, "clv": [], "ev": 0.0})
+        g["trades"] += 1
+        g["ev"] += float(c.get("ev_net_exec") or 0.0)
+        if c.get("settled") and c.get("net_pnl") is not None:
+            g["settled"] += 1
+            g["pnl"] += float(c["net_pnl"])
+        if c.get("settled") and c.get("clv_cents") is not None:
+            g["clv"].append(float(c["clv_cents"]))
+    return out
+
+
+def paired(control_cov: dict, other_cov: dict, control_rows: list[dict], other_rows: list[dict], other: str = "t60a", seed: int = 53, n_boot: int = 2000) -> dict[str, Any]:
+    """Paired, per-game differences between the control and the primary lane on the SAME games (descriptive; never pooled with either lane's own evidence).
+
+    The lanes share the checkpoint, the thresholds and the costs, so the lane rule that picks the board is the only difference. Whenever the control's latest observed tick is committed by D
+    the availability rule picks the identical tick: the two must then agree contract for contract (`identical_selections_on_common_games`), and every difference comes from games the control
+    loses to archive latency (`recovered`). A game that neither lane could evaluate is in `games` but in no difference."""
+    cls_c = {pg["game_id"]: pg["class"] for pg in control_cov["per_game"]}
+    cls_o = {pg["game_id"]: pg["class"] for pg in other_cov["per_game"]}
+    ev = ("TRADED", "EVALUATED_NO_TRADE")
+    both = sorted(g for g in cls_c if cls_c[g] in ev and cls_o.get(g) in ev)
+    only_o = sorted(g for g in cls_o if cls_o[g] in ev and cls_c.get(g) not in ev)
+    only_c = sorted(g for g in cls_c if cls_c[g] in ev and cls_o.get(g) not in ev)
+    pc, po = _per_game(control_rows), _per_game(other_rows)
+    keys = lambda rows: {(c["game_id"], c["ticker"], c["side"]) for c in trade_rows(rows)}      # noqa: E731
+    kc, ko = keys(control_rows), keys(other_rows)
+    same = all({k for k in kc if k[0] == g} == {k for k in ko if k[0] == g} for g in both)
+    union = sorted(set(both) | set(only_o) | set(only_c))
+    diffs = [(po.get(g, {}).get("pnl", 0.0) - pc.get(g, {}).get("pnl", 0.0)) for g in union]
+    unsettled = sum(po.get(g, {}).get("trades", 0) - po.get(g, {}).get("settled", 0) for g in union) + sum(pc.get(g, {}).get("trades", 0) - pc.get(g, {}).get("settled", 0) for g in union)
+    ci: dict[str, Any] = {"status": "INSUFFICIENT_GAMES", "min_games": 8}
+    if len(diffs) >= 8:
+        rng = np.random.default_rng(seed)
+        d = np.asarray(diffs)
+        bs = np.sort([float(rng.choice(d, size=len(d), replace=True).mean()) for _ in range(n_boot)])
+        ci = {"status": "OK", "method": "game-clustered bootstrap of the per-game mean difference", "n_boot": n_boot, "seed": seed, "lo95": round(bs[int(0.025 * n_boot)], 4), "hi95": round(bs[int(0.975 * n_boot) - 1], 4)}
+
+    def block(gs: list[str], per: dict) -> dict[str, Any]:
+        clv = [x for g in gs for x in per.get(g, {}).get("clv", [])]
+        return {"games": len(gs), "trades": sum(per.get(g, {}).get("trades", 0) for g in gs), "net_pnl": round(sum(per.get(g, {}).get("pnl", 0.0) for g in gs), 4),
+                "mean_clv_cents": None if not clv else round(float(np.mean(clv)), 3), "n_clv": len(clv)}
+
+    return {"pair": f"control vs {other}", "games_both_evaluated": len(both), f"games_only_{other}_evaluated": len(only_o), "games_only_control_evaluated": len(only_c),
+            "identical_selections_on_common_games": bool(same),
+            "check": "the availability rule is a superset of the strict rule: games_only_control_evaluated must be 0 and the common games must agree contract for contract",
+            "common_games": {"control": block(both, pc), other: block(both, po)}, "recovered_games": {other: block(only_o, po)},
+            "per_game_net_pnl_difference": {"n_games": len(diffs), "mean": None if not diffs else round(float(np.mean(diffs)), 4), "bootstrap": ci, "unsettled_trades_excluded": unsettled,
+                                           "reading": f"{other} minus control, summed over a game's settled trades (0 for a game a lane did not evaluate); descriptive, not evidence of an edge until the sealed ledgers carry it"}}
 
 
 # ================================================================================================ projection accuracy (lane-independent)
@@ -201,23 +255,39 @@ def accuracy_all_games(archive: str, lane_coverage: dict[str, dict]) -> dict[str
 
 
 # ================================================================================================ report
-def markdown(rep: dict) -> str:
-    L = ["# T-60 strict control vs T-45 availability study (research only; descriptive; lanes are never pooled)", "", rep["scope"], ""]
-    cols = rep["lanes"]
-    L += ["## Coverage", "", "| lane (source) | games | evaluated | traded | excluded by archive latency | excluded no data | share evaluated | decision instants usable |", "|---|---|---|---|---|---|---|---|"]
+def _f(x: Any, nd: int = 3) -> Any:
+    return round(x, nd) if isinstance(x, float) else x
+
+
+def _lane_tables(cols: dict[str, Any]) -> list[str]:
+    L = ["| lane (source) | games | evaluated | traded | excluded by archive latency | excluded no data | share evaluated | decision instants usable |", "|---|---|---|---|---|---|---|---|"]
     for k, v in cols.items():
         c = v["coverage"]
         L.append(f"| {k} ({v['source']}) | {c['games']} | {c['games_with_a_decision_evaluated']} | {c['games_traded']} | {c['excluded_by_archive_latency']} | {c['classes'].get('EXCLUDED_NO_DATA', 0)} | {c['share_evaluated']} | "
                  f"{c.get('decision_instants_with_a_usable_board')} / {c.get('decision_instants')} |")
-    L += ["", "## Predicted EV, closing-line value, settled performance (retrospective rows are descriptive; counted evidence only comes from the sealed ledgers)", "",
-          "| lane | trades | mean predicted EV | settled | net P&L | ROI on outlay | hit rate | CLV mean (c, n valid) | board age median / p90 (s) | ask drift mean (c) |", "|---|---|---|---|---|---|---|---|---|---|"]
+    L += ["", "| lane | trades | mean predicted EV | settled | net P&L | ROI on outlay | hit rate | CLV mean (c, n valid) | quote age at decision median / p90 (s) | ask drift mean (c) | adverse drift share |", "|---|---|---|---|---|---|---|---|---|---|---|"]
     for k, v in cols.items():
         pe, st, ex = v["predicted_ev"], v.get("settled") or {}, v.get("executability") or {}
         clv = (st.get("clv_cents") or {})
         age = (ex.get("board_age_at_decision_s") or {})
-        L.append(f"| {k} | {pe['n_trades']} | {pe['mean_ev_net_exec']} | {st.get('n_settled')} | {st.get('net_pnl')} | {st.get('roi_on_cash_outlay')} | {st.get('hit_rate')} | "
-                 f"{clv.get('mean')} ({clv.get('n_valid')}) | {age.get('median')} / {age.get('p90')} | {(ex.get('ask_drift_cents') or {}).get('mean')} |")
-    L += ["", f"Selection overlap (control vs T-45, retrospective): {json.dumps(rep['overlap'])}", ""]
+        L.append(f"| {k} | {pe['n_trades']} | {_f(pe['mean_ev_net_exec'])} | {st.get('n_settled')} | {_f(st.get('net_pnl'), 2)} | {_f(st.get('roi_on_cash_outlay'))} | {_f(st.get('hit_rate'))} | "
+                 f"{_f(clv.get('mean'), 2)} ({clv.get('n_valid')}) | {age.get('median')} / {age.get('p90')} | {(ex.get('ask_drift_cents') or {}).get('mean')} | {ex.get('share_adverse')} |")
+    return L
+
+
+def markdown(rep: dict) -> str:
+    L = ["# Strict T-60 control vs T-60 availability study (research only; descriptive; lanes are never pooled)", "", rep["scope"], "",
+         "## Primary comparison: coverage, predicted EV, CLV, settled performance, quote freshness and price drift", ""]
+    L += _lane_tables(rep["lanes"])
+    pr = rep.get("paired")
+    if pr:
+        d = pr["per_game_net_pnl_difference"]
+        L += ["", f"## Paired differences ({pr['pair']}, same games)", "",
+              f"* games evaluated by both lanes: {pr['games_both_evaluated']}; only by the availability lane (recovered): {pr.get('games_only_t60a_evaluated')}; only by the control: {pr['games_only_control_evaluated']}",
+              f"* identical selections on the common games: {pr['identical_selections_on_common_games']} ({pr['check']})",
+              f"* common games: {json.dumps(pr['common_games'])}", f"* recovered games: {json.dumps(pr['recovered_games'])}",
+              f"* per-game net P&L difference: n={d['n_games']}, mean={d['mean']}, bootstrap {json.dumps(d['bootstrap'])}; unsettled trades excluded: {d['unsettled_trades_excluded']}", f"* {d['reading']}"]
+    L += ["", f"Selection overlap (control vs t60a, retrospective): {json.dumps(rep['overlap'])}", ""]
     a = rep["projection_accuracy_all_games"]
     L += ["## Projection accuracy on all eligible games (independent of trades, markets and lanes)", ""]
     if a.get("status") == "OK":
@@ -226,49 +296,65 @@ def markdown(rep: dict) -> str:
         L.append(f"* {a['rule']}")
     else:
         L.append(f"* {a.get('reason')}")
+    ex = rep.get("exploratory")
+    if ex:
+        L += ["", "## EXPLORATORY ONLY: T-45 availability (inactive; not part of the primary comparison, never pooled, not an evidence line)", ""] + _lane_tables(ex["lanes"])
+        L += ["", f"* {ex['note']}"]
     L += ["", "## Caveats", ""] + [f"* {c}" for c in rep["caveats"]]
     return "\n".join(L) + "\n"
 
 
+PRIMARY = "t60a"
+
+
 def run(archive: str, market: str, repo: str, context: str, out: str, since: str = "2026-10-20", ref: str = "origin/data-archive", forecast_ref: str = "origin/projection-data",
-        now: datetime | None = None, prospective: dict[str, str] | None = None) -> dict[str, Any]:
+        now: datetime | None = None, prospective: dict[str, str] | None = None, include_t45: bool = False) -> dict[str, Any]:
     now = now or datetime.now(UTC).replace(microsecond=0)
     base = CFG.load()
     games_all = SW.schedule_games(context, None, all_history=True)
     games = [g for g in games_all if MK.parse_ts(g["start_utc"]) >= MK.parse_ts(since + "T00:00:00Z") and MK.parse_ts(g["start_utc"]) <= now - timedelta(hours=1)]
     clocks = {"board_commit": X.board_commit_index(repo, ref), "forecast_commit": X.forecast_commit_index(archive, repo, forecast_ref)}
     work = tempfile.mkdtemp(prefix="lanes_")
-    ctrl, t45 = lane_study("control"), lane_study("t45")
-    variants = {"control_T60_strict": ("control", ctrl, "RETROSPECTIVE_RECONSTRUCTION"), "t45_T45_available": ("t45", t45, "RETROSPECTIVE_RECONSTRUCTION"),
-                "comparator_T60_available": ("cmp", _variant(t45, 60, "latest_committed_by_decision"), "RETROSPECTIVE_COMPARATOR"),
-                "comparator_T45_strict": ("cmp", _variant(ctrl, 45, "observed_and_committed_by_checkpoint"), "RETROSPECTIVE_COMPARATOR")}
+    ctrl, prim = lane_study("control"), lane_study(PRIMARY)
+    primary = {"control_T60_strict": ("control", ctrl, "RETROSPECTIVE_RECONSTRUCTION"), "t60a_T60_available": (PRIMARY, prim, "RETROSPECTIVE_RECONSTRUCTION")}
+    explore: dict[str, Any] = {}
+    if include_t45:
+        t45 = lane_study("t45")
+        explore = {"t45_T45_available": ("t45", t45, "RETROSPECTIVE_RECONSTRUCTION"), "comparator_T45_strict": ("cmp", _variant(ctrl, 45, "observed_and_committed_by_checkpoint"), "RETROSPECTIVE_COMPARATOR")}
     lanes: dict[str, Any] = {}
+    exp_lanes: dict[str, Any] = {}
     rows_by: dict[str, list[dict]] = {}
-    for name, (_, st, src) in variants.items():
+    for name, (_, st, src) in {**primary, **explore}.items():
         rc = reconstruct(st, games, archive, market, clocks, base, work, name)
         trades = trade_rows(rc["rows"])
         settle = SL.settle_sealed(trades, archive, market, now, base, strategy_id=X.strategy_id(st), horizon=st["checkpoint"]["horizon"]) if trades else {}
-        lanes[name] = summarize(name, src, st, rc["bodies"], rc["rows"], games, market, settle)
-        lanes[name]["errors"] = rc["errors"]
+        (lanes if name in primary else exp_lanes)[name] = summarize(name, src, st, rc["bodies"], rc["rows"], games, market, settle)
+        (lanes if name in primary else exp_lanes)[name]["errors"] = rc["errors"]
         rows_by[name] = rc["rows"]
     if prospective:
         for ln, seal_dir in prospective.items():
+            if ln == "t45" and not include_t45:
+                continue
             st = lane_study(ln)
-            ev = SL.evaluate(seal_dir, archive, market, now, st, base, schedule=games, board_commits=clocks["board_commit"] if ln == "t45" else None)
-            lanes[f"{ln}_PROSPECTIVE"] = {"source": "PROSPECTIVE_SEALED", "evaluation": {k: ev[k] for k in ("game_counts", "progress", "metrics", "settlement_join")}, "coverage": {
+            ev = SL.evaluate(seal_dir, archive, market, now, st, base, schedule=games, board_commits=clocks["board_commit"] if X.board_rule_id(st) == "latest_committed_by_decision" else None)
+            (exp_lanes if ln == "t45" else lanes)[f"{ln}_PROSPECTIVE"] = {"source": "PROSPECTIVE_SEALED", "evaluation": {k: ev[k] for k in ("game_counts", "progress", "metrics", "settlement_join")}, "coverage": {
                 "games": len(games), "games_with_a_decision_evaluated": None, "games_traded": ev["progress"]["counted_games_traded"], "excluded_by_archive_latency": None, "share_evaluated": None,
                 "classes": ev["game_counts"]}, "predicted_ev": {"n_trades": ev["progress"]["counted_trades"], "mean_ev_net_exec": None}}
     cov = {k: v["coverage"] for k, v in lanes.items() if "per_game" in v["coverage"]}
-    rep = {"schema": "issue53.lane_comparison.v1", "authority": "research_only", "generated_utc": MK.iso(now), "games_from": since, "n_games": len(games),
-           "scope": "Retrospective reconstruction of both lanes' sealers over the games since " + since + " on the final archives (uncounted, descriptive) plus two matched comparators that change one thing at a time; "
-                    "prospective, counted evidence is read only from each lane's own sealed ledger and is not available yet (control start 2026-10-24T06:00Z; T-45 start 2026-10-27T06:00Z, after approval).",
-           "lanes": lanes, "overlap": overlap(trade_rows(rows_by["control_T60_strict"]), trade_rows(rows_by["t45_T45_available"])),
+    rep = {"schema": "issue53.lane_comparison.v2", "authority": "research_only", "generated_utc": MK.iso(now), "games_from": since, "n_games": len(games),
+           "scope": "Retrospective reconstruction of the control and of the PRIMARY T-60 availability lane over the games since " + since + " on the final archives (uncounted, descriptive); the two share the T-60 "
+                    "checkpoint, the thresholds, the costs and the caps, so the board-selection rule is the only difference. Prospective, counted evidence is read only from each lane's own sealed ledger "
+                    "(control start 2026-10-24T06:00Z; t60a start " + prim["prospective_start_utc"] + "); archival quotes are displayed quotes, not proven live fills.",
+           "lanes": lanes, "overlap": overlap(trade_rows(rows_by["control_T60_strict"]), trade_rows(rows_by["t60a_T60_available"])),
+           "paired": paired(lanes["control_T60_strict"]["coverage"], lanes["t60a_T60_available"]["coverage"], rows_by["control_T60_strict"], rows_by["t60a_T60_available"]),
            "projection_accuracy_all_games": accuracy_all_games(archive, cov),
-           "caveats": ["a handful of games: no interval, no inference; the coverage columns are mechanics, the P&L columns are anecdotes",
-                       "the availability rule trades on a board that is on average ~8 minutes old at the decision instant (executability block); the control's board is younger but loses most games to commit latency",
-                       "T-45 differs from the control in two things (offset AND board rule); the matched comparators (T-60 available, T-45 strict) separate them",
+           "caveats": ["a handful of games: no inference; the coverage columns are mechanics, the P&L and CLV columns are anecdotes",
+                       "the availability rule trades on a board that is older at the decision instant than the few boards the control can use (quote age block); the 900 s guard bounds it, the drift is reported",
+                       "archival quotes are displayed quotes: nothing here shows that an order would have filled at the sealed price or size",
                        "settled P&L, CLV and drift use the final archives; none of it was available to the selection",
                        "retrospective reconstruction runs the sealer at the first minute of each window with commit-time filters, so it reproduces what a live sealer would have written; it is still uncounted"]}
+    if exp_lanes:
+        rep["exploratory"] = {"lanes": exp_lanes, "note": "T-45 changes two things relative to the control (the offset AND the board rule); it is inactive, kept only as a labelled exploratory option, and is excluded from the overlap, the paired differences and the accuracy table above."}
     os.makedirs(out, exist_ok=True)
     json.dump(rep, open(os.path.join(out, "lane_comparison.json"), "w"), indent=1, sort_keys=True, default=str)
     open(os.path.join(out, "lane_comparison.md"), "w").write(markdown(rep))
@@ -286,10 +372,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--since", default="2026-10-20")
     ap.add_argument("--now", default=None)
     ap.add_argument("--seals-control", default=None)
-    ap.add_argument("--seals-t45", default=None)
+    ap.add_argument("--seals-t60a", default=None)
+    ap.add_argument("--seals-t45", default=None, help="exploratory only; ignored without --include-t45")
+    ap.add_argument("--include-t45", action="store_true", help="add the inactive T-45 study in a separate, labelled exploratory section")
     a = ap.parse_args(argv)
-    pro = {k: v for k, v in (("control", a.seals_control), ("t45", a.seals_t45)) if v}
-    rep = run(a.archive, a.market, a.repo, a.context or a.market, a.out, a.since, now=MK.parse_ts(a.now) if a.now else None, prospective=pro or None)
+    pro = {k: v for k, v in (("control", a.seals_control), ("t60a", a.seals_t60a), ("t45", a.seals_t45)) if v}
+    rep = run(a.archive, a.market, a.repo, a.context or a.market, a.out, a.since, now=MK.parse_ts(a.now) if a.now else None, prospective=pro or None, include_t45=a.include_t45)
     print(markdown(rep))
     return 0
 
