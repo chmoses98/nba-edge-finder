@@ -1,42 +1,54 @@
 # NBA research report: week 1 (2026-10-20 .. 2026-10-26 ET)
 
-**Status: PRELIMINARY** (version 3, generated 2026-10-22T11:07:28Z). Research / paper only.
+**Status: PRELIMINARY** (version 4, generated 2026-10-23T11:09:42Z). Research / paper only.
 
 > PRELIMINARY: the week is not over or settlements/outcomes are incomplete; numbers will change.
-> SAMPLE SIZE: 16 independent games in this report. Week-1 evidence cannot establish profitability: the preregistered control needs >= 200 independent decisions across >= 40 games with positive clustered lower confidence bounds before any VALIDATED_VALUE language is allowed.
+> SAMPLE SIZE: 28 independent games in this report. Week-1 evidence cannot establish profitability: the preregistered control needs >= 200 independent decisions across >= 40 games with positive clustered lower confidence bounds before any VALIDATED_VALUE language is allowed.
 > NO BETTING AUTHORITY: nothing in this report authorises a wager, a stake change or a model promotion. All trades are paper.
 
 | independent games | player-games | theses | decisions | contracts |
 |---|---|---|---|---|
-| 16 | 640 | 893 | 360306 | 4922 |
+| 28 | 717 | 1298 | 443208 | 7451 |
 
 ## 1. Data integrity
 
 ### Data integrity (2026-10-20 .. 2026-10-26 ET)
 
-- games scheduled: **38** (36 not yet covered by a projection slot (30 h window)), started: 0, fully complete evidence: **0**
+- games scheduled: **38** (24 not yet covered by a projection slot (30 h window)), started: 2, fully complete evidence: **2**
 - missing evidence counts: none
-- pregame slots expected 5, executed/covered 5, missed: none
+- pregame slots expected 11, executed/covered 11, missed: none
 
 | game | tip (UTC) | forecasts | obs | game fc | snapshots | decisions | outcome | missing |
 |---|---|---|---|---|---|---|---|---|
-| CLE@PHI | 10-22T23:00 | 8 fam / 5 v | 171 | y | LIVE | 9716 | n | - |
-| DEN@OKC | 10-23T01:30 | 8 fam / 4 v | 122 | y | LIVE | 6090 | n | - |
+| CLE@PHI | 10-22T23:00 | 8 fam / 8 v | 293 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 27954 | y | - |
+| DEN@OKC | 10-23T01:30 | 8 fam / 8 v | 278 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 25042 | y | - |
+| CHI@MIL | 10-23T20:00 | 8 fam / 5 v | 129 | y | LIVE | 7130 | n | - |
+| NYK@BOS | 10-23T23:00 | 8 fam / 4 v | 106 | y | LIVE | 8338 | n | - |
+| ATL@CHA | 10-23T23:00 | 8 fam / 4 v | 129 | y | LIVE | 5406 | n | - |
+| DAL@IND | 10-23T23:00 | 8 fam / 4 v | 140 | y | LIVE | 3192 | n | - |
+| MIN@ORL | 10-23T23:00 | 8 fam / 4 v | 119 | y | LIVE | 6858 | n | - |
+| TOR@WAS | 10-23T23:00 | 8 fam / 4 v | 137 | y | LIVE | 2520 | n | - |
+| DET@MIA | 10-24T00:00 | 8 fam / 4 v | 127 | y | LIVE | 6980 | n | - |
+| HOU@SAS | 10-24T01:30 | 8 fam / 3 v | 120 | y | LIVE | 5880 | n | - |
+| NOP@UTA | 10-24T01:30 | 8 fam / 3 v | 99 | y | LIVE | 4042 | n | - |
+| MEM@GSW | 10-24T02:00 | 8 fam / 3 v | 92 | y | LIVE | 1890 | n | - |
+| LAC@LAL | 10-24T02:00 | 8 fam / 3 v | 97 | y | LIVE | 2388 | n | - |
+| POR@SAC | 10-24T02:00 | 8 fam / 3 v | 87 | y | LIVE | 1890 | n | - |
 
 
 ## 2. Projection performance
 
-- minutes challenger: n=322 MAE +5.967 bias -0.585 [-2.027, +0.694]
-- minutes incumbent: n=191 MAE +11.637 bias +11.533 [+10.439, +12.731]
-- minutes naive_prior_mean: n=None MAE n/a bias n/a
-- participation Brier: +0.125 [+0.087, +0.164] (n=485, games=14); mean P(play) +0.732 vs played rate +0.664
-- assists (conditional on playing): n=322 games=14 MAE +1.339 bias -0.182 [-0.389, +0.024] CRPS +0.929 [+0.834, +1.024]
-- fga (conditional on playing): n=322 games=14 MAE +3.017 bias -0.245 [-0.717, +0.224] CRPS +2.124 [+1.961, +2.281]
-- points (conditional on playing): n=322 games=14 MAE +4.696 bias -0.475 [-1.172, +0.240] CRPS +3.279 [+2.981, +3.576]
-- pra (conditional on playing): n=322 games=14 MAE +6.004 bias -0.743 [-1.759, +0.326] CRPS +4.299 [+3.878, +4.745]
-- rebounds (conditional on playing): n=322 games=14 MAE +1.799 bias -0.194 [-0.535, +0.094] CRPS +1.255 [+1.125, +1.402]
-- threes (conditional on playing): n=322 games=14 MAE +0.837 bias +0.064 [-0.061, +0.192] CRPS +0.537 [+0.493, +0.586]
-- team points: MAE +9.558, margin MAE +16.309, total MAE +11.769
+- minutes challenger: n=367 MAE +5.725 bias -0.345 [-1.791, +0.878]
+- minutes incumbent: n=208 MAE +11.134 bias +10.839 [+9.059, +12.357]
+- minutes naive_prior_mean: n=22 MAE +2.545 bias +0.000 (CI withheld: TOO_FEW_CLUSTERS (<5 games))
+- participation Brier: +0.121 [+0.087, +0.157] (n=553, games=16); mean P(play) +0.727 vs played rate +0.664
+- assists (conditional on playing): n=367 games=16 MAE +1.348 bias -0.054 [-0.299, +0.201] CRPS +0.924 [+0.841, +1.014]
+- fga (conditional on playing): n=367 games=16 MAE +2.943 bias -0.184 [-0.597, +0.230] CRPS +2.076 [+1.911, +2.238]
+- points (conditional on playing): n=367 games=16 MAE +4.623 bias -0.176 [-0.938, +0.576] CRPS +3.214 [+2.952, +3.479]
+- pra (conditional on playing): n=367 games=16 MAE +5.955 bias -0.301 [-1.401, +0.772] CRPS +4.220 [+3.853, +4.595]
+- rebounds (conditional on playing): n=367 games=16 MAE +1.820 bias -0.175 [-0.465, +0.088] CRPS +1.268 [+1.132, +1.396]
+- threes (conditional on playing): n=367 games=16 MAE +0.818 bias +0.097 [-0.023, +0.213] CRPS +0.521 [+0.478, +0.568]
+- team points: MAE +10.493, margin MAE +15.260, total MAE +14.558
 
 ## 3. Market comparison
 
@@ -44,11 +56,11 @@ contracts (ladder rungs of a player-game are correlated); CIs resample games
 
 | horizon | contracts | games | Brier model | Brier market mid | diff (model - market) |
 |---|---|---|---|---|---|
-| T-90 | 4217 | 14 | +0.167 | +0.155 | +0.012 [+0.003, +0.021] |
-| T-60 | 4248 | 14 | +0.166 | +0.154 | +0.011 [+0.002, +0.020] |
-| T-30 | 4256 | 14 | +0.166 | +0.154 | +0.011 [+0.001, +0.021] |
-| T-10 | 4261 | 14 | +0.166 | +0.154 | +0.012 [+0.004, +0.020] |
-| LAST_VALID | 4272 | 14 | +0.166 | +0.155 | +0.011 [+0.003, +0.020] |
+| T-90 | 4846 | 16 | +0.167 | +0.158 | +0.009 [+0.000, +0.018] |
+| T-60 | 4877 | 16 | +0.166 | +0.158 | +0.009 [-0.000, +0.018] |
+| T-30 | 4888 | 16 | +0.167 | +0.157 | +0.009 [+0.000, +0.018] |
+| T-10 | 4897 | 16 | +0.167 | +0.158 | +0.009 [+0.002, +0.017] |
+| LAST_VALID | 4913 | 16 | +0.167 | +0.158 | +0.009 [+0.001, +0.017] |
 
 ## 4. Paper trading
 
@@ -56,15 +68,15 @@ Hypothetical net ROI after fees and slippage (paper only). `selected` = one cont
 
 | strategy | view | decisions | contracts | theses | games | ROI | ROI CI | hit rate |
 |---|---|---|---|---|---|---|---|---|
-| PF_ALL_CANDIDATES_V1 | all candidates | 115134 | 4299 | 777 | 14 | -0.115 | [-0.120, -0.110] | +0.500 |
-| PF_EDGE_STRICT_V1 | selected | 54 | 54 | 54 | 13 | -0.055 | [-0.456, +0.285] | +0.444 |
-| PF_EDGE_STRICT_V1 | all candidates | 166 | 62 | 54 | 13 | -0.163 | [-0.500, +0.218] | +0.392 |
-| PF_EDGE_V1 | selected | 201 | 201 | 201 | 14 | -0.096 | [-0.259, +0.058] | +0.430 |
-| PF_EDGE_V1 | all candidates | 1208 | 287 | 201 | 14 | -0.097 | [-0.307, +0.138] | +0.401 |
+| PF_ALL_CANDIDATES_V1 | all candidates | 130818 | 4968 | 902 | 16 | -0.115 | [-0.119, -0.110] | +0.500 |
+| PF_EDGE_STRICT_V1 | selected | 65 | 65 | 65 | 15 | -0.116 | [-0.473, +0.208] | +0.415 |
+| PF_EDGE_STRICT_V1 | all candidates | 194 | 74 | 65 | 15 | -0.199 | [-0.544, +0.154] | +0.376 |
+| PF_EDGE_V1 | selected | 228 | 228 | 228 | 16 | -0.035 | [-0.206, +0.131] | +0.458 |
+| PF_EDGE_V1 | all candidates | 1349 | 326 | 228 | 16 | -0.046 | [-0.252, +0.168] | +0.423 |
 
 Baselines: NO_BET_V1 = 0 by definition; MARKET_ONLY_V1 = quote mid (see section 3); control SHADOW_PURE_PREREG_V1 is read from the shadow branch (see Control).
 
-**Expression ranking** (which market best expresses a basketball thesis; research only): 4144 theses scored, 12029 NO_TRADE, status OK
+**Expression ranking** (which market best expresses a basketball thesis; research only): 4497 theses scored, 15538 NO_TRADE, status OK
 
 ## 5. Market families
 
@@ -72,15 +84,15 @@ Hit rate of the side actually evaluated, by family (descriptive; sample sizes sh
 
 | family | contracts | games | hit rate |
 |---|---|---|---|
-| game_spread | None | 14 | +0.500 |
-| game_total | None | 14 | +0.499 |
-| game_winner | None | 14 | +0.499 |
-| player_assists | None | 14 | +0.498 |
-| player_points | None | 14 | +0.498 |
-| player_pra | None | 14 | +0.497 |
-| player_rebounds | None | 14 | +0.498 |
-| player_threes | None | 14 | +0.500 |
-| team_total | None | 14 | +0.499 |
+| game_spread | None | 16 | +0.499 |
+| game_total | None | 16 | +0.499 |
+| game_winner | None | 16 | +0.499 |
+| player_assists | None | 16 | +0.499 |
+| player_points | None | 16 | +0.498 |
+| player_pra | None | 16 | +0.498 |
+| player_rebounds | None | 16 | +0.498 |
+| player_threes | None | 16 | +0.500 |
+| team_total | None | 16 | +0.500 |
 
 ## 6. Timing
 
@@ -88,11 +100,11 @@ share_h = sum(B_ref - B_h) / sum(B_ref - B_close), B = (mid - y_yes)^2 on contra
 
 | horizon | contracts | games | share of open->close improvement | mean abs move to close |
 |---|---|---|---|---|
-| T-90 | 1248 | 14 | +0.737 | +0.009 |
-| T-60 | 1248 | 14 | +0.826 | +0.007 |
-| T-30 | 1248 | 14 | +0.956 | +0.006 |
-| T-10 | 1248 | 14 | +0.969 | +0.004 |
-| LAST_VALID | 1248 | 14 | +1.000 | +0.000 |
+| T-90 | 1376 | 16 | +0.519 | +0.008 |
+| T-60 | 1376 | 16 | +0.691 | +0.007 |
+| T-30 | 1376 | 16 | +0.903 | +0.006 |
+| T-10 | 1376 | 16 | +0.945 | +0.004 |
+| LAST_VALID | 1376 | 16 | +1.000 | +0.000 |
 
 ## 7. Player matchup diagnostics
 
@@ -100,46 +112,46 @@ Segment tables (player, team, stat family, minutes bucket, starter proxy, injury
 
 ## 8. Patterns
 
-> INSUFFICIENT_SAMPLE: 16 games. Nothing here authorises a change to production parameters or betting; first-week results are never promotion evidence.
+> INSUFFICIENT_SAMPLE: 28 games. Nothing here authorises a change to production parameters or betting; first-week results are never promotion evidence.
 
 Leads are classified, never promoted. `p_holm` is Holm-adjusted over the declared family; exploratory screens use Benjamini-Hochberg (q=0.10).
 
 | id | claim | class | effect | 95% CI | p (Holm) | games needed (observed effect) | note |
 |---|---|---|---|---|---|---|---|
-| H02 | the old simulator under-predicts minutes (negative bias) | PROJECTION_CALIBRATION_ISSUE | +11.533 | [+10.439, +12.731] | +0.000 | 1 | Holm-significant and larger than the equivalence margin |
-| H03 | P(play) is mis-calibrated in the large | INCONCLUSIVE | +0.068 | [+0.002, +0.131] | +0.319 | 27 | not established either way |
-| H06 | the model beats the market mid at T-60 (Brier, points-ladder and other props) | EVIDENCE_AGAINST | +0.011 | [+0.002, +0.020] | +0.151 | 20 | the effect has the opposite sign with a 95% CI excluding 0 |
-| H04 | points projections are biased | INCONCLUSIVE | -0.475 | [-1.172, +0.240] | +1.000 | 65 | not established either way |
-| H12 | more than 20% of candidate sides fail the quality / executability gate | EVIDENCE_AGAINST | -0.028 | [-0.041, -0.015] | +0.000 | 22 | within the materiality margin |
-| H08 | PF_EDGE_V1 selected trades earn positive net P&L (1 per thesis) | INCONCLUSIVE | -0.043 | [-0.117, +0.025] | +1.000 | 92 | effect not distinguishable from 0 at this sample |
-| H07 | the model beats the market mid at some pregame window overall | EVIDENCE_AGAINST | +0.007 | [-0.001, +0.015] | +0.689 | 38 | 95% CI lies inside +/-0.002 (practically no effect) |
-| H01 | challenger minutes forecasts are biased | INCONCLUSIVE | -0.585 | [-2.027, +0.694] | +1.000 | 181 | not established either way |
-| H11 | selected trades beat the closing line (positive CLV, valid closes only) | INCONCLUSIVE | -0.199 | [-0.927, +0.525] | +1.000 | 417 | effect not distinguishable from 0 at this sample |
-| H05 | 80% central intervals for points do not cover 80% | INCONCLUSIVE | -0.017 | [-0.066, +0.029] | +1.000 | 203 | not established either way |
-| H10 | T-90 market prices are less accurate than T-10/closing prices (late information not yet priced early) | EVIDENCE_AGAINST | -0.001 | [-0.002, +0.001] | +1.000 | 343 | 95% CI lies inside +/-0.002 (practically no effect) |
-| H09 | NO-side (fade the ladder) candidates earn positive net P&L | INCONCLUSIVE | +0.000 | [-0.032, +0.032] | +1.000 | 162573 | effect not distinguishable from 0 at this sample |
+| H02 | the old simulator under-predicts minutes (negative bias) | PROJECTION_CALIBRATION_ISSUE | +10.839 | [+9.059, +12.357] | +0.000 | 1 | Holm-significant and larger than the equivalence margin |
+| H03 | P(play) is mis-calibrated in the large | INCONCLUSIVE | +0.064 | [+0.006, +0.122] | +0.340 | 29 | not established either way |
+| H06 | the model beats the market mid at T-60 (Brier, points-ladder and other props) | EVIDENCE_AGAINST | +0.009 | [-0.000, +0.018] | +0.577 | 37 | 95% CI lies inside +/-0.002 (practically no effect) |
+| H09 | NO-side (fade the ladder) candidates earn positive net P&L | INCONCLUSIVE | +0.017 | [-0.019, +0.055] | +1.000 | 161 | effect not distinguishable from 0 at this sample |
+| H07 | the model beats the market mid at some pregame window overall | INCONCLUSIVE | +0.005 | [-0.003, +0.013] | +1.000 | 82 | effect not distinguishable from 0 at this sample |
+| H01 | challenger minutes forecasts are biased | INCONCLUSIVE | -0.345 | [-1.791, +0.878] | +1.000 | 491 | not established either way |
+| H04 | points projections are biased | INCONCLUSIVE | -0.176 | [-0.938, +0.576] | +1.000 | 604 | not established either way |
+| H08 | PF_EDGE_V1 selected trades earn positive net P&L (1 per thesis) | INCONCLUSIVE | -0.016 | [-0.093, +0.058] | +1.000 | 780 | effect not distinguishable from 0 at this sample |
+| H10 | T-90 market prices are less accurate than T-10/closing prices (late information not yet priced early) | EVIDENCE_AGAINST | -0.000 | [-0.002, +0.001] | +1.000 | 323 | 95% CI lies inside +/-0.002 (practically no effect) |
+| H12 | more than 20% of candidate sides fail the quality / executability gate | EVIDENCE_AGAINST | -0.007 | [-0.024, +0.017] | +1.000 | 1894 | within the materiality margin |
+| H11 | selected trades beat the closing line (positive CLV, valid closes only) | INCONCLUSIVE | -0.037 | [-0.714, +0.632] | +1.000 | 11629 | effect not distinguishable from 0 at this sample |
+| H05 | 80% central intervals for points do not cover 80% | EVIDENCE_AGAINST | -0.002 | [-0.041, +0.037] | +1.000 | 21836 | 95% CI inside +/-0.05: no calibration defect of material size detected |
 | H13 | the DNP fair-price settlement costs more than a void policy assumes | INCONCLUSIVE | n/a | n/a | n/a | n/a | fewer than 2 games |
 
 Exploratory screen: OK
 
 ## 9. Root cause
 
-> INSUFFICIENT_SAMPLE: 16 games; every statistic below is descriptive, not a finding
+> INSUFFICIENT_SAMPLE: 28 games; every statistic below is descriptive, not a finding
 
 Minutes under-prediction verdict: **INCUMBENT_BIAS_NOT_NEGATIVE**
 
 | # | class | status | statistic | value | games | repeatability | reading |
 |---|---|---|---|---|---|---|---|
-| 1 | participation | MEASURED | mean(P(play) - played), challenger | +0.068 [+0.002, +0.131] | 14 | {'n_days': 2, 'share_same_sign': 1.0, 'note': ''} | P(play) is over-confident by 0.068 on average; Brier 0.1249. Participation errors enter unconditional stat error through (p - played) * mu; see decomposition. |
-| 2 | starter_rotation_assumptions | MEASURED | minutes bias by role proxy (starter-like - bench) | n/a | 14 | {'n_days': 2, 'share_same_sign': 1.0, 'note': ''} | Role = predicted-minutes bucket (a proxy: starter flags are not archived with outcomes). A starter-minus-bench bias gap away from 0 means the rotation shape (not the overall level) is wrong; bias is conditional on playing. |
-| 3 | minutes_allocation | MEASURED | minutes bias (pred - actual), challenger vs incumbent, paired | n/a | 14 | {'n_days': 2, 'share_same_sign': 1.0, 'note': ''} | verdict on the old simulator's systematic minutes under-prediction: INCUMBENT_BIAS_NOT_NEGATIVE. Challenger bias -0.59 [-2.03, +0.69] min. |
-| 4 | usage_and_per_minute_rates | MEASURED | error = r_pred*(m_pred - m_act) + m_act*(r_pred - r_act): rate component, points | -0.027 [-0.438, +0.389] | n/a | {'n_days': 2, 'share_same_sign': 0.5, 'note': ''} | Per-minute rate (usage) accounts for ~71% of the squared-error budget (rate vs minutes components, points); a rate-component mean away from 0 is a usage / efficiency bias independent of minutes. |
-| 5 | opponent_adjustment | NO_DATA | points bias: generous minus stingy opponents | n/a | n/a | n/a | NO_DATA: opponent-defence terciles need earlier final games in team_outcomes (unknown early in the season) and game_forecasts |
-| 6 | pace | MEASURED | game total error (pred - actual) and correlation with mean player-points error | +4.744 [-1.887, +11.155] | 14 | n/a | Game-total bias +4.74 [-1.89, +11.16]; per-game correlation between total error and mean player-points error: 0.6542922265904381. A high correlation points at pace/environment (shared by all players) rather than player-specific rates. |
-| 7 | distribution_shape_tails | MEASURED | PIT variance ratio / tail excess (observed share beyond the 10%/90% quantiles minus 10%) | +0.037 [-0.003, +0.079] | n/a | n/a | Largest departure of PIT variance from 1: minutes (1.22; >1 = too narrow). Upper-tail excess > 0 means actual outcomes exceed the forecast 90th percentile more often than 10%. |
-| 8 | injury_information | MEASURED | participation Brier: official-report (REPORTED) minus unverified/projected information states | n/a | 14 | {'n_days': 2, 'share_same_sign': 1.0, 'note': ''} | A negative gap means official reports sharpen P(play) as intended; ~0 means the report adds nothing measurable yet (e.g. opening week). |
-| 9 | market_timing | MEASURED | model-minus-market Brier at each pregame window (negative = model better), plus market price discovery | +0.007 [-0.001, +0.015] | 14 | n/a | Window with the smallest (best) model-minus-market gap: LAST_VALID. Prices converge toward the closing line; see price_discovery shares. A model edge that exists only at early windows and vanishes by T-10 is a timing signal, not yet value. |
-| 10 | fees_settlement_execution | MEASURED | per-contract trading costs (fee + slippage) and the gross-to-net P&L gap; DNP settlement effect | +0.026 [+0.026, +0.026] | 14 | {'n_days': 2, 'share_same_sign': 1.0, 'note': ''} | Costs average 0.026 per contract; compare with the model's gross edge before reading any ROI. DNP legs and non-executable quotes are listed separately. |
+| 1 | participation | MEASURED | mean(P(play) - played), challenger | +0.064 [+0.006, +0.122] | 16 | {'n_days': 3, 'share_same_sign': 1.0, 'note': ''} | P(play) is over-confident by 0.064 on average; Brier 0.1206. Participation errors enter unconditional stat error through (p - played) * mu; see decomposition. |
+| 2 | starter_rotation_assumptions | MEASURED | minutes bias by role proxy (starter-like - bench) | n/a | 16 | {'n_days': 3, 'share_same_sign': 0.6666666666666666, 'note': ''} | Role = predicted-minutes bucket (a proxy: starter flags are not archived with outcomes). A starter-minus-bench bias gap away from 0 means the rotation shape (not the overall level) is wrong; bias is conditional on playing. |
+| 3 | minutes_allocation | MEASURED | minutes bias (pred - actual), challenger vs incumbent, paired | n/a | 16 | {'n_days': 3, 'share_same_sign': 0.6666666666666666, 'note': ''} | verdict on the old simulator's systematic minutes under-prediction: INCUMBENT_BIAS_NOT_NEGATIVE. Challenger bias -0.35 [-1.79, +0.88] min. |
+| 4 | usage_and_per_minute_rates | MEASURED | error = r_pred*(m_pred - m_act) + m_act*(r_pred - r_act): rate component, points | +0.171 [-0.282, +0.647] | n/a | {'n_days': 3, 'share_same_sign': 0.6666666666666666, 'note': ''} | Per-minute rate (usage) accounts for ~72% of the squared-error budget (rate vs minutes components, points); a rate-component mean away from 0 is a usage / efficiency bias independent of minutes. |
+| 5 | opponent_adjustment | MEASURED | points bias (pred - actual): generous-defence opponents minus stingy ones | n/a | 16 | {'n_days': 3, 'share_same_sign': 0.6666666666666666, 'note': ''} | If the opponent adjustment works this gap is ~0; a negative gap means the model under-projects against generous defences (adjustment too weak). |
+| 6 | pace | MEASURED | game total error (pred - actual) and correlation with mean player-points error | +8.411 [+0.615, +17.013] | 16 | n/a | Game-total bias +8.41 [+0.61, +17.01]; per-game correlation between total error and mean player-points error: 0.776614117398203. A high correlation points at pace/environment (shared by all players) rather than player-specific rates. |
+| 7 | distribution_shape_tails | MEASURED | PIT variance ratio / tail excess (observed share beyond the 10%/90% quantiles minus 10%) | +0.028 [-0.013, +0.074] | n/a | n/a | Largest departure of PIT variance from 1: minutes (1.17; >1 = too narrow). Upper-tail excess > 0 means actual outcomes exceed the forecast 90th percentile more often than 10%. |
+| 8 | injury_information | MEASURED | participation Brier: official-report (REPORTED) minus unverified/projected information states | n/a | 16 | {'n_days': 3, 'share_same_sign': 1.0, 'note': ''} | A negative gap means official reports sharpen P(play) as intended; ~0 means the report adds nothing measurable yet (e.g. opening week). |
+| 9 | market_timing | MEASURED | model-minus-market Brier at each pregame window (negative = model better), plus market price discovery | +0.005 [-0.003, +0.013] | 16 | n/a | Window with the smallest (best) model-minus-market gap: LAST_VALID. Prices converge toward the closing line; see price_discovery shares. A model edge that exists only at early windows and vanishes by T-10 is a timing signal, not yet value. |
+| 10 | fees_settlement_execution | MEASURED | per-contract trading costs (fee + slippage) and the gross-to-net P&L gap; DNP settlement effect | +0.026 [+0.026, +0.026] | 16 | {'n_days': 3, 'share_same_sign': 1.0, 'note': ''} | Costs average 0.026 per contract; compare with the model's gross edge before reading any ROI. DNP legs and non-executable quotes are listed separately. |
 
 ## 10. Next week plan
 
@@ -152,17 +164,16 @@ Minutes under-prediction verdict: **INCUMBENT_BIAS_NOT_NEGATIVE**
  "control": {
   "status": "OK",
   "strategy_id": "SHADOW_PURE_PREREG_V1",
-  "evaluated_at": "2026-10-22T03:59:28.180261+00:00",
-  "source_file": "scorecards/value/dt=2026-10-22/scorecards_value_20261022T035928Z_39719786082.jsonl.gz",
+  "evaluated_at": "2026-10-23T04:52:37.270611+00:00",
+  "source_file": "scorecards/value/dt=2026-10-23/scorecards_value_20261023T045237Z_39898125396.jsonl.gz",
   "n_arms": 4,
   "arm": "sim_rotation",
   "capture_window": "pretip",
-  "n_decisions": 178,
-  "n_games": 7,
+  "n_decisions": 231,
+  "n_games": 9,
   "verdict": "INSUFFICIENT_SAMPLE",
   "verdict_reasons": [
-   "n_decisions 178 < preregistered min_decisions 200",
-   "n_games 7 < preregistered min_games 40"
+   "n_games 9 < preregistered min_games 40"
   ],
   "preregistration_sha256": "af2240994739dbd04a89bd2f9d74f56970f8e7189d1dbe73d5deb069d9b2e05b",
   "thresholds": {
@@ -201,8 +212,8 @@ Minutes under-prediction verdict: **INCUMBENT_BIAS_NOT_NEGATIVE**
    "week1": true,
    "verdict": "INSUFFICIENT_SAMPLE",
    "verdict_reasons": [
-    "n_decisions 54 < preregistered min_decisions 200",
-    "n_games 13 < preregistered min_games 40"
+    "n_decisions 65 < preregistered min_decisions 200",
+    "n_games 15 < preregistered min_games 40"
    ],
    "required_prospective_sample": {
     "min_independent_decisions": 200,
@@ -211,8 +222,8 @@ Minutes under-prediction verdict: **INCUMBENT_BIAS_NOT_NEGATIVE**
     "protocol": "chronological, prospective, preregistered before scoring, original model versions"
    },
    "remaining": {
-    "decisions": 146,
-    "games": 27
+    "decisions": 135,
+    "games": 25
    },
    "statement": "Week 1 grants no betting authority; this is evidence collection only."
   },
@@ -222,7 +233,7 @@ Minutes under-prediction verdict: **INCUMBENT_BIAS_NOT_NEGATIVE**
    "week1": true,
    "verdict": "INSUFFICIENT_SAMPLE",
    "verdict_reasons": [
-    "n_games 14 < preregistered min_games 40"
+    "n_games 16 < preregistered min_games 40"
    ],
    "required_prospective_sample": {
     "min_independent_decisions": 200,
@@ -232,7 +243,7 @@ Minutes under-prediction verdict: **INCUMBENT_BIAS_NOT_NEGATIVE**
    },
    "remaining": {
     "decisions": 0,
-    "games": 26
+    "games": 24
    },
    "statement": "Week 1 grants no betting authority; this is evidence collection only."
   }
