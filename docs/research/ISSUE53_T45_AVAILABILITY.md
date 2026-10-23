@@ -1,4 +1,7 @@
-# Issue #53 - T-45 availability study (research only; PROPOSED, not activated)
+# Issue #53 - T-45 availability study (research only; EXPLORATORY and inactive)
+
+> **Superseded as the primary experiment** by the T-60 availability study (`ISSUE53_T60_AVAILABILITY.md`), which changes only the board-selection rule. This document and its code are kept as an exploratory
+> option; T-45 is never activated, never in the primary comparison and never pooled with it.
 
 **Status.** Draft. Nothing here is enabled: the sealing chain still runs only the `control` lane (`SEAL_LANES: "control"`). No model, rule, stake, wagering authority or production
 default changes; the strict T-60 study (`ISSUE53_EXEC_SHADOW_V1`, `exec_shadow_config_v2.json`, sha256 `f84e4067...`) is byte-identical and keeps its own ledger branch
