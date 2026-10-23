@@ -23,7 +23,7 @@ def test_the_seal_workflow_is_a_self_renewing_chain_gated_by_a_dependency_free_c
     crons = [s["cron"] for s in wf["on"]["schedule"]]
     assert crons == ["*/5 12-23,0-3 * 10-12,1-6 *"]                                           # bootstrap only: the repo measured ~4% cron delivery
     jobs = wf["jobs"]
-    assert set(jobs) == {"tick"} and jobs["tick"]["timeout-minutes"] <= 300
+    assert set(jobs) == {"tick"} and jobs["tick"]["timeout-minutes"] <= 355
     # the ONLY write permissions: contents (Git Data API publisher, ledger layout only) and actions (successor dispatch); no issues, no secrets
     assert jobs["tick"]["permissions"] == {"contents": "write", "actions": "write"}
     grp = wf["concurrency"]["group"]
@@ -124,20 +124,21 @@ def test_the_selftest_workflow_is_manual_and_can_only_reach_the_throwaway_branch
     assert 'SELFTEST_BRANCH = "exec-shadow-seals-selftest"' in lr and "selftest only ever writes the throw-away branch" in lr
 
 
-def test_the_t45_lane_is_rehearsed_dry_but_not_enabled_live_without_approval():
+def test_the_t60a_lane_is_rehearsed_dry_but_not_enabled_live_before_its_activation_change():
     wf = load(SEAL)
     env = wf["env"]
-    assert env["SEAL_LANES"] == "control"                                    # ACTIVATION of the T-45 study = adding t45 here, in an approved PR
-    assert set(env["REHEARSAL_LANES"].split(",")) == {"control", "t45"}      # the dry PR rehearsal exercises both lanes on real archived data
+    assert env["SEAL_LANES"] == "control"                                    # ACTIVATION of the T-60 availability study = adding t60a here, in a separate reviewed PR
+    assert "t45" not in env["SEAL_LANES"] and "t45" not in env["REHEARSAL_LANES"]                      # the exploratory T-45 lane is never run by the workflow
+    assert set(env["REHEARSAL_LANES"].split(",")) == {"control", "t60a"}      # the dry PR rehearsal exercises both lanes on real archived data
     txt = SEAL.read_text()
     steps = wf["jobs"]["tick"]["steps"]
     chain = next(s for s in steps if str(s.get("name", "")).startswith("Seal chain"))
     assert '--lanes "$LANES"' in chain["run"] and "steps.gate.outputs.lanes" in chain["env"]["LANES"]
     gate = next(s for s in steps if str(s.get("name", "")).startswith("Idle gate"))
     assert 'LANES="$SEAL_LANES"' in gate["run"] and 'LANES="$REHEARSAL_LANES"' in gate["run"] and "pip" not in gate["run"]
-    assert "exec-shadow-seals-t45" not in txt or "seal_windows.py branch" in txt          # the branch name comes from the one table (seal_windows.LANES), not from the YAML
+    assert "exec-shadow-seals-t60a" not in txt or "seal_windows.py branch" in txt          # the branch name comes from the one table (seal_windows.LANES), not from the YAML
 
 
-def test_watchdog_reads_the_t45_ledger_best_effort():
+def test_watchdog_reads_the_t60a_ledger_best_effort():
     txt = (WF / "nba-watchdog.yml").read_text()
-    assert "exec-shadow-seals-t45" in txt and "--seals-t45" in txt and "|| echo" in txt
+    assert "exec-shadow-seals-t60a" in txt and "--seals-t60a" in txt and "|| echo" in txt and "seals-t45" not in txt

@@ -5,13 +5,14 @@ name: exec-shadow-seal
 #     nba.paper.ledger_remote (GitHub Git Data API: server-side commit time, fast-forward only, additions only). Nothing here runs `git push` or `git commit`.
 #   * Post-game research joins settlements to that ledger and never recomputes a selection (nba.paper.exec_seal.evaluate).
 #   * WHY A CHAIN AND NOT A 5-MINUTE CRON. This repository measured its own schedule delivery at ~4% (capture_worker.yml: 34 runs of 864 expected, gaps of 2-3 h). A seal window is
-#     40 minutes, so a cron-driven sealer would miss most games. Like capture-worker / nba-ticker, one run owns the cadence (a poll every 90 s, ~280 minutes) and dispatches its
+#     40 minutes, so a cron-driven sealer would miss most games. Like capture-worker / nba-ticker, one run owns the cadence (a poll every 90 s, 240-335 minutes, handing over at a quiet moment) and dispatches its
 #     successor; cron is only the bootstrap. A delivered cron costs a ~15 s stdlib gate (no dependency install); the chain starts only when a seal window is open or opens within 6 h.
 #   * Dead-man: nba-watchdog (the repo's ops monitor / `nba-ops-alert` issue) alerts when a window is open or imminent and no run of this workflow is alive, or when a window closed
 #     with neither a seal nor a MISSED marker, or on any MISSED marker (nba.paper.seal_monitor).
 #   * Only runs from the default branch can produce COUNTED seals (verified offline: code sha must be reachable from main). Pull-request runs and dry dispatches perform ONE
 #     rehearsal iteration on a fixed past instant and publish nothing.
-#   * Lanes: the same chain can seal a second, separately preregistered study (`t45`, own protocol / ledger branch / counts) - no extra scheduler. It is OFF in SEAL_LANES until approved.
+#   * Lanes: the same chain can seal a second, separately preregistered study (`t60a`, the T-60 availability study: own protocol / ledger branch / counts) - no extra scheduler. It is OFF in
+#     SEAL_LANES until its activation PR (the exploratory, inactive `t45` lane is kept in the code but is never enabled).
 #   * Does not touch the live ticker, capture worker, projection-foundation, the paper protocol, or any original archive.
 on:
   schedule:
@@ -33,6 +34,7 @@ on:
       - "research/projection_foundation/nba/paper/exec_shadow.py"
       - "research/projection_foundation/nba/paper/exec_shadow_config_v2.json"
       - "research/projection_foundation/nba/paper/exec_shadow_config_t45_v1.json"
+      - "research/projection_foundation/nba/paper/exec_shadow_config_t60a_v1.json"
       - "research/projection_foundation/nba/paper/seal_windows.py"
       - "research/projection_foundation/nba/paper/seal_chain.py"
       - "research/projection_foundation/nba/paper/seal_monitor.py"
@@ -50,10 +52,11 @@ env:
   PF_DIR: research/projection_foundation
   PY: "3.13"
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-  # Sealing lanes. `control` = the original strict T-60 study. `t45` = the separately preregistered T-45 availability study (exec_shadow_config_t45_v1.json; own ledger branch, own
-  # evidence counts). Adding t45 to SEAL_LANES is the ACTIVATION step and needs the owner's approval; the rehearsal below exercises both lanes dry on real archived data.
+  # Sealing lanes. `control` = the original strict T-60 study. `t60a` = the separately preregistered T-60 availability study (exec_shadow_config_t60a_v1.json; own ledger branch, own
+  # evidence counts). Adding t60a to SEAL_LANES is the ACTIVATION step (a separate reviewed change after its dry run, publication and verification are demonstrated); the rehearsal
+  # below exercises both lanes dry on real archived data. The exploratory `t45` lane is never listed here.
   SEAL_LANES: "control"
-  REHEARSAL_LANES: "control,t45"
+  REHEARSAL_LANES: "control,t60a"
   REHEARSAL_NOW: "2026-10-21T01:00:00Z"        # OKC@SAS window (opens 00:40Z, closes 01:20Z, tip 01:30Z) on real archived data: the dry iteration exercises the whole path
 
 concurrency:
@@ -64,7 +67,7 @@ concurrency:
 jobs:
   tick:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 350
     permissions:
       contents: write        # used ONLY by nba.paper.ledger_remote (Git Data API, ledger layout only) via PUBLISH_TOKEN
       actions: write         # used ONLY to dispatch the successor

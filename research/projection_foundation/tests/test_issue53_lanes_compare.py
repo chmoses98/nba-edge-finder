@@ -83,7 +83,7 @@ def test_selection_overlap_is_descriptive_and_separates_the_lanes():
     a = [{"game_id": "g1", "ticker": "A", "side": "NO"}, {"game_id": "g2", "ticker": "B", "side": "NO"}]
     b = [{"game_id": "g1", "ticker": "A", "side": "NO"}, {"game_id": "g3", "ticker": "C", "side": "YES"}]
     o = CL.overlap(a, b)
-    assert (o["contracts_both"], o["control_only"], o["t45_only"], o["games_traded_both"]) == (1, 1, 1, 1)
+    assert (o["contracts_both"], o["control_only"], o["t60a_only"], o["games_traded_both"]) == (1, 1, 1, 1)
 
 
 def test_projection_accuracy_keeps_every_eligible_game_in_the_denominator(tmp_path, monkeypatch):
@@ -98,19 +98,65 @@ def test_projection_accuracy_keeps_every_eligible_game_in_the_denominator(tmp_pa
     monkeypatch.setattr(pr, "score", lambda s: [{"family": "points", "models": [{"model_id": "pf-nba-points", "model_role": "challenger", "n": 12, "n_games": 3, "mae": 1.0, "bias": 0.1,
                                                                                 "primary_metric": "crps", "crps": 0.9}]}])
     cov = {"control": {"per_game": [{"game_id": "g1", "class": "TRADED"}, {"game_id": "g2", "class": "EXCLUDED_ARCHIVE_LATENCY"}]},
-           "t45": {"per_game": [{"game_id": "g1", "class": "TRADED"}, {"game_id": "g2", "class": "EVALUATED_NO_TRADE"}, {"game_id": "g3", "class": "NO_SEAL"}]}}
+           "t60a": {"per_game": [{"game_id": "g1", "class": "TRADED"}, {"game_id": "g2", "class": "EVALUATED_NO_TRADE"}, {"game_id": "g3", "class": "NO_SEAL"}]}}
     a = CL.accuracy_all_games(str(tmp_path), cov)
     assert a["status"] == "OK" and a["n_eligible_games"] == 3 and a["independent_of_lanes"] is True
     assert a["eligible_games_by_lane_status"]["control"] == {"TRADED": 1, "EXCLUDED_ARCHIVE_LATENCY": 1, "NO_LANE_RECORD": 1}
-    assert a["eligible_games_by_lane_status"]["t45"] == {"TRADED": 1, "EVALUATED_NO_TRADE": 1, "NO_SEAL": 1}
+    assert a["eligible_games_by_lane_status"]["t60a"] == {"TRADED": 1, "EVALUATED_NO_TRADE": 1, "NO_SEAL": 1}
     assert a["n_challenger_forecasts_scored"] == 12                                                  # NO_TRADE and unsealed games are scored like traded ones
 
 
 def test_variants_change_exactly_one_thing(monkeypatch):
     from nba.paper import exec_shadow as X, seal_windows as SW
-    n, c = X.load_lane(SW.lane_study_path("t45")), X.load_study()
+    n, c = X.load_lane(SW.lane_study_path("t60a")), X.load_study()
     v = CL._variant(n, 60, "latest_committed_by_decision")
     assert v["checkpoint"]["minutes_before_tip"] == 60 and v["checkpoint"]["horizon"] == "T-60" and v["checkpoint"]["board_rule_id"] == "latest_committed_by_decision"
     w = CL._variant(c, 45, "observed_and_committed_by_checkpoint")
     assert w["checkpoint"]["minutes_before_tip"] == 45 and X.board_rule_id(w) == "observed_and_committed_by_checkpoint" and w["strategies"] == c["strategies"]
     assert X.load_study()["checkpoint"]["minutes_before_tip"] == 60                                  # the originals are untouched (deep copies)
+
+
+def _cov(classes):
+    return {"per_game": [{"game_id": g, "class": k} for g, k in classes.items()]}
+
+
+def _trade(g, ticker, pnl, clv=1.0, ev=0.1):
+    return {"decision": "TRADE", "game_id": g, "ticker": ticker, "side": "NO", "settled": True, "net_pnl": pnl, "clv_cents": clv, "ev_net_exec": ev}
+
+
+def test_paired_differences_attribute_every_difference_to_games_the_control_loses():
+    cc = _cov({"g1": "TRADED", "g2": "EXCLUDED_ARCHIVE_LATENCY", "g3": "EVALUATED_NO_TRADE", "g4": "EXCLUDED_ARCHIVE_LATENCY"})
+    oc = _cov({"g1": "TRADED", "g2": "TRADED", "g3": "EVALUATED_NO_TRADE", "g4": "EVALUATED_NO_TRADE"})
+    ctrl = [_trade("g1", "A", 0.5)]
+    prim = [_trade("g1", "A", 0.5), _trade("g2", "B", -1.0, clv=-2.0)]
+    p = CL.paired(cc, oc, ctrl, prim)
+    assert p["games_both_evaluated"] == 2 and p["games_only_t60a_evaluated"] == 2 and p["games_only_control_evaluated"] == 0
+    assert p["identical_selections_on_common_games"] is True                                         # the superset property: same board, same contracts
+    assert p["recovered_games"]["t60a"]["games"] == 2 and p["recovered_games"]["t60a"]["trades"] == 1 and p["recovered_games"]["t60a"]["net_pnl"] == -1.0
+    assert p["per_game_net_pnl_difference"]["mean"] == round(-1.0 / 4, 4) and p["per_game_net_pnl_difference"]["bootstrap"]["status"] == "INSUFFICIENT_GAMES"
+
+
+def test_paired_flags_a_disagreement_on_a_common_game_and_a_game_only_the_control_has():
+    cc = _cov({"g1": "TRADED", "g2": "TRADED"})
+    oc = _cov({"g1": "TRADED", "g2": "EXCLUDED_ARCHIVE_LATENCY"})
+    p = CL.paired(cc, oc, [_trade("g1", "A", 0.5), _trade("g2", "B", 0.2)], [_trade("g1", "Z", 0.5)])
+    assert p["identical_selections_on_common_games"] is False and p["games_only_control_evaluated"] == 1          # a violated superset property is visible, not hidden
+
+
+def test_paired_bootstrap_is_seeded_and_game_clustered():
+    games = {f"g{i}": ("EXCLUDED_ARCHIVE_LATENCY") for i in range(10)}
+    cc = _cov(games)
+    oc = _cov({g: "TRADED" for g in games})
+    prim = [_trade(g, "T", (1.0 if i % 2 else -0.5)) for i, g in enumerate(games)]
+    a = CL.paired(cc, oc, [], prim)["per_game_net_pnl_difference"]["bootstrap"]
+    b = CL.paired(cc, oc, [], prim)["per_game_net_pnl_difference"]["bootstrap"]
+    assert a == b and a["status"] == "OK" and a["lo95"] <= 0.25 <= a["hi95"]
+
+
+def test_t45_is_exploratory_only(tmp_path, monkeypatch):
+    rep = {"scope": "s", "lanes": {}, "overlap": {}, "projection_accuracy_all_games": {"status": "NO_DATA", "reason": "x"}, "caveats": [],
+           "exploratory": {"lanes": {}, "note": "n"}}
+    md = CL.markdown(rep)
+    assert "EXPLORATORY ONLY" in md and "not part of the primary comparison" in md
+    assert md.index("Projection accuracy") < md.index("EXPLORATORY ONLY")                            # after, and apart from, every primary block
+    assert "EXPLORATORY ONLY" not in CL.markdown({**rep, "exploratory": None})                        # absent unless explicitly requested

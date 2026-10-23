@@ -56,7 +56,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$RUNNER_TEMP/seals"
-          bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$RUNNER_TEMP/seals_t45" exec-shadow-seals-t45 || echo "::warning::t45 ledger not mountable"
+          bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$RUNNER_TEMP/seals_t60a" exec-shadow-seals-t60a || echo "::notice::t60a ledger not mountable (expected until the lane is activated)"
           gh run list --workflow exec-shadow-seal.yml --limit 20 --json databaseId,status,conclusion,event,createdAt,updatedAt > "$RUNNER_TEMP/seal_runs.json" || echo "::warning::could not list exec-shadow-seal runs"
           echo "ok=true" >> "$GITHUB_OUTPUT"
       - name: Watchdog
@@ -68,7 +68,7 @@ jobs:
         run: |
           set +e
           SEAL_ARGS=""
-          if [ "$SEAL_OK" = true ]; then SEAL_ARGS="--seals $RUNNER_TEMP/seals --seal-runs $RUNNER_TEMP/seal_runs.json"; [ -d "$RUNNER_TEMP/seals_t45" ] && SEAL_ARGS="$SEAL_ARGS --seals-t45 $RUNNER_TEMP/seals_t45"; fi
+          if [ "$SEAL_OK" = true ]; then SEAL_ARGS="--seals $RUNNER_TEMP/seals --seal-runs $RUNNER_TEMP/seal_runs.json"; [ -d "$RUNNER_TEMP/seals_t60a" ] && SEAL_ARGS="$SEAL_ARGS --seals-t60a $RUNNER_TEMP/seals_t60a"; fi
           python -m nba.live.watchdog --archive "$RUNNER_TEMP/m/projection-data" --context "$RUNNER_TEMP/m/data-archive" $SEAL_ARGS \
             ${NOW:+--now "$NOW"} --out "$RUNNER_TEMP/health.json" --md "$RUNNER_TEMP/health.md" --expect-paper
           rc=$?

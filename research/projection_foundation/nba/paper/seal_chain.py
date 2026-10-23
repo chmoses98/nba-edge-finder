@@ -4,12 +4,15 @@ Why a chain and not a 5-minute cron. This repository MEASURED its scheduled-work
 (`capture_worker.yml`, `nba-ticker.yml`). A seal window is 40 minutes wide, so a cron-driven sealer would simply miss most games. The pattern that works here is a job that
 owns the cadence itself and dispatches its successor (`workflow_dispatch` is exempt from recursion suppression); cron is demoted to a bootstrap of last resort.
 
-One run (this module, ~280 minutes):
+One run (this module, up to ~335 minutes):
   1. loop every `interval_s`: mount the ledger (fresh) and the schedule context (depth-1, ~1 s); evaluate the gate IN PROCESS (`seal_windows`, no dependency installed);
   2. a window is OPEN -> mount the boards / forecasts, run `exec_seal seal`; a window CLOSED UNSEALED -> `exec_seal watch` writes the MISSED marker (red run);
   3. live runs only: export the new files and publish them through the Git Data API (`ledger_remote`: server-side commit time, fast-forward only, additions only), then
      verify durability and the deadline against the SERVER commit time;
-  4. after `successor_at_min` dispatch the successor (only if the gate says the chain is still needed); stop at `max_minutes`, or as soon as nothing is open, closing or opening
+  4. HANDOVER AT A QUIET MOMENT. Measured (2026-10-22/23): the successor is dispatched ~30 min before the end but cannot start before its predecessor finishes (one concurrency
+     group), and then waits for a hosted runner for up to 18+ minutes; dispatching earlier changes nothing. So the gap cannot be shortened, only placed: after `retire_after_min`
+     the chain retires - dispatching the successor and ending - at the first QUIET moment (no seal window open or closing unsealed, none opening within `quiet_lead_min`); if no
+     quiet moment comes it dispatches by `successor_at_min` (so the pending run exists) and ends at the hard cap `max_minutes` (the hosted-job limit is 360 min). Stop also as soon as nothing is open, closing or opening
      within the horizon (an idle day costs only a delivered cron's ~15 s gate).
 Dry runs (pull requests, manual dry dispatch) perform exactly one iteration and never publish or dispatch.
 
@@ -24,7 +27,7 @@ import shutil
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
 try:
@@ -208,6 +211,13 @@ class Chain:
         else:
             self.err("could not dispatch the successor (the cron bootstrap and the queued runs are the fallback)")
 
+    def quiet(self, g: dict[str, Any]) -> bool:
+        """No lane has a window open or closed-unsealed, and none opens within `quiet_lead_min`: a runner-queue delay of the successor cannot cost a game."""
+        if any(c.get("OPEN") or c.get("WINDOW_CLOSED_UNSEALED") for c in (g.get("counts") or {}).values()):
+            return False
+        nxt = g.get("next_window_opens_utc")
+        return not nxt or SW.parse_ts(nxt) - self.now() >= timedelta(minutes=self.a.quiet_lead_min)
+
     def run_chain(self) -> int:
         start = self.mono()
         n = 0
@@ -220,11 +230,18 @@ class Chain:
             if g is not None and not g["active"]:
                 self.say("nothing open, closing or opening within the horizon: chain ends (the next delivered cron restarts it)")
                 break
+            needed = g is None or g["active"]
             if elapsed_min >= self.a.max_minutes:
+                if needed and not self.successor_sent:
+                    self.dispatch_successor()                              # last chance to leave a pending run (cron bootstrap is the only other fallback)
                 self.say("lifetime reached: chain ends")
                 break
-            if not self.successor_sent and elapsed_min >= self.a.successor_at_min and (g is None or g["active"]):
+            quiet = g is not None and self.quiet(g)
+            if needed and not self.successor_sent and (elapsed_min >= self.a.successor_at_min or (elapsed_min >= self.a.retire_after_min and quiet)):
                 self.dispatch_successor()
+            if self.successor_sent and elapsed_min >= self.a.retire_after_min and quiet:
+                self.say("quiet moment (no seal window open, closing or imminent): handing over to the successor")
+                break
             self.sleep(self.a.interval_s)
         self.say(f"iterations={n} errors={len(self.errors)} missed={len(self.missed)} published={len([p for p in self.published if p.get('status') == 'PUBLISHED'])}")
         return 1 if self.errors else 0
@@ -238,8 +255,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--now", default=None, help="dry runs only")
     ap.add_argument("--interval-s", type=float, default=90.0)
-    ap.add_argument("--max-minutes", type=float, default=280.0)
-    ap.add_argument("--successor-at-min", type=float, default=250.0)
+    ap.add_argument("--max-minutes", type=float, default=335.0, help="hard cap (the hosted-job limit is 360 min)")
+    ap.add_argument("--successor-at-min", type=float, default=315.0, help="latest moment to dispatch the successor so a pending run exists before the hard cap")
+    ap.add_argument("--retire-after-min", type=float, default=240.0, help="from here on, hand over at the first quiet moment")
+    ap.add_argument("--quiet-lead-min", type=float, default=45.0, help="a moment is quiet if no window is open and the next one opens at least this many minutes away")
     ap.add_argument("--horizon-h", type=float, default=6.0)
     ap.add_argument("--default-branch", default=os.environ.get("DEFAULT_BRANCH", "main"))
     ap.add_argument("--workflow-file", default="exec-shadow-seal.yml")
