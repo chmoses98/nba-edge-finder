@@ -118,7 +118,16 @@ class KalshiClient:
                 self._sleep(attempt)
                 continue
             if r.status_code == 200:
-                return r.json()
+                try:
+                    return r.json()
+                except ValueError as e:
+                    # A 200 whose body is not JSON (a maintenance/interstitial page, a truncated body) used to raise JSONDecodeError out of the
+                    # client: it is not a KalshiError, so no per-series handler caught it and ONE bad response aborted the whole 300-series
+                    # capture (rc != 0, no tick). It is a transient fault like a 5xx: retry, then surface as KalshiError so only that series fails.
+                    last_exc = KalshiError(f"HTTP 200 with a non-JSON body {path}: {r.text[:120]!r}")
+                    log.warning(kv(event="kalshi_bad_body", path=path, attempt=attempt, err=type(e).__name__))
+                    self._sleep(attempt)
+                    continue
             if r.status_code in RETRYABLE_STATUS:
                 last_exc = KalshiError(f"HTTP {r.status_code} {path} {r.text[:200]}")
                 log.warning(kv(event="kalshi_retry", status=r.status_code, path=path, attempt=attempt))

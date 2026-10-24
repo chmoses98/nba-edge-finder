@@ -207,3 +207,112 @@ def test_the_aggregate_accounts_for_every_game_at_every_horizon():
         assert c["n_covered"] + c["n_stale"] + c["n_missing"] == c["n_games"] == 2
         assert sum(c["missing_reasons"].values()) == c["n_stale"] + c["n_missing"]
         assert c["n_missing"] >= 1, "the game with no snapshots must never be counted as covered"
+
+
+# -- regressions found on the 2026-10-24 archive ------------------------------------------------------------------------------
+
+
+def test_delta_encoded_ticks_count_as_snapshots(tmp_path):
+    """Regression: only checkpoint files were counted, ~1 tick in 24, so a 5-15 minute cadence read as a 367-minute maximum gap and
+    5.6% of intervals 'within 12 minutes' (the same archive measures 92.0% once deltas are counted)."""
+    ck = tmp_path / "kalshi" / "markets" / "dt=2026-10-03"
+    dl = tmp_path / "kalshi" / "markets_delta" / "dt=2026-10-03"
+    ck.mkdir(parents=True)
+    dl.mkdir(parents=True)
+    (ck / "kalshi_markets_20261003T220000Z_1.jsonl.gz").write_bytes(b"")
+    (dl / "kalshi_markets_delta_20261003T221500Z_1.json.gz").write_bytes(b"")
+    (dl / "kalshi_markets_delta_20261003T223000Z_1.json.gz").write_bytes(b"")
+    assert [t.minute for t in H.snapshot_times(tmp_path)] == [0, 15, 30]
+
+
+def _schedule_ledger(tmp_path, snapshots):
+    """snapshots: [(observed_at, [game rows])] written as context/schedule ledger entries."""
+    from nba_edge.archive.ledger import Ledger
+
+    led = Ledger(tmp_path, run_id="r")
+    for at, rows in snapshots:
+        led.append_rows("context/schedule", rows, observed_at=at)
+    return led
+
+
+def _game(gid, start, status="scheduled", season="regular"):
+    return {"game_id": gid, "start_time_utc": start.isoformat().replace("+00:00", "Z"), "status": status, "season_type": season}
+
+
+def test_games_that_have_dropped_out_of_the_latest_schedule_are_still_graded(tmp_path):
+    """Regression: grading used only the newest schedule snapshot, which lists games from today forward, so every finished game vanished
+    and the verdict was NO_DATA all season (0 games graded against 83 final box scores)."""
+    tip = datetime(2026, 10, 3, 23, 0, tzinfo=UTC)
+    led = _schedule_ledger(tmp_path, [(tip - timedelta(hours=10), [_game("g1", tip)]), (tip + timedelta(hours=20), [_game("g2", tip + timedelta(days=1))])])
+    games = H.known_games(led, now=tip + timedelta(hours=10))
+    assert [g["game_id"] for g in games] == ["g1"], "g1 is absent from the newest snapshot but has tipped; g2 has not"
+
+
+def test_tip_is_the_last_pre_tip_schedule_value_and_postponed_games_are_excluded(tmp_path):
+    tip = datetime(2026, 10, 3, 23, 0, tzinfo=UTC)
+    led = _schedule_ledger(tmp_path, [
+        (tip - timedelta(hours=5), [_game("g1", tip), _game("g2", tip), _game("g3", tip)]),
+        (tip - timedelta(hours=3), [_game("g3", tip + timedelta(days=1))]),  # genuinely moved while still pre-tip
+        (tip + timedelta(hours=2), [_game("g1", tip, status="in_progress"), _game("g2", tip, status="postponed")]),
+    ])
+    games = {g["game_id"]: g for g in H.known_games(led, now=tip + timedelta(hours=9))}
+    assert games["g1"]["tip"] == tip and games["g1"]["tip_source"] == "schedule_pre_tip"
+    assert "g2" not in games, "postponed"
+    assert "g3" not in games, "moved to tomorrow: it has not tipped yet"
+
+
+def test_future_games_are_not_graded(tmp_path):
+    tip = datetime(2026, 10, 3, 23, 0, tzinfo=UTC)
+    led = _schedule_ledger(tmp_path, [(tip - timedelta(hours=5), [_game("g1", tip)])])
+    assert H.known_games(led, now=tip - timedelta(hours=1)) == []
+
+
+# -- observed vs published ------------------------------------------------------------------------------------------------------
+
+
+def test_commit_log_parsing_and_matching_tolerates_one_second_rounding(tmp_path):
+    from nba_edge.archive.ledger import Ledger
+
+    log = H.parse_commit_log(
+        "2026-10-03T22:04:57+00:00|capture: 111 at 2026-10-03T22:01:39Z\n"
+        "2026-10-03T22:07:00+00:00|worker: 111 retired after 20 cycles\n"
+        "garbage line\n"
+    )
+    assert list(log) == ["111"]
+    led = Ledger(tmp_path, run_id="111")
+    led.append_rows("kalshi/markets", [{"ticker": "T"}], observed_at=datetime(2026, 10, 3, 22, 1, 40, tzinfo=UTC))
+    committed, missing = H.committed_map(led, log)
+    assert missing == 0 and list(committed.values()) == [datetime(2026, 10, 3, 22, 4, 57, tzinfo=UTC)]
+
+
+def test_an_observed_snapshot_committed_after_the_checkpoint_does_not_count_as_available_then():
+    """The brief: never let a snapshot committed after a decision checkpoint masquerade as available beforehand."""
+    obs = [TIP - timedelta(minutes=70), TIP - timedelta(minutes=64)]
+    committed = {obs[0]: obs[0] + timedelta(minutes=3), obs[1]: obs[1] + timedelta(minutes=7)}  # second lands at T-57
+    gh = H.assess_game("g", TIP, obs, committed=committed)
+    h = gh.horizons["T-60m"]
+    assert h["covered_by"] == obs[1].isoformat() and h["age_minutes"] == 4.0, "by the observation clock the newer tick covers T-60"
+    assert h["observed_cover_published_by_target"] is False and h["publication_lag_s"] == 420.0
+    assert h["published_cover_utc"] == obs[0].isoformat() and h["published_cover_age_minutes"] == 10.0, "a reader at T-60 only had the older tick"
+
+
+def test_summary_counts_unpublished_covers():
+    obs = [TIP - timedelta(minutes=64)]
+    g1 = H.assess_game("g1", TIP, obs, committed={obs[0]: obs[0] + timedelta(minutes=7)})
+    g2 = H.assess_game("g2", TIP, obs, committed={obs[0]: obs[0] + timedelta(minutes=2)})
+    pub = H.summarise([g1, g2])["horizon_coverage"]["T-60m"]["publication"]
+    assert pub["n_games"] == 2 and pub["observed_cover_not_yet_published_at_target"] == 1 and pub["publication_lag_s_max"] == 420.0
+
+
+def test_handover_gaps_pair_each_retirement_with_its_successors_lease():
+    log = "\n".join([
+        "2026-10-22T18:39:43+00:00|worker: 100 retired after 23 cycles",
+        "2026-10-22T19:42:51+00:00|worker: 200 gen 125 acquired lease",
+        "2026-10-22T19:50:08+00:00|capture: 200 at 2026-10-22T19:42:55Z",
+        "2026-10-22T08:56:21+00:00|worker: 50 retired after 20 cycles",
+        "2026-10-22T08:57:15+00:00|worker: 100 gen 123 acquired lease",
+        "unrelated|line",
+    ])
+    gaps = H.handover_gaps(log)
+    assert [(g["retired_run"], g["successor_run"], g["gap_minutes"]) for g in gaps] == [("50", "100", 0.9), ("100", "200", 63.1)]
+    assert H.handover_gaps(log, min_gap_s=600)[0]["gap_minutes"] == 63.1

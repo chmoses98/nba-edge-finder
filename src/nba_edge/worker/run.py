@@ -489,9 +489,16 @@ class Worker:
         try:
             from nba_edge.ops.evidence_health import run_evidence_health
 
-            run_evidence_health(self.archive_root, self.archive_root / "EVIDENCE_HEALTH.json")
+            run_evidence_health(self.archive_root, self.archive_root / "EVIDENCE_HEALTH.json", self.data_root)
         except Exception as e:  # noqa: BLE001 - a dashboard must never cost us a handover
             print(f"worker: could not write the evidence dashboard ({e})")
+        # Market-universe coverage, once per shift next to the dashboard: derived, overwritten, read-only over the archive.
+        try:
+            from nba_edge.ops.market_coverage import run_market_coverage
+
+            run_market_coverage(self.archive_root, self.archive_root)
+        except Exception as e:  # noqa: BLE001 - a report must never cost us a handover
+            print(f"worker: could not write the coverage report ({e})")
         res.final_push_ok = self._push(f"worker: {self.worker_id} retired after {len(res.cycles)} cycles")
         res.health = classify_shift(
             res.as_dict(), final_push_ok=res.final_push_ok, capture_status=capture_status

@@ -41,7 +41,7 @@ def cmd_capture(args: argparse.Namespace) -> int:
     return run_capture(out_root=Path(args.out), statuses=args.statuses.split(","), with_orderbook=args.orderbook,
                        max_orderbooks=args.max_orderbooks, series_filter=args.series.split(",") if args.series else None,
                        delta_encode=not args.full_snapshots,
-                       checkpoint_every=args.checkpoint_every or DEFAULT_CHECKPOINT_EVERY)
+                       checkpoint_every=args.checkpoint_every or DEFAULT_CHECKPOINT_EVERY, probe_all_series=args.probe_all_series)
 
 
 def cmd_reconstruct(args: argparse.Namespace) -> int:
@@ -164,7 +164,8 @@ def cmd_capture_health(args: argparse.Namespace) -> int:
 
     from nba_edge.ops.capture_health import run_capture_health
 
-    report = run_capture_health(Path(args.archive), Path(args.out) if args.out else None, days=args.days)
+    report = run_capture_health(Path(args.archive), Path(args.out) if args.out else None, days=args.days,
+                                commit_log=Path(args.commit_log) if args.commit_log else None)
     print(json.dumps(report["summary"], indent=2, sort_keys=True))
     # Exit non-zero only when asked to gate, so the report can be produced routinely without
     # painting an unattended workflow red every day of the off-season.
@@ -172,6 +173,18 @@ def cmd_capture_health(args: argparse.Namespace) -> int:
         print("capture-health: ACCEPTANCE FAILED")
         return 1
     return 0
+
+
+def cmd_coverage_report(args: argparse.Namespace) -> int:
+    """Market-universe coverage: discovered -> captured -> classified -> modelable -> priced -> book-sampled -> validated."""
+    from nba_edge.ops.market_coverage import run_market_coverage
+
+    rep = run_market_coverage(Path(args.archive), Path(args.out) if args.out else None)
+    print(f"coverage: {rep['health']}; {rep['board']['n_markets']} markets, {len(rep['alerts'])} alert(s)")
+    for a in rep["alerts"]:
+        print(f"  {a['level']} {a['code']}: {a['message']}")
+    # Gating is opt-in, exactly like capture-health: the report is produced routinely and must not paint an unattended run red.
+    return 1 if args.gate and rep["health"] == "ATTENTION" else 0
 
 
 def cmd_evidence_health(args: argparse.Namespace) -> int:
@@ -312,6 +325,8 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--series", default=None)
     c.add_argument("--full-snapshots", action="store_true",
                    help="Disable delta encoding and write a full board every tick (the old behaviour)")
+    c.add_argument("--probe-all-series", action="store_true",
+                   help="List every NBA series every tick (disables the skip-known-empty series policy)")
     c.add_argument("--checkpoint-every", type=int, default=None,
                    help="Deltas per checkpoint before a fresh full board is written")
     c.set_defaults(func=cmd_capture)
@@ -331,8 +346,16 @@ def build_parser() -> argparse.ArgumentParser:
     ch.add_argument("--archive", default="data/archive")
     ch.add_argument("--out", default=None, help="Write the full per-game report here")
     ch.add_argument("--days", type=int, default=30, help="Only grade games tipped within N days")
+    ch.add_argument("--commit-log", default=None,
+                    help="Output of `git log --format='%%cI|%%s' origin/data-archive`; adds the publication-clock view of every horizon")
     ch.add_argument("--gate", action="store_true", help="Exit 1 if the Phase 5 acceptance criteria fail")
     ch.set_defaults(func=cmd_capture_health)
+
+    cv = sub.add_parser("coverage-report", help="Market-universe coverage report (discovered/captured/classified/modelable/priced/validated)")
+    cv.add_argument("--archive", default="data/archive")
+    cv.add_argument("--out", default=None, help="directory for COVERAGE_REPORT.json/.md (default: the archive root)")
+    cv.add_argument("--gate", action="store_true", help="exit 1 when an ERROR-level alert is present")
+    cv.set_defaults(func=cmd_coverage_report)
 
     eh = sub.add_parser("evidence-health", help="Daily dataset-completeness dashboard")
     eh.add_argument("--archive", default="data/archive")

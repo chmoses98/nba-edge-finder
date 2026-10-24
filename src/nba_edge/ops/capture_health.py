@@ -31,7 +31,7 @@ from nba_edge.worker.plan import (
 
 # kalshi_markets_20260918T073603Z_35320111760.jsonl.gz -- the capture instant is in the NAME, so
 # cadence can be measured without decompressing a season of snapshots.
-SNAP_RE = re.compile(r"_(\d{8}T\d{6}Z)_(\d+)\.jsonl(?:\.gz)?$")
+SNAP_RE = re.compile(r"_(\d{8}T\d{6}Z)_(\d+)\.jsonl?(?:\.gz)?$")
 
 # The horizons the brief asks for by name. "nearest feasible pre-tip" is handled separately by
 # ``final_pregame``, because the last valid snapshot before tip is a different question from
@@ -45,17 +45,24 @@ def _parse_stamp(text: str) -> datetime:
     return datetime.strptime(text, "%Y%m%dT%H%M%SZ").replace(tzinfo=UTC)
 
 
+# Delta-encoded ticks live beside the checkpoints. Counting only checkpoints (one in ~24 ticks, ~2 h apart) made every cadence figure
+# wrong by an order of magnitude: on the 2026-10-24 archive 5.6% of intervals "within 12 min" and a 367-minute "maximum gap" against
+# a real 5-15 minute cadence.
+TICK_SUBDIRS = {"kalshi/markets": ("kalshi/markets", "kalshi/markets_delta"), "kalshi/orderbooks": ("kalshi/orderbooks", "kalshi/orderbooks_delta")}
+
+
 def snapshot_times(archive_root: Path, subdir: str = "kalshi/markets") -> list[datetime]:
-    """Every market-capture instant on the archive, sorted."""
-    root = archive_root / subdir
-    if not root.exists():
-        return []
+    """Every market-capture instant on the archive (checkpoints AND deltas), sorted."""
     out = []
-    for p in root.rglob("*.jsonl*"):
-        m = SNAP_RE.search(p.name)
-        if m:
-            out.append(_parse_stamp(m.group(1)))
-    return sorted(out)
+    for sub in TICK_SUBDIRS.get(subdir, (subdir,)):
+        root = archive_root / sub
+        if not root.exists():
+            continue
+        for p in root.rglob("*.json*"):
+            m = SNAP_RE.search(p.name)
+            if m:
+                out.append(_parse_stamp(m.group(1)))
+    return sorted(set(out))
 
 
 def expected_ticks(tip: datetime, open_hours: float = WINDOW_OPEN_HOURS_BEFORE_TIP) -> list[datetime]:
@@ -168,6 +175,7 @@ def assess_game(
     tip: datetime,
     snaps: list[datetime],
     tolerance_minutes: float = 12.0,
+    committed: dict[datetime, datetime] | None = None,
 ) -> GameHealth:
     """Grade one game's pregame capture coverage.
 
@@ -213,11 +221,33 @@ def assess_game(
             archive_last=archive_last, tolerance_minutes=tolerance_minutes,
         )
         gh.horizons[f"T-{minutes}m"] = {"target_utc": target.isoformat(), **graded}
+        if committed is not None:
+            gh.horizons[f"T-{minutes}m"].update(publication_view(target, cover, pregame, committed))
 
     if pregame:
         gh.final_pregame_utc = pregame[-1].isoformat()
         gh.final_pregame_age_minutes = round((tip - pregame[-1]).total_seconds() / 60, 2)
     return gh
+
+
+def publication_view(target: datetime, observed_cover: datetime | None, pregame: list[datetime], committed: dict[datetime, datetime]) -> dict:
+    """The same horizon seen through the archive's publication clock.
+
+    Three instants are NOT interchangeable and are never merged here: when the market was OBSERVED (the capture stamp), when the snapshot
+    was WRITTEN, and when it was COMMITTED to the archive branch, which is the earliest a reader of the archive could have had it. A
+    decision at ``target`` can only use a tick committed at or before ``target``; the observed-clock cover is therefore reported next to
+    the committed-clock cover, and the gap between them is the amount by which the observed clock flatters point-in-time availability.
+    """
+    cover_commit = committed.get(observed_cover) if observed_cover else None
+    published = [s for s in pregame if committed.get(s) is not None and committed[s] <= target]
+    pub_cover = published[-1] if published else None
+    return {
+        "observed_cover_committed_utc": cover_commit.isoformat() if cover_commit else None,
+        "observed_cover_published_by_target": None if observed_cover is None or cover_commit is None else cover_commit <= target,
+        "publication_lag_s": None if observed_cover is None or cover_commit is None else round((cover_commit - observed_cover).total_seconds(), 1),
+        "published_cover_utc": pub_cover.isoformat() if pub_cover else None,
+        "published_cover_age_minutes": None if pub_cover is None else round((target - pub_cover).total_seconds() / 60, 2),
+    }
 
 
 def summarise(games: list[GameHealth]) -> dict:
@@ -246,7 +276,23 @@ def summarise(games: list[GameHealth]) -> dict:
             h = g.horizons.get(key, {})
             if h.get("state") != "COVERED" and h.get("reason"):
                 reasons[h["reason"]] = reasons.get(h["reason"], 0) + 1
+        pub = [g.horizons[key] for g in games if "published_cover_age_minutes" in g.horizons.get(key, {})]
+        pub_block = None
+        if pub:
+            lags = [h["publication_lag_s"] for h in pub if h.get("publication_lag_s") is not None]
+            pub_ages = [h["published_cover_age_minutes"] for h in pub if h.get("published_cover_age_minutes") is not None]
+            pub_block = {
+                "n_games": len(pub),
+                "observed_cover_not_yet_published_at_target": sum(1 for h in pub if h.get("observed_cover_published_by_target") is False),
+                "published_within_12min": sum(1 for h in pub if h.get("published_cover_age_minutes") is not None and h["published_cover_age_minutes"] <= 12.0),
+                "published_age_minutes_median": round(_percentile(pub_ages, 0.5), 2) if pub_ages else None,
+                "published_age_minutes_p90": round(_percentile(pub_ages, 0.9), 2) if pub_ages else None,
+                "publication_lag_s_median": round(_percentile(lags, 0.5), 1) if lags else None,
+                "publication_lag_s_p90": round(_percentile(lags, 0.9), 1) if lags else None,
+                "publication_lag_s_max": round(max(lags), 1) if lags else None,
+            }
         horizon_cov[key] = {
+            "publication": pub_block,
             "games_with_any_prior_snapshot": len(have),
             "games_with_snapshot_within_12min": len(fresh),
             "coverage_pct": round(100.0 * len(have) / len(games), 2) if games else None,
@@ -324,36 +370,164 @@ def summarise(games: list[GameHealth]) -> dict:
     return summary
 
 
-def run_capture_health(archive_root: Path, out: Path | None = None, days: int = 30) -> dict:
-    """Assess every game in the archive's most recent schedule snapshot."""
-    from nba_edge.archive.ledger import Ledger
-    from nba_edge.workflows.conductor import _latest_schedule
+PARTIAL_SEASON_TYPES = ("regular", "playoffs", "play_in", "preseason")
+COMMIT_MATCH_TOLERANCE_S = 5.0  # the commit subject carries the capture instant to the second; the manifest rounds differently by <= 1s
 
-    snaps = snapshot_times(archive_root)
-    try:
-        rows = _latest_schedule(Ledger(archive_root))
-    except Exception as e:  # noqa: BLE001
-        print(f"capture-health: no schedule available ({e})")
-        rows = []
 
-    cutoff = datetime.now(tz=UTC) - timedelta(days=days)
-    games: list[GameHealth] = []
-    for g in rows:
+def known_games(ledger, *, now: datetime | None = None, since: datetime | None = None) -> list[dict]:
+    """Every game that has tipped, from ALL schedule snapshots plus final box scores -- not just the newest schedule snapshot.
+
+    The newest ``context/schedule`` snapshot only lists games from today forward, so grading "the games in the latest schedule that have
+    tipped" measured only games that were still on the board and returned NO_DATA all season (the 2026-10-24 archive: 0 games graded
+    against 83 final box scores). The tip used is the last schedule value observed BEFORE the game tipped (a reschedule cannot move a
+    tip into the past), overridden by the box score's ``actual_tip_utc`` when there is one. Postponed/cancelled games are excluded and
+    counted by the caller.
+    """
+    import gzip
+    import json
+
+    now = now or datetime.now(tz=UTC)
+    latest: dict[str, dict] = {}
+    pre_tip: dict[str, dict] = {}
+    for e in sorted((e for e in ledger.manifest() if e.kind == "context/schedule"), key=lambda e: e.observed_at_utc or e.written_at_utc):
+        obs = datetime.fromisoformat((e.observed_at_utc or e.written_at_utc).replace("Z", "+00:00"))
         try:
-            tip = datetime.fromisoformat(str(g["start_time_utc"]).replace("Z", "+00:00"))
-        except (KeyError, TypeError, ValueError):
+            with gzip.open(ledger.root / e.path, "rt") as f:
+                rows = [json.loads(line) for line in f if line.strip()]
+        except (OSError, ValueError):
             continue
-        # Only graded once it has actually happened: a future game has no coverage to measure and
-        # would drag every percentage toward zero for no reason.
-        if tip > datetime.now(tz=UTC) or tip < cutoff:
+        for g in rows:
+            gid = str(g.get("game_id"))
+            latest[gid] = g
+            try:
+                start = datetime.fromisoformat(str(g["start_time_utc"]).replace("Z", "+00:00"))
+            except (KeyError, ValueError):
+                continue
+            if obs < start:
+                pre_tip[gid] = g
+    actual: dict[str, datetime] = {}
+    for e in (e for e in ledger.manifest() if e.kind == "boxscores"):
+        try:
+            with gzip.open(ledger.root / e.path, "rt") as f:
+                for line in f:
+                    x = json.loads(line) if line.strip() else {}
+                    if x.get("actual_tip_utc") and str(x.get("is_final")).lower() == "true":
+                        actual[str(x["game_id"])] = datetime.fromisoformat(str(x["actual_tip_utc"]).replace("Z", "+00:00"))
+        except (OSError, ValueError):
             continue
-        games.append(assess_game(str(g.get("game_id", "?")), tip, snaps))
+    out = []
+    for gid, g in latest.items():
+        if str(g.get("status")) in ("postponed", "canceled", "cancelled"):
+            continue
+        src = pre_tip.get(gid, g)
+        try:
+            tip = actual.get(gid) or datetime.fromisoformat(str(src["start_time_utc"]).replace("Z", "+00:00"))
+        except (KeyError, ValueError):
+            continue
+        if tip > now or (since is not None and tip < since):
+            continue
+        out.append({"game_id": gid, "tip": tip, "season_type": g.get("season_type"), "tip_source": "box_actual" if gid in actual else "schedule_pre_tip"})
+    return sorted(out, key=lambda x: x["tip"])
+
+
+def parse_commit_log(text: str) -> dict[str, list[tuple[datetime, datetime]]]:
+    """``git log --format='%cI|%s' origin/data-archive`` -> {run_id: [(capture instant, commit instant)]}.
+
+    Subjects look like ``capture: <run_id> at 2026-10-24T06:31:22Z``. The commit time is the archive's own clock (the independent one);
+    it is a LOWER bound on availability -- a push can be retried after the commit and nothing here observes the push itself.
+    """
+    out: dict[str, list[tuple[datetime, datetime]]] = {}
+    for line in text.splitlines():
+        m = re.match(r"^(\S+)\|capture: (\d+) at (\S+)$", line.strip())
+        if not m:
+            continue
+        try:
+            commit = datetime.fromisoformat(m.group(1))
+            cap = datetime.fromisoformat(m.group(3).replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        out.setdefault(m.group(2), []).append((cap, commit))
+    return out
+
+
+def handover_gaps(text: str, *, min_gap_s: float = 0.0) -> list[dict]:
+    """Time with no worker between one worker's retirement commit and its successor's lease commit, from the archive's own commit log.
+
+    Lines: ``<commit time>|worker: <run_id> retired after N cycles`` and ``<commit time>|worker: <run_id> gen G acquired lease``. The gap is an upper
+    bound on the time without a writer (the retirement commit is made before the runner exits, the lease commit just after the successor's job starts).
+    It cannot say WHY: for 2026-10-22 18:39 -> 19:42 the Actions API shows the successor's job created 18:39:50 and started 19:41:58, i.e. 62 minutes
+    waiting for a hosted runner; the log alone only shows a gap.
+    """
+    events = []
+    for line in text.splitlines():
+        m = re.match(r"^(\S+)\|worker: (\d+) (retired after \d+ cycles|gen \d+ acquired lease)$", line.strip())
+        if not m:
+            continue
+        try:
+            t = datetime.fromisoformat(m.group(1))
+        except ValueError:
+            continue
+        events.append((t, m.group(2), "retired" if m.group(3).startswith("retired") else "acquired"))
+    events.sort()
+    out = []
+    last_retire = None
+    for t, run, kind in events:
+        if kind == "retired":
+            last_retire = (t, run)
+        elif last_retire is not None and run != last_retire[1]:
+            gap = (t - last_retire[0]).total_seconds()
+            if gap >= min_gap_s:
+                out.append({"retired_run": last_retire[1], "retired_utc": last_retire[0].isoformat(), "successor_run": run, "acquired_utc": t.isoformat(), "gap_minutes": round(gap / 60, 1)})
+            last_retire = None
+    return out
+
+
+def committed_map(ledger, log: dict[str, list[tuple[datetime, datetime]]]) -> tuple[dict[datetime, datetime], int]:
+    """{observed instant: commit instant} for every market tick on the manifest, plus how many ticks had no matching commit."""
+    out: dict[datetime, datetime] = {}
+    missing = 0
+    for e in ledger.manifest():
+        if e.kind not in ("kalshi/markets", "kalshi/markets_delta"):
+            continue
+        obs = datetime.fromisoformat((e.observed_at_utc or e.written_at_utc).replace("Z", "+00:00"))
+        best = None
+        for cap, commit in log.get(e.run_id, []):
+            if abs((cap - obs).total_seconds()) <= COMMIT_MATCH_TOLERANCE_S and (best is None or commit < best):
+                best = commit
+        if best is None:
+            missing += 1
+        else:
+            out[obs] = best
+    return out, missing
+
+
+def run_capture_health(archive_root: Path, out: Path | None = None, days: int = 30, commit_log: Path | None = None) -> dict:
+    """Assess every game that has tipped in the window (all schedule snapshots + final box scores)."""
+    from nba_edge.archive.ledger import Ledger
+
+    ledger = Ledger(archive_root)
+    snaps = snapshot_times(archive_root)
+    now = datetime.now(tz=UTC)
+    cutoff = now - timedelta(days=days)
+    games_in = known_games(ledger, now=now, since=cutoff)
+    committed = None
+    n_uncommitted = None
+    if commit_log is not None and Path(commit_log).exists():
+        committed, n_uncommitted = committed_map(ledger, parse_commit_log(Path(commit_log).read_text()))
+    games: list[GameHealth] = []
+    for g in games_in:
+        games.append(assess_game(g["game_id"], g["tip"], snaps, committed=committed))
 
     report = {
-        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
+        "generated_at_utc": now.isoformat(),
         "n_market_snapshots_on_archive": len(snaps),
         "archive_first_snapshot": snaps[0].isoformat() if snaps else None,
         "archive_last_snapshot": snaps[-1].isoformat() if snaps else None,
+        "game_universe": {"n_games": len(games_in), "by_season_type": {k: sum(1 for g in games_in if g["season_type"] == k) for k in sorted({str(g["season_type"]) for g in games_in})},
+                          "n_tip_from_box": sum(1 for g in games_in if g["tip_source"] == "box_actual")},
+        "handover_gaps": None if commit_log is None or not Path(commit_log).exists() else handover_gaps(Path(commit_log).read_text()),
+        "publication_clock": None if committed is None else {"n_ticks_with_commit_time": len(committed), "n_ticks_without": n_uncommitted,
+                                                             "note": "commit time is a lower bound on availability; the push itself is not observed"},
         "summary": summarise(games),
         "games": [
             {
