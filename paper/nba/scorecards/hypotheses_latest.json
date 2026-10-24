@@ -1,862 +1,862 @@
 {
  "authority": "research_only",
- "banner": "INSUFFICIENT_SAMPLE: 28 games. Nothing here authorises a change to production parameters or betting; first-week results are never promotion evidence.",
+ "banner": "INSUFFICIENT_SAMPLE: 36 games. Nothing here authorises a change to production parameters or betting; first-week results are never promotion evidence.",
  "classification_counts": {
-  "EVIDENCE_AGAINST": 4,
-  "INCONCLUSIVE": 8,
+  "EVIDENCE_AGAINST": 6,
+  "INCONCLUSIVE": 6,
   "PROJECTION_CALIBRATION_ISSUE": 1
  },
  "exploratory_screens": {
   "cells": [
    {
     "bh_reject": false,
+    "cell": "player_pra|T-10|0.2-0.4",
+    "ci95": [
+     0.01925036420355699,
+     0.05664871086405416
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.03785302649531153,
+    "n": 168,
+    "n_games": 28,
+    "p_value": 8.072629505001091e-05,
+    "q_bh": 0.01285732927038512
+   },
+   {
+    "bh_reject": false,
     "cell": "player_pra|T-90|0.6-0.8",
     "ci95": [
-     0.048170622219727725,
-     0.14936723403253968
+     0.036957549956072484,
+     0.1157423878725382
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.09994196007403407,
-    "n": 81,
-    "n_games": 16,
-    "p_value": 8.908963632058891e-05,
-    "q_bh": 0.020045168172132505
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_points|LIVE|0.8-1.0",
-    "ci95": [
-     0.017460190419934088,
-     0.0596484592385796
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.0392544734336301,
-    "n": 522,
-    "n_games": 16,
-    "p_value": 0.00024529248429920207,
-    "q_bh": 0.02720125470181751
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_points|T-60|0.8-1.0",
-    "ci95": [
-     0.02376924466784473,
-     0.07974057827542012
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.05049201018858157,
-    "n": 78,
-    "n_games": 16,
-    "p_value": 0.00036268339602423346,
-    "q_bh": 0.02720125470181751
-   },
-   {
-    "bh_reject": false,
-    "cell": "game_winner|LIVE|0.6-0.8",
-    "ci95": [
-     0.02697228662416551,
-     0.09467348463121483
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.060418022756849335,
-    "n": 73,
-    "n_games": 9,
-    "p_value": 0.0005596231658761757,
-    "q_bh": 0.031478803080534884
-   },
-   {
-    "bh_reject": false,
-    "cell": "game_winner|LIVE|0.2-0.4",
-    "ci95": [
-     0.024016014614249646,
-     0.09294294218860293
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.05748915366197184,
-    "n": 71,
-    "n_games": 8,
-    "p_value": 0.0010651512149809903,
-    "q_bh": 0.04793180467414456
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_points|T-30|0.8-1.0",
-    "ci95": [
-     0.018916595964930637,
-     0.07489649604028466
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.04616039961486271,
-    "n": 79,
-    "n_games": 16,
-    "p_value": 0.0014973214150058739,
-    "q_bh": 0.054718584574876404
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_pra|T-10|0.6-0.8",
-    "ci95": [
-     0.031847620003448596,
-     0.13807176005421032
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.08253380430981005,
-    "n": 79,
-    "n_games": 16,
-    "p_value": 0.0017023559645517104,
-    "q_bh": 0.054718584574876404
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_pra|T-60|0.6-0.8",
-    "ci95": [
-     0.029196206602427718,
-     0.14058288430278626
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.08554295789677792,
-    "n": 78,
-    "n_games": 16,
-    "p_value": 0.002948672543553101,
-    "q_bh": 0.08293141528743096
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_pra|T-60|0.0-0.2",
-    "ci95": [
-     0.00853294813178103,
-     0.04225818914138767
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.02334318191901635,
-    "n": 44,
-    "n_games": 16,
-    "p_value": 0.005372634614610185,
-    "q_bh": 0.13431586536525464
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_points|T-10|0.8-1.0",
-    "ci95": [
-     0.010122559370028773,
-     0.08209986172975067
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.04873248493735854,
-    "n": 78,
-    "n_games": 16,
-    "p_value": 0.0063248279976759305,
-    "q_bh": 0.14230862994770843
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_points|T-90|0.8-1.0",
-    "ci95": [
-     0.011664122476428123,
-     0.0751866769861673
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.04453209827224332,
-    "n": 80,
-    "n_games": 16,
-    "p_value": 0.008125849078665613,
-    "q_bh": 0.15335632947988068
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_points|LAST_VALID|0.8-1.0",
-    "ci95": [
-     0.012108408666383845,
-     0.0796951548054082
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.04649559242517923,
-    "n": 81,
-    "n_games": 16,
-    "p_value": 0.00867549532911153,
-    "q_bh": 0.15335632947988068
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_threes|LIVE|0.4-0.6",
-    "ci95": [
-     -0.03903486473443107,
-     -0.005506343925212938
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": -0.022458738351364527,
-    "n": 1199,
-    "n_games": 16,
-    "p_value": 0.008860587925504216,
-    "q_bh": 0.15335632947988068
+    "diff_model_minus_market": 0.07644312836686114,
+    "n": 143,
+    "n_games": 28,
+    "p_value": 0.00010989170316568479,
+    "q_bh": 0.01285732927038512
    },
    {
     "bh_reject": false,
     "cell": "player_rebounds|T-90|0.2-0.4",
     "ci95": [
-     0.006326531910224963,
-     0.041930955166335576
+     0.010564739160123753,
+     0.035188329341494344
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.022955359280716306,
-    "n": 135,
-    "n_games": 16,
-    "p_value": 0.010323952191174827,
-    "q_bh": 0.1611668713293885
+    "diff_model_minus_market": 0.023105776051968542,
+    "n": 236,
+    "n_games": 28,
+    "p_value": 0.00028508113855069703,
+    "q_bh": 0.01924838808670469
    },
    {
     "bh_reject": false,
-    "cell": "player_pra|T-10|0.2-0.4",
+    "cell": "player_pra|T-60|0.6-0.8",
     "ci95": [
-     0.01158891177040084,
-     0.06258272839428947
+     0.029228637572845693,
+     0.10263883288579999
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.033735118280080335,
-    "n": 93,
-    "n_games": 16,
-    "p_value": 0.0107444580886259,
-    "q_bh": 0.1611668713293885
+    "diff_model_minus_market": 0.0657276724187493,
+    "n": 138,
+    "n_games": 28,
+    "p_value": 0.00040081370856819503,
+    "q_bh": 0.01924838808670469
+   },
+   {
+    "bh_reject": false,
+    "cell": "player_points|LIVE|0.8-1.0",
+    "ci95": [
+     0.013674425236714466,
+     0.046749928391800484
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.029676049753748074,
+    "n": 857,
+    "n_games": 28,
+    "p_value": 0.0004171906685978365,
+    "q_bh": 0.01924838808670469
+   },
+   {
+    "bh_reject": false,
+    "cell": "game_spread|LIVE|0.6-0.8",
+    "ci95": [
+     0.03144263645066905,
+     0.13949935750628148
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.09522662287850141,
+    "n": 357,
+    "n_games": 12,
+    "p_value": 0.0004935484124796074,
+    "q_bh": 0.01924838808670469
+   },
+   {
+    "bh_reject": false,
+    "cell": "player_pra|T-10|0.6-0.8",
+    "ci95": [
+     0.027378710097745167,
+     0.09849496316427865
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.06092523365961095,
+    "n": 140,
+    "n_games": 28,
+    "p_value": 0.0007100623382142274,
+    "q_bh": 0.023736369591732746
    },
    {
     "bh_reject": false,
     "cell": "player_pra|LAST_VALID|0.2-0.4",
     "ci95": [
-     0.009664923221184485,
-     0.07411160519246376
+     0.016962225998007573,
+     0.059454340353721456
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.03865083136355185,
-    "n": 80,
-    "n_games": 16,
-    "p_value": 0.020038571614036684,
-    "q_bh": 0.28179241332239086
+    "diff_model_minus_market": 0.036642868326864794,
+    "n": 148,
+    "n_games": 28,
+    "p_value": 0.0008523652873128264,
+    "q_bh": 0.024802180713449064
    },
    {
     "bh_reject": false,
-    "cell": "player_assists|LAST_VALID|0.8-1.0",
+    "cell": "player_points|T-30|0.8-1.0",
     "ci95": [
-     0.008436198768027502,
-     0.0641432459329576
+     0.014619063712155779,
+     0.05617656513178801
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.03286269024068706,
-    "n": 58,
-    "n_games": 15,
-    "p_value": 0.021627805857762878,
-    "q_bh": 0.2845250412530042
+    "diff_model_minus_market": 0.034812215216467296,
+    "n": 139,
+    "n_games": 28,
+    "p_value": 0.0010302382019432464,
+    "q_bh": 0.024802180713449064
    },
    {
     "bh_reject": false,
-    "cell": "player_pra|LAST_VALID|0.6-0.8",
+    "cell": "player_pra|T-30|0.2-0.4",
     "ci95": [
-     0.01685015526352434,
-     0.13139533110623308
+     0.014532546778767636,
+     0.05602951664837724
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.06692626242298022,
-    "n": 58,
-    "n_games": 16,
-    "p_value": 0.022762003300240335,
-    "q_bh": 0.2845250412530042
+    "diff_model_minus_market": 0.03503167402567054,
+    "n": 157,
+    "n_games": 28,
+    "p_value": 0.0010599222527114985,
+    "q_bh": 0.024802180713449064
    },
    {
     "bh_reject": false,
-    "cell": "player_pra|LAST_VALID|0.4-0.6",
+    "cell": "game_spread|T-60|0.6-0.8",
     "ci95": [
-     0.011252845916588034,
-     0.10341968309233798
+     0.02631234018620536,
+     0.14607664300518128
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.05094286523181013,
-    "n": 111,
-    "n_games": 16,
-    "p_value": 0.02702063074763982,
-    "q_bh": 0.3199811535904715
+    "diff_model_minus_market": 0.098943795573125,
+    "n": 40,
+    "n_games": 10,
+    "p_value": 0.0017761432818672,
+    "q_bh": 0.03778341163244771
    },
    {
     "bh_reject": false,
-    "cell": "player_rebounds|T-10|0.4-0.6",
+    "cell": "game_spread|T-10|0.6-0.8",
     "ci95": [
-     0.004593250366541524,
-     0.06207401603638556
+     0.017961847644027768,
+     0.14037955404097874
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.03222544658675262,
-    "n": 147,
-    "n_games": 16,
-    "p_value": 0.02883810388666476,
-    "q_bh": 0.32442866872497855
+    "diff_model_minus_market": 0.09580401130609756,
+    "n": 41,
+    "n_games": 11,
+    "p_value": 0.002316030922496455,
+    "q_bh": 0.04516260298868086
    },
    {
     "bh_reject": false,
-    "cell": "player_pra|T-10|0.4-0.6",
+    "cell": "player_points|T-60|0.8-1.0",
     "ci95": [
-     0.01213814508738605,
-     0.11085291232731168
+     0.013353984000057502,
+     0.05775932078658404
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.05549658745094669,
-    "n": 94,
-    "n_games": 16,
-    "p_value": 0.03159751177194869,
-    "q_bh": 0.3288069395132442
+    "diff_model_minus_market": 0.03406592139209196,
+    "n": 141,
+    "n_games": 28,
+    "p_value": 0.002545287239757845,
+    "q_bh": 0.0458151703156412
    },
    {
     "bh_reject": false,
-    "cell": "player_pra|T-30|0.4-0.6",
+    "cell": "player_points|LAST_VALID|0.8-1.0",
     "ci95": [
-     0.008627150489988125,
-     0.11768181429339063
+     0.011407450687598726,
+     0.05802789676288551
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.058507627889970215,
-    "n": 99,
-    "n_games": 16,
-    "p_value": 0.03215001186351721,
-    "q_bh": 0.3288069395132442
-   },
-   {
-    "bh_reject": false,
-    "cell": "player_assists|LIVE|0.4-0.6",
-    "ci95": [
-     -0.055326468168414064,
-     -0.0012828142655822133
-    ],
-    "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": -0.029185635227364046,
-    "n": 1000,
-    "n_games": 16,
-    "p_value": 0.0350519093798002,
-    "q_bh": 0.3322669288147813
+    "diff_model_minus_market": 0.034908118777832516,
+    "n": 140,
+    "n_games": 28,
+    "p_value": 0.002905114542506013,
+    "q_bh": 0.048556914496171937
    },
    {
     "bh_reject": false,
     "cell": "player_pra|LIVE|0.6-0.8",
     "ci95": [
-     0.007982074551998735,
-     0.10179795784562497
+     0.014144568715651546,
+     0.07573348315179382
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.04935675000818078,
-    "n": 519,
-    "n_games": 16,
-    "p_value": 0.03544180574024334,
-    "q_bh": 0.3322669288147813
+    "diff_model_minus_market": 0.0431269615257543,
+    "n": 874,
+    "n_games": 28,
+    "p_value": 0.005391621902258986,
+    "q_bh": 0.08410930167524018
    },
    {
     "bh_reject": false,
-    "cell": "player_pra|T-30|0.0-0.2",
+    "cell": "player_points|T-10|0.8-1.0",
     "ci95": [
-     0.0038207650157339595,
-     0.040861528882991605
+     0.01042051556229885,
+     0.05879157223860736
     ],
     "classification": "INCONCLUSIVE",
-    "diff_model_minus_market": 0.018926326527613353,
+    "diff_model_minus_market": 0.034088385967338895,
+    "n": 139,
+    "n_games": 28,
+    "p_value": 0.006079427597905328,
+    "q_bh": 0.08891162861936541
+   },
+   {
+    "bh_reject": false,
+    "cell": "game_spread|T-90|0.6-0.8",
+    "ci95": [
+     0.01109816043339316,
+     0.14388251072346775
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.09365482714702382,
+    "n": 42,
+    "n_games": 11,
+    "p_value": 0.007122914953541241,
+    "q_bh": 0.09804482936050885
+   },
+   {
+    "bh_reject": false,
+    "cell": "player_pra|T-10|0.4-0.6",
+    "ci95": [
+     0.015583836331865887,
+     0.09238562054305849
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.05060898577171914,
+    "n": 153,
+    "n_games": 28,
+    "p_value": 0.009332999408768677,
+    "q_bh": 0.11747113831954503
+   },
+   {
+    "bh_reject": false,
+    "cell": "player_points|T-90|0.8-1.0",
+    "ci95": [
+     0.007905394737969166,
+     0.05832134497007553
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.033171636348769906,
+    "n": 139,
+    "n_games": 28,
+    "p_value": 0.010865729782030691,
+    "q_bh": 0.11747113831954503
+   },
+   {
+    "bh_reject": false,
+    "cell": "player_rebounds|T-10|0.4-0.6",
+    "ci95": [
+     0.00637795529500739,
+     0.04499556946756845
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.025298399366297,
+    "n": 253,
+    "n_games": 28,
+    "p_value": 0.011957751298719928,
+    "q_bh": 0.11747113831954503
+   },
+   {
+    "bh_reject": false,
+    "cell": "game_spread|LAST_VALID|0.6-0.8",
+    "ci95": [
+     0.010199447859298135,
+     0.14542145662309555
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.09190277105243902,
     "n": 41,
-    "n_games": 15,
-    "p_value": 0.04603537917975626,
-    "q_bh": 0.394062425191152
+    "n_games": 10,
+    "p_value": 0.012022601570792053,
+    "q_bh": 0.11747113831954503
+   },
+   {
+    "bh_reject": false,
+    "cell": "game_spread|T-30|0.6-0.8",
+    "ci95": [
+     0.0031646552647704245,
+     0.14567851150764063
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.0916314295890244,
+    "n": 41,
+    "n_games": 10,
+    "p_value": 0.012163696748193039,
+    "q_bh": 0.11747113831954503
+   },
+   {
+    "bh_reject": false,
+    "cell": "player_pra|T-60|0.2-0.4",
+    "ci95": [
+     0.008051687068692082,
+     0.05503181571055936
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.029577511863113994,
+    "n": 159,
+    "n_games": 28,
+    "p_value": 0.01247667352810959,
+    "q_bh": 0.11747113831954503
+   },
+   {
+    "bh_reject": false,
+    "cell": "player_rebounds|LIVE|0.2-0.4",
+    "ci95": [
+     0.0033130180759278257,
+     0.02485356027889859
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.013596670179145637,
+    "n": 1738,
+    "n_games": 28,
+    "p_value": 0.01321732710864202,
+    "q_bh": 0.11747113831954503
+   },
+   {
+    "bh_reject": false,
+    "cell": "player_pra|T-90|0.2-0.4",
+    "ci95": [
+     0.006894753612999518,
+     0.04877469893331753
+    ],
+    "classification": "INCONCLUSIVE",
+    "diff_model_minus_market": 0.026289640654710136,
+    "n": 167,
+    "n_games": 28,
+    "p_value": 0.014042599602709697,
+    "q_bh": 0.11747113831954503
    }
   ],
-  "n_cells_scanned": 225,
+  "n_cells_scanned": 234,
   "n_flagged": 0,
   "note": "every scanned cell is counted in the BH correction; flagged cells are leads for a pre-declared prospective test, nothing more",
   "status": "OK"
  },
- "generated_utc": "2026-10-23T11:07:02Z",
+ "generated_utc": "2026-10-24T11:12:21Z",
  "hypotheses": [
   {
    "ci95": [
-    9.058519467911642,
-    12.357284012117029
+    2.675334703183768,
+    7.158085312980272
    ],
    "claim": "the old simulator under-predicts minutes (negative bias)",
    "claim_direction": "negative",
    "classification": "PROJECTION_CALIBRATION_ISSUE",
    "classification_reason": "Holm-significant and larger than the equivalence margin",
-   "effect": 10.838821634615385,
+   "effect": 4.829147902869757,
    "equivalence_margin": 1.0,
-   "half_width": 1.6493822721026934,
+   "half_width": 2.241375304898252,
    "holm_reject": true,
    "id": "H02",
    "kind": "defect",
    "market_relative": false,
-   "n_days": 3,
-   "n_games": 15,
-   "n_independent_units": 15,
-   "n_obs": 208,
-   "p_holm": 1.1614905273910606e-34,
-   "p_value": 9.679087728258839e-36,
+   "n_days": 4,
+   "n_games": 27,
+   "n_independent_units": 27,
+   "n_obs": 453,
+   "p_holm": 0.0003693042725326532,
+   "p_value": 3.357311568478666e-05,
    "rank": 1,
-   "required_games_for_margin_effect": 77,
-   "required_games_for_observed_effect": 1,
+   "required_games_for_margin_effect": 323,
+   "required_games_for_observed_effect": 14,
    "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.6929315932477588,
+   "score": 0.1419324477048127,
    "score_parts": {
     "practical_weight": 0.6,
-    "precision": 0.8679247805030312,
-    "repeatability": 1.0,
+    "precision": 0.6829972494205561,
+    "repeatability": 0.75,
     "repeatability_note": "",
-    "standardised_effect": 1.3306291221192192
+    "standardised_effect": 0.46179606083569613
    },
-   "sd_per_game": 3.1128790377329425,
-   "sd_row": 8.145636867884715,
-   "se": 0.8685415594871005,
-   "sign_consistency": 1.0,
+   "sd_per_game": 6.406285920244332,
+   "sd_row": 10.457317228151789,
+   "se": 1.1642760519275224,
+   "sign_consistency": 0.75,
    "status": "TESTED",
    "units": "minutes"
   },
   {
    "ci95": [
-    0.0060957241803444,
-    0.12150583534509285
+    0.01606150054852383,
+    0.10401604974411463
    ],
    "claim": "P(play) is mis-calibrated in the large",
    "claim_direction": "either",
    "classification": "INCONCLUSIVE",
    "classification_reason": "not established either way",
-   "effect": 0.0635269439421338,
+   "effect": 0.060788877445932026,
    "equivalence_margin": 0.03,
-   "half_width": 0.05770505558237422,
+   "half_width": 0.0439772745977954,
    "holm_reject": false,
    "id": "H03",
    "kind": "defect",
    "market_relative": false,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 16,
-   "n_obs": 553,
-   "p_holm": 0.33998703619024645,
-   "p_value": 0.030907912380931494,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 28,
+   "n_obs": 971,
+   "p_holm": 0.07205950332843071,
+   "p_value": 0.007205950332843071,
    "rank": 2,
-   "required_games_for_margin_effect": 128,
-   "required_games_for_observed_effect": 29,
+   "required_games_for_margin_effect": 131,
+   "required_games_for_observed_effect": 32,
    "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.05843666554884991,
+   "score": 0.06389745959434494,
    "score_parts": {
     "practical_weight": 0.6,
-    "precision": 0.5240113517165187,
+    "precision": 0.5802339425481609,
     "repeatability": 1.0,
     "repeatability_note": "",
-    "standardised_effect": 0.18586323037159178
+    "standardised_effect": 0.18353935918137965
    },
-   "sd_per_game": 0.12086884619668671,
-   "sd_row": 0.34179403755721854,
-   "se": 0.029434384009394472,
+   "sd_per_game": 0.12221381566035894,
+   "sd_row": 0.33120349617140404,
+   "se": 0.02262186513589001,
    "sign_consistency": 1.0,
    "status": "TESTED",
    "units": "probability"
   },
   {
    "ci95": [
-    -0.0001825304170034804,
-    0.018067792835123886
-   ],
-   "claim": "the model beats the market mid at T-60 (Brier, points-ladder and other props)",
-   "claim_direction": "negative",
-   "classification": "EVIDENCE_AGAINST",
-   "classification_reason": "95% CI lies inside +/-0.002 (practically no effect)",
-   "effect": 0.008715687277506982,
-   "equivalence_margin": 0.002,
-   "half_width": 0.009125161626063683,
-   "holm_reject": false,
-   "id": "H06",
-   "kind": "market_edge",
-   "market_relative": true,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 4877,
-   "n_obs": 4877,
-   "p_holm": 0.577300451612933,
-   "p_value": 0.0577300451612933,
-   "rank": 3,
-   "required_games_for_margin_effect": 695,
-   "required_games_for_observed_effect": 37,
-   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.01239980429533321,
-   "score_parts": {
-    "practical_weight": 1.0,
-    "precision": 0.4885242470588171,
-    "repeatability": 0.3333333333333333,
-    "repeatability_note": "",
-    "standardised_effect": 0.07614650267609116
-   },
-   "sd_per_game": 0.018811939506419715,
-   "sd_row": 0.11445945606433709,
-   "se": 0.004592661262632319,
-   "sign_consistency": 0.3333333333333333,
-   "status": "TESTED",
-   "units": "Brier"
-  },
-  {
-   "ci95": [
-    -0.01935901774223632,
-    0.05461718559615562
-   ],
-   "claim": "NO-side (fade the ladder) candidates earn positive net P&L",
-   "claim_direction": "positive",
-   "classification": "INCONCLUSIVE",
-   "classification_reason": "effect not distinguishable from 0 at this sample",
-   "effect": 0.017209821428571432,
-   "equivalence_margin": 0.01,
-   "half_width": 0.03698810166919597,
-   "holm_reject": false,
-   "id": "H09",
-   "kind": "market_edge",
-   "market_relative": true,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 5376,
-   "n_obs": 5376,
-   "p_holm": 1.0,
-   "p_value": 0.3676084885843276,
-   "rank": 4,
-   "required_games_for_margin_effect": 475,
-   "required_games_for_observed_effect": 161,
-   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.00845109148206933,
-   "score_parts": {
-    "practical_weight": 1.0,
-    "precision": 0.31753654835678313,
-    "repeatability": 0.6666666666666666,
-    "repeatability_note": "",
-    "standardised_effect": 0.039921820932753115
-   },
-   "sd_per_game": 0.07774347478933273,
-   "sd_row": 0.43108808732850046,
-   "se": 0.019101604890252703,
-   "sign_consistency": 0.6666666666666666,
-   "status": "TESTED",
-   "units": "$ per contract"
-  },
-  {
-   "ci95": [
-    -0.002590071636893485,
-    0.012860092874777606
-   ],
-   "claim": "the model beats the market mid at some pregame window overall",
-   "claim_direction": "negative",
-   "classification": "INCONCLUSIVE",
-   "classification_reason": "effect not distinguishable from 0 at this sample",
-   "effect": 0.005003792375790775,
-   "equivalence_margin": 0.002,
-   "half_width": 0.007725082255835546,
-   "holm_reject": false,
-   "id": "H07",
-   "kind": "market_edge",
-   "market_relative": true,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 65112,
-   "n_obs": 65112,
-   "p_holm": 1.0,
-   "p_value": 0.2111103390769482,
-   "rank": 5,
-   "required_games_for_margin_effect": 509,
-   "required_games_for_observed_effect": 82,
-   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.005865374945315257,
-   "score_parts": {
-    "practical_weight": 1.0,
-    "precision": 0.39310563742675964,
-    "repeatability": 0.3333333333333333,
-    "repeatability_note": "",
-    "standardised_effect": 0.044761822677305524
-   },
-   "sd_per_game": 0.016105282263477287,
-   "sd_row": 0.11178705594416564,
-   "se": 0.004001375335569516,
-   "sign_consistency": 0.3333333333333333,
-   "status": "TESTED",
-   "units": "Brier"
-  },
-  {
-   "ci95": [
-    -1.7912798430666326,
-    0.8778056385566921
-   ],
-   "claim": "challenger minutes forecasts are biased",
-   "claim_direction": "either",
-   "classification": "INCONCLUSIVE",
-   "classification_reason": "not established either way",
-   "effect": -0.34509536784741124,
-   "equivalence_margin": 1.0,
-   "half_width": 1.3345427408116624,
-   "holm_reject": false,
-   "id": "H01",
-   "kind": "defect",
-   "market_relative": false,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 16,
-   "n_obs": 367,
-   "p_holm": 1.0,
-   "p_value": 0.6024818681938693,
-   "rank": 6,
-   "required_games_for_margin_effect": 59,
-   "required_games_for_observed_effect": 491,
-   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.003913924300708868,
-   "score_parts": {
-    "practical_weight": 0.6,
-    "precision": 0.20545816748758788,
-    "repeatability": 0.6666666666666666,
-    "repeatability_note": "",
-    "standardised_effect": 0.047624345488057995
-   },
-   "sd_per_game": 2.727724133133298,
-   "sd_row": 7.246196547392874,
-   "se": 0.6625812584465491,
-   "sign_consistency": 0.6666666666666666,
-   "status": "TESTED",
-   "units": "minutes"
-  },
-  {
-   "ci95": [
-    -0.9376850943914956,
-    0.5763804069013928
-   ],
-   "claim": "points projections are biased",
-   "claim_direction": "either",
-   "classification": "INCONCLUSIVE",
-   "classification_reason": "not established either way",
-   "effect": -0.17634877384196193,
-   "equivalence_margin": 0.29435967302452315,
-   "half_width": 0.7570327506464443,
-   "holm_reject": false,
-   "id": "H04",
-   "kind": "defect",
-   "market_relative": false,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 16,
-   "n_obs": 367,
-   "p_holm": 1.0,
-   "p_value": 0.649803518821086,
-   "rank": 7,
-   "required_games_for_margin_effect": 217,
-   "required_games_for_observed_effect": 604,
-   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.0021678524439617333,
-   "score_parts": {
-    "practical_weight": 0.6,
-    "precision": 0.18893535945938086,
-    "repeatability": 0.6666666666666666,
-    "repeatability_note": "",
-    "standardised_effect": 0.028685107570187243
-   },
-   "sd_per_game": 1.5458480930116185,
-   "sd_row": 6.147746645553569,
-   "se": 0.3884033406501548,
-   "sign_consistency": 0.6666666666666666,
-   "status": "TESTED",
-   "units": "points"
-  },
-  {
-   "ci95": [
-    -0.09286133814102565,
-    0.05766599787560482
-   ],
-   "claim": "PF_EDGE_V1 selected trades earn positive net P&L (1 per thesis)",
-   "claim_direction": "positive",
-   "classification": "INCONCLUSIVE",
-   "classification_reason": "effect not distinguishable from 0 at this sample",
-   "effect": -0.01554824561403509,
-   "equivalence_margin": 0.01,
-   "half_width": 0.07526366800831524,
-   "holm_reject": false,
-   "id": "H08",
-   "kind": "market_edge",
-   "market_relative": true,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 228,
-   "n_obs": 228,
-   "p_holm": 1.0,
-   "p_value": 0.6840565195445959,
-   "rank": 8,
-   "required_games_for_margin_effect": 1886,
-   "required_games_for_observed_effect": 780,
-   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.0018417322304904009,
-   "score_parts": {
-    "practical_weight": 1.0,
-    "precision": 0.17121372068750687,
-    "repeatability": 0.3333333333333333,
-    "repeatability_note": "",
-    "standardised_effect": 0.032270758846223505
-   },
-   "sd_per_game": 0.1549964527259027,
-   "sd_row": 0.48180601169391557,
-   "se": 0.03820828079003988,
-   "sign_consistency": 0.3333333333333333,
-   "status": "TESTED",
-   "units": "$ per contract"
-  },
-  {
-   "ci95": [
-    -0.0018742519942117715,
-    0.000949220958799401
-   ],
-   "claim": "T-90 market prices are less accurate than T-10/closing prices (late information not yet priced early)",
-   "claim_direction": "positive",
-   "classification": "EVIDENCE_AGAINST",
-   "classification_reason": "95% CI lies inside +/-0.002 (practically no effect)",
-   "effect": -0.0004981785345717235,
-   "equivalence_margin": 0.002,
-   "half_width": 0.001411736476505586,
-   "holm_reject": false,
-   "id": "H10",
-   "kind": "market_edge",
-   "market_relative": true,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 4845,
-   "n_obs": 4845,
-   "p_holm": 1.0,
-   "p_value": 0.4939230359994302,
-   "rank": 9,
-   "required_games_for_margin_effect": 20,
-   "required_games_for_observed_effect": 323,
-   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.001416331291907999,
-   "score_parts": {
-    "practical_weight": 0.6,
-    "precision": 0.26083806435487417,
-    "repeatability": 0.6666666666666666,
-    "repeatability_note": "",
-    "standardised_effect": 0.01357481408446831
-   },
-   "sd_per_game": 0.0031925585214700085,
-   "sd_row": 0.03669873719609294,
-   "se": 0.0007282432942571727,
-   "sign_consistency": 0.6666666666666666,
-   "status": "TESTED",
-   "units": "Brier"
-  },
-  {
-   "ci95": [
-    -0.024335382187729786,
-    0.01667788605631986
+    -0.06392455068685554,
+    -0.03530737995670432
    ],
    "claim": "more than 20% of candidate sides fail the quality / executability gate",
    "claim_direction": "positive",
    "classification": "EVIDENCE_AGAINST",
    "classification_reason": "within the materiality margin",
-   "effect": -0.007494449558672223,
+   "effect": -0.04867380176826431,
    "equivalence_margin": 0.05,
-   "half_width": 0.020506634122024824,
-   "holm_reject": false,
+   "half_width": 0.01430858536507561,
+   "holm_reject": true,
    "id": "H12",
    "kind": "operational",
    "market_relative": false,
-   "n_days": 4,
-   "n_games": 28,
-   "n_independent_units": 28,
-   "n_obs": 147736,
-   "p_holm": 1.0,
-   "p_value": 0.4770919827915079,
-   "rank": 10,
-   "required_games_for_margin_effect": 43,
-   "required_games_for_observed_effect": 1894,
+   "n_days": 5,
+   "n_games": 36,
+   "n_independent_units": 36,
+   "n_obs": 214900,
+   "p_holm": 2.0567361289819246e-10,
+   "p_value": 1.7139467741516038e-11,
+   "rank": 3,
+   "required_games_for_margin_effect": 16,
+   "required_games_for_observed_effect": 17,
    "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.0012718965238687104,
+   "score": 0.04198584935781294,
    "score_parts": {
     "practical_weight": 0.5,
-    "precision": 0.26764855403930776,
-    "repeatability": 0.5,
+    "precision": 0.772816083728568,
+    "repeatability": 0.8,
     "repeatability_note": "",
-    "standardised_effect": 0.019008457242506386
+    "standardised_effect": 0.13582096129277568
    },
-   "sd_per_game": 0.11639037186269409,
-   "sd_row": 0.394269217278363,
-   "se": 0.010540902019868402,
-   "sign_consistency": 0.5,
+   "sd_per_game": 0.07034876852401557,
+   "sd_row": 0.3583673779435492,
+   "se": 0.007233951119250182,
+   "sign_consistency": 0.8,
    "status": "TESTED",
    "units": "share"
   },
   {
    "ci95": [
-    -0.713731644640235,
-    0.6317411219295408
+    -1.1504442448863763,
+    0.05241046831955885
    ],
    "claim": "selected trades beat the closing line (positive CLV, valid closes only)",
    "claim_direction": "positive",
-   "classification": "INCONCLUSIVE",
-   "classification_reason": "effect not distinguishable from 0 at this sample",
-   "effect": -0.03728070175438596,
+   "classification": "EVIDENCE_AGAINST",
+   "classification_reason": "95% CI lies inside +/-0.5 (practically no effect)",
+   "effect": -0.5305039787798409,
    "equivalence_margin": 0.5,
-   "half_width": 0.6727363832848878,
+   "half_width": 0.6014273566029675,
    "holm_reject": false,
    "id": "H11",
    "kind": "market_edge",
    "market_relative": true,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 228,
-   "n_obs": 228,
-   "p_holm": 1.0,
-   "p_value": 0.913529381396133,
-   "rank": 11,
-   "required_games_for_margin_effect": 65,
-   "required_games_for_observed_effect": 11629,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 377,
+   "n_obs": 377,
+   "p_holm": 0.5497938844592994,
+   "p_value": 0.07854198349418563,
+   "rank": 4,
+   "required_games_for_margin_effect": 83,
+   "required_games_for_observed_effect": 74,
    "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 0.00012505444834356771,
+   "score": 0.024728882967967696,
    "score_parts": {
     "practical_weight": 1.0,
-    "precision": 0.05250676714677059,
-    "repeatability": 0.3333333333333333,
+    "precision": 0.4686715193730629,
+    "repeatability": 0.5,
     "repeatability_note": "",
-    "standardised_effect": 0.00714504749420242
+    "standardised_effect": 0.10552756865212237
    },
-   "sd_per_game": 1.4349983551926944,
-   "sd_row": 5.2176982426829195,
-   "se": 0.34332289055967913,
-   "sign_consistency": 0.3333333333333333,
+   "sd_per_game": 1.6232220684557637,
+   "sd_row": 5.027160064008273,
+   "se": 0.3015582121036209,
+   "sign_consistency": 0.5,
    "status": "TESTED",
    "units": "cents"
   },
   {
    "ci95": [
-    -0.04147966675178756,
-    0.0373390862944162
+    0.0022412470243988168,
+    0.015030604935887237
+   ],
+   "claim": "the model beats the market mid at T-60 (Brier, points-ladder and other props)",
+   "claim_direction": "negative",
+   "classification": "EVIDENCE_AGAINST",
+   "classification_reason": "the effect has the opposite sign with a 95% CI excluding 0",
+   "effect": 0.008723249029238288,
+   "equivalence_margin": 0.002,
+   "half_width": 0.00639467895574421,
+   "holm_reject": false,
+   "id": "H06",
+   "kind": "market_edge",
+   "market_relative": true,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 8431,
+   "n_obs": 8431,
+   "p_holm": 0.07225308211545306,
+   "p_value": 0.00802812023505034,
+   "rank": 5,
+   "required_games_for_margin_effect": 645,
+   "required_games_for_observed_effect": 34,
+   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
+   "score": 0.024095954431895175,
+   "score_parts": {
+    "practical_weight": 1.0,
+    "precision": 0.5770135324036196,
+    "repeatability": 0.5,
+    "repeatability_note": "",
+    "standardised_effect": 0.0835195470425817
+   },
+   "sd_per_game": 0.01812950156484768,
+   "sd_row": 0.10444559792440944,
+   "se": 0.0032906932817551773,
+   "sign_consistency": 0.5,
+   "status": "TESTED",
+   "units": "Brier"
+  },
+  {
+   "ci95": [
+    -0.09560288463002725,
+    0.014138022340353907
+   ],
+   "claim": "PF_EDGE_V1 selected trades earn positive net P&L (1 per thesis)",
+   "claim_direction": "positive",
+   "classification": "INCONCLUSIVE",
+   "classification_reason": "effect not distinguishable from 0 at this sample",
+   "effect": -0.04094164456233421,
+   "equivalence_margin": 0.01,
+   "half_width": 0.05487045348519058,
+   "holm_reject": false,
+   "id": "H08",
+   "kind": "market_edge",
+   "market_relative": true,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 377,
+   "n_obs": 377,
+   "p_holm": 0.8301346691797845,
+   "p_value": 0.13835577819663075,
+   "rank": 6,
+   "required_games_for_margin_effect": 2034,
+   "required_games_for_observed_effect": 122,
+   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
+   "score": 0.01807360898168905,
+   "score_parts": {
+    "practical_weight": 1.0,
+    "precision": 0.4273118467985776,
+    "repeatability": 0.5,
+    "repeatability_note": "",
+    "standardised_effect": 0.0845921268838981
+   },
+   "sd_per_game": 0.16095404397661506,
+   "sd_row": 0.4839888305270565,
+   "se": 0.027627025712302022,
+   "sign_consistency": 0.5,
+   "status": "TESTED",
+   "units": "$ per contract"
+  },
+  {
+   "ci95": [
+    0.00045018187613526115,
+    0.012071783961977943
+   ],
+   "claim": "the model beats the market mid at some pregame window overall",
+   "claim_direction": "negative",
+   "classification": "EVIDENCE_AGAINST",
+   "classification_reason": "the effect has the opposite sign with a 95% CI excluding 0",
+   "effect": 0.006101753685449074,
+   "equivalence_margin": 0.002,
+   "half_width": 0.005810801042921341,
+   "holm_reject": false,
+   "id": "H07",
+   "kind": "market_edge",
+   "market_relative": true,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 107077,
+   "n_obs": 107077,
+   "p_holm": 0.2942614374014939,
+   "p_value": 0.03678267967518674,
+   "rank": 7,
+   "required_games_for_margin_effect": 510,
+   "required_games_for_observed_effect": 55,
+   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
+   "score": 0.015207455616975807,
+   "score_parts": {
+    "practical_weight": 1.0,
+    "precision": 0.512212017034214,
+    "repeatability": 0.5,
+    "repeatability_note": "",
+    "standardised_effect": 0.0593795346896752
+   },
+   "sd_per_game": 0.01611852104991853,
+   "sd_row": 0.10275852980892482,
+   "se": 0.0029220606696270376,
+   "sign_consistency": 0.5,
+   "status": "TESTED",
+   "units": "Brier"
+  },
+  {
+   "ci95": [
+    -0.04019892840857275,
+    0.018452854868061846
    ],
    "claim": "80% central intervals for points do not cover 80%",
    "claim_direction": "either",
    "classification": "EVIDENCE_AGAINST",
    "classification_reason": "95% CI inside +/-0.05: no calibration defect of material size detected",
-   "effect": -0.0016348773841962255,
+   "effect": -0.010280373831775743,
    "equivalence_margin": 0.05,
-   "half_width": 0.03940937652310188,
+   "half_width": 0.029325891638317295,
    "holm_reject": false,
    "id": "H05",
    "kind": "defect",
    "market_relative": false,
-   "n_days": 3,
-   "n_games": 16,
-   "n_independent_units": 16,
-   "n_obs": 367,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 28,
+   "n_obs": 642,
    "p_holm": 1.0,
-   "p_value": 0.936417449103933,
-   "rank": 12,
-   "required_games_for_margin_effect": 24,
-   "required_games_for_observed_effect": 21836,
+   "p_value": 0.5004347767436005,
+   "rank": 8,
+   "required_games_for_margin_effect": 23,
+   "required_games_for_observed_effect": 535,
    "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
-   "score": 3.24169317860087e-05,
+   "score": 0.0019629120470710127,
    "score_parts": {
     "practical_weight": 0.6,
-    "precision": 0.039832064870486704,
-    "repeatability": 0.3333333333333333,
+    "precision": 0.25956433179842525,
+    "repeatability": 0.5,
     "repeatability_note": "",
-    "standardised_effect": 0.004069200516143441
+    "standardised_effect": 0.02520777840148171
    },
-   "sd_per_game": 0.08623017591999224,
-   "sd_row": 0.4017686957696718,
-   "se": 0.020494006428426914,
-   "sign_consistency": 0.3333333333333333,
+   "sd_per_game": 0.0848302833635412,
+   "sd_row": 0.4078254603813664,
+   "se": 0.015257175861371477,
+   "sign_consistency": 0.5,
    "status": "TESTED",
    "units": "coverage"
+  },
+  {
+   "ci95": [
+    -0.868321991940964,
+    1.1191421714736551
+   ],
+   "claim": "challenger minutes forecasts are biased",
+   "claim_direction": "either",
+   "classification": "INCONCLUSIVE",
+   "classification_reason": "not established either way",
+   "effect": 0.20490654205607478,
+   "equivalence_margin": 1.0,
+   "half_width": 0.9937320817073096,
+   "holm_reject": false,
+   "id": "H01",
+   "kind": "defect",
+   "market_relative": false,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 28,
+   "n_obs": 642,
+   "p_holm": 1.0,
+   "p_value": 0.6809906647239324,
+   "rank": 9,
+   "required_games_for_margin_effect": 57,
+   "required_games_for_observed_effect": 1351,
+   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
+   "score": 0.0014992061816033304,
+   "score_parts": {
+    "practical_weight": 0.6,
+    "precision": 0.17094939041153748,
+    "repeatability": 0.5,
+    "repeatability_note": "",
+    "standardised_effect": 0.029232943894373156
+   },
+   "sd_per_game": 2.6874169685600955,
+   "sd_row": 7.009439172341305,
+   "se": 0.49842066001193924,
+   "sign_consistency": 0.5,
+   "status": "TESTED",
+   "units": "minutes"
+  },
+  {
+   "ci95": [
+    -0.0013513325345505837,
+    0.0006634644497145595
+   ],
+   "claim": "T-90 market prices are less accurate than T-10/closing prices (late information not yet priced early)",
+   "claim_direction": "positive",
+   "classification": "EVIDENCE_AGAINST",
+   "classification_reason": "95% CI lies inside +/-0.002 (practically no effect)",
+   "effect": -0.0003400500775008945,
+   "equivalence_margin": 0.002,
+   "half_width": 0.0010073984921325717,
+   "holm_reject": false,
+   "id": "H10",
+   "kind": "market_edge",
+   "market_relative": true,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 8387,
+   "n_obs": 8387,
+   "p_holm": 1.0,
+   "p_value": 0.513666149844819,
+   "rank": 10,
+   "required_games_for_margin_effect": 17,
+   "required_games_for_observed_effect": 564,
+   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
+   "score": 0.001193582911102516,
+   "score_parts": {
+    "practical_weight": 0.6,
+    "precision": 0.2523659048399859,
+    "repeatability": 0.75,
+    "repeatability_note": "",
+    "standardised_effect": 0.01051016170666349
+   },
+   "sd_per_game": 0.0028800834291095325,
+   "sd_row": 0.03235440966482002,
+   "se": 0.0005206390310667,
+   "sign_consistency": 0.75,
+   "status": "TESTED",
+   "units": "Brier"
+  },
+  {
+   "ci95": [
+    -0.4379649504506879,
+    0.6593125502734877
+   ],
+   "claim": "points projections are biased",
+   "claim_direction": "either",
+   "classification": "INCONCLUSIVE",
+   "classification_reason": "not established either way",
+   "effect": 0.1123208722741432,
+   "equivalence_margin": 0.29607476635514013,
+   "half_width": 0.5486387503620878,
+   "holm_reject": false,
+   "id": "H04",
+   "kind": "defect",
+   "market_relative": false,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 28,
+   "n_obs": 642,
+   "p_holm": 1.0,
+   "p_value": 0.6952415198573244,
+   "rank": 11,
+   "required_games_for_margin_effect": 210,
+   "required_games_for_observed_effect": 1453,
+   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
+   "score": 0.0009370984699874857,
+   "score_parts": {
+    "practical_weight": 0.6,
+    "precision": 0.16993605725286592,
+    "repeatability": 0.5,
+    "repeatability_note": "",
+    "standardised_effect": 0.018381393667248173
+   },
+   "sd_per_game": 1.5279506446620272,
+   "sd_row": 6.110574328989845,
+   "se": 0.28671428310563285,
+   "sign_consistency": 0.5,
+   "status": "TESTED",
+   "units": "points"
+  },
+  {
+   "ci95": [
+    -0.028868582078657806,
+    0.028846597731879368
+   ],
+   "claim": "NO-side (fade the ladder) candidates earn positive net P&L",
+   "claim_direction": "positive",
+   "classification": "INCONCLUSIVE",
+   "classification_reason": "effect not distinguishable from 0 at this sample",
+   "effect": 8.537886872998978e-05,
+   "equivalence_margin": 0.01,
+   "half_width": 0.028857589905268585,
+   "holm_reject": false,
+   "id": "H09",
+   "kind": "market_edge",
+   "market_relative": true,
+   "n_days": 4,
+   "n_games": 28,
+   "n_independent_units": 9370,
+   "n_obs": 9370,
+   "p_holm": 1.0,
+   "p_value": 0.9952988390077363,
+   "rank": 12,
+   "required_games_for_margin_effect": 494,
+   "required_games_for_observed_effect": 6772632,
+   "required_note": "games needed for 80% power at alpha 0.05 (two-sided) given the per-game SD observed so far; planning figures, not guarantees",
+   "score": 2.905748634288121e-07,
+   "score_parts": {
+    "practical_weight": 1.0,
+    "precision": 0.002949900177714022,
+    "repeatability": 0.5,
+    "repeatability_note": "",
+    "standardised_effect": 0.000197006573730226
+   },
+   "sd_per_game": 0.07930951203449223,
+   "sd_row": 0.4333808111748832,
+   "se": 0.014490481634427482,
+   "sign_consistency": 0.5,
+   "status": "TESTED",
+   "units": "$ per contract"
   },
   {
    "claim": "the DNP fair-price settlement costs more than a void policy assumes",
@@ -877,15 +877,15 @@
  "hypotheses_version": "nba-hyp-2026-10-19-v1",
  "integrity": {
   "decisions_asof_at_or_after_tip_excluded": 0,
-  "decisions_bad_identity_excluded": 42479,
+  "decisions_bad_identity_excluded": 65883,
   "decisions_duplicate_ids_dropped": 0,
   "decisions_forecast_after_asof_excluded": 0,
-  "decisions_invalid_price_excluded": 8106,
-  "decisions_raw": 493793,
+  "decisions_invalid_price_excluded": 16260,
+  "decisions_raw": 726843,
   "decisions_replay_excluded": 0,
   "paper_corrections_applied": 0,
   "paper_settlements_orphaned": 0,
-  "paper_settlements_raw": 132361,
+  "paper_settlements_raw": 217275,
   "paper_settlements_strategy_mismatch_excluded": 0,
   "pf_settlements_generated_after_tip_excluded": 0,
   "snapshots_replay_excluded": 0
@@ -895,7 +895,7 @@
   "family_size_tested": 12,
   "method": "Holm (alpha 0.05) over the declared family"
  },
- "n_games": 28,
+ "n_games": 36,
  "schema": "sift.ranked_hypotheses.v1",
  "window": {
   "day_et": null,
