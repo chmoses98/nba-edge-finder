@@ -234,4 +234,4 @@ python scripts/replay_book_policy.py --archive /tmp/da
 
 ## Appendix B — Phase 5 input audit (full)
 
-Reproduced from the read-only dataset audit run for this task (`PHASE5_input_audit.md`); the claims marked VERIFIED were re-run, and the shot-profile defect and the `OnOffIndex` gap were re-verified independently by this author.
+See `docs/research/NBA_INPUT_DATA_AUDIT_2026-10-24.md` (inventory, verification of the four headline counts, certification and quarantine analysis, point-in-time availability, observed-vs-modeled table, defect list with file:line). Two of its defects were re-verified by this author and fixed (shot-profile timestamps, lineup quarantine).
