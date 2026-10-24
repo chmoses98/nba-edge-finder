@@ -489,7 +489,7 @@ class Worker:
         try:
             from nba_edge.ops.evidence_health import run_evidence_health
 
-            run_evidence_health(self.archive_root, self.archive_root / "EVIDENCE_HEALTH.json")
+            run_evidence_health(self.archive_root, self.archive_root / "EVIDENCE_HEALTH.json", self.data_root)
         except Exception as e:  # noqa: BLE001 - a dashboard must never cost us a handover
             print(f"worker: could not write the evidence dashboard ({e})")
         # Market-universe coverage, once per shift next to the dashboard: derived, overwritten, read-only over the archive.

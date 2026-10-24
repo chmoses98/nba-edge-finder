@@ -52,6 +52,37 @@ def _count_partitions(root: Path, subdir: str) -> dict:
     }
 
 
+def stint_section(data_root: Path) -> dict:
+    """Lineup/stint data actually on disk (``data/history/espn_pbp/stints_*.parquet``), split into certified and quarantined games.
+
+    This used to be a hard-coded ``absent`` ("no canonical stint dataset exists yet") although 2,643 games / 2,400 certified games have been on disk
+    since 2026-10-11, so the dashboard understated the evidence. Historical only: nothing in this repo captures 2026-27 stints, and that is stated.
+    """
+    base = Path(data_root) / "history" / "espn_pbp"
+    files = sorted(base.glob("stints_*.parquet")) if base.exists() else []
+    if not files:
+        return {
+            "state": "absent",
+            "reason": f"no stints_*.parquet under {base}; lineup reconstruction has not been run on this checkout",
+            "n_games_available": 0, "n_valid_lineup_possessions": 0, "n_quarantined_games": 0,
+        }
+    try:
+        import pandas as pd
+
+        per_game = pd.concat([pd.read_parquet(f, columns=["game_id", "certified"]).groupby("game_id")["certified"].first() for f in files])
+        n_cert = int(per_game.sum())
+        return {
+            "state": "historical_only",
+            "reason": "certified lineup stints exist for past seasons only; there is no 2026-27 pipeline (full_pbp.yml is manual), so no live game has stints",
+            "seasons": [f.stem.removeprefix("stints_") for f in files],
+            "n_games_with_stints": int(len(per_game)), "n_games_available": n_cert, "n_quarantined_games": int(len(per_game) - n_cert),
+            "n_valid_lineup_possessions": 0,
+            "quarantine": "the `certified` column marks it; consumers must use nba_edge.pbp.stints.certified_only() (OnOffIndex.from_stints refuses uncertified rows)",
+        }
+    except Exception as e:  # noqa: BLE001 - a dashboard must not fail on one unreadable file
+        return {"state": "unreadable", "reason": f"{type(e).__name__}: {e}", "n_games_available": 0, "n_valid_lineup_possessions": 0, "n_quarantined_games": 0}
+
+
 def build_report(archive_root: Path, data_root: Path | None = None) -> dict:
     archive = Path(archive_root)
     data_root = Path(data_root) if data_root else archive.parent
@@ -162,16 +193,7 @@ def build_report(archive_root: Path, data_root: Path | None = None) -> dict:
         n_families=len((evl or {}).get("families") or []),
     )
 
-    stint = {
-        "state": "absent",
-        "reason": (
-            "no canonical stint dataset exists yet. Phase 8 is gated on the Phase 7 source audit "
-            "finding a source that is reachable from a GitHub runner; see SOURCE_AUDIT.md."
-        ),
-        "n_games_available": 0,
-        "n_valid_lineup_possessions": 0,
-        "n_quarantined_games": 0,
-    }
+    stint = stint_section(data_root)
 
     return {
         "generated_at_utc": now.isoformat(),
@@ -197,8 +219,8 @@ def build_report(archive_root: Path, data_root: Path | None = None) -> dict:
     }
 
 
-def run_evidence_health(archive_root: Path, out: Path | None = None) -> dict:
-    report = build_report(Path(archive_root))
+def run_evidence_health(archive_root: Path, out: Path | None = None, data_root: Path | None = None) -> dict:
+    report = build_report(Path(archive_root), data_root)
     if out:
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(report, indent=2, sort_keys=True, default=str) + "\n")
