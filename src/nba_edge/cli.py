@@ -41,7 +41,7 @@ def cmd_capture(args: argparse.Namespace) -> int:
     return run_capture(out_root=Path(args.out), statuses=args.statuses.split(","), with_orderbook=args.orderbook,
                        max_orderbooks=args.max_orderbooks, series_filter=args.series.split(",") if args.series else None,
                        delta_encode=not args.full_snapshots,
-                       checkpoint_every=args.checkpoint_every or DEFAULT_CHECKPOINT_EVERY)
+                       checkpoint_every=args.checkpoint_every or DEFAULT_CHECKPOINT_EVERY, probe_all_series=args.probe_all_series)
 
 
 def cmd_reconstruct(args: argparse.Namespace) -> int:
@@ -325,6 +325,8 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--series", default=None)
     c.add_argument("--full-snapshots", action="store_true",
                    help="Disable delta encoding and write a full board every tick (the old behaviour)")
+    c.add_argument("--probe-all-series", action="store_true",
+                   help="List every NBA series every tick (disables the skip-known-empty series policy)")
     c.add_argument("--checkpoint-every", type=int, default=None,
                    help="Deltas per checkpoint before a fresh full board is written")
     c.set_defaults(func=cmd_capture)

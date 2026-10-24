@@ -333,6 +333,7 @@ def build_report(archive_root: Path, *, now: datetime | None = None, previous: d
             "n_series_with_markets_on_board": cls["n_series_with_markets"],
             "note": "n_series_queried is how many series the collector asked Kalshi about; only n_series_with_markets_on_board of them currently have markets.",
             "status_file_alarms": {"collection": status.get("collection_alarms"), "classification": status.get("classification_alarms")},
+            "series_probe": {k: v for k, v in (status.get("series_probe") or {}).items() if k != "skipped"} or None,
         },
         "catalog": cat,
         "classification": cls,

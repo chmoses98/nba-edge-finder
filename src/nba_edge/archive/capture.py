@@ -7,12 +7,14 @@ evaluation layer labels them later against the authoritative tip time. That keep
 
 from __future__ import annotations
 
+import hashlib
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from nba_edge.archive.book_policy import POLICY_ID as BOOK_POLICY_ID
-from nba_edge.archive.book_policy import Selection, select_books
+from nba_edge.archive.book_policy import TICK_SECONDS, Selection, select_books
 from nba_edge.archive.delta import ORDERBOOK_CHECKPOINT_KIND, ORDERBOOK_DELTA_KIND
 from nba_edge.archive.ledger import Ledger
 from nba_edge.archive.reconstruct import DEFAULT_CHECKPOINT_EVERY, write_board
@@ -23,7 +25,7 @@ from nba_edge.kalshi.discovery import is_nba_series
 from nba_edge.kalshi.normalize import orderbook_levels, quote_cents
 from nba_edge.kalshi.ontology import Ontology, Support, classify_market
 from nba_edge.log import get_logger, kv
-from nba_edge.timeutil import iso, utcnow
+from nba_edge.timeutil import iso, parse_iso, utcnow
 
 log = get_logger(__name__)
 
@@ -45,6 +47,54 @@ def nba_series_tickers(client: KalshiClient, catalog_dir: Path) -> list[str]:
     except KalshiError as e:
         log.warning(kv(event="series_rescan_failed", err=str(e)[:200]))
     return sorted(tickers)
+
+
+# ---- which series to LIST this tick ---------------------------------------------------------------------------------------------------
+# 171 of the 300 queried series had no market at all on the 2026-10-24 board, yet each costs two list requests (open, unopened) every tick:
+# 342 of ~582 requests, ~68 s of a ~134 s market read. Because a tick is stamped at its START, that wasted time is data that is older than
+# its stamp is honest about. A series is skipped ONLY when the previous tick read it successfully and found it empty; every skipped series is
+# still probed on a deterministic rotation, so none is ignored for more than EMPTY_SERIES_PROBE_EVERY ticks, and any series the daily
+# catalog shows as live, any series new to the universe, and every series after an incomplete or stale previous tick is probed at once.
+EMPTY_SERIES_PROBE_EVERY = 6
+PREVIOUS_STATUS_MAX_AGE_MIN = 45.0
+SERIES_PROBE_POLICY = "skip-known-empty-v1"
+
+
+def catalog_live_series(catalog_dir: Path) -> set[str]:
+    try:
+        d = json.loads((catalog_dir / "discovery_summary.json").read_text())
+        return {r["ticker"] for r in d.get("nba_series", []) if sum((r.get("counts_by_status") or {}).get(s, 0) for s in ("open", "unopened")) > 0}
+    except (OSError, ValueError, KeyError):
+        return set()
+
+
+def plan_series_probe(series: list[str], prev_status: dict[str, Any] | None, catalog_live: set[str], now: datetime,
+                      every: int = EMPTY_SERIES_PROBE_EVERY) -> tuple[list[str], list[str], str]:
+    """(series to list now, series skipped as known-empty, reason). Deterministic in its inputs; safe default is to list everything."""
+    full = (list(series), [], "")
+    st = (prev_status or {}).get("series_state") or {}
+    last = (prev_status or {}).get("last_capture_utc")
+    if not st or not last:
+        return (*full[:2], "no previous series state: listing every series")
+    try:
+        age_min = (now - parse_iso(last)).total_seconds() / 60.0
+    except ValueError:
+        return (*full[:2], "unreadable previous capture time: listing every series")
+    if age_min > PREVIOUS_STATUS_MAX_AGE_MIN or age_min < 0:
+        return (*full[:2], f"previous tick is {age_min:.0f} min old: listing every series")
+    if (prev_status or {}).get("n_fetch_errors"):
+        return (*full[:2], "previous tick was incomplete: listing every series")
+    empty_ok = set(st.get("empty_ok") or [])
+    tick = int(now.timestamp() // TICK_SECONDS)
+    probe, skipped = [], []
+    for sr in series:
+        known_empty = sr in empty_ok
+        due = int(hashlib.sha256(sr.encode()).hexdigest(), 16) % every == tick % every
+        if known_empty and not due and sr not in catalog_live:
+            skipped.append(sr)
+        else:
+            probe.append(sr)
+    return probe, skipped, f"{len(skipped)} series read successfully and empty on the previous tick are skipped; each is re-listed every {every} ticks"
 
 
 def snapshot_markets(client: KalshiClient, series: list[str], statuses: list[str], ontology: Ontology) -> list[dict[str, Any]]:
@@ -126,15 +176,24 @@ def snapshot_orderbooks(client: KalshiClient, markets: list[dict[str, Any]], max
 
 
 def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_orderbooks: int = 400, series_filter: list[str] | None = None,
-                delta_encode: bool = True, checkpoint_every: int = DEFAULT_CHECKPOINT_EVERY) -> int:
+                delta_encode: bool = True, checkpoint_every: int = DEFAULT_CHECKPOINT_EVERY, probe_all_series: bool = False) -> int:
     cfg = settings()
     onto = Ontology.load()
     client = KalshiClient(cfg)
     ledger = Ledger(out_root)
     t0 = utcnow()
     series = series_filter or nba_series_tickers(client, cfg.catalog_dir)
-    log.info(kv(event="capture_start", series=len(series), statuses=",".join(statuses)))
-    markets = snapshot_markets(client, series, statuses, onto)
+    prev_status = None
+    try:
+        prev_status = json.loads((out_root / "STATUS_capture.json").read_text())
+    except (OSError, ValueError):
+        pass
+    if probe_all_series or series_filter:
+        probe, skipped, probe_reason = list(series), [], "listing every series (explicit)"
+    else:
+        probe, skipped, probe_reason = plan_series_probe(series, prev_status, catalog_live_series(cfg.catalog_dir), t0)
+    log.info(kv(event="capture_start", series=len(series), probed=len(probe), skipped_empty=len(skipped), statuses=",".join(statuses)))
+    markets = snapshot_markets(client, probe, statuses, onto)
     markets_done = utcnow()
     fetch_errors = [r for r in markets if "_error" in r]
     # `observed_at` (t0) is the instant this capture STARTED. The markets were read over the following
@@ -143,6 +202,8 @@ def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_o
     # point-in-time reader can use the conservative one (fetch end) instead of guessing; nothing historical is
     # rewritten -- older ticks simply lack these keys and are bounded by their manifest `written_at_utc`.
     market_meta = {"series": series, "statuses": statuses, "requests": client.request_count,
+                   "series_probe": {"policy": SERIES_PROBE_POLICY, "n_probed": len(probe), "n_skipped_empty": len(skipped),
+                                    "skipped_sha256": hashlib.sha256("\n".join(sorted(skipped)).encode()).hexdigest() if skipped else None, "reason": probe_reason},
                    "capture_started_utc": iso(t0), "markets_fetched_utc": iso(markets_done),
                    "complete": not fetch_errors, "n_fetch_errors": len(fetch_errors),
                    "fetch_errors": [{k: e.get(k) for k in ("series_ticker", "status_requested", "_error")} for e in fetch_errors[:25]]}
@@ -196,6 +257,15 @@ def run_capture(out_root: Path, statuses: list[str], with_orderbook: bool, max_o
     status["observation_window"] = {"capture_started_utc": iso(t0), "markets_fetched_utc": iso(markets_done),
                                     "books_fetched_utc": books_meta["books_fetched_utc"] if with_orderbook else None}
     status["n_fetch_errors"] = len(fetch_errors)
+    seen_series = {m.get("series_ticker") for m in markets if m.get("ticker")}
+    failed_series = {m.get("series_ticker") for m in markets if "_error" in m}
+    status["series_state"] = {
+        "policy": SERIES_PROBE_POLICY,
+        "nonempty": sorted(seen_series & set(probe)),
+        # empty AND read successfully this tick; a series skipped this tick stays empty_ok (nothing new was learned about it)
+        "empty_ok": sorted(((set(probe) - seen_series - failed_series) | set(skipped)) & set(series)),
+    }
+    status["series_probe"] = {"n_universe": len(series), "n_probed": len(probe), "n_skipped_empty": len(skipped), "reason": probe_reason, "skipped": sorted(skipped)}
     if with_orderbook:
         status["orderbook_policy"] = {"policy": books_meta["selection_policy"], "n": books_meta["n"], "n_errors": books_meta["n_errors"],
                                       "selection": books_meta["selection"]}

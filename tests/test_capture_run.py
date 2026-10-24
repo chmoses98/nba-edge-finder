@@ -7,6 +7,7 @@ STATUS_capture.json when a series fetch fails halfway, and which instants a poin
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -127,3 +128,61 @@ def test_pagination_cutoff_and_book_outage_are_collection_alarms(tmp_path, stub)
     joined = " | ".join(_status(tmp_path)["collection_alarms"])
     assert "live cursor" in joined and "order-book" in joined
     assert _meta(tmp_path, "kalshi/orderbooks")[0]["n_errors"] == 2
+
+
+# -- skipping series that were read successfully and found empty -------------------------------------------------------------------
+
+
+NOW = datetime(2026, 10, 24, 18, 0, tzinfo=UTC)
+UNIVERSE = ["KXNBAGAME", "KXNBAPTS"] + [f"KXEMPTY{i:03d}" for i in range(60)]
+
+
+def _prev(empty_ok, age_min=5.0, errors=0, nonempty=("KXNBAGAME", "KXNBAPTS")):
+    return {"last_capture_utc": (NOW - timedelta(minutes=age_min)).isoformat().replace("+00:00", "Z"), "n_fetch_errors": errors,
+            "series_state": {"nonempty": list(nonempty), "empty_ok": list(empty_ok)}}
+
+
+def test_a_series_with_markets_last_tick_is_never_skipped():
+    probe, skipped, _ = C.plan_series_probe(UNIVERSE, _prev([s for s in UNIVERSE if s.startswith("KXEMPTY")]), set(), NOW)
+    assert "KXNBAGAME" in probe and "KXNBAPTS" in probe
+    assert set(skipped) <= {s for s in UNIVERSE if s.startswith("KXEMPTY")}
+    assert len(skipped) > 40, "most known-empty series are skipped (that is the saving)"
+
+
+def test_every_known_empty_series_is_relisted_within_the_rotation_period():
+    empties = [s for s in UNIVERSE if s.startswith("KXEMPTY")]
+    seen = set()
+    for k in range(C.EMPTY_SERIES_PROBE_EVERY):
+        probe, _, _ = C.plan_series_probe(UNIVERSE, _prev(empties), set(), NOW + timedelta(seconds=C.TICK_SECONDS * k))
+        seen |= set(probe)
+    assert set(empties) <= seen, "no series may be ignored for more than EMPTY_SERIES_PROBE_EVERY ticks"
+
+
+def test_a_series_new_to_the_universe_or_live_in_the_catalog_is_probed_immediately():
+    probe, skipped, _ = C.plan_series_probe(UNIVERSE + ["KXBRANDNEW"], _prev([s for s in UNIVERSE if s.startswith("KXEMPTY")]), {"KXEMPTY007"}, NOW)
+    assert "KXBRANDNEW" in probe and "KXEMPTY007" in probe and "KXEMPTY007" not in skipped
+
+
+@pytest.mark.parametrize("prev", [None, {}, _prev(["KXEMPTY000"], age_min=90.0), _prev(["KXEMPTY000"], errors=2),
+                                  {"last_capture_utc": "garbage", "series_state": {"empty_ok": ["KXEMPTY000"]}}])
+def test_without_a_trustworthy_previous_tick_every_series_is_listed(prev):
+    probe, skipped, reason = C.plan_series_probe(UNIVERSE, prev, set(), NOW)
+    assert probe == UNIVERSE and skipped == [] and reason
+
+
+def test_the_skip_is_recorded_in_the_archive_and_never_hides_a_market(tmp_path, stub, monkeypatch):
+    """End to end: tick 1 lists everything and learns which series are empty; tick 2 skips them, says so, and the board is unchanged."""
+    universe = ["KXNBAGAME", "KXNBAPTS", "KXEMPTYA", "KXEMPTYB"]
+    cap = C
+    monkeypatch.setattr(cap, "nba_series_tickers", lambda client, catalog_dir: universe)
+    cap.run_capture(tmp_path, ["open"], False)
+    st1 = _status(tmp_path)
+    assert st1["series_probe"]["n_skipped_empty"] == 0 and set(st1["series_state"]["empty_ok"]) == {"KXEMPTYA", "KXEMPTYB"}
+    cap.run_capture(tmp_path, ["open"], False)
+    st2 = _status(tmp_path)
+    metas = _meta(tmp_path, "kalshi/markets") + _meta(tmp_path, "kalshi/markets_delta")
+    assert st2["series_probe"]["n_skipped_empty"] + st2["series_probe"]["n_probed"] == 4
+    assert metas[-1]["series"] == universe and metas[-1]["series_probe"]["n_skipped_empty"] == st2["series_probe"]["n_skipped_empty"]
+    board = latest_board(Ledger(tmp_path, run_id="r"))
+    assert {r["ticker"] for r in board.rows} == {GAME["ticker"], PTS["ticker"]}
+    assert set(st2["series_state"]["nonempty"]) == {"KXNBAGAME", "KXNBAPTS"}
