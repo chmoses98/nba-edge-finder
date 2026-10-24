@@ -13,6 +13,7 @@ Nothing is dropped: markets whose series/family is unknown are reported under UN
 
 from __future__ import annotations
 
+import functools
 import gzip
 import json
 import re
@@ -21,6 +22,9 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
+import yaml
+
+from nba_edge.config import REPO_ROOT
 from nba_edge.kalshi.client import KalshiClient, KalshiError
 from nba_edge.kalshi.ontology import Ontology, Support, classify_market
 from nba_edge.kalshi.ticker import parse_ticker
@@ -33,9 +37,33 @@ MARKET_STATUSES = ("unopened", "open", "closed", "settled")
 NON_NBA_MARKERS = ("WNBA", "NCAA", "COLLEGE", "EUROLEAGUE", "FIBA", "OLYMPIC", "NBL", "G LEAGUE", "GLEAGUE", "BIG3", "SUMMER LEAGUE")
 
 
+OVERRIDES_PATH = REPO_ROOT / "data" / "catalog" / "nba_series_overrides.yaml"
+
+
+@functools.lru_cache(maxsize=1)
+def series_overrides(path: Path = OVERRIDES_PATH) -> dict[str, dict[str, str]]:
+    """Reviewed include/exclude lists (see the file header for why they exist). Missing file == no overrides."""
+    try:
+        raw = yaml.safe_load(path.read_text()) or {}
+    except OSError:
+        return {"include": {}, "exclude": {}}
+    return {k: {str(t).upper(): str(why) for t, why in (raw.get(k) or {}).items()} for k in ("include", "exclude")}
+
+
+# A series tagged Basketball whose ticker carries the letters NBA somewhere other than the prefix (KXTRADEOFFNBA,
+# KXRECORDNBABEST). Tickers are not delimited, so the bare substring also matches KXCOINBASE / KXZYNBAN -- the Basketball
+# tag is what makes this safe, and the women's/college/international markers are still refused.
+_NON_NBA_TICKER_RE = re.compile(r"WNBA|NCAA|WB|UNBA|CBA")
+
+
 def is_nba_series(s: dict[str, Any]) -> tuple[bool, str]:
     """Return (is_nba, reason). Conservative on inclusion; explicit on exclusion."""
     ticker = (s.get("ticker") or "").upper()
+    ov = series_overrides()
+    if ticker in ov["exclude"]:
+        return False, f"reviewed exclusion: {ov['exclude'][ticker]}"
+    if ticker in ov["include"]:
+        return True, f"reviewed inclusion: {ov['include'][ticker]}"
     title = (s.get("title") or "").upper()
     tags = [str(t).upper() for t in (s.get("tags") or [])]
     blob = " ".join([ticker, title, *tags])
@@ -50,6 +78,8 @@ def is_nba_series(s: dict[str, Any]) -> tuple[bool, str]:
         return True, "tag NBA"
     if re.search(r"\bNBA\b", title):
         return True, "title mentions NBA"
+    if "BASKETBALL" in tags and "NBA" in ticker and not _NON_NBA_TICKER_RE.search(ticker):
+        return True, "Basketball tag and NBA in ticker"
     return False, "no NBA marker"
 
 

@@ -278,3 +278,41 @@ def test_the_worker_step_reports_and_exactly_one_step_enforces():
     preserve = next(s for s in steps if str(s.get("name", "")).startswith("Preserve the archive"))
     assert "final_push == 'failed'" in preserve["if"], "the artifact must survive a rejected final push"
     assert preserve["if"].strip() != "failure()", "bare failure() can never see a reported push failure"
+
+
+# -- collection faults vs ontology debt ----------------------------------------------------------------------------------------
+
+
+def _status(run_id, **kw):
+    return {"run_id": run_id, "by_support": {"UNRESOLVED": 2901}, **kw}
+
+
+def test_ontology_debt_alone_does_not_degrade_a_shift_but_is_reported_separately(tmp_path):
+    """Regression: a shift with 20/20 captures OK and 0 failures was graded DEGRADED purely because 2,901 captured markets
+    were UNRESOLVED in the ontology. That is a research backlog, not a collection fault."""
+    res, archive, _ = shift(tmp_path)
+    status = _status(res.worker_id, collection_alarms=[], classification_alarms=["2901 market(s) classified UNRESOLVED across series ['KXNBAPTSPROT']"])
+    h = H.classify_shift(res.as_dict(), final_push_ok=True, capture_status=status)
+    assert h["state"] == H.HEALTHY and h["warnings"] == []
+    assert h["classification"]["state"] == "DEBT" and h["classification"]["n_unresolved"] == 2901
+    assert any(a.startswith("::warning title=ontology-debt::") for a in H.annotations(h))
+
+
+def test_a_collection_alarm_still_degrades_the_shift(tmp_path):
+    res, _, _ = shift(tmp_path)
+    status = _status(res.worker_id, collection_alarms=["3 series/status fetch(es) failed"], classification_alarms=[])
+    h = H.classify_shift(res.as_dict(), final_push_ok=True, capture_status=status)
+    assert h["state"] == H.DEGRADED and any("fetch" in w for w in h["warnings"])
+    assert h["classification"]["state"] == "CLEAN"
+
+
+def test_a_legacy_status_without_the_split_keeps_its_old_meaning(tmp_path):
+    res, _, _ = shift(tmp_path)
+    h = H.classify_shift(res.as_dict(), final_push_ok=True, capture_status={"run_id": res.worker_id, "alarms": ["old style alarm"]})
+    assert h["state"] == H.DEGRADED and h["classification"]["state"] == "UNKNOWN"
+
+
+def test_a_stale_status_from_another_run_colours_nothing(tmp_path):
+    res, _, _ = shift(tmp_path)
+    h = H.classify_shift(res.as_dict(), final_push_ok=True, capture_status=_status("someone-else", collection_alarms=["x"], classification_alarms=["y"]))
+    assert h["state"] == H.HEALTHY and h["classification"]["state"] == "UNKNOWN"

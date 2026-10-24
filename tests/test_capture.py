@@ -117,5 +117,5 @@ def test_coverage_alarms_make_silent_omissions_visible():
     assert capture_alarms(live, {str(Support.MODELABLE): 5}, KalshiClient(), onto) == [], (
         "hitting a configured cap must never fail the run"
     )
-    assert any("sampled by priority" in n for n in capture_notes(live, 2)), "but it must still be recorded"
+    assert any("order books sampled by policy" in n for n in capture_notes(live, 2)), "but it must still be recorded"
     assert capture_notes(live, 50) == []
