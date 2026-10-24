@@ -212,7 +212,9 @@ def _load_decisions(archive, lo_utc, in_window, prospective_only, q) -> pd.DataF
     q["decisions_duplicate_ids_dropped"] = int(n0 - len(dec))
     dec["start"] = _ts(dec["game_start_utc"])
     dec["as_of"] = _ts(dec["as_of_utc"])
+    raw_ids = set(dec["decision_id"])                   # every distinct decision the loaded days hold, before ANY filter
     dec = dec[in_window(dec["start"])].copy()
+    win_ids = set(dec["decision_id"])
     if prospective_only and "replay" in dec.columns:
         rp = dec["replay"].fillna(False).astype(bool)
         q["decisions_replay_excluded"] = int(rp.sum())
@@ -220,24 +222,43 @@ def _load_decisions(archive, lo_utc, in_window, prospective_only, q) -> pd.DataF
     for c in ("price", "bid", "ask", "ev_net", "p_model", "p_cond", "p_play", "p_model_sd", "spread", "fee_per_contract", "depth_at_entry",
               "quote_age_s", "threshold"):
         dec[c] = pd.to_numeric(dec[c], errors="coerce") if c in dec.columns else np.nan
-    ident = dec["game_id"].isna() | (dec["game_id"].astype(str) == "") | dec["ticker"].isna() | ~dec["side"].isin(["YES", "NO"])
+    # A PASS recorded for a market the engine could not price (reason NO_PERIOD_MODEL / NO_FORECAST) has no side to take, so it is written with
+    # side "BOTH" and no price. That is an expected, fully identified record, not a corrupt one: on the 2026-10-24 archive all 64,695 rows the
+    # old rule called "bad identity" were exactly these (63,116 NO_PERIOD_MODEL + 1,579 NO_FORECAST), 0 of them with a missing game or ticker.
+    # They are still excluded from every statistic (they carry no side and no price) but counted under their own name; the bad-identity
+    # counter now means what it says.
+    unpriced_pass = (dec["decision"].astype(str) == "PASS") & (dec["side"].astype(str) == "BOTH") & dec["game_id"].notna() & dec["ticker"].notna() \
+        & (dec["game_id"].astype(str) != "")
+    q["decisions_unpriced_pass_excluded"] = int(unpriced_pass.sum())
+    if "reason" in dec.columns:
+        q["decisions_unpriced_pass_by_reason"] = {str(k): int(v) for k, v in dec.loc[unpriced_pass, "reason"].fillna("UNSPECIFIED").value_counts().items()}
+    ident = (dec["game_id"].isna() | (dec["game_id"].astype(str) == "") | dec["ticker"].isna() | ~dec["side"].isin(["YES", "NO"])) & ~unpriced_pass
     q["decisions_bad_identity_excluded"] = int(ident.sum())
-    badp = ~(dec["price"].between(0.005, 0.995)) | (dec["bid"].notna() & dec["ask"].notna() & (dec["bid"] > dec["ask"]))
+    # A PASS that carries a reason and no price (NO_EXECUTABLE_QUOTE: no ask to take; OUTSIDE_PROTOCOL_HORIZON) records that there was nothing to
+    # price. On the 2026-10-24 archive all 15,864 rows the old rule called "invalid price" were exactly these (11,562 + 4,302), none with a price
+    # outside (0, 1) or a crossed book. A price that IS present and impossible, or a TRADE/other decision with no price, is still invalid.
+    no_price_pass = (dec["decision"].astype(str) == "PASS") & dec["price"].isna() & ~unpriced_pass & ~ident
+    q["decisions_no_price_pass_excluded"] = int(no_price_pass.sum())
+    if "reason" in dec.columns:
+        q["decisions_no_price_pass_by_reason"] = {str(k): int(v) for k, v in dec.loc[no_price_pass, "reason"].fillna("UNSPECIFIED").value_counts().items()}
+    badp = (~(dec["price"].between(0.005, 0.995)) | (dec["bid"].notna() & dec["ask"].notna() & (dec["bid"] > dec["ask"]))) & ~unpriced_pass & ~no_price_pass
     q["decisions_invalid_price_excluded"] = int((badp & ~ident).sum())
-    leak = dec["as_of"] >= dec["start"]
+    leak = (dec["as_of"] >= dec["start"]) & ~unpriced_pass & ~no_price_pass
     q["decisions_asof_at_or_after_tip_excluded"] = int((leak & ~ident & ~badp).sum())
     if "forecast_generated_utc" in dec.columns:
         fg = _ts(dec["forecast_generated_utc"])
-        fl = fg.notna() & (fg > dec["as_of"])
+        fl = fg.notna() & (fg > dec["as_of"]) & ~unpriced_pass & ~no_price_pass
         q["decisions_forecast_after_asof_excluded"] = int((fl & ~ident & ~badp & ~leak).sum())
         leak = leak | fl
-    dec = dec[~(ident | badp | leak)].copy()
+    dec = dec[~(ident | badp | leak | unpriced_pass | no_price_pass)].copy()
+    kept_ids = set(dec["decision_id"])
     if "thesis_id" not in dec.columns:
         dec["thesis_id"] = dec["game_id"].astype(str) + "|" + dec.get("entity_id", pd.Series("-", index=dec.index)).astype(str) + "|" + dec["stat"].astype(str)
     dec["cluster"] = dec["game_id"].astype(str)
     dec["day_et"] = dec["start"].dt.tz_convert(ET).dt.strftime("%Y-%m-%d")
     if st.empty:                       # decisions exist but nothing is settled yet (the normal state before the first game ends)
-        q["paper_settlements_orphaned"] = 0
+        for k in ("paper_settlements_orphaned", "paper_settlements_out_of_window", "paper_settlements_decision_excluded", "paper_settlements_decision_outside_loaded_days", "paper_settlements_unmatched_in_window"):
+            q[k] = 0
         dec["won"], dec["dnp"], dec["settled"] = np.nan, False, False
         for c in ("net_pnl", "net_pnl_if_conditional_void", "clv_cents"):
             dec[c] = np.nan
@@ -254,7 +275,23 @@ def _load_decisions(archive, lo_utc, in_window, prospective_only, q) -> pd.DataF
             if col in st.columns:
                 st[col] = [(n.get(col) if isinstance(n, dict) and col in n else old) for n, old in zip(idx, st[col])]
         q["paper_corrections_applied"] = int(idx.map(lambda x: isinstance(x, dict)).sum())
-    q["paper_settlements_orphaned"] = int((~st["decision_id"].isin(dec["decision_id"])).sum())
+    # Where does each settlement's decision live? "Orphaned" used to mean "its decision is not in this scorecard's kept set", which is true of
+    # every settlement belonging to another day's window (daily card of 2026-10-22: 100,749 "orphans" of 116,602 settlements) and of every
+    # settlement whose decision was legitimately excluded. Only a settlement whose decision exists in NO loaded day is an orphan.
+    sid = st["decision_id"]
+    in_kept = sid.isin(kept_ids)
+    in_raw = sid.isin(raw_ids)
+    in_win_not_kept = sid.isin(win_ids) & ~in_kept
+    q["paper_settlements_unmatched_in_window"] = int((~in_kept).sum())          # the previous meaning of "orphaned", kept for continuity
+    q["paper_settlements_out_of_window"] = int((in_raw & ~sid.isin(win_ids)).sum())
+    q["paper_settlements_decision_excluded"] = int(in_win_not_kept.sum())
+    no_decision = ~in_raw
+    if lo_utc is None:                  # every decision day was loaded: a settlement with no decision anywhere is a genuine orphan
+        q["paper_settlements_orphaned"] = int(no_decision.sum())
+        q["paper_settlements_decision_outside_loaded_days"] = 0
+    else:                               # a bounded window cannot tell an orphan from a decision on an earlier, unloaded day
+        q["paper_settlements_orphaned"] = 0
+        q["paper_settlements_decision_outside_loaded_days"] = int(no_decision.sum())
     keep = [c for c in ("decision_id", "strategy_id", "won", "dnp", "net_pnl", "net_pnl_if_conditional_void", "clv_cents", "closing_line", "kalshi_result",
                         "dnp_value_source", "fee_paid", "gross_payoff", "participated", "actual") if c in st.columns]
     m = dec.merge(st[keep].rename(columns={"strategy_id": "_sid_s", "actual": "stat_actual", "participated": "stat_participated"}),

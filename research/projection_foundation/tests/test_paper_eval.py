@@ -309,7 +309,11 @@ def test_late_information_invalid_prices_and_bad_identities_are_excluded_and_cou
     assert q["decisions_forecast_after_asof_excluded"] == 1
     assert q["decisions_invalid_price_excluded"] == 2
     assert q["decisions_bad_identity_excluded"] == 3
-    assert q["paper_settlements_orphaned"] >= 8
+    # only the two settlements whose decision exists NOWHERE are orphans; the seven that belong to decisions excluded above are counted as such
+    assert q["paper_settlements_orphaned"] == 2
+    assert q["paper_settlements_decision_excluded"] == 7
+    assert q["paper_settlements_unmatched_in_window"] >= 8
+    assert q["paper_settlements_unmatched_in_window"] == q["paper_settlements_orphaned"] + q["paper_settlements_decision_excluded"] + q["paper_settlements_out_of_window"]
     after = E.scorecard(d, f["now"], window=None)
     assert after["sample"]["paper_decisions"]["n_decisions"] == base["sample"]["paper_decisions"]["n_decisions"]    # none of the bad rows leaked in
     # no +5.0 P&L from the poisoned settlements can appear in any ROI
@@ -434,3 +438,53 @@ def test_hypotheses_are_declared_once_and_ranked_deterministically(arch):
     assert scores == sorted(scores, reverse=True)
     assert all(h["classification"] in S.FINDING_CLASSES for h in a["hypotheses"])
     assert a["multiple_testing"]["family_size_tested"] == sum(1 for h in a["hypotheses"] if h["status"] == "TESTED")
+
+
+# ------------------------------------------------------------------------------------------------ integrity counters mean what they say (2026-10-24 audit)
+def test_unpriced_pass_records_are_not_bad_identity(tmp_path):
+    """Regression: PASS decisions for markets the engine could not price (NO_PERIOD_MODEL / NO_FORECAST) are written with side BOTH and no price. The
+    counter called all 64,695 of them 'bad identity' (8.6% of decisions) although every one had a game and a ticker."""
+    d, f = _arch(tmp_path, n_days=2, games_per_day=2, seed=4)
+    base = E.scorecard(d, f["now"], window=None)["data_status"]["integrity"]
+    day = store.days(d, "decisions")[0]
+    tpl = store.read(d, "decisions", [day])[0]
+    unpriced = [dict(tpl, decision_id=f"u{i}", decision="PASS", side="BOTH", price=None, bid=None, ask=None, reason="NO_PERIOD_MODEL" if i % 2 else "NO_FORECAST") for i in range(6)]
+    really_bad = [dict(tpl, decision_id="r1", decision="PASS", side="BOTH", ticker=None), dict(tpl, decision_id="r2", decision="PASS", side="BOTH", game_id=""),
+                  dict(tpl, decision_id="r3", decision="TRADE", side="BOTH")]
+    store.write_once(d, "decisions", day, unpriced + really_bad, utc("2026-10-20T23:58:00Z"))
+    q = E.scorecard(d, f["now"], window=None)["data_status"]["integrity"]
+    assert q["decisions_unpriced_pass_excluded"] == base.get("decisions_unpriced_pass_excluded", 0) + 6
+    assert q["decisions_unpriced_pass_by_reason"]["NO_PERIOD_MODEL"] - base.get("decisions_unpriced_pass_by_reason", {}).get("NO_PERIOD_MODEL", 0) == 3
+    assert q["decisions_bad_identity_excluded"] == base["decisions_bad_identity_excluded"] + 3, "a missing ticker, a missing game and a TRADE with no side are still bad identity"
+    assert q["decisions_invalid_price_excluded"] == base["decisions_invalid_price_excluded"], "an unpriced PASS is not an invalid price either"
+
+
+def test_a_bounded_window_does_not_call_other_days_settlements_orphans(tmp_path):
+    """Regression: daily card of 2026-10-22 reported 100,749 'orphaned' settlements out of 116,602 — every settlement belonging to another day's
+    games. Only a settlement whose decision is in NO loaded day is an orphan, and a bounded window cannot know that."""
+    d, f = _arch(tmp_path, n_days=4, games_per_day=3, seed=5)
+    day = sorted({r["game_date_et"] for r in store.read(d, "decisions")})[1]
+    one = E.scorecard(d, f["now"], window=None, day_et=day)["data_status"]["integrity"]
+    full = E.scorecard(d, f["now"], window=None)["data_status"]["integrity"]
+    assert one["paper_settlements_orphaned"] == 0 and full["paper_settlements_orphaned"] == 0
+    assert one["paper_settlements_out_of_window"] > 0, "the other days' settlements are accounted for by name"
+    assert one["paper_settlements_unmatched_in_window"] >= one["paper_settlements_out_of_window"]
+    store.write_once(d, "settlements", store.days(d, "settlements")[0],
+                     [{"schema": S.SETTLEMENT_SCHEMA, "decision_id": "no-such-decision", "strategy_id": "PF_EDGE_V1", "net_pnl": 5.0, "won": True, "dnp": False}], utc("2026-10-20T23:59:59Z"))
+    assert E.scorecard(d, f["now"], window=None)["data_status"]["integrity"]["paper_settlements_orphaned"] == 1, "a settlement with no decision anywhere is still caught"
+
+
+def test_a_pass_with_a_recorded_reason_and_no_price_is_not_an_invalid_price(tmp_path):
+    """Regression: 15,864 'invalid price' exclusions on the 2026-10-24 archive were all PASS rows with reason NO_EXECUTABLE_QUOTE / OUTSIDE_PROTOCOL_HORIZON and a
+    null price; none had an out-of-range price or a crossed book."""
+    d, f = _arch(tmp_path, n_days=2, games_per_day=2, seed=4)
+    base = E.scorecard(d, f["now"], window=None)["data_status"]["integrity"]
+    day = store.days(d, "decisions")[0]
+    tpl = store.read(d, "decisions", [day])[0]
+    rows = [dict(tpl, decision_id=f"n{i}", decision="PASS", price=None, bid=None, ask=None, reason="NO_EXECUTABLE_QUOTE") for i in range(4)]
+    rows.append(dict(tpl, decision_id="t1", decision="TRADE", price=None))                    # a TRADE with no price IS invalid
+    rows.append(dict(tpl, decision_id="t2", decision="PASS", price=1.7, reason="x"))          # a present, impossible price IS invalid
+    store.write_once(d, "decisions", day, rows, utc("2026-10-20T23:58:00Z"))
+    q = E.scorecard(d, f["now"], window=None)["data_status"]["integrity"]
+    assert q["decisions_no_price_pass_excluded"] == base.get("decisions_no_price_pass_excluded", 0) + 4
+    assert q["decisions_invalid_price_excluded"] == base["decisions_invalid_price_excluded"] + 2
