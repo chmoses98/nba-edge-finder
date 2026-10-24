@@ -145,7 +145,8 @@ jobs:
       - name: Evaluate
         if: needs.decide.outputs.evaluate == 'true'
         continue-on-error: true
-        run: nba evaluate --data data --out data/archive/eval
+        # --out is the LEDGER ROOT. It was data/archive/eval, an empty ledger: evaluate read 0 rows on every run.
+        run: nba evaluate --data data --out data/archive
       # Edge Finder app export (edge_finder.app.v1). Read-only over the archive; writes
       # data/archive/app/latest, which the push step below carries to the data-archive branch
       # (app/ is not a ledger kind, so Ledger.verify ignores it). continue-on-error because a

@@ -28,8 +28,9 @@ from typing import Any
 
 import numpy as np
 
-from nba_edge.archive.ledger import Ledger
-from nba_edge.archive.reconstruct import iter_market_rows
+from nba_edge.archive.delta import DeltaChainError
+from nba_edge.archive.ledger import Ledger, entry_observed_at
+from nba_edge.archive.reconstruct import iter_market_rows, reconstruct_at
 from nba_edge.evaluation.authority import AuthorityLedger, EvaluationRow
 from nba_edge.evaluation.clv import closing_snapshot, clv_prob
 from nba_edge.evaluation.metrics import (
@@ -100,8 +101,59 @@ def tip_times(ledger: Ledger) -> dict[str, datetime]:
     return tips
 
 
+def _slim(row: dict[str, Any]) -> dict[str, Any]:
+    """The fields evaluation reads from a market row, in cents.
+
+    Boards captured since the Kalshi API moved to dollar strings carry ``yes_bid_dollars`` etc. and the cents view only
+    under ``_quote_cents``; reading the bare ``yes_bid`` key therefore returned None for every closing quote and made
+    the closing price (and so CLV and Kalshi's own calibration) permanently empty.
+    """
+    q = row.get("_quote_cents") or {}
+    out = {k: row.get(k) for k in _OBS_KEYS}
+    for k in ("yes_bid", "yes_ask", "no_bid", "no_ask", "last_price"):
+        if out.get(k) is None and q.get(k) is not None:
+            out[k] = q[k]
+    return out
+
+
+# How many ticks before the last pre-tip tick a ticker may be searched for when it was absent from that board (a
+# market that is briefly paused disappears from the open list for a tick or two). The observation keeps its own
+# `_observed_at_utc`, so the age of the close is never hidden.
+CLOSING_LOOKBACK_TICKS = 12
+
+
+def closing_observations(ledger: Ledger, wanted: dict[datetime, set[str]]) -> dict[str, list[dict[str, Any]]]:
+    """For each tip, each wanted ticker's row on the last board observed STRICTLY before that tip.
+
+    Replaces a pass over every tick of the archive (``observations_by_ticker``: 2,336 ticks x ~7,000 rows = 16M row
+    visits, 8.6 minutes on the 2026-10-24 archive and linear in archive size, against a 15-minute job budget) with one
+    reconstruction per distinct tip. Closing is the only observation evaluation uses: ``closing_snapshot`` returns the
+    last observation strictly before tip and ``market_only_report`` uses the same.
+    """
+    ticks = sorted({entry_observed_at(e) for e in ledger.manifest() if e.kind in ("kalshi/markets", "kalshi/markets_delta")})
+    out: dict[str, list[dict[str, Any]]] = {}
+    for tip, tickers in wanted.items():
+        before = [t for t in ticks if t < tip]
+        remaining = set(tickers)
+        for at in reversed(before[-CLOSING_LOOKBACK_TICKS:]):
+            if not remaining:
+                break
+            try:
+                rec = reconstruct_at(ledger.root, at)
+            except DeltaChainError:
+                continue
+            for row in rec.rows:
+                tk = row.get("ticker")
+                if tk in remaining:
+                    remaining.discard(tk)
+                    slim = _slim(row)
+                    slim["_observed_at_utc"] = rec.observed_at_utc
+                    out.setdefault(tk, []).append(slim)
+    return out
+
+
 def observations_by_ticker(ledger: Ledger, tickers: set[str]) -> dict[str, list[dict[str, Any]]]:
-    """Slim market observations for the tickers of interest, in observation order."""
+    """Every observation of the tickers of interest, in observation order (full-archive pass; kept for research use)."""
     out: dict[str, list[dict[str, Any]]] = {}
     # Every TICK. The benchmark is "the raw executable price at the final valid pre-tip snapshot";
     # if delta-encoded ticks were invisible here, that instant would silently move earlier and the
@@ -110,7 +162,7 @@ def observations_by_ticker(ledger: Ledger, tickers: set[str]) -> dict[str, list[
         tk = row.get("ticker")
         if tk not in tickers or not row.get("_observed_at_utc"):
             continue
-        out.setdefault(tk, []).append({k: row.get(k) for k in _OBS_KEYS})
+        out.setdefault(tk, []).append(_slim(row))
     for obs in out.values():
         obs.sort(key=lambda o: o["_observed_at_utc"])
     return out
@@ -384,19 +436,26 @@ def report_markdown(report: dict[str, Any]) -> str:
 def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -> int:
     out_root = Path(out_root)
     now = now or utcnow()
+    # Fail closed on the mistake that made this job a silent no-op in production: pointing --out at the reports directory
+    # (<archive>/eval) instead of the ledger root. An empty ledger evaluates 0 rows and "succeeds", which looks identical
+    # to "nothing is settled yet".
+    parent_manifest = out_root.parent / "manifest.jsonl"
+    if out_root.name == "eval" and not (out_root / "manifest.jsonl").exists() and parent_manifest.exists():
+        print(f"evaluate: --out {out_root} is the reports directory, not the ledger root; the ledger is {out_root.parent}")
+        return 2
     ledger = Ledger(out_root)
 
     settlements = best_settlements(ledger)
     tips = tip_times(ledger)
     predictions = list(ledger.iter_rows("predictions"))
-    tickers = set(settlements)
-    obs = observations_by_ticker(ledger, tickers)
-    families_by_ticker = {tk: str(o[-1].get("_family") or "") for tk, o in obs.items() if o}
-
     existing_rows = list(ledger.iter_rows("evaluations"))
     seen = {(r.get("prediction_id"), r.get("settlement_key")) for r in existing_rows}
-    new_rows: list[dict[str, Any]] = []
+
+    # Pass 1 (no market data): which (prediction, settlement) pairs are NEW, and which closes do they and the market-only
+    # report need? Only those games' closing boards are reconstructed.
+    pending: list[tuple[dict[str, Any], SettlementRecord, datetime]] = []
     n_skipped = {"unsettled": 0, "no_tip": 0, "invalid": 0}
+    wanted: dict[datetime, set[str]] = {}
     for pred in predictions:
         tk = pred.get("ticker")
         rec = settlements.get(tk) if tk else None
@@ -408,6 +467,28 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
         if tip is None:
             n_skipped["no_tip"] += 1
             continue
+        if (pred.get("prediction_id"), rec.idempotency_key) in seen:
+            continue
+        pending.append((pred, rec, tip))
+        wanted.setdefault(tip, set()).add(tk)
+    market_only_tickers = {
+        tk for tk, rec in settlements.items()
+        if rec.engine_version == KALSHI_ENGINE_VERSION and rec.outcome in (SettlementOutcome.YES, SettlementOutcome.NO)
+    }
+    for tk in market_only_tickers:
+        rec = settlements[tk]
+        t = tips.get(rec.game_id) if rec.game_id else None
+        if t is not None:
+            wanted.setdefault(t, set()).add(tk)
+    obs = closing_observations(ledger, wanted)
+    no_tip = {tk for tk in market_only_tickers if not (settlements[tk].game_id and tips.get(settlements[tk].game_id))}
+    if no_tip:  # market-only settlements of games with no known tip are closed on "last open observation": needs the full history
+        obs.update(observations_by_ticker(ledger, no_tip))
+    families_by_ticker = {tk: str(o[-1].get("_family") or "") for tk, o in obs.items() if o}
+
+    new_rows: list[dict[str, Any]] = []
+    for pred, rec, tip in pending:
+        tk = pred.get("ticker")
         row = build_evaluation_row(pred, rec, tip, obs.get(tk, []))
         if row is None:
             n_skipped["invalid"] += 1

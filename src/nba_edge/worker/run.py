@@ -374,7 +374,10 @@ class Worker:
         ("matchup_shadow", ["nba", "matchup-shadow", "--out", "ARCHIVE"], 300.0),
         ("simulate", ["nba", "simulate", "--data", "DATA", "--out", "ARCHIVE"], 2400.0),
         ("settle", ["nba", "settle", "--data", "DATA", "--out", "ARCHIVE"], 1200.0),
-        ("evaluate", ["nba", "evaluate", "--data", "DATA", "--out", "ARCHIVE/eval"], 900.0),
+        # `--out` is the LEDGER ROOT (predictions/, settlements/, manifest.jsonl live there); the reports go to <root>/eval/.
+        # This used to be "ARCHIVE/eval", which made an empty subdirectory the ledger: evaluate read 0 predictions and 0
+        # settlements on every run (n_rows 0 against 18,231 settled tickers), and its STATUS file landed where nothing reads it.
+        ("evaluate", ["nba", "evaluate", "--data", "DATA", "--out", "ARCHIVE"], 900.0),
         # The Edge Finder app export (edge_finder.app.v1): a pure read-only re-expression of the
         # archive into ARCHIVE/app/latest, which archive_push.sh then carries to the data-archive
         # branch with everything else. Always due (see ALWAYS_DUE): it has no decision key because
