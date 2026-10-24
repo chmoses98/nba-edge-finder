@@ -2,8 +2,8 @@
 
 Companion to `NBA_COLLECTION_RELIABILITY_AUDIT_2026-10-24.md`. Read-only dataset audit; every number was recomputed from files on disk unless marked UNVERIFIED.
 Archives audited: `data-archive` @ `9523c12`, `projection-data` @ `b1fad93`, repo `main` @ `8927d69`. Two items were re-verified independently by the lead author:
-the `OnOffIndex` quarantine gap (section 2) and the shot-profile timestamp defect (section 5 #1, now **fixed** in PR-E; the committed parquet shows `tip_ts` max 1,781,397 and per-player decay in 0.07% of steps).
-Section 2's quarantine gap and the stale lineup health report are fixed in PR-A (`nba_edge/pbp/stints.py`, `OnOffIndex` refuses uncertified rows, dashboard reads disk).
+the `OnOffIndex` quarantine gap (section 2) and the shot-profile timestamp defect (section 5 #1, now **fixed** in #62; the committed parquet shows `tip_ts` max 1,781,397 and per-player decay in 0.07% of steps).
+Section 2's quarantine gap and the stale lineup health report are fixed in #58 (`nba_edge/pbp/stints.py`, `OnOffIndex` refuses uncertified rows, dashboard reads disk).
 
 ## 0. Bottom line
 
