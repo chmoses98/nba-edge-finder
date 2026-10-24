@@ -15,7 +15,7 @@
       "first_day": "dt=2026-09-18",
       "last_day": "dt=2026-10-24",
       "n_days": 37,
-      "n_snapshots": 372,
+      "n_snapshots": 375,
       "state": "ok"
     },
     "lineups": {
@@ -26,14 +26,14 @@
       "first_day": "dt=2026-09-18",
       "last_day": "dt=2026-10-24",
       "n_days": 37,
-      "n_snapshots": 372,
+      "n_snapshots": 375,
       "state": "ok"
     },
     "schedule": {
       "first_day": "dt=2026-09-18",
       "last_day": "dt=2026-10-24",
       "n_days": 37,
-      "n_snapshots": 372,
+      "n_snapshots": 375,
       "state": "ok"
     },
     "state": "ok"
@@ -834,35 +834,43 @@
       },
       {
         "checkpoint": "kalshi/markets/dt=2026-10-24/kalshi_markets_20261024T052213Z_40049163034.jsonl.gz",
-        "final_board_sha256": "bc01ee37f0b4565cec4dff6690ce942c9857e2c78be47a63f23e7b8243a2cede",
-        "n_deltas": 22,
-        "n_markets": 10937,
+        "final_board_sha256": "a1945d6185741d0532618b44eed0354c51e876616505796a35e4b16a27d6cef0",
+        "n_deltas": 24,
+        "n_markets": 10939,
         "ok": true,
-        "tip_captured_at_utc": "2026-10-24T10:46:22Z"
+        "tip_captured_at_utc": "2026-10-24T11:20:33Z"
+      },
+      {
+        "checkpoint": "kalshi/markets/dt=2026-10-24/kalshi_markets_20261024T113533Z_40088216429.jsonl.gz",
+        "final_board_sha256": "97c81db20b2607e9f8864e6dbdd9c06a5280349f158cc1bd4c5882eec589dad7",
+        "n_deltas": 17,
+        "n_markets": 11368,
+        "ok": true,
+        "tip_captured_at_utc": "2026-10-24T15:50:33Z"
       }
     ],
     "n_broken": 0,
-    "n_chains": 100,
-    "n_ok": 100,
+    "n_chains": 101,
+    "n_ok": 101,
     "state": "ok"
   },
   "evidence": {
     "reason": "evaluate has not run against this archive",
     "state": "absent"
   },
-  "generated_at_utc": "2026-10-24T11:01:23.351467+00:00",
+  "generated_at_utc": "2026-10-24T15:58:12.653857+00:00",
   "markets": {
-    "age_minutes": 18.357657449999998,
+    "age_minutes": 10.385389333333334,
     "alarms": [
-      "3463 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+      "3510 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
       "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
     ],
     "by_support": {
-      "BUILDABLE": 2018,
-      "MODELABLE": 1972,
-      "RESEARCH": 1851,
+      "BUILDABLE": 2345,
+      "MODELABLE": 2019,
+      "RESEARCH": 1861,
       "UNMODELABLE": 1633,
-      "UNRESOLVED": 3463
+      "UNRESOLVED": 3510
     },
     "cadence": {
       "acceptance": {
@@ -966,8 +974,8 @@
         "p99": null
       }
     },
-    "last_capture_utc": "2026-10-24T10:46:22Z",
-    "n_discovered": 10937,
+    "last_capture_utc": "2026-10-24T15:50:33Z",
+    "n_discovered": 11368,
     "n_series": 300,
     "n_unresolved_alarms": 2,
     "state": "ok"
@@ -985,14 +993,14 @@
   },
   "simulation": {
     "coverage": {
-      "BUILDABLE": 1721,
-      "MODELABLE": 1932,
-      "RESEARCH": 100,
-      "UNRESOLVED": 1280
+      "BUILDABLE": 2046,
+      "MODELABLE": 1979,
+      "RESEARCH": 110,
+      "UNRESOLVED": 1329
     },
     "n_games": 8,
     "refusals": null,
-    "simulated_at_utc": "2026-10-24T10:49:53Z",
+    "simulated_at_utc": "2026-10-24T15:53:53Z",
     "state": "ok"
   },
   "stint_data": {
@@ -1008,8 +1016,8 @@
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 454.480488,
-        "hours_to_next_tip": 15.72718417611111,
+        "duration_s": 210.289585,
+        "hours_to_next_tip": 10.907574436111112,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -1017,14 +1025,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T06:16:22Z"
+        "started_at": "2026-10-24T11:05:32Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 210.076591,
-        "hours_to_next_tip": 15.477184146111112,
+        "duration_s": 210.855227,
+        "hours_to_next_tip": 10.657574396944444,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -1032,30 +1040,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T06:31:22Z"
+        "started_at": "2026-10-24T11:20:32Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 238.870732,
-        "hours_to_next_tip": 15.227184107777777,
-        "jobs_failed": [],
-        "jobs_run": [
-          "simulate",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T06:46:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 207.728798,
-        "hours_to_next_tip": 14.977184058055556,
+        "duration_s": 212.193025,
+        "hours_to_next_tip": 10.407574361944445,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -1063,44 +1055,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T07:01:22Z"
+        "started_at": "2026-10-24T11:35:32Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 456.103754,
-        "hours_to_next_tip": 14.727184015,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T07:16:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 210.476262,
-        "hours_to_next_tip": 14.477183981666666,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T07:31:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 244.491602,
-        "hours_to_next_tip": 14.227183944722222,
+        "duration_s": 447.359909,
+        "hours_to_next_tip": 10.157574328611112,
         "jobs_failed": [],
         "jobs_run": [
           "simulate",
@@ -1109,14 +1071,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T07:46:22Z"
+        "started_at": "2026-10-24T11:50:32Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 212.509031,
-        "hours_to_next_tip": 13.977183901944445,
+        "duration_s": 201.973143,
+        "hours_to_next_tip": 9.907574296388889,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -1124,14 +1086,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T08:01:22Z"
+        "started_at": "2026-10-24T12:05:32Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 212.161431,
-        "hours_to_next_tip": 13.727183859444445,
+        "duration_s": 211.185835,
+        "hours_to_next_tip": 9.657574263611112,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -1139,14 +1101,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T08:16:22Z"
+        "started_at": "2026-10-24T12:20:32Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 456.953648,
-        "hours_to_next_tip": 13.4771838125,
+        "duration_s": 211.337574,
+        "hours_to_next_tip": 9.407574226666666,
         "jobs_failed": [],
         "jobs_run": [
           "app_export",
@@ -1154,75 +1116,14 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T08:31:22Z"
+        "started_at": "2026-10-24T12:35:32Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 244.908128,
-        "hours_to_next_tip": 13.227183770277778,
-        "jobs_failed": [],
-        "jobs_run": [
-          "simulate",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T08:46:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 215.287959,
-        "hours_to_next_tip": 12.977183730555554,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T09:01:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 219.198232,
-        "hours_to_next_tip": 12.727183683611111,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T09:16:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 471.376673,
-        "hours_to_next_tip": 12.477183635833333,
-        "jobs_failed": [],
-        "jobs_run": [
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T09:31:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 247.881712,
-        "hours_to_next_tip": 12.22718359777778,
+        "duration_s": 441.35504,
+        "hours_to_next_tip": 9.157574181944444,
         "jobs_failed": [],
         "jobs_run": [
           "simulate",
@@ -1231,122 +1132,237 @@
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T09:46:22Z"
+        "started_at": "2026-10-24T12:50:32Z"
       },
       {
         "cadence_s": 900.0,
         "capture_ok": true,
         "captured": true,
-        "duration_s": 212.029393,
-        "hours_to_next_tip": 11.977183559722222,
-        "jobs_failed": [],
-        "jobs_run": [
-          "evaluate",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T10:01:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 214.077699,
-        "hours_to_next_tip": 11.727183523333332,
-        "jobs_failed": [],
-        "jobs_run": [
-          "evaluate",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T10:16:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 216.137013,
-        "hours_to_next_tip": 11.4771834775,
-        "jobs_failed": [],
-        "jobs_run": [
-          "evaluate",
-          "app_export",
-          "research_export"
-        ],
-        "push_ok": true,
-        "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T10:31:22Z"
-      },
-      {
-        "cadence_s": 900.0,
-        "capture_ok": true,
-        "captured": true,
-        "duration_s": 505.002472,
-        "hours_to_next_tip": 11.22718344138889,
+        "duration_s": 213.550131,
+        "hours_to_next_tip": 8.907574147777778,
         "jobs_failed": [],
         "jobs_run": [
           "context",
           "matchup_shadow",
-          "simulate",
-          "evaluate",
           "app_export",
           "research_export"
         ],
         "push_ok": true,
         "reason": "conductor gate: off-window capture due",
-        "started_at": "2026-10-24T10:46:22Z"
+        "started_at": "2026-10-24T13:05:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 211.292383,
+        "hours_to_next_tip": 8.657574105833334,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-24T13:20:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 214.062471,
+        "hours_to_next_tip": 8.407574071666668,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-24T13:35:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 448.176911,
+        "hours_to_next_tip": 8.15757404,
+        "jobs_failed": [],
+        "jobs_run": [
+          "simulate",
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "conductor gate: off-window capture due",
+        "started_at": "2026-10-24T13:50:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 211.339235,
+        "hours_to_next_tip": 7.907574003055556,
+        "jobs_failed": [],
+        "jobs_run": [
+          "context",
+          "matchup_shadow",
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "game at 2026-10-24T22:00:00+00:00 is T+7.91h",
+        "started_at": "2026-10-24T14:05:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 206.955079,
+        "hours_to_next_tip": 7.657573971388889,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "game at 2026-10-24T22:00:00+00:00 is T+7.66h",
+        "started_at": "2026-10-24T14:20:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 213.097482,
+        "hours_to_next_tip": 7.407573932499999,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "game at 2026-10-24T22:00:00+00:00 is T+7.41h",
+        "started_at": "2026-10-24T14:35:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 456.323999,
+        "hours_to_next_tip": 7.157573900277778,
+        "jobs_failed": [],
+        "jobs_run": [
+          "simulate",
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "game at 2026-10-24T22:00:00+00:00 is T+7.16h",
+        "started_at": "2026-10-24T14:50:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 211.343936,
+        "hours_to_next_tip": 6.907573868055556,
+        "jobs_failed": [],
+        "jobs_run": [
+          "context",
+          "matchup_shadow",
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "game at 2026-10-24T22:00:00+00:00 is T+6.91h",
+        "started_at": "2026-10-24T15:05:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 210.217628,
+        "hours_to_next_tip": 6.657573830277778,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "game at 2026-10-24T22:00:00+00:00 is T+6.66h",
+        "started_at": "2026-10-24T15:20:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 208.271849,
+        "hours_to_next_tip": 6.407573797777778,
+        "jobs_failed": [],
+        "jobs_run": [
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "game at 2026-10-24T22:00:00+00:00 is T+6.41h",
+        "started_at": "2026-10-24T15:35:32Z"
+      },
+      {
+        "cadence_s": 900.0,
+        "capture_ok": true,
+        "captured": true,
+        "duration_s": 458.729799,
+        "hours_to_next_tip": 6.157573765277778,
+        "jobs_failed": [],
+        "jobs_run": [
+          "simulate",
+          "app_export",
+          "research_export"
+        ],
+        "push_ok": true,
+        "reason": "game at 2026-10-24T22:00:00+00:00 is T+6.16h",
+        "started_at": "2026-10-24T15:50:32Z"
       }
     ],
-    "exit_reason": "planned retirement at 2026-10-24T11:01:22Z (exit_at 2026-10-24T11:16:19Z)",
+    "exit_reason": "planned retirement before next cadence tick",
     "fail_closed": false,
     "final_push_ok": true,
-    "generation": 132,
+    "generation": 133,
     "health": {
       "disposition": "DEGRADED",
       "failures": [],
       "reasons": [
-        "coverage alarm: 3463 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+        "coverage alarm: 3510 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
         "coverage alarm: series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
       ],
       "retry_budget": 3,
       "state": "DEGRADED",
       "streams": {
         "capture": {
-          "attempts": 19,
+          "attempts": 20,
           "disposition": "OK",
           "failed": 0,
-          "ok": 19,
+          "ok": 20,
           "trailing_failures": 0
         },
         "context": {
-          "attempts": 1,
+          "attempts": 3,
           "disposition": "OK",
           "failed": 0,
-          "ok": 1,
-          "trailing_failures": 0
-        },
-        "evaluate": {
-          "attempts": 4,
-          "disposition": "OK",
-          "failed": 0,
-          "ok": 4,
+          "ok": 3,
           "trailing_failures": 0
         },
         "matchup_shadow": {
-          "attempts": 1,
+          "attempts": 3,
           "disposition": "OK",
           "failed": 0,
-          "ok": 1,
+          "ok": 3,
           "trailing_failures": 0
         },
         "push": {
-          "attempts": 20,
+          "attempts": 21,
           "failed": 0,
-          "ok": 20
+          "ok": 21
         },
         "simulate": {
           "attempts": 5,
@@ -1357,16 +1373,16 @@
         }
       },
       "warnings": [
-        "coverage alarm: 3463 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+        "coverage alarm: 3510 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
         "coverage alarm: series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRST50PTS', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
       ]
     },
     "n_capture_failed": 0,
-    "n_captured": 19,
-    "n_cycles": 19,
+    "n_captured": 20,
+    "n_cycles": 20,
     "state": "ok",
     "successor_dispatch_attempts": 2,
     "successor_dispatched": true,
-    "worker_id": "40069159793"
+    "worker_id": "40088216429"
   }
 }
