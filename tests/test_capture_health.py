@@ -302,3 +302,17 @@ def test_summary_counts_unpublished_covers():
     g2 = H.assess_game("g2", TIP, obs, committed={obs[0]: obs[0] + timedelta(minutes=2)})
     pub = H.summarise([g1, g2])["horizon_coverage"]["T-60m"]["publication"]
     assert pub["n_games"] == 2 and pub["observed_cover_not_yet_published_at_target"] == 1 and pub["publication_lag_s_max"] == 420.0
+
+
+def test_handover_gaps_pair_each_retirement_with_its_successors_lease():
+    log = "\n".join([
+        "2026-10-22T18:39:43+00:00|worker: 100 retired after 23 cycles",
+        "2026-10-22T19:42:51+00:00|worker: 200 gen 125 acquired lease",
+        "2026-10-22T19:50:08+00:00|capture: 200 at 2026-10-22T19:42:55Z",
+        "2026-10-22T08:56:21+00:00|worker: 50 retired after 20 cycles",
+        "2026-10-22T08:57:15+00:00|worker: 100 gen 123 acquired lease",
+        "unrelated|line",
+    ])
+    gaps = H.handover_gaps(log)
+    assert [(g["retired_run"], g["successor_run"], g["gap_minutes"]) for g in gaps] == [("50", "100", 0.9), ("100", "200", 63.1)]
+    assert H.handover_gaps(log, min_gap_s=600)[0]["gap_minutes"] == 63.1

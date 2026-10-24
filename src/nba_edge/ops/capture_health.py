@@ -450,6 +450,38 @@ def parse_commit_log(text: str) -> dict[str, list[tuple[datetime, datetime]]]:
     return out
 
 
+def handover_gaps(text: str, *, min_gap_s: float = 0.0) -> list[dict]:
+    """Time with no worker between one worker's retirement commit and its successor's lease commit, from the archive's own commit log.
+
+    Lines: ``<commit time>|worker: <run_id> retired after N cycles`` and ``<commit time>|worker: <run_id> gen G acquired lease``. The gap is an upper
+    bound on the time without a writer (the retirement commit is made before the runner exits, the lease commit just after the successor's job starts).
+    It cannot say WHY: for 2026-10-22 18:39 -> 19:42 the Actions API shows the successor's job created 18:39:50 and started 19:41:58, i.e. 62 minutes
+    waiting for a hosted runner; the log alone only shows a gap.
+    """
+    events = []
+    for line in text.splitlines():
+        m = re.match(r"^(\S+)\|worker: (\d+) (retired after \d+ cycles|gen \d+ acquired lease)$", line.strip())
+        if not m:
+            continue
+        try:
+            t = datetime.fromisoformat(m.group(1))
+        except ValueError:
+            continue
+        events.append((t, m.group(2), "retired" if m.group(3).startswith("retired") else "acquired"))
+    events.sort()
+    out = []
+    last_retire = None
+    for t, run, kind in events:
+        if kind == "retired":
+            last_retire = (t, run)
+        elif last_retire is not None and run != last_retire[1]:
+            gap = (t - last_retire[0]).total_seconds()
+            if gap >= min_gap_s:
+                out.append({"retired_run": last_retire[1], "retired_utc": last_retire[0].isoformat(), "successor_run": run, "acquired_utc": t.isoformat(), "gap_minutes": round(gap / 60, 1)})
+            last_retire = None
+    return out
+
+
 def committed_map(ledger, log: dict[str, list[tuple[datetime, datetime]]]) -> tuple[dict[datetime, datetime], int]:
     """{observed instant: commit instant} for every market tick on the manifest, plus how many ticks had no matching commit."""
     out: dict[datetime, datetime] = {}
@@ -493,6 +525,7 @@ def run_capture_health(archive_root: Path, out: Path | None = None, days: int = 
         "archive_last_snapshot": snaps[-1].isoformat() if snaps else None,
         "game_universe": {"n_games": len(games_in), "by_season_type": {k: sum(1 for g in games_in if g["season_type"] == k) for k in sorted({str(g["season_type"]) for g in games_in})},
                           "n_tip_from_box": sum(1 for g in games_in if g["tip_source"] == "box_actual")},
+        "handover_gaps": None if commit_log is None or not Path(commit_log).exists() else handover_gaps(Path(commit_log).read_text()),
         "publication_clock": None if committed is None else {"n_ticks_with_commit_time": len(committed), "n_ticks_without": n_uncommitted,
                                                              "note": "commit time is a lower bound on availability; the push itself is not observed"},
         "summary": summarise(games),
