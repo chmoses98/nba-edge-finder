@@ -169,7 +169,7 @@ def _game_forecast(gg: dict, g: pd.DataFrame, tdist, now_utc: str, asof: str) ->
             "rho": gm["rho"], "rho_source": gm["rho_source"], "context": ctx, "inputs_asof": asof}
 
 
-def project_slate(sl: dict | None, out: str | None, *, availability: dict | None = None, calib: dict | None = None, minutes_engine: str = "frozen",
+def project_slate(sl: dict | None, out: str | None, *, availability: dict | None = None, calib: dict | None = None, minutes_engine: str = "frozen", stat_models: str = "frozen",
                   now_utc: str | None = None, reconcile_cfg=None, max_hist_seasons: int = 7) -> dict:
     """Frozen-model forward projections for the games in `sl` (see load_slate; `sl["asof"]` = newest input captured).
 
@@ -179,6 +179,8 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     research_only."""
     from .live import participation as PART, reconcile as REC
     t0 = time.time()
+    if stat_models not in ("frozen", "refit") or (stat_models == "refit" and minutes_engine != "jrm"):
+        raise ValueError(f"stat_models={stat_models!r} needs minutes_engine='jrm' (frozen|refit)")
     now_utc = now_utc or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     frozen = json.loads(FROZEN.read_text())
     data.ensure_hoopr(range(data.FIRST_SEASON, SLATE_SEASON + 1), refresh_current=True)
@@ -251,6 +253,14 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
         F["min_best"] = jr["m_jrm"].to_numpy()
         F["min_inj"] = jr["m_jrm"].to_numpy()
         f.loc[sl_idx, "min_best"] = F["min_best"].to_numpy()
+        if stat_models == "refit":
+            # JRM-consistent stat models: the ladders are trained with the JRM walk-forward minutes on every history row (as in the backtest, minutes_rebuild/downstream_fit.py) instead of a
+            # minutes input that is missing for all history. History rows without a frozen JRM value (the current season) keep their frozen forecast.
+            hm = J.history_minutes()
+            key = pd.MultiIndex.from_arrays([f["game_id"].to_numpy(), f["pid"].to_numpy()])
+            v = hm.reindex(key).to_numpy(float)
+            use = np.isfinite(v) & ~f["is_slate"].to_numpy()
+            f.loc[use, "min_best"] = v[use]
         from .live.availability import SRC_OFFICIAL as _SRC_OFF
         # the eligibility head is calibrated on the official designation exactly where the official report covers the player (the verifier's D1/D2 read these labels)
         basis = [("confirmed starter" if c == "STARTER_CONFIRMED" else
@@ -426,7 +436,7 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     res = {"schema": "sift.projections.v1", "sport": "NBA",
            "generated_utc": now_utc, "data_asof_utc": asof,
            "model": {"id": MODEL_ID, "version": f"pf-{PF_VERSION}+{_git_sha()}", "authority": "research_only",
-                     **({"minutes_engine": J.VERSION} if jrm_on else {})},          # the key exists only for the joint rotation model: the frozen document is unchanged
+                     **({"minutes_engine": J.VERSION} if jrm_on else {}), **({"stat_models": "refit-jrm-history"} if jrm_on and stat_models == "refit" else {})},          # the key exists only for the joint rotation model: the frozen document is unchanged
            "mode": mode, "slate_date": str(pd.Timestamp(F["date"].iloc[0]).date()) if len(F) else None,
            "history_through": str(pd.Timestamp(hist_last).date()),
            "inputs": files, "families": fam_out, "games": games, "players": player_rows,

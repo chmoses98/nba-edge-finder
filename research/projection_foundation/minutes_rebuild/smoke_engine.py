@@ -1,6 +1,6 @@
 """End-to-end smoke of nba.project.project_slate with minutes_engine in {frozen, jrm} on a slate rebuilt from a published feed.
 python smoke_engine.py FEED.json OUT_PREFIX"""
-import sys, json, gzip
+import sys, json, gzip, os
 sys.path.insert(0, ".."); sys.path.insert(0, ".")
 import numpy as np, pandas as pd
 from nba import project as PRJ, data
@@ -30,7 +30,7 @@ sl = {"day": sch.game_date_et.min(), "schedule": sch, "rosters": ros, "injuries"
       "asof": feed["data_asof_utc"], "files": {}}
 calib = json.load(open("../nba/live/participation_calibration.json"))
 for eng in sys.argv[3:] or ["frozen", "jrm"]:
-    res = PRJ.project_slate(sl, f"{pref}_{eng}.json", availability=avail, calib=calib, now_utc=feed["generated_utc"], minutes_engine=eng)
+    res = PRJ.project_slate(sl, f"{pref}_{eng}.json", availability=avail, calib=calib, now_utc=feed["generated_utc"], minutes_engine=eng, stat_models=(os.environ.get("PF_NBA_STAT_MODELS") or "frozen") if eng == "jrm" else "frozen")
     d = json.load(open(f"{pref}_{eng}.json"))
     ev = AC.minutes_integrity(d)
     print(eng, "players", len(d["players"]), "model", d["model"], "runtime", d["runtime_s"], "| F1:", AC.check_minutes_integrity(d)[0]["status"], ev["worst_gap"], ev["normalised"][:3])

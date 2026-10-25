@@ -25,8 +25,10 @@ if dirty:
 py = [sys.executable, "-I"]
 run(py + ["jrm_live.py", feed_path, os.path.join(scratch, "live"), "--S", "400"])
 run(py + ["smoke_engine.py", feed_path, os.path.join(scratch, "eng"), "jrm"])
+# challenger: the same JRM minutes with the stat ladders refitted on JRM history minutes (PF_NBA_STAT_MODELS=refit); archived next to the current candidate
+run(py + ["smoke_engine.py", feed_path, os.path.join(scratch, "engr"), "jrm"], env={**os.environ, "PF_NBA_STAT_MODELS": "refit"})
 outdir = os.path.join(arch, "jrm_v2_uniform")
-run(py + ["archive_shadow.py", feed_path, os.path.join(scratch, "live.csv"), outdir, "v2", "--stats", os.path.join(scratch, "eng_jrm.json")])
+run(py + ["archive_shadow.py", feed_path, os.path.join(scratch, "live.csv"), outdir, "v2", "--stats", os.path.join(scratch, "eng_jrm.json"), "--stats-refit", os.path.join(scratch, "engr_jrm.json")])
 
 def commit_additive(paths, msg, appendable=()):
     """Stage `paths`; refuse unless every change is a new file or an append to a file in `appendable` (old bytes unchanged)."""
