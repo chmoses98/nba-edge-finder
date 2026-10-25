@@ -57,9 +57,41 @@ def add_player_history(c: pd.DataFrame) -> pd.DataFrame:
     return c
 
 
+def ridge_ratings_observed(t: pd.DataFrame, y_col: str, **kw) -> pd.DataFrame:
+    """``pit.rolling_ridge_ratings`` that fits only games with an observed outcome and still emits ratings for blocks that contain nothing but unplayed games.
+
+    The vendored pf_core fits every row of every earlier block. A slate row (outcome not yet known) in an earlier block than the block being rated therefore
+    reached sklearn as NaN: the 96 h dry run of 2026-10-24 reached the 2026-10-27 block while 2026-10-24..26 were unplayed and died with "Input y contains NaN"
+    (current main fails identically; it is date-triggered, so live runs would have hit it from 2026-10-26). pf_core is byte-identical across sport repos
+    (MANIFEST.json), so the fix lives here:
+
+      * blocks that contain an observed game are rated by one call on the observed rows only, which for fully observed input is exactly the old computation;
+      * a block with no observed game (a pure slate block) is rated by a call on {observed rows of earlier blocks} + {that block's rows}: its own rows are never
+        in a training set because training uses strictly earlier blocks.
+
+    Missing outcomes are excluded, never imputed.
+    """
+    obs = t[y_col].notna()
+    base = pit.rolling_ridge_ratings(t[obs], "block", "team", "opp", y_col, **kw)
+    extra = sorted(set(t["block"]) - set(t.loc[obs, "block"]))
+    parts = [base]
+    for b in extra:
+        frame = pd.concat([t[obs & (t["block"] < b)], t[t["block"] == b]])
+        r = pit.rolling_ridge_ratings(frame, "block", "team", "opp", y_col, **kw)
+        parts.append(r[r["block"] == b])
+    parts = [p for p in parts if len(p)]
+    return pd.concat(parts, ignore_index=True) if parts else base
+
+
 def team_context(tg: pd.DataFrame, alpha: float = 8.0) -> pd.DataFrame:
     """Per team-game PIT context: rest, back-to-back, ridge pace / efficiency ratings, expected margin."""
     t = tg.sort_values(["team", "date"]).copy()
+    if "is_slate" in t.columns:
+        # Slate rows (games not yet played) legitimately have no outcome and are excluded from every fit. A COMPLETED game with no pace or no
+        # efficiency is a data hole (e.g. a half-published box score): refuse it by name rather than let it be dropped silently or reach sklearn.
+        hole = t[~t["is_slate"].fillna(False).astype(bool) & (t["pace48"].isna() | t["ortg"].isna())]
+        if len(hole):
+            raise ValueError(f"completed team-games with no pace/ortg (incomplete box score?): {sorted(hole['game_id'].astype(str).unique())[:10]}")
     t["prev_date"] = t.groupby("team")["date"].shift(1)
     t["rest_days"] = (t["date"] - t["prev_date"]).dt.days.clip(upper=10).fillna(10)
     t["b2b"] = (t["rest_days"] == 1).astype(float)
@@ -69,10 +101,10 @@ def team_context(tg: pd.DataFrame, alpha: float = 8.0) -> pd.DataFrame:
     t["three_in_four"] = ((t["date"] - d).dt.days <= 3).astype(float)
     # weekly blocks across seasons
     t["block"] = (t["season"] * 100 + ((t["date"] - t.groupby("season")["date"].transform("min")).dt.days // 7)).astype(int)
-    rr_pace = pit.rolling_ridge_ratings(t, "block", "team", "opp", "pace48", home_col=None, alpha=alpha,
-                                        date_col="date", halflife_days=120, season_col="season", prior_season_decay=0.35)
-    rr_eff = pit.rolling_ridge_ratings(t, "block", "team", "opp", "ortg", home_col="home", alpha=alpha,
-                                       date_col="date", halflife_days=120, season_col="season", prior_season_decay=0.35)
+    rr_pace = ridge_ratings_observed(t, "pace48", home_col=None, alpha=alpha,
+                                     date_col="date", halflife_days=120, season_col="season", prior_season_decay=0.35)
+    rr_eff = ridge_ratings_observed(t, "ortg", home_col="home", alpha=alpha,
+                                    date_col="date", halflife_days=120, season_col="season", prior_season_decay=0.35)
     p = rr_pace.rename(columns={"off_rating": "pace_off", "def_rating": "pace_def", "intercept": "pace_mu"})
     e = rr_eff.rename(columns={"off_rating": "ortg_off", "def_rating": "drtg_def", "intercept": "ortg_mu",
                                "home_adv": "ortg_home", "n_off": "rating_n"})
@@ -97,7 +129,7 @@ def team_context(tg: pd.DataFrame, alpha: float = 8.0) -> pd.DataFrame:
     # team's own PIT season pace (EWMA of earlier games)
     t["team_pace_ewm"] = t.groupby("team")["pace48"].transform(lambda s: s.ewm(halflife=15).mean().shift(1))
     t["pace_factor"] = (t["exp_pace"] / t["team_pace_ewm"]).clip(0.85, 1.15)
-    return t
+    return t.drop(columns="is_slate", errors="ignore")      # a guard flag only: the returned frame is exactly what it was before the flag existed
 
 
 def teammate_absence(c: pd.DataFrame) -> pd.DataFrame:
