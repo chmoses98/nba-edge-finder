@@ -134,6 +134,26 @@ def _iso(ts) -> str:
     return pd.Timestamp(ts).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def likely_out_reason(pa: dict) -> str:
+    """Why a LIKELY_OUT row is withheld, worded by the strength of the source: a PROJECTED exclusion comes from an aggregator (ESPN) that the
+    official injury report does not confirm; a REPORTED one is the league's own (e.g. DOUBTFUL). Neither is a confirmation of absence."""
+    src = pa.get("source") or "an availability source"
+    if pa.get("certainty") == "PROJECTED":
+        return (f"Likely out: reported OUT by {src} (an aggregator, PROJECTED), not confirmed on the official NBA injury report. "
+                "Withheld as a precaution; this is not an official designation.")
+    return f"Likely out: {pa.get('designation') or 'ruled out'} on the official report ({src}, {pa.get('certainty')}). Withheld."
+
+
+def withhold_likely_out(pa: dict, findings: list[dict], status: str) -> tuple[list[dict], str]:
+    """A likely-out player is withheld exactly like a confirmed-out one: the gate alone only REVIEWs the row, which still publishes it as
+    "conditional on playing". The finding says where the exclusion comes from, so an aggregator report is never read as the league's own
+    designation; the participation status itself stays LIKELY_OUT / PROJECTED and is never promoted to CONFIRMED_OUT."""
+    if pa.get("status") != "LIKELY_OUT":
+        return findings, status
+    return findings + [{"check": "participation_withheld", "severity": "BLOCK", "what": likely_out_reason(pa),
+                        "category": "data_quality", "action": "Withhold; redistribute opportunity to teammates."}], "BLOCK"
+
+
 def _legacy_participation(status: str | None) -> dict:
     """Participation block for runs without a live availability feed (ESPN context statuses only)."""
     s = (status or "UNKNOWN").upper()
@@ -209,6 +229,8 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
         asof = sl["asof"].replace("+00:00", "Z")
         files = sl["files"]
     tg = data.team_games_from_box(box)
+    tg["is_slate"] = False
+    tg_slate = tg_slate.assign(is_slate=True)
     cand = data.build_candidates(box)
     slate_c["is_slate"] = True
     cand["is_slate"] = False
@@ -363,6 +385,7 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
             findings.append({"check": "restriction", "severity": "REVIEW", "what": "Minutes restriction reported",
                              "category": "uncertainty", "action": "Treat as conditional on a limited role."})
             status = status if status == "BLOCK" else "REVIEW"
+        findings, status = withhold_likely_out(pa, findings, status)
         row = {
             "player_id": f"espn:{r['pid']}", "name": r["name"], "team": r["team"], "opponent": r["opp"],
             "game_id": f"espn:{r['game_id']}", "family": fam, "mean": round(float(d.mean[i]), 2),

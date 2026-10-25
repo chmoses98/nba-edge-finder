@@ -1,0 +1,55 @@
+{
+ "authority": "research_only",
+ "inputs": {
+  "minutes_shadow_archive_ref": null,
+  "projection_data_ref": null
+ },
+ "network": false,
+ "orders_placed": 0,
+ "outputs": [
+  "SUMMARY.md",
+  "attribution_2026-10-20.json",
+  "attribution_2026-10-20.md",
+  "dress_rehearsal",
+  "exec_shadow.json",
+  "jrm_matched.json",
+  "manifest.json"
+ ],
+ "paper_config_sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
+ "read_only": true,
+ "run_id": "f4f7ab85a666eebb",
+ "schema": "issue53.manifest.v1",
+ "study_config_sha256": "f84e4067436e2515ea7f35f7417a4e9e66ad69f62ae66ea004a7c6c23244c3e8",
+ "three_way": {
+  "1_original_frozen_strategy_selection": {
+   "entry_cost": 3.4,
+   "label": "PF_EDGE_STRICT_V1 earliest TRADE per thesis across horizons (NOT simultaneously executable; 6 of 7 are as-of replays)",
+   "n": 7,
+   "net_pnl": 1.39,
+   "roi": 0.40882,
+   "roi_basis": "net P&L / sum of quoted asks (scorecard definition)"
+  },
+  "2_new_fixed_checkpoint_executable_shadow": {
+   "hit_rate": 0.6666666666666666,
+   "label": "PF_EDGE_STRICT_T60_EXEC_V1, T-60 only, global ledger, displayed size, integer fee (RETROSPECTIVE application of the frozen rules; not prospective evidence)",
+   "n_decisions": 3,
+   "n_games": 1,
+   "net_pnl": 0.46,
+   "roi_on_cash_outlay": 0.2987012987012987
+  },
+  "3_eligible_matched_jrm_whatif": {
+   "decision_matrix": {
+    "both_bet": 1,
+    "jrm_only": 2,
+    "neither": 2427,
+    "v1_only": 2
+   },
+   "jrm_net_pnl": 0.53,
+   "label": "PF_EDGE_STRICT_T60_EXEC_JRM_V1 vs V1 on the same candidate rows (archive_scale_approximation; RETROSPECTIVE)",
+   "matched_games": 4,
+   "status": "OK",
+   "v1_net_pnl": 0.46
+  }
+ },
+ "workflows_dispatched": 0
+}

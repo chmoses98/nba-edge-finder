@@ -27,7 +27,7 @@ def doc():
 def good_audit(doc, **over):
     teams = sorted({p["team"] for p in doc["players"]})
     a = {"schema": "sift.nba_roster_audit.v1", "feed_generated_utc": doc["generated_utc"], "slate": doc["slate_date"],
-         "sources": {"espn_rosters": "ok"}, "identity": {t: {} for t in teams}, "genuine_roster_errors": 0}
+         "feed_sha256": AC.feed_digest(doc), "checked_utc": doc["generated_utc"], "sources": {"espn_rosters": "ok"}, "identity": {t: {} for t in teams}, "genuine_roster_errors": 0}
     a.update(over)
     return a
 

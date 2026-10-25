@@ -36,6 +36,8 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+from .roster_audit import feed_digest
+
 SCHEMA = "sift.nba_activation_check.v1"
 FAMILIES = ("minutes", "points", "rebounds", "assists", "threes", "pra", "fga")
 OFFICIAL_HOST = "ak-static.cms.nba.com"
@@ -179,12 +181,21 @@ def _documented_review(p: dict, recon: dict[tuple, dict]) -> bool:
     return float(r.get("minutes_scale") or 1.0) >= lo and lo <= float(r.get("usage_scale") or 1.0) <= 1 + MAX_DOCUMENTED_NORMALISATION
 
 
-def audit_accepts(audit: dict | None, doc: dict) -> tuple[bool, str]:
-    """May the documented REVIEW be accepted for this feed? Only with a roster audit of the same slate and teams, run close to the feed, with no error."""
+def audit_accepts(audit: dict | None, doc: dict, now: datetime | None = None) -> tuple[bool, str]:
+    """May the documented REVIEW be accepted for this feed? Only with a roster audit of THIS document (its digest), of the same slate and teams,
+    run close to the feed and (when `now` is given) not older than MAX_AUDIT_AGE_H at the time of the check, with no error."""
     if not audit:
         return False, "no roster audit supplied (--roster-audit)"
     if audit.get("schema") != "sift.nba_roster_audit.v1":
         return False, "the roster audit is not a sift.nba_roster_audit.v1 document"
+    if not audit.get("feed_sha256"):
+        return False, "the roster audit is not bound to a feed (no feed_sha256)"
+    if audit["feed_sha256"] != feed_digest(doc):
+        return False, "the roster audit describes a different document than this feed (feed_sha256 differs)"
+    if now is not None:
+        c = _ts(audit.get("checked_utc"))
+        if not c or abs((now - c).total_seconds()) / 3600 > MAX_AUDIT_AGE_H:
+            return False, f"the roster audit was run at {audit.get('checked_utc')}, not within {MAX_AUDIT_AGE_H:g} h of this check"
     if audit.get("slate") != doc.get("slate_date"):
         return False, f"the roster audit is for slate {audit.get('slate')}, the feed for {doc.get('slate_date')}"
     a, g = _ts(audit.get("feed_generated_utc")), _ts(doc.get("generated_utc"))
@@ -200,11 +211,11 @@ def audit_accepts(audit: dict | None, doc: dict) -> tuple[bool, str]:
     return True, "a roster audit of this slate found no roster, team or availability error"
 
 
-def eligible_breakdown(doc: dict, audit: dict | None) -> dict:
+def eligible_breakdown(doc: dict, audit: dict | None, now: datetime | None = None) -> dict:
     """The four D5 categories over eligible (confirmed / likely active) rows, counted separately."""
     elig = [p for p in doc["players"] if p["participation"]["status"] in ("CONFIRMED_ACTIVE", "LIKELY_ACTIVE")]
     recon = {(str(r["game_id"]).replace("espn:", ""), r["team"]): r for r in doc.get("reconciliation", [])}
-    ok, why = audit_accepts(audit, doc)
+    ok, why = audit_accepts(audit, doc, now)
     clean = blocked = documented = other = 0
     for p in elig:
         st = p["gate"]["status"]
@@ -228,7 +239,7 @@ def _out_basis(p: dict) -> str:
     return "aggregator-only OUT (ESPN)" if pa.get("source") != OFFICIAL_SOURCE else f"official {pa.get('designation') or 'LIKELY_OUT'}"
 
 
-def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit: dict | None = None) -> list[dict]:
+def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit: dict | None = None, now: datetime | None = None) -> list[dict]:
     if not doc or not doc.get("players"):
         return [check("D1", "Availability reaches the model", PENDING, "no projection document")]
     rows = doc["players"]
@@ -266,7 +277,7 @@ def check_model_inputs(doc: dict | None, avail: list[dict] | None = None, audit:
                      {"uncertain_rows": len(unc), "wrongly_pass": passed[:10]}))
     # D5 eligible players are projected and not blocked. Four categories, counted and reported separately; PASS keeps its meaning (the
     # gate said PASS), the 50 % bar is unchanged, and the only REVIEW that counts toward it is the documented, audited one.
-    b = eligible_breakdown(doc, audit)
+    b = eligible_breakdown(doc, audit, now)
     n = b["eligible"]
     if not n:
         out.append(check("D5", "Eligible (confirmed / likely active) players pass the projection-quality gate", PENDING, "no eligible player on the slate yet"))
@@ -381,7 +392,7 @@ def evaluate(archive: str, now: datetime | None = None, audit: dict | None = Non
     doc = _json(pp) if os.path.exists(pp) else None
     av_files = sorted(glob.glob(os.path.join(archive, "availability", "nba", "*", "*.jsonl.gz")))
     avail = _jsonl_gz(av_files) if av_files else []
-    checks = check_official_report(run, now) + check_identity(run) + check_vocabulary(run) + check_model_inputs(doc, avail, audit) + check_minutes_integrity(doc) + check_archive(archive, doc, run, now)
+    checks = check_official_report(run, now) + check_identity(run) + check_vocabulary(run) + check_model_inputs(doc, avail, audit, now) + check_minutes_integrity(doc) + check_archive(archive, doc, run, now)
     req = [c for c in checks if c["required"]]
     if any(c["status"] == FAIL for c in req):
         verdict = "BLOCKED"

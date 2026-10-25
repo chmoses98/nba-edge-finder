@@ -98,3 +98,21 @@ def test_games_beyond_the_projection_window_are_not_reported_as_missing_and_prio
     LED.write(str(arch), rec)
     rep = IG.build(str(arch), ctx, "2026-10-20", "2026-10-26", now)
     assert "2026-10-19@2120" in rep["slots"]["executed"] or "2026-10-19@2120" not in rep["slots"]["missed"]
+
+
+def test_a_game_owes_forecasts_only_after_a_slot_whose_window_contained_it(tmp_path):
+    """2026-10-21 report: CLE@PHI (tip 36 h out) was listed as missing forecasts, but the projection window is 30 h and the first slot that
+    can contain it had not run. A game is owed once a pregame slot >= 1 h old has it inside its 30 h window."""
+    tip = utc("2026-10-22T23:00:00Z")
+    assert not IG.owed_projection(tip, utc("2026-10-21T13:30:00Z"))      # 33.5 h out: the window opens at 17:00Z, first containing slot is 13:50 ET = 17:50Z
+    assert not IG.owed_projection(tip, utc("2026-10-21T18:30:00Z"))      # that slot ran 40 min ago: still inside the 1 h allowance
+    assert IG.owed_projection(tip, utc("2026-10-21T19:00:00Z"))          # now owed
+    assert IG.owed_projection(tip, utc("2026-10-22T20:00:00Z")) and IG.owed_projection(tip, utc("2026-10-23T05:00:00Z"))
+    tips = ["2026-10-20T19:00:00Z", "2026-10-22T23:00:00Z"]
+    ctx = _ctx(tmp_path, tips)
+    arch = tmp_path / "arch"
+    arch.mkdir()
+    rep = IG.build(str(arch), ctx, "2026-10-20", "2026-10-26", utc("2026-10-21T13:30:00Z"))
+    later = next(g for g in rep["games"] if g["game_id"] == "espn:1")
+    assert later["scheduled_later"] and later["missing"] == []
+    assert rep["games"][0]["missing"]                                    # the played game still reports its missing evidence

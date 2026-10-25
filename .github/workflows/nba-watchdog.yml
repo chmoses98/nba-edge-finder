@@ -13,11 +13,13 @@ on:
   pull_request:
     paths:
       - "research/projection_foundation/nba/live/watchdog.py"
+      - "research/projection_foundation/nba/paper/seal_monitor.py"
       - ".github/workflows/nba-watchdog.yml"
 
 permissions:
   contents: read
   issues: write
+  actions: read          # Issue #53: the seal chain's run list (dead-man check)
 
 defaults:
   run:
@@ -47,14 +49,27 @@ jobs:
           pip install -q -e . --no-deps
       - name: Mount the data branches read-only
         run: bash $PF_DIR/scripts/nba_live_ci.sh mount_ro "$RUNNER_TEMP/m"
+      - name: Seal-chain dead-man inputs (Issue #53; best effort - never blocks the existing checks)
+        id: seal
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$RUNNER_TEMP/seals"
+          bash $PF_DIR/scripts/exec_seal_ci.sh mount_seals "$RUNNER_TEMP/seals_t60a" exec-shadow-seals-t60a || echo "::notice::t60a ledger not mountable (expected until the lane is activated)"
+          gh run list --workflow exec-shadow-seal.yml --limit 20 --json databaseId,status,conclusion,event,createdAt,updatedAt > "$RUNNER_TEMP/seal_runs.json" || echo "::warning::could not list exec-shadow-seal runs"
+          echo "ok=true" >> "$GITHUB_OUTPUT"
       - name: Watchdog
         id: wd
         working-directory: research/projection_foundation
         env:
           NOW: ${{ github.event.inputs.now }}
+          SEAL_OK: ${{ steps.seal.outputs.ok }}
         run: |
           set +e
-          python -m nba.live.watchdog --archive "$RUNNER_TEMP/m/projection-data" --context "$RUNNER_TEMP/m/data-archive" \
+          SEAL_ARGS=""
+          if [ "$SEAL_OK" = true ]; then SEAL_ARGS="--seals $RUNNER_TEMP/seals --seal-runs $RUNNER_TEMP/seal_runs.json"; [ -d "$RUNNER_TEMP/seals_t60a" ] && SEAL_ARGS="$SEAL_ARGS --seals-t60a $RUNNER_TEMP/seals_t60a"; fi
+          python -m nba.live.watchdog --archive "$RUNNER_TEMP/m/projection-data" --context "$RUNNER_TEMP/m/data-archive" $SEAL_ARGS \
             ${NOW:+--now "$NOW"} --out "$RUNNER_TEMP/health.json" --md "$RUNNER_TEMP/health.md" --expect-paper
           rc=$?
           cat "$RUNNER_TEMP/health.md" >> "$GITHUB_STEP_SUMMARY"

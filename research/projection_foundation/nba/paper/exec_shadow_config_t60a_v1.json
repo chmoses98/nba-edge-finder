@@ -1,0 +1,147 @@
+{
+ "config_id": "nba_exec_shadow_config_t60a",
+ "version": "1.0.0",
+ "study_id": "ISSUE53_EXEC_SHADOW_T60_AVAIL_V1",
+ "issue": "chmoses98/nba-edge-finder#53",
+ "declared_utc": "2026-10-23T16:00:00Z",
+ "prospective_start_utc": "2026-10-27T06:00:00Z",
+ "authority": "research_only",
+ "primary_strategy": "PF_EDGE_STRICT_T60_AVAIL_V1",
+ "role": "PRIMARY new experiment (owner approval 2026-10-23); the strict T-60 study remains the conservative control",
+ "notes": "Preregistered, ADDITIVE, read-only study that runs BESIDE the unchanged strict T-60 control (ISSUE53_EXEC_SHADOW_V1, exec_shadow_config_v2.json, pinned below by sha256). It changes exactly ONE thing: the board-selection rule. The control requires the latest tick OBSERVED by the checkpoint to have been COMMITTED by it; this study takes the latest tick that was observed AND committed by the checkpoint. Because the capture branch receives ticks a median 211 s (max 502 s) after they are observed, the control loses a game whenever its latest tick is that young (latency_diag: 5 of 14 games usable at T-60); on any game the control can evaluate, this study picks the SAME board (a tick committed by the checkpoint that is also the latest observed one) - the two studies differ only on the games the control loses. The decision instant (T-60), every selection rule and threshold, the 900 s quote-age guard, quality gates, costs, exposure caps, settlement and the sealing window are identical to the control. Prospective evidence exists only as SEALED pre-tip ledger entries on the separate branch exec-shadow-seals-t60a; its evidence counts and verdicts are never pooled with the control's. Changing any value means a new version and a new later start.",
+ "control": {
+  "study_id": "ISSUE53_EXEC_SHADOW_V1",
+  "config": "research/projection_foundation/nba/paper/exec_shadow_config_v2.json",
+  "version": "2.0.1",
+  "sha256": "f84e4067436e2515ea7f35f7417a4e9e66ad69f62ae66ea004a7c6c23244c3e8",
+  "note": "unchanged; keeps its own ledger branch, start date and evidence counts"
+ },
+ "differs_from_control_only_in": [
+  "board_rule_id",
+  "board_rule",
+  "study_id",
+  "config_id",
+  "version",
+  "primary_strategy and its id",
+  "ledger_branch",
+  "prospective_start_utc",
+  "notes/control/role metadata"
+ ],
+ "base_protocol": {
+  "path": "research/projection_foundation/nba/paper/paper_config.json",
+  "config_id": "nba_paper_config",
+  "version": "1.0.0",
+  "sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
+  "inherits": [
+   "quality",
+   "execution.fee_taker_multiplier",
+   "execution.fee_use_series_multiplier",
+   "thesis",
+   "game_model"
+  ],
+  "note": "quality gates (two-sided, active, top size, spread <= 0.15, price 0.03-0.97, no BLOCK gate), the fee multiplier and the thesis definitions are read from the pinned base file, not re-declared. A test fails if the base file's digest changes."
+ },
+ "checkpoint": {
+  "horizon": "T-60",
+  "minutes_before_tip": 60,
+  "allowed_decision_modes": [
+   "sealed_pretip_asof",
+   "asof_replay"
+  ],
+  "max_quote_age_s": 900,
+  "max_quote_age_note": "age of the board at the checkpoint (checkpoint - board_observed_utc); 900 s is the existing CLOSING_MAX_AGE_S constant of the paper system, chosen before any result was scored here and not tuned. The base 1800 s board-age gate also still applies.",
+  "board_after_checkpoint": "NO_TRADE (a board observed after the checkpoint is never used)",
+  "missing_or_stale_board": "NO_TRADE for the whole game (reason recorded per game); never replaced by another horizon, never backfilled",
+  "no_retroactive_best_horizon": true,
+  "prospective_decision_modes": [
+   "sealed_pretip_asof"
+  ],
+  "board_rule": "the board of a game is the latest capture tick that was OBSERVED at or before the T-60 checkpoint AND COMMITTED to the capture branch (git commit time of the commit that added its file) at or before it. This is the ONLY change relative to the strict T-60 study, whose rule is 'the latest tick OBSERVED at or before the checkpoint, which must itself be committed by it, else NO_TRADE'. Nothing committed after the checkpoint is ever read; no grace window, no later horizon, no fallback beyond the 1800 s gap; a board older than max_quote_age_s (900 s, unchanged) makes every candidate STALE_QUOTE_AT_CHECKPOINT.",
+  "forecast_rule": "player and game forecasts must be generated, self-archived AND committed to projection-data at or before the checkpoint; the engine's as-of rule (generated <= board time) is unchanged",
+  "max_board_gap_s": 1800,
+  "board_rule_id": "latest_committed_by_decision"
+ },
+ "execution": {
+  "side_price_basis": "ask",
+  "slippage": 0.01,
+  "order_contracts": 1,
+  "min_displayed_size": 1.0,
+  "fee_rounding": "whole-order, round-up-to-cent taker fee (nba_edge.kalshi.fees) used BOTH for the entry decision (ev_net_exec) and for settlement",
+  "dnp_policy": "participation-aware: p_model prices the DNP leg at the decision-time mid; settlement values a DNP at the authoritative Kalshi scalar when archived, otherwise the LAST_VALID mid (flagged modeled_last_valid_mid); never a fee-free void",
+  "insufficient_displayed_depth": "the candidate is blocked (INSUFFICIENT_DEPTH) -> PASS / NO_TRADE; no partial fill is imagined and nothing is filled beyond the displayed top-of-book size"
+ },
+ "strategies": {
+  "PF_EDGE_STRICT_T60_AVAIL_V1": {
+   "numeric_rules_copied_from": "PF_EDGE_STRICT_T60_EXEC_V1 v1.0.0 (verbatim values, not tuned)",
+   "min_ev_net": 0.06,
+   "ev_basis": "ev_net_exec = p_model - effective_entry - whole_order_integer_fee",
+   "quality_required": true,
+   "gate_statuses": [
+    "PASS"
+   ],
+   "min_p_play": 0.85,
+   "max_spread": 0.06,
+   "one_per_thesis": true,
+   "role": "candidate_shadow",
+   "version": "1.0.0",
+   "rule": "one fixed pretip checkpoint (T-60) per game; board = latest tick observed AND committed by it; PASS-only; one highest-net-EV contract per thesis; global chronological exposure ledger (this study's own)"
+  }
+ },
+ "exposure": {
+  "max_trades_per_thesis": 1,
+  "max_trades_per_player_game": 2,
+  "max_trades_per_team_game": 3,
+  "max_trades_per_game": 8,
+  "max_notional_per_game": 100.0,
+  "max_notional_per_day": 300.0,
+  "scope": "ONE global chronological ledger across all checkpoints and games (caps are never reset between horizon snapshots or runs); positions are admitted in decision-instant order, within an instant by descending ev_net_exec; a thesis already held can never be entered again"
+ },
+ "evidence": {
+  "min_decisions": 200,
+  "min_games": 40,
+  "primary_unit": "game (cluster); secondary: player-game",
+  "value_validation_requires": "n_decisions >= 200 AND n_games >= 40 AND lower 95% bound of ROI > 0 under BOTH game-clustered and player-game-clustered bootstraps",
+  "language": "never 'edge', 'profitable' or 'validated' below the minimums; first-week results are descriptive only",
+  "own_counts": "this study's decisions and games are counted on its own ledger only; reported next to the control's and never pooled"
+ },
+ "no_tuning": "No threshold above was chosen or changed after looking at 2026-10-20 / 2026-10-21 results. Any optimisation is a distinct FUTURE experiment with its own preregistration, prospective start and multiple-testing discipline.",
+ "sealing": {
+  "schema": "issue53.exec_seal.v1",
+  "earliest_after_checkpoint_s": 600,
+  "earliest_note": "measured tick-to-commit lag on the capture branch: median 213 s, p90 357 s, max 502 s (150 real ticks 2026-10-20..22); 600 s covers the maximum observed with margin",
+  "deadline_before_tip_s": 600,
+  "deadline_note": "a seal must be committed to the ledger branch at least 10 minutes before tip; later = LATE (uncounted)",
+  "window_s_total_for_a_60_minute_checkpoint": 2400,
+  "missed_marker": "a game with no seal after its window is recorded as MISSED (uncounted, alert); never sealed late as if on time",
+  "ledger_branch": "exec-shadow-seals-t60a",
+  "counted_iff": [
+   "seal verifies (sha256 of body and of the candidate file)",
+   "protocol_sha256 equals this file's sha256 and study_version equals its version",
+   "computed_utc >= prospective_start_utc, checkpoint_utc >= prospective_start_utc, computed inside [checkpoint + earliest_after_checkpoint_s, tip - deadline_before_tip_s]",
+   "the seal and its candidate file are each ADDED exactly once on the ledger branch, never modified/deleted/renamed afterwards, and byte-identical to the adding commit",
+   "the adding commit's SERVER commit time is >= computed_utc - 120 s and <= tip - deadline_before_tip_s",
+   "it is the first (earliest-added) seal of its game; later duplicates are DUPLICATE_UNCOUNTED",
+   "run from the default branch by schedule/workflow_dispatch; code sha reachable from the default branch; protocol file committed on the default branch before prospective_start_utc",
+   "independent clocks recorded in the seal",
+   "the sealed board was committed at or before the checkpoint and is the latest tick observed AND committed at/before it in the FINAL archive; the tip in the seal equals the final schedule's tip"
+  ],
+  "never": [
+   "recompute a sealed selection from later archive state",
+   "count a seal produced by a branch/PR workflow run",
+   "overwrite, edit or delete a seal",
+   "pool this ledger with the control's"
+  ],
+  "cadence": "the SAME sealing chain as the control (one extra lane; no additional scheduler)",
+  "commit_clock": "the seal commit is created through the GitHub Git Data API (no client-supplied dates): its commit time is the SERVER clock at creation, independent of the runner clock; a failed or late publish simply leaves no seal"
+ },
+ "executability": {
+  "price_drift_diagnostic": "for every selected contract the sealed ask is compared with the ask on the first board observed after the checkpoint (descriptive 'drift', never used in a selection)",
+  "quote_freshness": "board age at the checkpoint (checkpoint - tick observed) is recorded on every seal and reported per study",
+  "note": "archived quotes are displayed top-of-book quotes, not proven live fills; every output says so"
+ },
+ "projection_accuracy": {
+  "rule": "forecast accuracy (pf_core.prospective scorecard) is evaluated on ALL eligible games with settled forecasts, independent of any trade decision, market, seal or lane",
+  "report": "compare_lanes.accuracy_all_games"
+ },
+ "amendments": []
+}

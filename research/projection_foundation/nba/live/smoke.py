@@ -91,7 +91,10 @@ def main(argv=None) -> int:
     print("   participation:", dict(pst), " gate:", dict(gst))
     check(pst.get("UNVERIFIED", 0) > 0 and all(p["gate"]["status"] != "PASS" for p in pl if p["participation"]["status"] == "UNVERIFIED"),
           "unverified players are REVIEW/BLOCK, never PASS")
-    check(all(p["gate"]["status"] == "BLOCK" for p in pl if p["participation"]["status"] == "CONFIRMED_OUT"), "confirmed-out players are BLOCK")
+    check(all(p["gate"]["status"] == "BLOCK" for p in pl if p["participation"]["status"] in ("CONFIRMED_OUT", "LIKELY_OUT")), "confirmed-out and likely-out players are BLOCK")
+    check(all(any(f["check"] == "participation_withheld" and "not an official designation" in f["what"] for f in p["gate"]["findings"])
+              for p in pl if p["participation"]["status"] == "LIKELY_OUT" and p["participation"].get("certainty") == "PROJECTED"),
+          "an aggregator-only exclusion says it is not an official designation")
     # ---- idempotency of the pregame stages (same clock) --------------------------------------------------------------
     run("capture,project,publish,guard", NOW)
     check(files(arch, "availability") == av_files, "re-run: no new availability file")
