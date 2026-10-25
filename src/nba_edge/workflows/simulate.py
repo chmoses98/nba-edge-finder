@@ -17,6 +17,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import os
 from collections import Counter
 from dataclasses import asdict
 from pathlib import Path
@@ -67,6 +68,29 @@ def _read_kind(ledger: Ledger, kind: str, latest_only: bool = True) -> list[dict
     return list(ledger.iter_rows(kind))
 
 
+BOX_INTEGRITY_ENV = "NBA_EDGE_BOX_INTEGRITY"
+
+
+def box_integrity_enabled() -> bool:
+    """Box-score integrity handling (schedule-derived season_type; rate models skip ``stats_complete=False`` rows) is OFF unless ``NBA_EDGE_BOX_INTEGRITY=1``.
+
+    It changes live-facing projections (player props and team pace), so it is inert on merge; see docs/research/BOX_INTEGRITY_2026-10-25.md.
+    """
+    return os.environ.get(BOX_INTEGRITY_ENV, "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def _schedule_types(archive: Ledger) -> dict[str, tuple[str, str]]:
+    """{game_id: (season, season_type)} from every archived schedule snapshot (latest wins)."""
+    out: dict[str, tuple[str, str]] = {}
+    try:
+        for r in archive.iter_rows("context/schedule"):
+            if r.get("game_id"):
+                out[str(r["game_id"])] = (str(r.get("season") or ""), str(r.get("season_type") or ""))
+    except Exception as e:  # noqa: BLE001 - a missing schedule must degrade to the old labelling, not stop the run
+        log.warning(kv(event="schedule_types_unavailable", err=str(e)[:120]))
+    return out
+
+
 def load_history(data_root: Path, archive: Ledger) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Historical ESPN parquet + current-season box scores archived by the settle job."""
     from nba_edge.data.history import load_player_games, load_team_games, parse_player_rows, parse_team_rows
@@ -78,6 +102,10 @@ def load_history(data_root: Path, archive: Ledger) -> tuple[pd.DataFrame, pd.Dat
     pg = load_player_games(hist, seasons) if seasons else pd.DataFrame()
     extra_t, extra_p = [], []
     seen = set(tg["game_id"]) if not tg.empty else set()
+    # The settle job's box score has points/rebounds/assists/minutes only: parse_*_rows fill FGA/FTA/FGM/OREB/DREB/possessions with 0. Those rows are tagged
+    # ``stats_complete=False`` so a rate model can refuse to learn "this player never shoots" from them; the ESPN parquet rows are complete. The settle row
+    # also carries no season/season_type, so the old default labelled preseason games "regular"; the archived schedule knows the truth.
+    sched = _schedule_types(archive)
     for row in archive.iter_rows("boxscores"):
         try:
             box = FinalBoxScore(**{k: v for k, v in row.items() if not k.startswith("_")})
@@ -87,8 +115,15 @@ def load_history(data_root: Path, archive: Ledger) -> tuple[pd.DataFrame, pd.Dat
             continue
         seen.add(box.game_id)
         meta = {"game_id": box.game_id, "game_date_et": (box.actual_tip_utc or box.fetched_at_utc).astimezone(ET).date().isoformat(), "season": row.get("_season", ""), "season_type": row.get("_season_type", "regular"), "home_team_id": box.home_team_id, "away_team_id": box.away_team_id}
-        extra_p.extend(parse_player_rows(box, meta))
-        extra_t.extend(parse_team_rows(box, meta))
+        if box_integrity_enabled():
+            s_season, s_type = sched.get(box.game_id, ("", ""))
+            meta["season"] = row.get("_season") or s_season
+            meta["season_type"] = row.get("_season_type") or s_type or "unknown"
+        extra_p.extend({**r, "stats_complete": False} for r in parse_player_rows(box, meta))
+        extra_t.extend({**r, "stats_complete": False} for r in parse_team_rows(box, meta))
+    for df in (tg, pg):
+        if not df.empty and "stats_complete" not in df:
+            df["stats_complete"] = True
     if extra_t:
         tg = pd.concat([tg, pd.DataFrame(extra_t)], ignore_index=True) if not tg.empty else pd.DataFrame(extra_t)
         pg = pd.concat([pg, pd.DataFrame(extra_p)], ignore_index=True) if not pg.empty else pd.DataFrame(extra_p)
@@ -233,7 +268,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             game_in[f"{side}_rest_days"] = rd if rd is not None else 2
             game_in[f"{side}_b2b"] = rd == 1
         rosters_map = {home_id: names.roster(home_id) or None, away_id: names.roster(away_id) or None}
-        gp, rep = build_game_params(game_in, tg, pg, cutoff, inj_map, {k: v for k, v in rosters_map.items() if v}, BuildConfig())
+        gp, rep = build_game_params(game_in, tg, pg, cutoff, inj_map, {k: v for k, v in rosters_map.items() if v}, BuildConfig(require_complete_box=box_integrity_enabled()))
         if n_sims > 0:
             from nba_edge.sim.engine import simulate
 
