@@ -184,7 +184,14 @@ jobs:
           set -uo pipefail
           # the checker appends its markdown to the job summary itself; it never fails the job here (report only), the verdict is read from the summary / JSON
           DRYA=$(ls -d /tmp/pf_nba_dry_*/archive | head -n1); echo "dry-run archive: $DRYA"
-          python -m nba.live.activation_check --archive "$DRYA" --json "$PF_WORK/activation_check.json" || true
+          echo "ROSTER_AUDIT_BEGIN"
+          python -m nba.live.roster_audit --archive "$DRYA" --json "$PF_WORK/roster_audit.json" || true
+          echo "ROSTER_AUDIT_END"
+          if [ -f "$PF_WORK/roster_audit.json" ]; then
+            python -m nba.live.activation_check --archive "$DRYA" --roster-audit "$PF_WORK/roster_audit.json" --json "$PF_WORK/activation_check.json" || true
+          else
+            python -m nba.live.activation_check --archive "$DRYA" --json "$PF_WORK/activation_check.json" || true
+          fi
           # TEST BRANCH ONLY (not in the PRs): echo the feed into the log (gzip+base64) so it can be re-verified offline with the SIFT verifier
           F="$DRYA/projections/nba/latest.json"
           if [ -f "$F" ]; then echo "FEED_B64_BEGIN"; gzip -9c "$F" | base64 -w 120; echo "FEED_B64_END"; fi
