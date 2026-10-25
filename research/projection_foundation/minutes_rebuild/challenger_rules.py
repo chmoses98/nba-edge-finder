@@ -4,7 +4,7 @@ FREEZE is the commit that introduced the challenger (code option, frozen history
 """
 import subprocess
 
-FREEZE = "UNSET"          # replaced by the freeze commit sha right after the freeze commit exists
+FREEZE = "e11565292ef943d890a82e8b8ac31c05b360b9a0"          # replaced by the freeze commit sha right after the freeze commit exists
 CHALLENGER_FILES = ["research/projection_foundation/nba/minutes_jrm.py", "research/projection_foundation/nba/stats.py", "research/projection_foundation/nba/project.py",
                     "research/projection_foundation/nba/live/reconcile.py", "research/projection_foundation/results/frozen_params.json", "research/projection_foundation/results/jrm"]
 

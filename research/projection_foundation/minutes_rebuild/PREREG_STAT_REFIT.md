@@ -12,7 +12,7 @@ season, so the stat models do not use minutes at all; the frozen engine's reconc
 high bias; the JRM conserves the budget, needs no gate, and exposes the bias. The backtest (downstream_fit.py) trained the ladders with a finite minutes forecast on every history
 row. The challenger makes the live recipe match the backtest recipe.
 
-## Candidate R1 (frozen at the commit recorded in `challenger_rules.FREEZE`)
+## Candidate R1 (frozen at commit e11565292ef943d890a82e8b8ac31c05b360b9a0, recorded in `challenger_rules.FREEZE`)
 
 * minutes: JRM v2 (unchanged, uniform allocation, level E).
 * stat ladders: `project_slate(..., minutes_engine="jrm", stat_models="refit")` (env `PF_NBA_STAT_MODELS=refit`): for history rows of seasons 2020-2026 the minutes input is the
