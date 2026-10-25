@@ -186,6 +186,13 @@ def load_q_calibration() -> dict:
     return json.load(open(ASSETS / "q_calibration.json"))
 
 
+def history_minutes() -> pd.DataFrame:
+    """Walk-forward JRM minutes of the history rows (seasons 2020-2026), frozen by minutes_rebuild/build_hist_minutes.py. Every value comes from heads trained on strictly
+    earlier seasons. Indexed by (game_id, pid). Used only to train the refitted stat models with the SAME minutes distribution they are served with."""
+    h = pd.read_parquet(ASSETS / "hist_minutes.parquet")
+    return h.set_index(["game_id", "pid"])["m_jrm"]
+
+
 def readiness() -> dict:
     """Readiness of the minutes family under this engine, from the study's original READY rules (results/jrm/readiness.json)."""
     return json.load(open(ASSETS / "readiness.json"))
