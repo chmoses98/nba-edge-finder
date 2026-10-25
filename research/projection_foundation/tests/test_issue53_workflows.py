@@ -124,10 +124,10 @@ def test_the_selftest_workflow_is_manual_and_can_only_reach_the_throwaway_branch
     assert 'SELFTEST_BRANCH = "exec-shadow-seals-selftest"' in lr and "selftest only ever writes the throw-away branch" in lr
 
 
-def test_the_t60a_lane_is_rehearsed_dry_but_not_enabled_live_before_its_activation_change():
+def test_the_t60a_lane_is_active_beside_the_control_and_t45_never_runs():
     wf = load(SEAL)
     env = wf["env"]
-    assert env["SEAL_LANES"] == "control"                                    # ACTIVATION of the T-60 availability study = adding t60a here, in a separate reviewed PR
+    assert env["SEAL_LANES"] == "control,t60a"                              # the T-60 availability study is activated by its own reviewed change; the strict control stays first
     assert "t45" not in env["SEAL_LANES"] and "t45" not in env["REHEARSAL_LANES"]                      # the exploratory T-45 lane is never run by the workflow
     assert set(env["REHEARSAL_LANES"].split(",")) == {"control", "t60a"}      # the dry PR rehearsal exercises both lanes on real archived data
     txt = SEAL.read_text()
