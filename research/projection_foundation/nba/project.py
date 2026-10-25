@@ -227,6 +227,8 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
         asof = sl["asof"].replace("+00:00", "Z")
         files = sl["files"]
     tg = data.team_games_from_box(box)
+    tg["is_slate"] = False
+    tg_slate = tg_slate.assign(is_slate=True)
     cand = data.build_candidates(box)
     slate_c["is_slate"] = True
     cand["is_slate"] = False
