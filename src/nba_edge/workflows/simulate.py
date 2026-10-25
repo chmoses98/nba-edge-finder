@@ -28,6 +28,7 @@ import pandas as pd
 from nba_edge import MODEL_VERSION
 from nba_edge.archive.ledger import Ledger
 from nba_edge.archive.reconstruct import entry_observed_at, latest_board
+from nba_edge.archive.slate_store import write_pass
 from nba_edge.execution.economics import EconomicsConfig, compute_economics, market_implied_probability
 from nba_edge.execution.expression import PricedContract, group_by_thesis, select_portfolio
 from nba_edge.features.build import FEATURE_VERSION, BuildConfig, build_game_params, rest_days_for
@@ -365,14 +366,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
         archive.append_rows("predictions", pred_rows, observed_at=now, meta={"date": target, "n": len(pred_rows)})
         archive.append_rows("contracts", contract_rows, observed_at=now, meta={"date": target})
     sd = out_root / "slates" / f"dt={target}" / now.strftime("%Y%m%dT%H%M%SZ")
-    sd.mkdir(parents=True, exist_ok=True)
-    (sd / "slate.json").write_text(json.dumps(slate, indent=1, default=str))
-    (sd / "slate.md").write_text(slate_markdown(slate))
-    (sd / "packet.json").write_text(json.dumps({"slate": slate, "games": packet_games}, indent=1, default=str))
-    latest = out_root / "slates" / "latest"
-    latest.mkdir(parents=True, exist_ok=True)
-    for f in ("slate.json", "slate.md", "packet.json"):
-        (latest / f).write_text((sd / f).read_text())
+    status["slate_bytes"] = write_pass(sd, out_root / "slates" / "latest", slate, {"slate": slate, "games": packet_games}, slate_markdown(slate))
     status["slate_dir"] = str(sd)
     status["coverage"] = dict(coverage)
     (out_root / "STATUS_simulate.json").write_text(json.dumps(status, indent=1, default=str))

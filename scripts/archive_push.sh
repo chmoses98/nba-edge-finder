@@ -26,7 +26,7 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
   exit 2
 fi
 grep -qs 'manifest.jsonl merge=union' .gitattributes || echo 'manifest.jsonl merge=union' >> .gitattributes
-git add -A
+git add --sparse -A   # --sparse: a sparse worktree (archive_checkout.sh) writes new slates/dt=* outside its cone
 if git diff --cached --quiet; then
   echo "archive-push: nothing to commit"
   exit 0

@@ -76,9 +76,10 @@ jobs:
           git config user.name "nba-edge-bot"
           git config user.email "nba-edge-bot@users.noreply.github.com"
           # --depth=1: the archive grows all season and a full fetch is the slowest step here.
-          if git fetch origin "$ARCHIVE_BRANCH" --depth=1 2>/dev/null; then
-            git worktree add data/archive "origin/$ARCHIVE_BRANCH"
-            (cd data/archive && git checkout -B "$ARCHIVE_BRANCH")
+          # scripts/archive_checkout.sh: depth-1, trees-only fetch; historical slates/dt=* are not materialised (sparse).
+          # It falls back to a plain depth-1 checkout itself; exit 3 means the branch is missing -> create the orphan below.
+          if bash scripts/archive_checkout.sh "$ARCHIVE_BRANCH" data/archive; then
+            :
           else
             mkdir -p data/archive && cd data/archive && git init -q \
               && git checkout -q --orphan "$ARCHIVE_BRANCH" \
