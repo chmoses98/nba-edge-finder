@@ -1,0 +1,457 @@
+{
+ "board": {
+  "commit_utc": "2026-10-25T21:58:54Z",
+  "gap_s": 269.0,
+  "rule": "latest_committed_by_decision",
+  "tick_observed_utc": "2026-10-25T21:55:31Z"
+ },
+ "body_sha256": "938ed90e860b8ce492c54d8c76c88e5764a0cccc867d0da07a25e7b9652e9f21",
+ "candidates": {
+  "file": "espn_401909864__candidates.jsonl.gz",
+  "n_eligible": 4,
+  "n_sides": 632,
+  "n_trades": 3,
+  "primary_reason_histogram": {
+   "EV_ABOVE_THRESHOLD": 3,
+   "EV_BELOW_THRESHOLD": 79,
+   "EXPOSURE_CAP:TEAM_GAME": 1,
+   "GATE_STATUS": 441,
+   "QUALITY_GATE:EXTREME_PRICE": 36,
+   "QUALITY_GATE:NO_SIZE": 7,
+   "QUALITY_GATE:SPREAD_WIDE": 29,
+   "SPREAD_WIDE_STRICT": 36
+  },
+  "sha256": "2089f0f7736bbc42c710fdfa667b8ad75e2202288afd386c3f42a01ee1fcc2be"
+ },
+ "checkpoint_utc": "2026-10-25T22:00:00Z",
+ "clocks": {
+  "board_commit_index_ticks": 2537,
+  "forecast_commit_index_ids": 49992
+ },
+ "code": {
+  "default_branch": "main",
+  "dirty": false,
+  "event": "workflow_dispatch",
+  "protocol_effective_commit_utc": "2026-10-23T19:48:32Z",
+  "protocol_path": "research/projection_foundation/nba/paper/exec_shadow_config_t60a_v1.json",
+  "ref": "refs/heads/main",
+  "run_attempt": "1",
+  "run_id": "40222732954",
+  "sha": "77d3d6c785da9ed7df4d3f9857778ff628601baf",
+  "workflow": "exec-shadow-seal"
+ },
+ "computed_utc": "2026-10-25T22:11:09Z",
+ "decision_mode": "sealed_pretip_asof",
+ "dry_run": false,
+ "forecast_ids_sha256": "a4309b164f1692518c02634d2682b684f2db0827ffcfed67f2779e6895faa5d4",
+ "forecasts": {
+  "n_game_records_used": 7,
+  "n_player_records_late_or_unverified": 0,
+  "n_player_records_used": 1846
+ },
+ "game": {
+  "away": "TOR",
+  "game_date_et": "2026-10-25",
+  "game_id": "espn:401909864",
+  "home": "MIN",
+  "schedule_file": "context_schedule_20261025T211753Z_40216046475.jsonl.gz",
+  "schedule_observed_utc": "2026-10-25T21:17:53Z",
+  "schedule_sha256": "0f7ff6f7ad65d4c4c60d1ca01c537012e17a40bcc26cd24083539170542dceaf",
+  "start_utc": "2026-10-25T23:00:00Z"
+ },
+ "game_reason": null,
+ "inputs": {
+  "coverage": {
+   "UNSUPPORTED_SERIES:KXNBA1HTEAMTOTAL": 22,
+   "UNSUPPORTED_SERIES:KXNBA2D": 4,
+   "UNSUPPORTED_SERIES:KXNBA3D": 2,
+   "UNSUPPORTED_SERIES:KXNBA3PTPROT": 44,
+   "UNSUPPORTED_SERIES:KXNBAASTPROT": 47,
+   "UNSUPPORTED_SERIES:KXNBABLK": 14,
+   "UNSUPPORTED_SERIES:KXNBAOT": 1,
+   "UNSUPPORTED_SERIES:KXNBAPTSLEADER": 14,
+   "UNSUPPORTED_SERIES:KXNBAPTSPROT": 44,
+   "UNSUPPORTED_SERIES:KXNBAREBPROT": 56,
+   "UNSUPPORTED_SERIES:KXNBASTL": 28,
+   "UNSUPPORTED_SERIES:KXNBASTOCK": 16,
+   "UNSUPPORTED_SERIES:KXNBAWINMARGIN": 8,
+   "markets": 514,
+   "quote:TWO_SIDED": 514
+  },
+  "data_archive_head": "d5395bd195396ae8ad63cc316ac7385ca513a300",
+  "n_snapshot_rows": 514,
+  "projection_data_head": "4d483e817f00efe0382fe278ca9e1d32d2fee7c0"
+ },
+ "ledger_after": {
+  "n_game": {
+   "espn:401909861": 1,
+   "espn:401909862": 3,
+   "espn:401909863": 6,
+   "espn:401909864": 3,
+   "espn:401909865": 3
+  },
+  "n_team": {
+   "espn:401909861|LAL": 1,
+   "espn:401909862|BKN": 3,
+   "espn:401909863|NYK": 3,
+   "espn:401909863|ORL": 3,
+   "espn:401909864|TOR": 3,
+   "espn:401909865|OKC": 3
+  },
+  "n_unit": {
+   "espn:401909861|espn:3945274": 1,
+   "espn:401909862|espn:3064514": 2,
+   "espn:401909862|espn:4278104": 1,
+   "espn:401909863|espn:3062679": 0,
+   "espn:401909863|espn:3147657": 1,
+   "espn:401909863|espn:3934719": 0,
+   "espn:401909863|espn:4066320": 2,
+   "espn:401909863|espn:4431823": 2,
+   "espn:401909863|espn:4432165": 0,
+   "espn:401909863|espn:4566434": 1,
+   "espn:401909864|espn:4395625": 1,
+   "espn:401909864|espn:4432241": 1,
+   "espn:401909864|espn:5093267": 1,
+   "espn:401909865|espn:4433255": 1,
+   "espn:401909865|espn:4683778": 1,
+   "espn:401909865|espn:4900671": 1
+  },
+  "notional_day": {
+   "2026-10-25": 7.35
+  },
+  "notional_game": {
+   "espn:401909861": 0.47,
+   "espn:401909862": 1.49,
+   "espn:401909863": 2.79,
+   "espn:401909864": 1.22,
+   "espn:401909865": 1.38
+  },
+  "theses": [
+   "espn:401909861|player|espn:3945274|assists",
+   "espn:401909862|player|espn:3064514|assists",
+   "espn:401909862|player|espn:3064514|pra",
+   "espn:401909862|player|espn:4278104|points",
+   "espn:401909863|player|espn:3147657|points",
+   "espn:401909863|player|espn:4066320|assists",
+   "espn:401909863|player|espn:4066320|points",
+   "espn:401909863|player|espn:4431823|points",
+   "espn:401909863|player|espn:4431823|threes",
+   "espn:401909863|player|espn:4566434|assists",
+   "espn:401909864|player|espn:4395625|pra",
+   "espn:401909864|player|espn:4432241|assists",
+   "espn:401909864|player|espn:5093267|rebounds",
+   "espn:401909865|player|espn:4433255|rebounds",
+   "espn:401909865|player|espn:4683778|threes",
+   "espn:401909865|player|espn:4900671|threes"
+  ]
+ },
+ "ledger_before": {
+  "n_game": {
+   "espn:401909861": 1,
+   "espn:401909862": 3
+  },
+  "n_team": {
+   "espn:401909861|LAL": 1,
+   "espn:401909862|BKN": 3
+  },
+  "n_unit": {
+   "espn:401909861|espn:3945274": 1,
+   "espn:401909862|espn:3064514": 2,
+   "espn:401909862|espn:4278104": 1
+  },
+  "notional_day": {
+   "2026-10-25": 1.96
+  },
+  "notional_game": {
+   "espn:401909861": 0.47,
+   "espn:401909862": 1.49
+  },
+  "theses": [
+   "espn:401909861|player|espn:3945274|assists",
+   "espn:401909862|player|espn:3064514|assists",
+   "espn:401909862|player|espn:3064514|pra",
+   "espn:401909862|player|espn:4278104|points"
+  ]
+ },
+ "paper_config_sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
+ "protocol_sha256": "aa425cb5f66dee1116de9cf13b7d8be8d1d054370855012a78bcbc83353188d8",
+ "schema": "issue53.exec_seal.v1",
+ "seal_id": "a6616d104b116a9dc4c4",
+ "selected": [
+  {
+   "as_of_utc": "2026-10-25T21:55:31Z",
+   "ask": 0.28,
+   "bid": 0.22,
+   "blockers": [],
+   "board_commit_utc": "2026-10-25T21:58:54Z",
+   "board_observed_utc": "2026-10-25T21:55:31Z",
+   "board_utc": "2026-10-25T21:55:31Z",
+   "candidate_id": "8b7a0f91b2d58aad38a9a6ff",
+   "checkpoint_utc": "2026-10-25T22:00:00Z",
+   "comparator": null,
+   "computation_lag_s": 938.0,
+   "decided_utc": "2026-10-25T22:11:09Z",
+   "decision": "TRADE",
+   "decision_mode": "sealed_pretip_asof",
+   "depth_at_entry": null,
+   "effective_entry": 0.29,
+   "effective_entry_exec": 0.29,
+   "entity_id": "espn:4432241",
+   "ev_net": 0.09038054553999998,
+   "ev_net_exec": 0.08479354553999997,
+   "event_ticker": "KXNBAAST-26OCT25TORMIN",
+   "exposure_after": {
+    "day_notional": 5.98,
+    "game": 2,
+    "game_notional": 0.85,
+    "player_game": 1,
+    "team_game": 2
+   },
+   "family": "player_assists",
+   "fee_assumption": {
+    "multiplier": 0.07,
+    "source": "default",
+    "taker": true
+   },
+   "fee_int": 0.02,
+   "forecast_commit_utc": "2026-10-25T19:11:03Z",
+   "forecast_generated_utc": "2026-10-25T19:04:05Z",
+   "forecast_ids": [
+    "344aed0c9684eccc01cd8168",
+    "960e86e105e77c51372aede3"
+   ],
+   "game_date_et": "2026-10-25",
+   "game_id": "espn:401909864",
+   "game_start_utc": "2026-10-25T23:00:00Z",
+   "gate": {
+    "readiness": "READY",
+    "status": "PASS"
+   },
+   "horizon": "T-60",
+   "k": 6,
+   "model_id": "pf-nba-assists",
+   "model_version": "pf-1.3.0+77d3d6c",
+   "opponent": "MIN",
+   "p_cond": 0.39621179999999995,
+   "p_market_mid": 0.25,
+   "p_model": 0.39479354553999996,
+   "p_play": 0.9903,
+   "participation": {
+    "captured_utc": "2026-10-25T19:04:04Z",
+    "certainty": "PROJECTED",
+    "designation": "ACTIVE",
+    "implicit": true,
+    "p_play": 0.9903,
+    "source": "nba_official_injury_report",
+    "status": "LIKELY_ACTIVE"
+   },
+   "period": "FULL",
+   "player_name": "Jamal Shead",
+   "price": 0.28,
+   "quality": {
+    "failures": [],
+    "passed": true
+   },
+   "quote_age_at_checkpoint_s": 269.0,
+   "reason": "EV_ABOVE_THRESHOLD",
+   "side": "YES",
+   "slippage": 0.01,
+   "snapshot_id": "96b5a1739646e6ea610f2f68",
+   "spread": 0.06,
+   "stat": "assists",
+   "team": "TOR",
+   "thesis_id": "espn:401909864|player|espn:4432241|assists",
+   "threshold": 5.5,
+   "ticker": "KXNBAAST-26OCT25TORMIN-TORJSHEAD1-6",
+   "tip_utc": "2026-10-25T23:00:00Z",
+   "top_size": 4.0,
+   "unit_id": "espn:401909864|espn:4432241"
+  },
+  {
+   "as_of_utc": "2026-10-25T21:55:31Z",
+   "ask": 0.36,
+   "bid": 0.31,
+   "blockers": [],
+   "board_commit_utc": "2026-10-25T21:58:54Z",
+   "board_observed_utc": "2026-10-25T21:55:31Z",
+   "board_utc": "2026-10-25T21:55:31Z",
+   "candidate_id": "4eda3faf9d624f8b526f6011",
+   "checkpoint_utc": "2026-10-25T22:00:00Z",
+   "comparator": null,
+   "computation_lag_s": 938.0,
+   "decided_utc": "2026-10-25T22:11:09Z",
+   "decision": "TRADE",
+   "decision_mode": "sealed_pretip_asof",
+   "depth_at_entry": null,
+   "effective_entry": 0.37,
+   "effective_entry_exec": 0.37,
+   "entity_id": "espn:4395625",
+   "ev_net": 0.08839277530842762,
+   "ev_net_exec": 0.08470977530842762,
+   "event_ticker": "KXNBAPRA-26OCT25TORMIN",
+   "exposure_after": {
+    "day_notional": 6.35,
+    "game": 3,
+    "game_notional": 1.22,
+    "player_game": 1,
+    "team_game": 3
+   },
+   "family": "player_pra",
+   "fee_assumption": {
+    "multiplier": 0.07,
+    "source": "default",
+    "taker": true
+   },
+   "fee_int": 0.02,
+   "forecast_commit_utc": "2026-10-25T19:11:03Z",
+   "forecast_generated_utc": "2026-10-25T19:04:05Z",
+   "forecast_ids": [
+    "b741255b20d36bc15b657672",
+    "e2fcdf97145d57abfb497641"
+   ],
+   "game_date_et": "2026-10-25",
+   "game_id": "espn:401909864",
+   "game_start_utc": "2026-10-25T23:00:00Z",
+   "gate": {
+    "readiness": "READY",
+    "status": "PASS"
+   },
+   "horizon": "T-60",
+   "k": 30,
+   "model_id": "pf-nba-pra",
+   "model_version": "pf-1.3.0+77d3d6c",
+   "opponent": "MIN",
+   "p_cond": 0.4768805476880548,
+   "p_market_mid": 0.33499999999999996,
+   "p_model": 0.4747097753084276,
+   "p_play": 0.9847,
+   "participation": {
+    "captured_utc": "2026-10-25T19:04:04Z",
+    "certainty": "PROJECTED",
+    "designation": "ACTIVE",
+    "implicit": true,
+    "p_play": 0.9847,
+    "source": "nba_official_injury_report",
+    "status": "LIKELY_ACTIVE"
+   },
+   "period": "FULL",
+   "player_name": "RJ Barrett",
+   "price": 0.36,
+   "quality": {
+    "failures": [],
+    "passed": true
+   },
+   "quote_age_at_checkpoint_s": 269.0,
+   "reason": "EV_ABOVE_THRESHOLD",
+   "side": "YES",
+   "slippage": 0.01,
+   "snapshot_id": "1f8562bf70e6461feeecbb53",
+   "spread": 0.05,
+   "stat": "pra",
+   "team": "TOR",
+   "thesis_id": "espn:401909864|player|espn:4395625|pra",
+   "threshold": 29.5,
+   "ticker": "KXNBAPRA-26OCT25TORMIN-TORRBARRETT9-30",
+   "tip_utc": "2026-10-25T23:00:00Z",
+   "top_size": 1.0,
+   "unit_id": "espn:401909864|espn:4395625"
+  },
+  {
+   "as_of_utc": "2026-10-25T21:55:31Z",
+   "ask": 0.55,
+   "bid": 0.54,
+   "blockers": [],
+   "board_commit_utc": "2026-10-25T21:58:54Z",
+   "board_observed_utc": "2026-10-25T21:55:31Z",
+   "board_utc": "2026-10-25T21:55:31Z",
+   "candidate_id": "ad6d5c074e70ffb7eeb502a0",
+   "checkpoint_utc": "2026-10-25T22:00:00Z",
+   "comparator": null,
+   "computation_lag_s": 938.0,
+   "decided_utc": "2026-10-25T22:11:09Z",
+   "decision": "TRADE",
+   "decision_mode": "sealed_pretip_asof",
+   "depth_at_entry": null,
+   "effective_entry": 0.56,
+   "effective_entry_exec": 0.56,
+   "entity_id": "espn:5093267",
+   "ev_net": 0.08920808202955814,
+   "ev_net_exec": 0.08645608202955814,
+   "event_ticker": "KXNBAREB-26OCT25TORMIN",
+   "exposure_after": {
+    "day_notional": 5.69,
+    "game": 1,
+    "game_notional": 0.56,
+    "player_game": 1,
+    "team_game": 1
+   },
+   "family": "player_rebounds",
+   "fee_assumption": {
+    "multiplier": 0.07,
+    "source": "default",
+    "taker": true
+   },
+   "fee_int": 0.02,
+   "forecast_commit_utc": "2026-10-25T19:11:03Z",
+   "forecast_generated_utc": "2026-10-25T19:04:05Z",
+   "forecast_ids": [
+    "342ad7b2926ddbcc805f20da",
+    "a22f80fe1e24ccc56e0f6a9d"
+   ],
+   "game_date_et": "2026-10-25",
+   "game_id": "espn:401909864",
+   "game_start_utc": "2026-10-25T23:00:00Z",
+   "gate": {
+    "readiness": "READY",
+    "status": "PASS"
+   },
+   "horizon": "T-60",
+   "k": 6,
+   "model_id": "pf-nba-rebounds",
+   "model_version": "pf-1.3.0+77d3d6c",
+   "opponent": "MIN",
+   "p_cond": 0.6698135669813567,
+   "p_market_mid": 0.5449999999999999,
+   "p_model": 0.6664560820295582,
+   "p_play": 0.9731,
+   "participation": {
+    "captured_utc": "2026-10-25T19:04:04Z",
+    "certainty": "PROJECTED",
+    "designation": "ACTIVE",
+    "implicit": true,
+    "p_play": 0.9731,
+    "source": "nba_official_injury_report",
+    "status": "LIKELY_ACTIVE"
+   },
+   "period": "FULL",
+   "player_name": "Collin Murray-Boyles",
+   "price": 0.55,
+   "quality": {
+    "failures": [],
+    "passed": true
+   },
+   "quote_age_at_checkpoint_s": 269.0,
+   "reason": "EV_ABOVE_THRESHOLD",
+   "side": "NO",
+   "slippage": 0.01,
+   "snapshot_id": "cdfbbbf54869555a5ca08618",
+   "spread": 0.01,
+   "stat": "rebounds",
+   "team": "TOR",
+   "thesis_id": "espn:401909864|player|espn:5093267|rebounds",
+   "threshold": 5.5,
+   "ticker": "KXNBAREB-26OCT25TORMIN-TORCMURRAYBOYLES30-6",
+   "tip_utc": "2026-10-25T23:00:00Z",
+   "top_size": 1678.99,
+   "unit_id": "espn:401909864|espn:5093267"
+  }
+ ],
+ "status": "TRADED",
+ "strategy_id": "PF_EDGE_STRICT_T60_AVAIL_V1",
+ "study_id": "ISSUE53_EXEC_SHADOW_T60_AVAIL_V1",
+ "study_version": "1.0.0",
+ "window": {
+  "closes_utc": "2026-10-25T22:50:00Z",
+  "opens_utc": "2026-10-25T22:10:00Z"
+ }
+}
