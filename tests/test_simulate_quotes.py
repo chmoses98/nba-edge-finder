@@ -8,8 +8,13 @@ import pytest
 from nba_edge.archive.ledger import Ledger
 from nba_edge.execution.economics import compute_economics, market_implied_probability
 from nba_edge.kalshi.fees import DEFAULT_SCHEDULE
-from nba_edge.workflows.simulate import QUOTE_FIX_ENV, legacy_market_snapshot, market_snapshot, quote_fix_enabled, run_simulate
-
+from nba_edge.workflows.simulate import (
+    QUOTE_FIX_ENV,
+    legacy_market_snapshot,
+    market_snapshot,
+    quote_fix_enabled,
+    run_simulate,
+)
 from tests.test_simulate_job import FIX, _archive, _history  # noqa: F401
 
 DOLLARS = {"yes_bid_dollars": "0.6000", "yes_ask_dollars": "0.6200", "no_bid_dollars": "0.3800", "no_ask_dollars": "0.4000", "last_price_dollars": "0.6100",
