@@ -1,0 +1,7293 @@
+{
+ "authority": "research_only",
+ "by_day": {
+  "2026-10-24": {
+   "challenger_minutes_bias": -0.25875000000000015,
+   "challenger_minutes_mae": 4.992559523809524,
+   "n_games": 8,
+   "n_player_games": 322
+  }
+ },
+ "data_status": {
+  "integrity": {
+   "decisions_asof_at_or_after_tip_excluded": 0,
+   "decisions_bad_identity_excluded": 14560,
+   "decisions_duplicate_ids_dropped": 0,
+   "decisions_forecast_after_asof_excluded": 0,
+   "decisions_invalid_price_excluded": 5280,
+   "decisions_raw": 450612,
+   "decisions_replay_excluded": 0,
+   "paper_corrections_applied": 0,
+   "paper_settlements_orphaned": 92389,
+   "paper_settlements_raw": 130419,
+   "paper_settlements_strategy_mismatch_excluded": 0,
+   "pf_settlements_generated_after_tip_excluded": 0,
+   "snapshots_replay_excluded": 0
+  },
+  "kinds_rows": {
+   "game_forecasts": 212,
+   "market_snapshots": 111017,
+   "paper_decisions": 112656,
+   "pf_settlements": 3636,
+   "team_outcomes": 44
+  }
+ },
+ "generated_utc": "2026-10-25T11:14:26Z",
+ "insufficient_sample": [
+  "INSUFFICIENT_SAMPLE: 8 games with evidence in this window (the preregistered minimum for a value verdict is 40 games and 200 independent decisions); nothing below is a finding"
+ ],
+ "market": {
+  "hit_rates": {
+   "by_family": {
+    "game_spread": {
+     "ci95": [
+      0.49430860033726814,
+      0.5016880486158002
+     ],
+     "hit_rate": 0.4977424209847345,
+     "mean": 0.4977424209847345,
+     "mean_price": 0.506706084712965,
+     "n": 4651,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 4651,
+     "se": 0.0018288565658546784,
+     "suppressed": false,
+     "z": 272.16044728588366
+    },
+    "game_total": {
+     "ci95": [
+      0.4933160142353145,
+      0.5044027997290584
+     ],
+     "hit_rate": 0.4986621260034055,
+     "mean": 0.4986621260034055,
+     "mean_price": 0.5092434930673801,
+     "n": 4111,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 4111,
+     "se": 0.0028533977599567817,
+     "suppressed": false,
+     "z": 174.76081778761835
+    },
+    "game_winner": {
+     "ci95": [
+      0.4608879492600423,
+      0.5032545080858376
+     ],
+     "hit_rate": 0.4794816414686825,
+     "mean": 0.4794816414686825,
+     "mean_price": 0.492829373650108,
+     "n": 463,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 463,
+     "se": 0.01123812331560694,
+     "suppressed": false,
+     "z": 42.665632686447076
+    },
+    "player_assists": {
+     "ci95": [
+      0.4941972920696325,
+      0.5049905827442859
+     ],
+     "hit_rate": 0.4997736532367587,
+     "mean": 0.4997736532367587,
+     "mean_price": 0.5352105024898145,
+     "n": 4418,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 4418,
+     "se": 0.002790534742549615,
+     "suppressed": false,
+     "z": 179.09601540389096
+    },
+    "player_points": {
+     "ci95": [
+      0.48888075237473594,
+      0.4995073811753269
+     ],
+     "hit_rate": 0.49411764705882355,
+     "mean": 0.49411764705882355,
+     "mean_price": 0.5214448529411765,
+     "n": 5440,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 5440,
+     "se": 0.002810985205697576,
+     "suppressed": false,
+     "z": 175.78094899158424
+    },
+    "player_pra": {
+     "ci95": [
+      0.500381679389313,
+      0.5136510874595095
+     ],
+     "hit_rate": 0.5064878892733564,
+     "mean": 0.5064878892733564,
+     "mean_price": 0.5880320069204154,
+     "n": 2312,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 2312,
+     "se": 0.003415397475490133,
+     "suppressed": false,
+     "z": 148.29544523238013
+    },
+    "player_rebounds": {
+     "ci95": [
+      0.49808573883804574,
+      0.4996695307336418
+     ],
+     "hit_rate": 0.4990466285318079,
+     "mean": 0.4990466285318079,
+     "mean_price": 0.550086670133472,
+     "n": 5769,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 5769,
+     "se": 0.00042214619996193046,
+     "suppressed": false,
+     "z": 1182.16539335617
+    },
+    "player_threes": {
+     "ci95": [
+      0.49761521489199434,
+      0.5001015003056068
+     ],
+     "hit_rate": 0.49889669007021065,
+     "mean": 0.49889669007021065,
+     "mean_price": 0.5331614844533601,
+     "n": 4985,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 4985,
+     "se": 0.0006298993594050566,
+     "suppressed": false,
+     "z": 792.0260318115284
+    },
+    "team_total": {
+     "ci95": [
+      0.49581630667445026,
+      0.5027901785714286
+     ],
+     "hit_rate": 0.4992534527808884,
+     "mean": 0.4992534527808884,
+     "mean_price": 0.515337812616648,
+     "n": 5358,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 5358,
+     "se": 0.0018822281196613185,
+     "suppressed": false,
+     "z": 265.2459856304359
+    }
+   },
+   "by_price_range": {
+    "0.0-0.2": {
+     "ci95": [
+      0.04767489464748076,
+      0.154136318914965
+     ],
+     "hit_rate": 0.09739959993845207,
+     "mean": 0.09739959993845207,
+     "mean_price": 0.11988305893214342,
+     "n": 6499,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 6499,
+     "se": 0.027219065596827755,
+     "suppressed": false,
+     "z": 3.578359425747646
+    },
+    "0.2-0.4": {
+     "ci95": [
+      0.18804047749727829,
+      0.27301798800799465
+     ],
+     "hit_rate": 0.2320240114837531,
+     "mean": 0.2320240114837531,
+     "mean_price": 0.2940153986689286,
+     "n": 7663,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 7663,
+     "se": 0.02167013055859188,
+     "suppressed": false,
+     "z": 10.707088767019869
+    },
+    "0.4-0.6": {
+     "ci95": [
+      0.4487696011457574,
+      0.46854720157357377
+     ],
+     "hit_rate": 0.45927505330490404,
+     "mean": 0.45927505330490404,
+     "mean_price": 0.4888557213930348,
+     "n": 7035,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 7035,
+     "se": 0.005061249668422297,
+     "suppressed": false,
+     "z": 90.74340990731449
+    },
+    "0.6-0.8": {
+     "ci95": [
+      0.6640463384360777,
+      0.7505206374031046
+     ],
+     "hit_rate": 0.7063949195096736,
+     "mean": 0.7063949195096736,
+     "mean_price": 0.6958957317973711,
+     "n": 6771,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 6771,
+     "se": 0.022271464508520026,
+     "suppressed": false,
+     "z": 31.717488503705706
+    },
+    "0.8-1.0": {
+     "ci95": [
+      0.8211366433280729,
+      0.9099240666393956
+     ],
+     "hit_rate": 0.8669671873361987,
+     "mean": 0.8669671873361987,
+     "mean_price": 0.9066348673865187,
+     "n": 9539,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 9539,
+     "se": 0.023188867751162814,
+     "suppressed": false,
+     "z": 37.387215134413985
+    }
+   },
+   "status": "OK"
+  },
+  "liquidity": {
+   "decisions": {
+    "mean_spread": 0.06348636557307201,
+    "median_quote_age_s": 0.0,
+    "median_spread": 0.03,
+    "n_candidate_sides": 37552,
+    "quality_failures": {
+     "EXTREME_PRICE": 1589,
+     "GATE_BLOCK": 274,
+     "NO_SIZE": 326,
+     "SPREAD_WIDE": 2562
+    },
+    "share_displayed_size_ge_1_contract": 0.10494780570941628,
+    "share_quality_gate_passed": 0.8849595227950575
+   },
+   "snapshots": {
+    "missing_causes": {},
+    "n": 34216,
+    "quote_class": {
+     "NO_QUOTE": 18,
+     "ONE_SIDED": 858,
+     "PLACEHOLDER": 313,
+     "TWO_SIDED": 33027
+    },
+    "share_two_sided": 0.9652501753565583
+   },
+   "status": "OK"
+  },
+  "model_vs_market": {
+   "by_horizon": {
+    "LAST_VALID": {
+     "brier_diff_model_minus_market": {
+      "ci95": [
+       -0.003787750726164067,
+       0.014346897353514866
+      ],
+      "mean": 0.0047477281051413476,
+      "n_clusters": 8,
+      "n_obs": 2169,
+      "se": 0.004695671104292854,
+      "z": 1.0110861684501076
+     },
+     "brier_market_mid": 0.15826498386353158,
+     "brier_model": 0.16301271196867292,
+     "logloss_diff_model_minus_market": {
+      "ci95": [
+       -0.011704977129960187,
+       0.033910226524087074
+      ],
+      "mean": 0.010975248189552743,
+      "n_clusters": 8,
+      "n_obs": 2169,
+      "se": 0.011638430280864882,
+      "z": 0.943017909176077
+     },
+     "n_contracts": 2169,
+     "n_decisions": 2169,
+     "n_games": 8,
+     "n_player_games": 98,
+     "n_theses": 398,
+     "note": "negative diff = the model was more accurate than the market"
+    },
+    "T-10": {
+     "brier_diff_model_minus_market": {
+      "ci95": [
+       -0.0034546234345002704,
+       0.015645929526631762
+      ],
+      "mean": 0.005317723224716715,
+      "n_clusters": 8,
+      "n_obs": 2181,
+      "se": 0.004799708309892982,
+      "z": 1.1079263324723339
+     },
+     "brier_market_mid": 0.15646638010087116,
+     "brier_model": 0.16178410332558787,
+     "logloss_diff_model_minus_market": {
+      "ci95": [
+       -0.010570338948267607,
+       0.037100216492790106
+      ],
+      "mean": 0.012235842360670436,
+      "n_clusters": 8,
+      "n_obs": 2181,
+      "se": 0.011928956686634462,
+      "z": 1.0257261118551815
+     },
+     "n_contracts": 2181,
+     "n_decisions": 2181,
+     "n_games": 8,
+     "n_player_games": 98,
+     "n_theses": 397,
+     "note": "negative diff = the model was more accurate than the market"
+    },
+    "T-30": {
+     "brier_diff_model_minus_market": {
+      "ci95": [
+       -0.002630102887514373,
+       0.0153469759299348
+      ],
+      "mean": 0.0054828415977970935,
+      "n_clusters": 8,
+      "n_obs": 2162,
+      "se": 0.004484956164297584,
+      "z": 1.2224961397489587
+     },
+     "brier_market_mid": 0.1569832099907493,
+     "brier_model": 0.1624660515885464,
+     "logloss_diff_model_minus_market": {
+      "ci95": [
+       -0.007859026953503991,
+       0.03577714556066396
+      ],
+      "mean": 0.012625914957502572,
+      "n_clusters": 8,
+      "n_obs": 2162,
+      "se": 0.01095262976591906,
+      "z": 1.1527747424449806
+     },
+     "n_contracts": 2162,
+     "n_decisions": 2162,
+     "n_games": 8,
+     "n_player_games": 96,
+     "n_theses": 391,
+     "note": "negative diff = the model was more accurate than the market"
+    },
+    "T-60": {
+     "brier_diff_model_minus_market": {
+      "ci95": [
+       -0.003437250182207545,
+       0.014567079047923323
+      ],
+      "mean": 0.004447051138151523,
+      "n_clusters": 8,
+      "n_obs": 2137,
+      "se": 0.004660544933915688,
+      "z": 0.9541912375502424
+     },
+     "brier_market_mid": 0.15784300421151146,
+     "brier_model": 0.162290055349663,
+     "logloss_diff_model_minus_market": {
+      "ci95": [
+       -0.010854759158161762,
+       0.03394714912274141
+      ],
+      "mean": 0.010293632450782098,
+      "n_clusters": 8,
+      "n_obs": 2137,
+      "se": 0.011395700714395466,
+      "z": 0.9032908733535626
+     },
+     "n_contracts": 2137,
+     "n_decisions": 2137,
+     "n_games": 8,
+     "n_player_games": 95,
+     "n_theses": 388,
+     "note": "negative diff = the model was more accurate than the market"
+    },
+    "T-90": {
+     "brier_diff_model_minus_market": {
+      "ci95": [
+       -0.004377133972517412,
+       0.013986098948120139
+      ],
+      "mean": 0.004208062130868128,
+      "n_clusters": 8,
+      "n_obs": 2126,
+      "se": 0.004696455334476749,
+      "z": 0.8960081233982321
+     },
+     "brier_market_mid": 0.15815698494825967,
+     "brier_model": 0.16236504707912777,
+     "logloss_diff_model_minus_market": {
+      "ci95": [
+       -0.012639310015022002,
+       0.03229768537593263
+      ],
+      "mean": 0.009757746614061247,
+      "n_clusters": 8,
+      "n_obs": 2126,
+      "se": 0.011133106733665259,
+      "z": 0.8764621455172905
+     },
+     "n_contracts": 2126,
+     "n_decisions": 2126,
+     "n_games": 8,
+     "n_player_games": 94,
+     "n_theses": 385,
+     "note": "negative diff = the model was more accurate than the market"
+    }
+   },
+   "calibration_market": {
+    "bins": [
+     {
+      "bin": "0.0-0.2",
+      "ci95": [
+       0.025434821506659627,
+       0.480762123181387
+      ],
+      "hit_rate": 0.13453635876362338,
+      "insufficient": false,
+      "mean_p": 0.10214757906021084,
+      "n": 5597,
+      "n_games": 8
+     },
+     {
+      "bin": "0.2-0.4",
+      "ci95": [
+       0.1291418587583918,
+       0.6837649408986507
+      ],
+      "hit_rate": 0.36153232242617717,
+      "insufficient": false,
+      "mean_p": 0.295951050811386,
+      "n": 3759,
+      "n_games": 8
+     },
+     {
+      "bin": "0.4-0.6",
+      "ci95": [
+       0.297919796442729,
+       0.8572525619975713
+      ],
+      "hit_rate": 0.6148430624816662,
+      "insufficient": false,
+      "mean_p": 0.5049251980052801,
+      "n": 3409,
+      "n_games": 8
+     },
+     {
+      "bin": "0.6-0.8",
+      "ci95": [
+       0.5063389014735353,
+       0.9703444908491181
+      ],
+      "hit_rate": 0.8527933786579959,
+      "insufficient": false,
+      "mean_p": 0.7005956251847472,
+      "n": 3383,
+      "n_games": 8
+     },
+     {
+      "bin": "0.8-1.0",
+      "ci95": [
+       0.621849490235104,
+       0.9968313498260567
+      ],
+      "hit_rate": 0.9578856897292651,
+      "insufficient": false,
+      "mean_p": 0.8671744735711217,
+      "n": 2327,
+      "n_games": 8
+     }
+    ],
+    "ece": 0.0827323410013532,
+    "n": 18475,
+    "status": "OK"
+   },
+   "calibration_model": {
+    "bins": [
+     {
+      "bin": "0.0-0.2",
+      "ci95": [
+       0.0289151328259655,
+       0.4914657076620047
+      ],
+      "hit_rate": 0.14503386004514673,
+      "insufficient": false,
+      "mean_p": 0.10401500526434773,
+      "n": 5316,
+      "n_games": 8
+     },
+     {
+      "bin": "0.2-0.4",
+      "ci95": [
+       0.13259832101059715,
+       0.6885210128983985
+      ],
+      "hit_rate": 0.3676104190260476,
+      "insufficient": false,
+      "mean_p": 0.2974966115884538,
+      "n": 4415,
+      "n_games": 8
+     },
+     {
+      "bin": "0.4-0.6",
+      "ci95": [
+       0.3090170359798853,
+       0.8655915626787586
+      ],
+      "hit_rate": 0.6292278238672623,
+      "insufficient": false,
+      "mean_p": 0.5027096964294105,
+      "n": 3134,
+      "n_games": 8
+     },
+     {
+      "bin": "0.6-0.8",
+      "ci95": [
+       0.47170806464045884,
+       0.9574707902995252
+      ],
+      "hit_rate": 0.8176352705410822,
+      "insufficient": false,
+      "mean_p": 0.7033295497743417,
+      "n": 2994,
+      "n_games": 8
+     },
+     {
+      "bin": "0.8-1.0",
+      "ci95": [
+       0.6228553021857048,
+       0.9969468817492704
+      ],
+      "hit_rate": 0.9587155963302753,
+      "insufficient": false,
+      "mean_p": 0.8884699512166186,
+      "n": 2616,
+      "n_games": 8
+     }
+    ],
+    "ece": 0.07849041617509489,
+    "n": 18475,
+    "status": "OK"
+   },
+   "counts": {
+    "n_contracts": 2199,
+    "n_decisions": 18475,
+    "n_games": 8,
+    "n_player_games": 98,
+    "n_theses": 398
+   },
+   "one_contract_per_thesis_per_horizon": {
+    "brier_diff_model_minus_market": {
+     "ci95": [
+      -0.0019592112993603136,
+      0.020571515247450326
+     ],
+     "mean": 0.00833202967857921,
+     "n_clusters": 8,
+     "n_obs": 2342,
+     "se": 0.0058765169438902915,
+     "z": 1.4178517237565138
+    },
+    "brier_market_mid": 0.24397016438941074,
+    "brier_model": 0.25230219406799,
+    "logloss_diff_model_minus_market": {
+     "ci95": [
+      -0.004906610682185521,
+      0.049685534726830155
+     ],
+     "mean": 0.01997047908394312,
+     "n_clusters": 8,
+     "n_obs": 2342,
+     "se": 0.01397902682093122,
+     "z": 1.428602959258989
+    },
+    "n_contracts": 475,
+    "n_decisions": 2342,
+    "n_games": 8,
+    "n_player_games": 98,
+    "n_theses": 398,
+    "note": "negative diff = the model was more accurate than the market"
+   },
+   "overall": {
+    "brier_diff_model_minus_market": {
+     "ci95": [
+      -0.003510729975801898,
+      0.014117657559160104
+     ],
+     "mean": 0.004597918185724289,
+     "n_clusters": 8,
+     "n_obs": 18475,
+     "se": 0.004397014354813141,
+     "z": 1.0456909654368607
+    },
+    "brier_market_mid": 0.1588244709066306,
+    "brier_model": 0.16342238909235485,
+    "logloss_diff_model_minus_market": {
+     "ci95": [
+      -0.012003237451773301,
+      0.03277445896342362
+     ],
+     "mean": 0.010593610729097215,
+     "n_clusters": 8,
+     "n_obs": 18475,
+     "se": 0.010849434529449356,
+     "z": 0.9764205406597237
+    },
+    "n_contracts": 2199,
+    "n_decisions": 18475,
+    "n_games": 8,
+    "n_player_games": 98,
+    "n_theses": 398,
+    "note": "negative diff = the model was more accurate than the market"
+   },
+   "status": "OK",
+   "unit_note": "contracts (ladder rungs of a player-game are correlated); CIs resample games"
+  },
+  "paper": {
+   "benchmarks": {
+    "MARKET_ONLY_V1": {
+     "note": "never trades; its probability is the quote mid, scored in market.model_vs_market"
+    },
+    "NO_BET_V1": {
+     "net_pnl": 0.0,
+     "note": "zero by definition",
+     "roi": 0.0
+    },
+    "SHADOW_PURE_PREREG_V1": {
+     "reason": "control is evaluated by nba-shadow-pure (read by the weekly report, not recomputed here)",
+     "status": "NO_DATA"
+    }
+   },
+   "status": "OK",
+   "strategies": {
+    "PF_ALL_CANDIDATES_V1": {
+     "all_candidates": {
+      "by_side": {
+       "NO": {
+        "hit_rate": 0.495426251691475,
+        "mean_net_pnl_per_contract": -0.13898244022203246,
+        "n_contracts": 2234,
+        "n_decisions": 18736,
+        "n_games": 8,
+        "n_player_games": 100,
+        "n_theses": 407,
+        "roi": -0.22767531998569476,
+        "roi_ci95": [
+         -0.31323012301125186,
+         -0.146661806628092
+        ],
+        "total_net_pnl": -2603.9750000000004
+       },
+       "YES": {
+        "hit_rate": 0.5045737483085251,
+        "mean_net_pnl_per_contract": 0.02392960076857387,
+        "n_contracts": 2234,
+        "n_decisions": 18736,
+        "n_games": 8,
+        "n_player_games": 100,
+        "n_theses": 407,
+        "roi": 0.05285560186031157,
+        "roi_ci95": [
+         -0.05521382391481667,
+         0.16237693723650587
+        ],
+        "total_net_pnl": 448.345
+       }
+      },
+      "hit_rate": 0.5,
+      "mean_net_pnl_per_contract": -0.0575264197267293,
+      "n_contracts": 2234,
+      "n_decisions": 37472,
+      "n_games": 8,
+      "n_player_games": 100,
+      "n_theses": 407,
+      "roi": -0.10821609584089698,
+      "roi_ci95": [
+       -0.1132213221670535,
+       -0.102371738137858
+      ],
+      "roi_if_dnp_void": -0.1061277666755801,
+      "total_net_pnl": -2155.63
+     },
+     "selected": {
+      "n_decisions": 0,
+      "note": "no TRADE decisions"
+     }
+    },
+    "PF_EDGE_STRICT_V1": {
+     "all_candidates": {
+      "by_side": {
+       "NO": {
+        "hit_rate": 0.352112676056338,
+        "mean_net_pnl_per_contract": -0.10901408450704225,
+        "n_contracts": 28,
+        "n_decisions": 71,
+        "n_games": 7,
+        "n_player_games": 15,
+        "n_theses": 22,
+        "roi": -0.252858542959817,
+        "roi_ci95": [
+         -0.7440514469453376,
+         0.3638596491228068
+        ],
+        "total_net_pnl": -7.74
+       },
+       "YES": {
+        "hit_rate": 0.425531914893617,
+        "mean_net_pnl_per_contract": 0.03574468085106382,
+        "n_contracts": 22,
+        "n_decisions": 47,
+        "n_games": 6,
+        "n_player_games": 12,
+        "n_theses": 16,
+        "roi": 0.09917355371900821,
+        "roi_ci95": [
+         -0.6938905780876292,
+         1.0675722440372306
+        ],
+        "total_net_pnl": 1.6799999999999995
+       }
+      },
+      "hit_rate": 0.3813559322033898,
+      "mean_net_pnl_per_contract": -0.051355932203389826,
+      "n_contracts": 50,
+      "n_decisions": 118,
+      "n_games": 8,
+      "n_player_games": 24,
+      "n_theses": 38,
+      "roi": -0.12744479495268146,
+      "roi_ci95": [
+       -0.48958979589072027,
+       0.19982726687503463
+      ],
+      "roi_if_dnp_void": -0.12744479495268146,
+      "total_net_pnl": -6.06
+     },
+     "selected": {
+      "by_horizon_one_per_thesis": {
+       "LIVE": {
+        "hit_rate": 0.35,
+        "mean_net_pnl_per_contract": -0.0915,
+        "n_contracts": 20,
+        "n_decisions": 20,
+        "n_games": 5,
+        "n_player_games": 16,
+        "n_theses": 20,
+        "roi": -0.2220873786407767,
+        "roi_ci95": [
+         -0.46859903381642504,
+         0.10741138560687429
+        ],
+        "total_net_pnl": -1.83
+       },
+       "T-30": {
+        "hit_rate": 0.36363636363636365,
+        "mean_net_pnl_per_contract": -0.057878787878787884,
+        "n_contracts": 33,
+        "n_decisions": 33,
+        "n_games": 8,
+        "n_player_games": 22,
+        "n_theses": 33,
+        "roi": -0.14783281733746131,
+        "roi_ci95": [
+         -0.5987107171635777,
+         0.25792115071365807
+        ],
+        "total_net_pnl": -1.9100000000000001
+       },
+       "T-60": {
+        "hit_rate": 0.42424242424242425,
+        "mean_net_pnl_per_contract": -0.01575757575757576,
+        "n_contracts": 33,
+        "n_decisions": 33,
+        "n_games": 8,
+        "n_player_games": 22,
+        "n_theses": 33,
+        "roi": -0.038404726735598214,
+        "roi_ci95": [
+         -0.4492362982929021,
+         0.35008404813092314
+        ],
+        "total_net_pnl": -0.52
+       },
+       "T-90": {
+        "hit_rate": 0.375,
+        "mean_net_pnl_per_contract": -0.056249999999999994,
+        "n_contracts": 32,
+        "n_decisions": 32,
+        "n_games": 8,
+        "n_player_games": 22,
+        "n_theses": 32,
+        "roi": -0.14007782101167313,
+        "roi_ci95": [
+         -0.6241755042987568,
+         0.3194139576498657
+        ],
+        "total_net_pnl": -1.7999999999999998
+       }
+      },
+      "clv_cents": {
+       "ci95": [
+        -1.28125,
+        -0.7756962864721494
+       ],
+       "mean": -1.064516129032258,
+       "n_clusters": 7,
+       "n_obs": 31,
+       "n_trades": 38,
+       "n_valid_closing_lines": 31,
+       "note": "only trades with a VALID closing line (<=15 min before tip) count; stale snapshots are never closing lines",
+       "se": 0.13181235853594284,
+       "share_positive": 0.12903225806451613,
+       "z": -8.075996369809161
+      },
+      "overall_one_per_thesis": {
+       "hit_rate": 0.34210526315789475,
+       "mean_net_pnl_per_contract": -0.0881578947368421,
+       "n_contracts": 38,
+       "n_decisions": 38,
+       "n_games": 8,
+       "n_player_games": 24,
+       "n_theses": 38,
+       "roi": -0.22010512483574246,
+       "roi_ci95": [
+        -0.6106452187305242,
+        0.17233598858752325
+       ],
+       "total_net_pnl": -3.35
+      },
+      "verdict": {
+       "authority": "none: a paper verdict never grants wagering authority; first-week results are never promotion evidence",
+       "have": {
+        "games": 8,
+        "independent_decisions": 38
+       },
+       "label": "INSUFFICIENT_SAMPLE",
+       "meets_minimums": false,
+       "required": {
+        "min_decisions": 200,
+        "min_games": 40
+       }
+      }
+     }
+    },
+    "PF_EDGE_V1": {
+     "all_candidates": {
+      "by_side": {
+       "NO": {
+        "hit_rate": 0.43109540636042404,
+        "mean_net_pnl_per_contract": -0.06911660777385159,
+        "n_contracts": 86,
+        "n_decisions": 283,
+        "n_games": 8,
+        "n_player_games": 39,
+        "n_theses": 68,
+        "roi": -0.14699030585406178,
+        "roi_ci95": [
+         -0.5080520096057598,
+         0.1865582446485923
+        ],
+        "total_net_pnl": -19.56
+       },
+       "YES": {
+        "hit_rate": 0.33974358974358976,
+        "mean_net_pnl_per_contract": -0.043757961783439506,
+        "n_contracts": 48,
+        "n_decisions": 157,
+        "n_games": 8,
+        "n_player_games": 27,
+        "n_theses": 34,
+        "roi": -0.12378378378378378,
+        "roi_ci95": [
+         -0.619849987410042,
+         0.6493233388926416
+        ],
+        "total_net_pnl": -6.870000000000003
+       }
+      },
+      "hit_rate": 0.39863325740318906,
+      "mean_net_pnl_per_contract": -0.06006818181818182,
+      "n_contracts": 133,
+      "n_decisions": 440,
+      "n_games": 8,
+      "n_player_games": 57,
+      "n_theses": 96,
+      "roi": -0.14016015272842972,
+      "roi_ci95": [
+       -0.3313733250409905,
+       0.05791896151794735
+      ],
+      "roi_if_dnp_void": -0.1400499229911307,
+      "total_net_pnl": -26.43
+     },
+     "selected": {
+      "by_horizon_one_per_thesis": {
+       "LIVE": {
+        "hit_rate": 0.39285714285714285,
+        "mean_net_pnl_per_contract": -0.07717647058823529,
+        "n_contracts": 85,
+        "n_decisions": 85,
+        "n_games": 8,
+        "n_player_games": 54,
+        "n_theses": 85,
+        "roi": -0.17601287899114573,
+        "roi_ci95": [
+         -0.35412865625957024,
+         0.021226362635672416
+        ],
+        "total_net_pnl": -6.56
+       },
+       "T-10": {
+        "hit_rate": 0.4716981132075472,
+        "mean_net_pnl_per_contract": -0.006037735849056601,
+        "n_contracts": 53,
+        "n_decisions": 53,
+        "n_games": 8,
+        "n_player_games": 38,
+        "n_theses": 53,
+        "roi": -0.013485040033712602,
+        "roi_ci95": [
+         -0.2404092730084012,
+         0.2221111797185853
+        ],
+        "total_net_pnl": -0.31999999999999984
+       },
+       "T-30": {
+        "hit_rate": 0.39622641509433965,
+        "mean_net_pnl_per_contract": -0.057169811320754736,
+        "n_contracts": 53,
+        "n_decisions": 53,
+        "n_games": 8,
+        "n_player_games": 39,
+        "n_theses": 53,
+        "roi": -0.1349665924276169,
+        "roi_ci95": [
+         -0.3620878889462921,
+         0.1195735628912917
+        ],
+        "total_net_pnl": -3.030000000000001
+       },
+       "T-60": {
+        "hit_rate": 0.4528301886792453,
+        "mean_net_pnl_per_contract": -0.019433962264150943,
+        "n_contracts": 53,
+        "n_decisions": 53,
+        "n_games": 8,
+        "n_player_games": 38,
+        "n_theses": 53,
+        "roi": -0.04390451832907074,
+        "roi_ci95": [
+         -0.3223421849452607,
+         0.21910166717424756
+        ],
+        "total_net_pnl": -1.03
+       },
+       "T-90": {
+        "hit_rate": 0.41509433962264153,
+        "mean_net_pnl_per_contract": -0.04264150943396228,
+        "n_contracts": 53,
+        "n_decisions": 53,
+        "n_games": 8,
+        "n_player_games": 39,
+        "n_theses": 53,
+        "roi": -0.09960334949316883,
+        "roi_ci95": [
+         -0.3362459132575992,
+         0.1365319133764346
+        ],
+        "total_net_pnl": -2.2600000000000007
+       }
+      },
+      "clv_cents": {
+       "ci95": [
+        -2.119047619047619,
+        -0.0125
+       ],
+       "mean": -0.963855421686747,
+       "n_clusters": 7,
+       "n_obs": 83,
+       "n_trades": 96,
+       "n_valid_closing_lines": 83,
+       "note": "only trades with a VALID closing line (<=15 min before tip) count; stale snapshots are never closing lines",
+       "se": 0.5435331047463098,
+       "share_positive": 0.3493975903614458,
+       "z": -1.7733150258375148
+      },
+      "overall_one_per_thesis": {
+       "hit_rate": 0.4,
+       "mean_net_pnl_per_contract": -0.08968749999999999,
+       "n_contracts": 96,
+       "n_decisions": 96,
+       "n_games": 8,
+       "n_player_games": 57,
+       "n_theses": 96,
+       "roi": -0.1957708049113233,
+       "roi_ci95": [
+        -0.3562209600945195,
+        -0.029570791527313352
+       ],
+       "total_net_pnl": -8.61
+      },
+      "verdict": {
+       "authority": "none: a paper verdict never grants wagering authority; first-week results are never promotion evidence",
+       "have": {
+        "games": 8,
+        "independent_decisions": 96
+       },
+       "label": "INSUFFICIENT_SAMPLE",
+       "meets_minimums": false,
+       "required": {
+        "min_decisions": 200,
+        "min_games": 40
+       }
+      }
+     }
+    }
+   },
+   "unit_note": "selected-trade inference collapses to one decision per thesis (per horizon in by_horizon); CIs resample games"
+  },
+  "price_discovery": {
+   "closing_horizon": "LAST_VALID",
+   "definition": "share_h = sum(B_ref - B_h) / sum(B_ref - B_close), B = (mid - y_yes)^2 on contracts present at ref, h and close",
+   "horizons": {
+    "LAST_VALID": {
+     "brier_close": 0.1356125,
+     "brier_h": 0.1356125,
+     "brier_ref": 0.14704843750000002,
+     "mean_abs_move_to_close": 0.0,
+     "n_contracts": 16,
+     "n_games": 8,
+     "share_ci95": [
+      1.0,
+      1.0
+     ],
+     "share_of_ref_to_close_improvement": 1.0
+    },
+    "T-10": {
+     "brier_close": 0.1356125,
+     "brier_h": 0.1353625,
+     "brier_ref": 0.14704843750000002,
+     "mean_abs_move_to_close": 0.0006250000000000006,
+     "n_contracts": 16,
+     "n_games": 8,
+     "share_ci95": [
+      1.0,
+      1.2593192868719585
+     ],
+     "share_of_ref_to_close_improvement": 1.021860909960377
+    },
+    "T-30": {
+     "brier_close": 0.1356125,
+     "brier_h": 0.1345,
+     "brier_ref": 0.14704843750000002,
+     "mean_abs_move_to_close": 0.0025000000000000022,
+     "n_contracts": 16,
+     "n_games": 8,
+     "share_ci95": [
+      0.8369452123542618,
+      3.131053011179203
+     ],
+     "share_of_ref_to_close_improvement": 1.097281049323678
+    },
+    "T-60": {
+     "brier_close": 0.1356125,
+     "brier_h": 0.1317,
+     "brier_ref": 0.14704843750000002,
+     "mean_abs_move_to_close": 0.0037500000000000033,
+     "n_contracts": 16,
+     "n_games": 8,
+     "share_ci95": [
+      1.0,
+      8.302180685358199
+     ],
+     "share_of_ref_to_close_improvement": 1.3421232408799013
+    },
+    "T-90": {
+     "brier_close": 0.1356125,
+     "brier_h": 0.1304625,
+     "brier_ref": 0.14704843750000002,
+     "mean_abs_move_to_close": 0.006875000000000003,
+     "n_contracts": 16,
+     "n_games": 8,
+     "share_ci95": [
+      0.9758825113787571,
+      10.199908506299936
+     ],
+     "share_of_ref_to_close_improvement": 1.4503347451837685
+    }
+   },
+   "reference_horizon": "OPEN",
+   "status": "OK"
+  }
+ },
+ "paper": true,
+ "projection": {
+  "minutes": {
+   "challenger": {
+    "bias": {
+     "ci95": [
+      -1.3881484865843747,
+      0.8933443146724488
+     ],
+     "mean": -0.25875000000000015,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.5840784932888418,
+     "z": -0.44300552575224106
+    },
+    "mae": 4.992559523809524,
+    "mae_ci": [
+     4.359821428571429,
+     5.769493212333098
+    ],
+    "n": 168,
+    "n_games": 8,
+    "rmse": 6.524300044558694
+   },
+   "incumbent": {
+    "bias": {
+     "ci95": [
+      -3.7518361027146,
+      -1.049823085622875
+     ],
+     "mean": -2.4748684931506846,
+     "n_clusters": 8,
+     "n_obs": 146,
+     "se": 0.7020150521214649,
+     "z": -3.525378103605783
+    },
+    "mae": 6.872042465753424,
+    "mae_ci": [
+     5.971304827586207,
+     7.784930257782565
+    ],
+    "n": 146,
+    "n_games": 8,
+    "rmse": 8.559356140825047
+   },
+   "naive_prior_mean": {
+    "reason": "no player has an earlier settled game yet",
+    "status": "NO_DATA"
+   },
+   "paired_challenger_vs_incumbent": {
+    "bias_diff": {
+     "ci95": [
+      0.9384372173125106,
+      3.0425799003596032
+     ],
+     "mean": 1.9143890410958906,
+     "n_clusters": 8,
+     "n_obs": 146,
+     "se": 0.5416599049555957,
+     "z": 3.5343008104925704
+    },
+    "mae_diff": {
+     "ci95": [
+      -3.332648648629754,
+      -1.0399738768018016
+     ],
+     "mean": -2.1912890410958905,
+     "n_clusters": 8,
+     "n_obs": 146,
+     "se": 0.598257057622705,
+     "z": -3.6627884505089154
+    },
+    "n": 146,
+    "note": "negative = challenger better"
+   }
+  },
+  "participation": {
+   "challenger": {
+    "brier": {
+     "ci95": [
+      0.09965312325,
+      0.15006026695340502
+     ],
+     "mean": 0.1257537455797101,
+     "n_clusters": 8,
+     "n_obs": 276,
+     "se": 0.01292929011494597,
+     "z": 9.72626837681843
+    },
+    "calibration": {
+     "bins": [
+      {
+       "bin": "0.0-0.2",
+       "ci95": [
+        0.0,
+        0.3244156195108769
+       ],
+       "hit_rate": 0.0,
+       "insufficient": false,
+       "mean_p": 0.0012787234042553192,
+       "n": 47,
+       "n_games": 8
+      },
+      {
+       "bin": "0.2-0.4",
+       "ci95": [
+        0.0866911678663399,
+        0.7248059970510204
+       ],
+       "hit_rate": 0.3333333333333333,
+       "insufficient": true,
+       "mean_p": 0.3068666666666667,
+       "n": 9,
+       "n_games": 5
+      },
+      {
+       "bin": "0.4-0.6",
+       "ci95": [
+        0.21521252682444186,
+        0.7847874731755582
+       ],
+       "hit_rate": 0.5,
+       "insufficient": false,
+       "mean_p": 0.5239909090909092,
+       "n": 22,
+       "n_games": 8
+      },
+      {
+       "bin": "0.6-0.8",
+       "ci95": [
+        0.1173795818772419,
+        0.6670083817964423
+       ],
+       "hit_rate": 0.3404255319148936,
+       "insufficient": false,
+       "mean_p": 0.6986553191489363,
+       "n": 47,
+       "n_games": 8
+      },
+      {
+       "bin": "0.8-1.0",
+       "ci95": [
+        0.570928924036263,
+        0.988329669083872
+       ],
+       "hit_rate": 0.9139072847682119,
+       "insufficient": false,
+       "mean_p": 0.9507119205298014,
+       "n": 151,
+       "n_games": 8
+      }
+     ],
+     "ece": 0.08607565543071166,
+     "n": 276,
+     "status": "OK"
+    },
+    "mean_p": 0.6911014492753623,
+    "n": 276,
+    "n_games": 8,
+    "played_rate": 0.6086956521739131
+   },
+   "incumbent": {
+    "brier": {
+     "ci95": [
+      0.13656626911764708,
+      0.19422384710193455
+     ],
+     "mean": 0.16068735714285717,
+     "n_clusters": 8,
+     "n_obs": 238,
+     "se": 0.015135228034367757,
+     "z": 10.61677807417122
+    },
+    "calibration": {
+     "bins": [
+      {
+       "bin": "0.0-0.2",
+       "ci95": [
+        0.0,
+        0.7934567085261071
+       ],
+       "hit_rate": 0.0,
+       "insufficient": true,
+       "mean_p": 0.065,
+       "n": 4,
+       "n_games": 1
+      },
+      {
+       "bin": "0.2-0.4",
+       "ci95": [
+        0.012753943335199247,
+        0.5474061081386417
+       ],
+       "hit_rate": 0.1111111111111111,
+       "insufficient": true,
+       "mean_p": 0.34052777777777776,
+       "n": 18,
+       "n_games": 5
+      },
+      {
+       "bin": "0.4-0.6",
+       "ci95": [
+        0.07311967351877602,
+        0.5938457727189802
+       ],
+       "hit_rate": 0.2535211267605634,
+       "insufficient": false,
+       "mean_p": 0.49801408450704215,
+       "n": 71,
+       "n_games": 8
+      },
+      {
+       "bin": "0.6-0.8",
+       "ci95": [
+        0.5053896591875454,
+        0.9700215715270227
+       ],
+       "hit_rate": 0.8518518518518519,
+       "insufficient": false,
+       "mean_p": 0.6821388888888891,
+       "n": 54,
+       "n_games": 8
+      },
+      {
+       "bin": "0.8-1.0",
+       "ci95": [
+        0.533413070807315,
+        0.9788432176954267
+       ],
+       "hit_rate": 0.8791208791208791,
+       "insufficient": false,
+       "mean_p": 0.953098901098901,
+       "n": 91,
+       "n_games": 8
+      }
+     ],
+     "ece": 0.15396064814814808,
+     "n": 238,
+     "status": "OK"
+    },
+    "mean_p": 0.6946050420168067,
+    "n": 238,
+    "n_games": 8,
+    "played_rate": 0.6134453781512605
+   },
+   "paired_challenger_vs_incumbent": {
+    "brier_diff": {
+     "ci95": [
+      -0.12545046535128207,
+      -0.048035560664621405
+     ],
+     "mean": -0.0840195184375,
+     "n_clusters": 8,
+     "n_obs": 192,
+     "se": 0.020549215797792,
+     "z": -4.088697070694437
+    },
+    "n": 192,
+    "note": "negative = challenger better"
+   }
+  },
+  "participation_vs_production": {
+   "conditional_production_component": {
+    "ci95": [
+     -0.8487061693017127,
+     0.1329949441435784
+    ],
+    "mean": -0.36380434782608706,
+    "n_clusters": 8,
+    "n_obs": 276,
+    "se": 0.25249550527077547,
+    "z": -1.4408349464912031
+   },
+   "family": "points",
+   "identity": "p*mu - played*y = (p - played)*mu + played*(mu - y)",
+   "mse_conditional": 21.77745543478261,
+   "mse_participation": 2.896877713363739,
+   "mse_total": 24.886851217276785,
+   "n": 276,
+   "n_games": 8,
+   "participation_component": {
+    "ci95": [
+     -0.07828971500000002,
+     0.45469606181818173
+    ],
+    "mean": 0.20643953623188407,
+    "n_clusters": 8,
+    "n_obs": 276,
+    "se": 0.13589861860666197,
+    "z": 1.5190701594207674
+   },
+   "status": "OK",
+   "unconditional_error": {
+    "ci95": [
+     -0.6296846788321169,
+     0.2573035467625898
+    ],
+    "mean": -0.15736481159420299,
+    "n_clusters": 8,
+    "n_obs": 276,
+    "se": 0.22480673304570442,
+    "z": -0.7000004379860361
+   }
+  },
+  "player_stats_conditional": {
+   "assists": {
+    "bias": {
+     "ci95": [
+      -0.5269142857142857,
+      -0.03659794734493534
+     ],
+     "mean": -0.2688690476190476,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.12913496793865412,
+     "z": -2.082077781958908
+    },
+    "calibration_thresholds": {
+     "bins": [
+      {
+       "bin": "0.0-0.2",
+       "ci95": [
+        0.003946499682237675,
+        0.3845055539982243
+       ],
+       "hit_rate": 0.04739336492890995,
+       "insufficient": false,
+       "mean_p": 0.042793360575779954,
+       "n": 422,
+       "n_games": 8
+      },
+      {
+       "bin": "0.2-0.4",
+       "ci95": [
+        0.16263866867420163,
+        0.7270618406336967
+       ],
+       "hit_rate": 0.41836734693877553,
+       "insufficient": false,
+       "mean_p": 0.30496155298186606,
+       "n": 98,
+       "n_games": 8
+      },
+      {
+       "bin": "0.4-0.6",
+       "ci95": [
+        0.22739926285010675,
+        0.7967287507387906
+       ],
+       "hit_rate": 0.5178571428571429,
+       "insufficient": false,
+       "mean_p": 0.5113605428923302,
+       "n": 56,
+       "n_games": 8
+      },
+      {
+       "bin": "0.6-0.8",
+       "ci95": [
+        0.48069899954350204,
+        0.9610292492378476
+       ],
+       "hit_rate": 0.8269230769230769,
+       "insufficient": false,
+       "mean_p": 0.7105607913002382,
+       "n": 52,
+       "n_games": 8
+      },
+      {
+       "bin": "0.8-1.0",
+       "ci95": [
+        0.6458613732160998,
+        0.9990146263416995
+       ],
+       "hit_rate": 0.9772727272727273,
+       "insufficient": false,
+       "mean_p": 0.9117648113664317,
+       "n": 44,
+       "n_games": 8
+      }
+     ],
+     "ece": 0.033261854754601354,
+     "n": 672,
+     "status": "OK"
+    },
+    "coverage": {
+     "50": {
+      "pit_cover": 0.4583333333333333,
+      "range_cover": 0.7202380952380952
+     },
+     "80": {
+      "pit_cover": 0.7976190476190477,
+      "range_cover": 0.9166666666666666
+     },
+     "90": {
+      "pit_cover": 0.9047619047619048,
+      "range_cover": 0.9404761904761905
+     }
+    },
+    "crps": {
+     "ci95": [
+      0.8025358363721454,
+      1.0229258512822383
+     ],
+     "mean": 0.9042061364763047,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.055936226814364144,
+     "z": 16.16494690421466
+    },
+    "incumbent": {
+     "bias": {
+      "ci95": [
+       -0.7763751974921631,
+       -0.27061185822147654
+      ],
+      "mean": -0.4933547945205479,
+      "n_clusters": 8,
+      "n_obs": 146,
+      "se": 0.1292406425350214,
+      "z": -3.817334739626194
+     },
+     "mae": 1.586872602739726,
+     "mae_ci": [
+      1.4247227586206896,
+      1.7702265239726025
+     ],
+     "n": 146,
+     "n_games": 8,
+     "rmse": 2.0902250787238263
+    },
+    "mae": 1.2983928571428571,
+    "mae_ci": [
+     1.1495843891402715,
+     1.461576847646573
+    ],
+    "model_version": [
+     "pf-nba-assists"
+    ],
+    "n": 168,
+    "n_games": 8,
+    "paired_vs_incumbent": {
+     "mae_diff": {
+      "ci95": [
+       -0.35227915348901356,
+       -0.09930069444444448
+      ],
+      "mean": -0.22173561643835618,
+      "n_clusters": 8,
+      "n_obs": 146,
+      "se": 0.06398489190436729,
+      "z": -3.465437071766337
+     },
+     "n": 146,
+     "note": "negative = challenger better"
+    },
+    "pit_var_ratio": 0.9834307233844312,
+    "rmse": 1.7918793340007713,
+    "thresholds": {
+     "2": {
+      "brier": 0.1560044456228852,
+      "hit_rate": 0.5833333333333334,
+      "mean_p": 0.5255729237194986,
+      "n": 168
+     },
+     "4": {
+      "brier": 0.14150266814290818,
+      "hit_rate": 0.2976190476190476,
+      "mean_p": 0.23756074844861327,
+      "n": 168
+     },
+     "6": {
+      "brier": 0.05306982722245322,
+      "hit_rate": 0.1130952380952381,
+      "mean_p": 0.10512324713983577,
+      "n": 168
+     },
+     "8": {
+      "brier": 0.027858789743604,
+      "hit_rate": 0.05357142857142857,
+      "mean_p": 0.04631470929269477,
+      "n": 168
+     }
+    }
+   },
+   "fga": {
+    "bias": {
+     "ci95": [
+      -0.6106363125404872,
+      0.39602484243697456
+     ],
+     "mean": -0.09976190476190483,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.2622819483557862,
+     "z": -0.3803613073156583
+    },
+    "calibration_thresholds": {
+     "bins": [
+      {
+       "bin": "0.0-0.2",
+       "ci95": [
+        0.0015423133216830587,
+        0.3616999947230515
+       ],
+       "hit_rate": 0.028735632183908046,
+       "insufficient": false,
+       "mean_p": 0.043395002104708286,
+       "n": 348,
+       "n_games": 8
+      },
+      {
+       "bin": "0.2-0.4",
+       "ci95": [
+        0.08959191406278988,
+        0.6232847242293328
+       ],
+       "hit_rate": 0.2875,
+       "insufficient": false,
+       "mean_p": 0.2948428478809547,
+       "n": 80,
+       "n_games": 8
+      },
+      {
+       "bin": "0.4-0.6",
+       "ci95": [
+        0.22012827215611303,
+        0.7896628058219901
+       ],
+       "hit_rate": 0.5072463768115942,
+       "insufficient": false,
+       "mean_p": 0.4977874703598064,
+       "n": 69,
+       "n_games": 8
+      },
+      {
+       "bin": "0.6-0.8",
+       "ci95": [
+        0.44785956786791714,
+        0.9472935603427022
+       ],
+       "hit_rate": 0.7924528301886793,
+       "insufficient": false,
+       "mean_p": 0.7152172718243672,
+       "n": 53,
+       "n_games": 8
+      },
+      {
+       "bin": "0.8-1.0",
+       "ci95": [
+        0.594140700605377,
+        0.9928424496556641
+       ],
+       "hit_rate": 0.9344262295081968,
+       "insufficient": false,
+       "mean_p": 0.9316576714366771,
+       "n": 122,
+       "n_games": 8
+      }
+     ],
+     "ece": 0.016030955038872263,
+     "n": 672,
+     "status": "OK"
+    },
+    "coverage": {
+     "50": {
+      "pit_cover": 0.5535714285714286,
+      "range_cover": 0.6547619047619048
+     },
+     "80": {
+      "pit_cover": 0.8452380952380952,
+      "range_cover": 0.8809523809523809
+     },
+     "90": {
+      "pit_cover": 0.9226190476190477,
+      "range_cover": 0.9702380952380952
+     }
+    },
+    "crps": {
+     "ci95": [
+      1.7079955591547182,
+      2.1220282362776195
+     ],
+     "mean": 1.922229949100681,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.10264683234461552,
+     "z": 18.726636810838848
+    },
+    "mae": 2.7350000000000003,
+    "mae_ci": [
+     2.3807285393818547,
+     3.0866746693351894
+    ],
+    "model_version": [
+     "pf-nba-fga"
+    ],
+    "n": 168,
+    "n_games": 8,
+    "pit_var_ratio": 0.877496004303356,
+    "rmse": 3.5882448621124214,
+    "thresholds": {
+     "10": {
+      "brier": 0.13636913380920226,
+      "hit_rate": 0.42857142857142855,
+      "mean_p": 0.39831776268673463,
+      "n": 168
+     },
+     "15": {
+      "brier": 0.07947550891726032,
+      "hit_rate": 0.15476190476190477,
+      "mean_p": 0.1686800534848617,
+      "n": 168
+     },
+     "20": {
+      "brier": 0.03009364308628526,
+      "hit_rate": 0.047619047619047616,
+      "mean_p": 0.054196755038356394,
+      "n": 168
+     },
+     "5": {
+      "brier": 0.09838262969976459,
+      "hit_rate": 0.7023809523809523,
+      "mean_p": 0.7157398058121162,
+      "n": 168
+     }
+    }
+   },
+   "points": {
+    "bias": {
+     "ci95": [
+      -1.3710400805676695,
+      0.23242937853107337
+     ],
+     "mean": -0.5976785714285716,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.41911749062123066,
+     "z": -1.4260406325268637
+    },
+    "calibration_thresholds": {
+     "bins": [
+      {
+       "bin": "0.0-0.2",
+       "ci95": [
+        0.005395562106413704,
+        0.39490091173476327
+       ],
+       "hit_rate": 0.05615942028985507,
+       "insufficient": false,
+       "mean_p": 0.04287695982421189,
+       "n": 552,
+       "n_games": 8
+      },
+      {
+       "bin": "0.2-0.4",
+       "ci95": [
+        0.11525470360604806,
+        0.6638811720032771
+       ],
+       "hit_rate": 0.33653846153846156,
+       "insufficient": false,
+       "mean_p": 0.298805510684898,
+       "n": 104,
+       "n_games": 8
+      },
+      {
+       "bin": "0.4-0.6",
+       "ci95": [
+        0.27253067809159676,
+        0.8370235457715041
+       ],
+       "hit_rate": 0.581081081081081,
+       "insufficient": false,
+       "mean_p": 0.5124032381572574,
+       "n": 74,
+       "n_games": 8
+      },
+      {
+       "bin": "0.6-0.8",
+       "ci95": [
+        0.40166401440358956,
+        0.9244801692808148
+       ],
+       "hit_rate": 0.7413793103448276,
+       "insufficient": false,
+       "mean_p": 0.7130186171620728,
+       "n": 58,
+       "n_games": 8
+      },
+      {
+       "bin": "0.8-1.0",
+       "ci95": [
+        0.58119339762762,
+        0.9904549243247149
+       ],
+       "hit_rate": 0.9230769230769231,
+       "insufficient": false,
+       "mean_p": 0.9076430017005754,
+       "n": 52,
+       "n_games": 8
+      }
+     ],
+     "ece": 0.022364035188498152,
+     "n": 840,
+     "status": "OK"
+    },
+    "coverage": {
+     "50": {
+      "pit_cover": 0.5,
+      "range_cover": 0.5654761904761905
+     },
+     "80": {
+      "pit_cover": 0.7976190476190477,
+      "range_cover": 0.8511904761904762
+     },
+     "90": {
+      "pit_cover": 0.8988095238095238,
+      "range_cover": 0.9285714285714286
+     }
+    },
+    "crps": {
+     "ci95": [
+      2.9372184745525005,
+      3.6417930466348856
+     ],
+     "mean": 3.2680619731421365,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.18208196987824146,
+     "z": 17.94830084125021
+    },
+    "incumbent": {
+     "bias": {
+      "ci95": [
+       -2.8511468085106384,
+       -0.9913482654694172
+      ],
+      "mean": -1.9216883561643836,
+      "n_clusters": 8,
+      "n_obs": 146,
+      "se": 0.48139625820619886,
+      "z": -3.9919054695710936
+     },
+     "mae": 5.574574657534246,
+     "mae_ci": [
+      4.813746258503401,
+      6.268388551724138
+     ],
+     "n": 146,
+     "n_games": 8,
+     "rmse": 7.074222747620067
+    },
+    "mae": 4.596726190476191,
+    "mae_ci": [
+     4.023173118961991,
+     5.261695249744413
+    ],
+    "model_version": [
+     "pf-nba-points"
+    ],
+    "n": 168,
+    "n_games": 8,
+    "paired_vs_incumbent": {
+     "mae_diff": {
+      "ci95": [
+       -1.408197926904177,
+       -0.16705114152417744
+      ],
+      "mean": -0.7386157534246577,
+      "n_clusters": 8,
+      "n_obs": 146,
+      "se": 0.31804872805638645,
+      "z": -2.322335190391673
+     },
+     "n": 146,
+     "note": "negative = challenger better"
+    },
+    "pit_var_ratio": 1.0208753983617556,
+    "rmse": 5.981408547682203,
+    "thresholds": {
+     "10": {
+      "brier": 0.1540571684550673,
+      "hit_rate": 0.5416666666666666,
+      "mean_p": 0.4989045065138381,
+      "n": 168
+     },
+     "15": {
+      "brier": 0.14224746673976355,
+      "hit_rate": 0.3333333333333333,
+      "mean_p": 0.3034898552589008,
+      "n": 168
+     },
+     "20": {
+      "brier": 0.1062753500582734,
+      "hit_rate": 0.19642857142857142,
+      "mean_p": 0.16331240438266148,
+      "n": 168
+     },
+     "25": {
+      "brier": 0.05914827269484622,
+      "hit_rate": 0.08928571428571429,
+      "mean_p": 0.07798525346882629,
+      "n": 168
+     },
+     "30": {
+      "brier": 0.024873972521353704,
+      "hit_rate": 0.02976190476190476,
+      "mean_p": 0.03496399490947303,
+      "n": 168
+     }
+    }
+   },
+   "pra": {
+    "bias": {
+     "ci95": [
+      -2.400209666427547,
+      -0.26530715875864125
+     ],
+     "mean": -1.3229166666666667,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.5544641498428095,
+     "z": -2.3859372459729156
+    },
+    "calibration_thresholds": {
+     "bins": [
+      {
+       "bin": "0.0-0.2",
+       "ci95": [
+        0.007312035590364974,
+        0.4067545917579311
+       ],
+       "hit_rate": 0.06635071090047394,
+       "insufficient": false,
+       "mean_p": 0.045975487471579916,
+       "n": 633,
+       "n_games": 8
+      },
+      {
+       "bin": "0.2-0.4",
+       "ci95": [
+        0.14792155501304904,
+        0.7087726673074399
+       ],
+       "hit_rate": 0.3939393939393939,
+       "insufficient": false,
+       "mean_p": 0.29129597733671436,
+       "n": 132,
+       "n_games": 8
+      },
+      {
+       "bin": "0.4-0.6",
+       "ci95": [
+        0.25784098908385866,
+        0.8245473500001808
+       ],
+       "hit_rate": 0.5609756097560976,
+       "insufficient": false,
+       "mean_p": 0.49904195032413184,
+       "n": 82,
+       "n_games": 8
+      },
+      {
+       "bin": "0.6-0.8",
+       "ci95": [
+        0.4774011718276745,
+        0.9597416626064639
+       ],
+       "hit_rate": 0.8235294117647058,
+       "insufficient": false,
+       "mean_p": 0.7078552886482411,
+       "n": 68,
+       "n_games": 8
+      },
+      {
+       "bin": "0.8-1.0",
+       "ci95": [
+        0.5953616316947281,
+        0.9930505706667663
+       ],
+       "hit_rate": 0.9354838709677419,
+       "insufficient": false,
+       "mean_p": 0.9219580641955083,
+       "n": 93,
+       "n_games": 8
+      }
+     ],
+     "ece": 0.040326138786906884,
+     "n": 1008,
+     "status": "OK"
+    },
+    "coverage": {
+     "50": {
+      "pit_cover": 0.4523809523809524,
+      "range_cover": 0.5059523809523809
+     },
+     "80": {
+      "pit_cover": 0.7440476190476191,
+      "range_cover": 0.7797619047619048
+     },
+     "90": {
+      "pit_cover": 0.8809523809523809,
+      "range_cover": 0.8928571428571429
+     }
+    },
+    "crps": {
+     "ci95": [
+      3.941757513671132,
+      5.140549269228206
+     ],
+     "mean": 4.507502057570908,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.3128610561357605,
+     "z": 14.407360613188487
+    },
+    "mae": 6.336369047619048,
+    "mae_ci": [
+     5.518428621474865,
+     7.275333333333332
+    ],
+    "model_version": [
+     "pf-nba-pra"
+    ],
+    "n": 168,
+    "n_games": 8,
+    "pit_var_ratio": 1.094839777947878,
+    "rmse": 8.204097372074285,
+    "thresholds": {
+     "15": {
+      "brier": 0.14520899769375223,
+      "hit_rate": 0.6011904761904762,
+      "mean_p": 0.525080342947061,
+      "n": 168
+     },
+     "20": {
+      "brier": 0.14706810047461874,
+      "hit_rate": 0.43452380952380953,
+      "mean_p": 0.37231852619119987,
+      "n": 168
+     },
+     "25": {
+      "brier": 0.12821559950286843,
+      "hit_rate": 0.30952380952380953,
+      "mean_p": 0.24829674993445666,
+      "n": 168
+     },
+     "30": {
+      "brier": 0.1050172245741074,
+      "hit_rate": 0.20238095238095238,
+      "mean_p": 0.1554166349199191,
+      "n": 168
+     },
+     "35": {
+      "brier": 0.0688164661820307,
+      "hit_rate": 0.08928571428571429,
+      "mean_p": 0.09118185507903663,
+      "n": 168
+     },
+     "40": {
+      "brier": 0.036612714335128235,
+      "hit_rate": 0.047619047619047616,
+      "mean_p": 0.050272867730695156,
+      "n": 168
+     }
+    }
+   },
+   "rebounds": {
+    "bias": {
+     "ci95": [
+      -0.7458682634730539,
+      -0.03939393939393937
+     ],
+     "mean": -0.36136904761904765,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.18364828065336333,
+     "z": -1.9677235546851255
+    },
+    "calibration_thresholds": {
+     "bins": [
+      {
+       "bin": "0.0-0.2",
+       "ci95": [
+        0.005193014477356289,
+        0.39353688688732413
+       ],
+       "hit_rate": 0.055,
+       "insufficient": false,
+       "mean_p": 0.053412653392674626,
+       "n": 400,
+       "n_games": 8
+      },
+      {
+       "bin": "0.2-0.4",
+       "ci95": [
+        0.10852913618593907,
+        0.6537652484567769
+       ],
+       "hit_rate": 0.32407407407407407,
+       "insufficient": false,
+       "mean_p": 0.27453206257626916,
+       "n": 108,
+       "n_games": 8
+      },
+      {
+       "bin": "0.4-0.6",
+       "ci95": [
+        0.3460303197317515,
+        0.8913371653049673
+       ],
+       "hit_rate": 0.6756756756756757,
+       "insufficient": false,
+       "mean_p": 0.4904565316702134,
+       "n": 74,
+       "n_games": 8
+      },
+      {
+       "bin": "0.6-0.8",
+       "ci95": [
+        0.4011035773691353,
+        0.9241777910145164
+       ],
+       "hit_rate": 0.7407407407407407,
+       "insufficient": false,
+       "mean_p": 0.6931532956556331,
+       "n": 54,
+       "n_games": 8
+      },
+      {
+       "bin": "0.8-1.0",
+       "ci95": [
+        0.5437345521757871,
+        0.9817199659824197
+       ],
+       "hit_rate": 0.8888888888888888,
+       "insufficient": false,
+       "mean_p": 0.8997746350956611,
+       "n": 36,
+       "n_games": 8
+      }
+     ],
+     "ece": 0.03371026999871561,
+     "n": 672,
+     "status": "OK"
+    },
+    "coverage": {
+     "50": {
+      "pit_cover": 0.4880952380952381,
+      "range_cover": 0.6785714285714286
+     },
+     "80": {
+      "pit_cover": 0.8333333333333334,
+      "range_cover": 0.9107142857142857
+     },
+     "90": {
+      "pit_cover": 0.9285714285714286,
+      "range_cover": 0.9523809523809523
+     }
+    },
+    "crps": {
+     "ci95": [
+      1.0727034517429688,
+      1.5123968114473787
+     ],
+     "mean": 1.282836455332537,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.11485588479598234,
+     "z": 11.169096451707546
+    },
+    "incumbent": {
+     "bias": {
+      "ci95": [
+       -0.9480457783157274,
+       -0.07625637583892611
+      ],
+      "mean": -0.4832910958904109,
+      "n_clusters": 8,
+      "n_obs": 146,
+      "se": 0.22475774346727634,
+      "z": -2.1502756186942045
+     },
+     "mae": 2.072600684931507,
+     "mae_ci": [
+      1.7416624858659682,
+      2.4636423777429464
+     ],
+     "n": 146,
+     "n_games": 8,
+     "rmse": 2.821457436204748
+    },
+    "mae": 1.7904166666666665,
+    "mae_ci": [
+     1.4885310220776662,
+     2.0969432136635606
+    ],
+    "model_version": [
+     "pf-nba-rebounds"
+    ],
+    "n": 168,
+    "n_games": 8,
+    "paired_vs_incumbent": {
+     "mae_diff": {
+      "ci95": [
+       -0.3706097335037623,
+       -0.03376639513237732
+      ],
+      "mean": -0.2037650684931507,
+      "n_clusters": 8,
+      "n_obs": 146,
+      "se": 0.08432409401397381,
+      "z": -2.416451322434412
+     },
+     "n": 146,
+     "note": "negative = challenger better"
+    },
+    "pit_var_ratio": 0.918004090252234,
+    "rmse": 2.4426165469099104,
+    "thresholds": {
+     "10": {
+      "brier": 0.05458027062917712,
+      "hit_rate": 0.06547619047619048,
+      "mean_p": 0.06754263842079318,
+      "n": 168
+     },
+     "4": {
+      "brier": 0.1615263509332468,
+      "hit_rate": 0.5416666666666666,
+      "mean_p": 0.4699583789330234,
+      "n": 168
+     },
+     "6": {
+      "brier": 0.12979986972842175,
+      "hit_rate": 0.27976190476190477,
+      "mean_p": 0.2618755586343968,
+      "n": 168
+     },
+     "8": {
+      "brier": 0.10631611770760865,
+      "hit_rate": 0.17857142857142858,
+      "mean_p": 0.13592385429601703,
+      "n": 168
+     }
+    }
+   },
+   "threes": {
+    "bias": {
+     "ci95": [
+      -0.27395329341317365,
+      0.003604651162790688
+     ],
+     "mean": -0.13845238095238094,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.07142403116225376,
+     "z": -1.9384565488590118
+    },
+    "calibration_thresholds": {
+     "bins": [
+      {
+       "bin": "0.0-0.2",
+       "ci95": [
+        0.013808562552754783,
+        0.4385283597726306
+       ],
+       "hit_rate": 0.09467455621301775,
+       "insufficient": false,
+       "mean_p": 0.06383608236018244,
+       "n": 338,
+       "n_games": 8
+      },
+      {
+       "bin": "0.2-0.4",
+       "ci95": [
+        0.12222716948184459,
+        0.6740251602119118
+       ],
+       "hit_rate": 0.3492063492063492,
+       "insufficient": false,
+       "mean_p": 0.2943315633257461,
+       "n": 126,
+       "n_games": 8
+      },
+      {
+       "bin": "0.4-0.6",
+       "ci95": [
+        0.2609137635152417,
+        0.8272059382876873
+       ],
+       "hit_rate": 0.5652173913043478,
+       "insufficient": false,
+       "mean_p": 0.5000812599416171,
+       "n": 92,
+       "n_games": 8
+      },
+      {
+       "bin": "0.6-0.8",
+       "ci95": [
+        0.3883015298243422,
+        0.9170996284789601
+       ],
+       "hit_rate": 0.726027397260274,
+       "insufficient": false,
+       "mean_p": 0.7065166003823266,
+       "n": 73,
+       "n_games": 8
+      },
+      {
+       "bin": "0.8-1.0",
+       "ci95": [
+        0.49078581803487603,
+        0.9648408571787188
+       ],
+       "hit_rate": 0.8372093023255814,
+       "insufficient": false,
+       "mean_p": 0.8650947308190348,
+       "n": 43,
+       "n_games": 8
+      }
+     ],
+     "ece": 0.038621298907580655,
+     "n": 672,
+     "status": "OK"
+    },
+    "coverage": {
+     "50": {
+      "pit_cover": 0.4583333333333333,
+      "range_cover": 0.7380952380952381
+     },
+     "80": {
+      "pit_cover": 0.75,
+      "range_cover": 0.9107142857142857
+     },
+     "90": {
+      "pit_cover": 0.8869047619047619,
+      "range_cover": 0.9523809523809523
+     }
+    },
+    "crps": {
+     "ci95": [
+      0.5510434181964808,
+      0.7124936164125292
+     ],
+     "mean": 0.6344133952420372,
+     "n_clusters": 8,
+     "n_obs": 168,
+     "se": 0.04104147378586642,
+     "z": 15.457860956750341
+    },
+    "incumbent": {
+     "bias": {
+      "ci95": [
+       -0.4026397260273972,
+       -0.07775761287391672
+      ],
+      "mean": -0.24714315068493153,
+      "n_clusters": 8,
+      "n_obs": 146,
+      "se": 0.0822811438116152,
+      "z": -3.003642623767751
+     },
+     "mae": 1.0195842465753424,
+     "mae_ci": [
+      0.914552804054054,
+      1.115457425280199
+     ],
+     "n": 146,
+     "n_games": 8,
+     "rmse": 1.3507736120055094
+    },
+    "mae": 0.9483333333333333,
+    "mae_ci": [
+     0.8395418481219381,
+     1.050182926829268
+    ],
+    "model_version": [
+     "pf-nba-threes"
+    ],
+    "n": 168,
+    "n_games": 8,
+    "paired_vs_incumbent": {
+     "mae_diff": {
+      "ci95": [
+       -0.06116019999999998,
+       0.0302365887263593
+      ],
+      "mean": -0.01931027397260275,
+      "n_clusters": 8,
+      "n_obs": 146,
+      "se": 0.023835935807771675,
+      "z": -0.8101328233274845
+     },
+     "n": 146,
+     "note": "negative = challenger better"
+    },
+    "pit_var_ratio": 1.0843083420586475,
+    "rmse": 1.263778348558684,
+    "thresholds": {
+     "1": {
+      "brier": 0.18060855030631875,
+      "hit_rate": 0.625,
+      "mean_p": 0.5842414825213188,
+      "n": 168
+     },
+     "2": {
+      "brier": 0.18670000164696446,
+      "hit_rate": 0.36904761904761907,
+      "mean_p": 0.32411364609063265,
+      "n": 168
+     },
+     "3": {
+      "brier": 0.13756996602210148,
+      "hit_rate": 0.20238095238095238,
+      "mean_p": 0.16485935135191856,
+      "n": 168
+     },
+     "4": {
+      "brier": 0.07220999730306706,
+      "hit_rate": 0.09523809523809523,
+      "mean_p": 0.07824167470602753,
+      "n": 168
+     }
+    }
+   }
+  },
+  "status": "OK",
+  "team": {
+   "margin_home": {
+    "bias": {
+     "ci95": [
+      -0.822499999999998,
+      6.773781250000002
+     ],
+     "mean": 2.8450000000000006,
+     "n_clusters": 8,
+     "n_obs": 8,
+     "se": 1.9939238064839044,
+     "z": 1.426834862369635
+    },
+    "mae": 5.459999999999999,
+    "mae_ci": [
+     3.434749999999999,
+     7.692656249999994
+    ],
+    "n": 8,
+    "n_games": 8,
+    "rmse": 6.271843827775049
+   },
+   "n_games": 8,
+   "n_team_games": 16,
+   "pace": {
+    "reason": "game_forecasts carry no expected-pace context (not invented)",
+    "status": "NO_DATA"
+   },
+   "status": "OK",
+   "team_points": {
+    "bias": {
+     "ci95": [
+      -10.932359375,
+      0.5072656249999923
+     ],
+     "mean": -5.1625000000000005,
+     "n_clusters": 8,
+     "n_obs": 16,
+     "se": 2.9215745754049407,
+     "z": -1.7670266038937101
+    },
+    "mae": 8.443749999999998,
+    "mae_ci": [
+     5.219046874999999,
+     12.268843749999995
+    ],
+    "n": 16,
+    "n_games": 8,
+    "rmse": 10.106615407741604
+   },
+   "team_points_coverage_80": {
+    "pit_cover": 0.8125,
+    "range_cover": 0.875
+   },
+   "team_points_crps": {
+    "ci95": [
+     3.9752240335263154,
+     8.277286971557361
+    ],
+    "mean": 5.810765179035121,
+    "n_clusters": 8,
+    "n_obs": 16,
+    "se": 1.128457002848141,
+    "z": 5.149301359616879
+   },
+   "total": {
+    "bias": {
+     "ci95": [
+      -21.56721874999999,
+      0.920062500000005
+     ],
+     "mean": -10.324999999999992,
+     "n_clusters": 8,
+     "n_obs": 8,
+     "se": 5.837469360768345,
+     "z": -1.7687459003024188
+    },
+    "mae": 15.404999999999998,
+    "mae_ci": [
+     7.872249999999998,
+     23.71090625
+    ],
+    "n": 8,
+    "n_games": 8,
+    "rmse": 19.215584170146894
+   }
+  }
+ },
+ "sample": {
+  "forecast_settlements": {
+   "n_games": 8,
+   "n_player_games": 322,
+   "n_rows": 3636
+  },
+  "paper_decisions": {
+   "n_contracts": 2255,
+   "n_decisions": 112656,
+   "n_games": 8,
+   "n_player_games": 101,
+   "n_theses": 412
+  },
+  "paper_settled": 38030,
+  "team_games": 8
+ },
+ "schema": "sift.paper_scorecard.v1",
+ "segments": {
+  "market": {
+   "all_candidates": {
+    "family": {
+     "game_spread": {
+      "ci95": [
+       -0.034746753246753255,
+       -0.0336783530494214
+      ],
+      "mean": -0.03421304347826087,
+      "n": 4600,
+      "n_clusters": 8,
+      "n_contracts": 263,
+      "n_decisions": 4600,
+      "n_games": 8,
+      "n_obs": 4600,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.06720787123829368,
+      "se": 0.0002742646874077536,
+      "suppressed": false,
+      "z": -124.74461733163557
+     },
+     "game_total": {
+      "ci95": [
+       -0.03695729480330257,
+       -0.03561359979101358
+      ],
+      "mean": -0.03630541871921182,
+      "n": 4060,
+      "n_clusters": 8,
+      "n_contracts": 232,
+      "n_decisions": 4060,
+      "n_games": 8,
+      "n_obs": 4060,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.07113110031222401,
+      "se": 0.00034077001493892635,
+      "suppressed": false,
+      "z": -106.5393582992288
+     },
+     "game_winner": {
+      "ci95": [
+       -0.036344929245283035,
+       -0.03197202877397832
+      ],
+      "mean": -0.03428240740740741,
+      "n": 432,
+      "n_clusters": 8,
+      "n_contracts": 16,
+      "n_decisions": 432,
+      "n_games": 8,
+      "n_obs": 432,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.06769666773323582,
+      "se": 0.0011408872588737982,
+      "suppressed": false,
+      "z": -30.04890022283931
+     },
+     "player_assists": {
+      "ci95": [
+       -0.06753346333489026,
+       -0.058334654763451885
+      ],
+      "mean": -0.06291685494803435,
+      "n": 4426,
+      "n_clusters": 8,
+      "n_contracts": 273,
+      "n_decisions": 4426,
+      "n_games": 8,
+      "n_obs": 4426,
+      "n_player_games": 78,
+      "n_theses": 78,
+      "roi": -0.11701403479283974,
+      "se": 0.002392274417978911,
+      "suppressed": false,
+      "z": -26.30001578213131
+     },
+     "player_points": {
+      "ci95": [
+       -0.05518142570245581,
+       -0.04915731477480621
+      ],
+      "mean": -0.05189616672869371,
+      "n": 5374,
+      "n_clusters": 8,
+      "n_contracts": 328,
+      "n_decisions": 5374,
+      "n_games": 8,
+      "n_obs": 5374,
+      "n_player_games": 92,
+      "n_theses": 92,
+      "roi": -0.09874029909930321,
+      "se": 0.0015442316442360654,
+      "suppressed": false,
+      "z": -33.60646501604806
+     },
+     "player_pra": {
+      "ci95": [
+       -0.15078387104948981,
+       -0.10601681345076062
+      ],
+      "mean": -0.1252826086956522,
+      "n": 2300,
+      "n_clusters": 8,
+      "n_contracts": 132,
+      "n_decisions": 2300,
+      "n_games": 8,
+      "n_obs": 2300,
+      "n_player_games": 42,
+      "n_theses": 42,
+      "roi": -0.2096490206920638,
+      "se": 0.011688957431289181,
+      "suppressed": false,
+      "z": -10.718031050424889
+     },
+     "player_rebounds": {
+      "ci95": [
+       -0.0868355012790777,
+       -0.06874607716180724
+      ],
+      "mean": -0.07792504258943782,
+      "n": 5870,
+      "n_clusters": 8,
+      "n_contracts": 355,
+      "n_decisions": 5870,
+      "n_games": 8,
+      "n_obs": 5870,
+      "n_player_games": 84,
+      "n_theses": 84,
+      "roi": -0.14111890614491351,
+      "se": 0.004544357871065418,
+      "suppressed": false,
+      "z": -17.147646554334507
+     },
+     "player_threes": {
+      "ci95": [
+       -0.06753261994385007,
+       -0.05463943474605912
+      ],
+      "mean": -0.06086836935166994,
+      "n": 5090,
+      "n_clusters": 8,
+      "n_contracts": 331,
+      "n_decisions": 5090,
+      "n_games": 8,
+      "n_obs": 5090,
+      "n_player_games": 79,
+      "n_theses": 79,
+      "roi": -0.11386547981756233,
+      "se": 0.003269267817428103,
+      "suppressed": false,
+      "z": -18.618349046593075
+     },
+     "team_total": {
+      "ci95": [
+       -0.04407959599703482,
+       -0.040281602774542
+      ],
+      "mean": -0.0419718045112782,
+      "n": 5320,
+      "n_clusters": 8,
+      "n_contracts": 304,
+      "n_decisions": 5320,
+      "n_games": 8,
+      "n_obs": 5320,
+      "n_player_games": 8,
+      "n_theses": 16,
+      "roi": -0.08131582397412918,
+      "se": 0.0009922346390971515,
+      "suppressed": false,
+      "z": -42.30028146313149
+     }
+    },
+    "freshness": {
+     "2-6h": {
+      "ci95": [
+       -0.06374154080151413,
+       -0.05447217916579786
+      ],
+      "mean": -0.05922508979646136,
+      "n": 15034,
+      "n_clusters": 8,
+      "n_contracts": 2179,
+      "n_decisions": 15034,
+      "n_games": 8,
+      "n_obs": 15034,
+      "n_player_games": 98,
+      "n_theses": 399,
+      "roi": -0.11104805900679188,
+      "se": 0.002396984660471039,
+      "suppressed": false,
+      "z": -24.708163874867203
+     },
+     "6-12h": {
+      "ci95": [
+       -0.07435713816484538,
+       -0.059585175110506636
+      ],
+      "mean": -0.06690040278286342,
+      "n": 5462,
+      "n_clusters": 8,
+      "n_contracts": 2010,
+      "n_decisions": 5462,
+      "n_games": 8,
+      "n_obs": 5462,
+      "n_player_games": 82,
+      "n_theses": 351,
+      "roi": -0.12366825055165219,
+      "se": 0.0038111789792249382,
+      "suppressed": false,
+      "z": -17.55372895042275
+     },
+     "<2h": {
+      "n": 16824,
+      "n_contracts": 1936,
+      "n_decisions": 16824,
+      "n_games": 7,
+      "n_player_games": 87,
+      "n_theses": 353,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.10081740797113681,
+      "suppressed": true
+     },
+     ">12h": {
+      "ci95": [
+       -0.03986486486486487,
+       -0.03412152225755166
+      ],
+      "mean": -0.03703947368421054,
+      "n": 152,
+      "n_clusters": 8,
+      "n_contracts": 16,
+      "n_decisions": 152,
+      "n_games": 8,
+      "n_obs": 152,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.07277662874870734,
+      "se": 0.0014646314111431628,
+      "suppressed": false,
+      "z": -25.289279884623515
+     }
+    },
+    "gate": {
+     "BLOCK": {
+      "n": 274,
+      "n_contracts": 20,
+      "n_decisions": 274,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.22666508228863405,
+      "suppressed": true
+     },
+     "PASS": {
+      "ci95": [
+       -0.07726914141978063,
+       -0.05978003936002462
+      ],
+      "mean": -0.06792241739857799,
+      "n": 9564,
+      "n_clusters": 8,
+      "n_contracts": 608,
+      "n_decisions": 9564,
+      "n_games": 8,
+      "n_obs": 9564,
+      "n_player_games": 47,
+      "n_theses": 159,
+      "roi": -0.12536474093744185,
+      "se": 0.004676773121155643,
+      "suppressed": false,
+      "z": -14.523350959944402
+     },
+     "REVIEW": {
+      "ci95": [
+       -0.07363915373766813,
+       -0.06614282665992953
+      ],
+      "mean": -0.06995840266222962,
+      "n": 13222,
+      "n_clusters": 8,
+      "n_contracts": 1079,
+      "n_decisions": 13222,
+      "n_games": 8,
+      "n_obs": 13222,
+      "n_player_games": 80,
+      "n_theses": 288,
+      "roi": -0.12863233838041063,
+      "se": 0.001954036863907673,
+      "suppressed": false,
+      "z": -35.80198713463735
+     },
+     "unknown": {
+      "ci95": [
+       -0.03837262995463897,
+       -0.03716214580582008
+      ],
+      "mean": -0.03766860949208993,
+      "n": 14412,
+      "n_clusters": 8,
+      "n_contracts": 815,
+      "n_decisions": 14412,
+      "n_games": 8,
+      "n_obs": 14412,
+      "n_player_games": 8,
+      "n_theses": 32,
+      "roi": -0.07357443434774655,
+      "se": 0.0003214834596471245,
+      "suppressed": false,
+      "z": -117.17122098112537
+     }
+    },
+    "horizon": {
+     "LAST_VALID": {
+      "ci95": [
+       -0.06197181294052313,
+       -0.05377442757747874
+      ],
+      "mean": -0.058026315789473676,
+      "n": 4408,
+      "n_clusters": 8,
+      "n_contracts": 2204,
+      "n_decisions": 4408,
+      "n_games": 8,
+      "n_obs": 4408,
+      "n_player_games": 100,
+      "n_theses": 407,
+      "roi": -0.1090378934175694,
+      "se": 0.0021482857433200906,
+      "suppressed": false,
+      "z": -27.010520350889777
+     },
+     "LIVE": {
+      "ci95": [
+       -0.06544827608436249,
+       -0.05583454719520716
+      ],
+      "mean": -0.06105361036296011,
+      "n": 15594,
+      "n_clusters": 8,
+      "n_contracts": 2165,
+      "n_decisions": 15594,
+      "n_games": 8,
+      "n_obs": 15594,
+      "n_player_games": 96,
+      "n_theses": 392,
+      "roi": -0.11409961410320923,
+      "se": 0.0025084448098472586,
+      "suppressed": false,
+      "z": -24.33922808398472
+     },
+     "T-10": {
+      "ci95": [
+       -0.05438156712915453,
+       -0.047723777072807935
+      ],
+      "mean": -0.051139440433212995,
+      "n": 4432,
+      "n_clusters": 8,
+      "n_contracts": 2216,
+      "n_decisions": 4432,
+      "n_games": 8,
+      "n_obs": 4432,
+      "n_player_games": 100,
+      "n_theses": 406,
+      "roi": -0.09737456017116268,
+      "se": 0.0017018992459380089,
+      "suppressed": false,
+      "z": -30.04845354698261
+     },
+     "T-30": {
+      "ci95": [
+       -0.05552545467346177,
+       -0.04819953302996363
+      ],
+      "mean": -0.05201822323462415,
+      "n": 4390,
+      "n_clusters": 8,
+      "n_contracts": 2195,
+      "n_decisions": 4390,
+      "n_games": 8,
+      "n_obs": 4390,
+      "n_player_games": 98,
+      "n_theses": 400,
+      "roi": -0.09888068587758987,
+      "se": 0.0019301122356544906,
+      "suppressed": false,
+      "z": -26.95087999221198
+     },
+     "T-60": {
+      "ci95": [
+       -0.0602253116011505,
+       -0.05151196621538504
+      ],
+      "mean": -0.05615083025830258,
+      "n": 4336,
+      "n_clusters": 8,
+      "n_contracts": 2168,
+      "n_decisions": 4336,
+      "n_games": 8,
+      "n_obs": 4336,
+      "n_player_games": 97,
+      "n_theses": 397,
+      "roi": -0.10589657827091113,
+      "se": 0.002271305016561726,
+      "suppressed": false,
+      "z": -24.72183605850659
+     },
+     "T-90": {
+      "ci95": [
+       -0.06109911765124058,
+       -0.05378376372103337
+      ],
+      "mean": -0.057815398886827456,
+      "n": 4312,
+      "n_clusters": 8,
+      "n_contracts": 2156,
+      "n_decisions": 4312,
+      "n_games": 8,
+      "n_obs": 4312,
+      "n_player_games": 96,
+      "n_theses": 394,
+      "roi": -0.10869849574885543,
+      "se": 0.00187546299863971,
+      "suppressed": false,
+      "z": -30.827267148838168
+     }
+    },
+    "p_sd_tercile": {
+     "high_unc": {
+      "ci95": [
+       -0.0647016607407559,
+       -0.057068380208383895
+      ],
+      "mean": -0.06116724041309743,
+      "n": 12491,
+      "n_clusters": 8,
+      "n_contracts": 747,
+      "n_decisions": 12491,
+      "n_games": 8,
+      "n_obs": 12491,
+      "n_player_games": 94,
+      "n_theses": 269,
+      "roi": -0.1148711225508475,
+      "se": 0.0019668845023740485,
+      "suppressed": false,
+      "z": -31.098542054334143
+     },
+     "low_unc": {
+      "ci95": [
+       -0.05661476570066293,
+       -0.04740017762654332
+      ],
+      "mean": -0.051842926907373306,
+      "n": 12491,
+      "n_clusters": 8,
+      "n_contracts": 800,
+      "n_decisions": 12491,
+      "n_games": 8,
+      "n_obs": 12491,
+      "n_player_games": 99,
+      "n_theses": 341,
+      "roi": -0.09798764959469979,
+      "se": 0.002330756426527796,
+      "suppressed": false,
+      "z": -22.242962120501545
+     },
+     "mid_unc": {
+      "ci95": [
+       -0.06420704460546052,
+       -0.05521397033022913
+      ],
+      "mean": -0.05956925540432346,
+      "n": 12490,
+      "n_clusters": 8,
+      "n_contracts": 823,
+      "n_decisions": 12490,
+      "n_games": 8,
+      "n_obs": 12490,
+      "n_player_games": 100,
+      "n_theses": 348,
+      "roi": -0.1117195793810841,
+      "se": 0.0022954349804346634,
+      "suppressed": false,
+      "z": -25.95118394207072
+     }
+    },
+    "price_range": {
+     "0.0-0.2": {
+      "ci95": [
+       -0.09382575585226215,
+       0.013262015358502651
+      ],
+      "mean": -0.044816035566457156,
+      "n": 6523,
+      "n_clusters": 8,
+      "n_contracts": 893,
+      "n_decisions": 6523,
+      "n_games": 8,
+      "n_obs": 6523,
+      "n_player_games": 100,
+      "n_theses": 360,
+      "roi": -0.3740355950202803,
+      "se": 0.02761192253062352,
+      "suppressed": false,
+      "z": -1.6230682784493942
+     },
+     "0.2-0.4": {
+      "ci95": [
+       -0.13083037855943982,
+       -0.0527967483500863
+      ],
+      "mean": -0.09142932419971019,
+      "n": 7591,
+      "n_clusters": 8,
+      "n_contracts": 1089,
+      "n_decisions": 7591,
+      "n_games": 8,
+      "n_obs": 7591,
+      "n_player_games": 100,
+      "n_theses": 387,
+      "roi": -0.31106828317235524,
+      "se": 0.020054975554558294,
+      "suppressed": false,
+      "z": -4.5589347117867325
+     },
+     "0.4-0.6": {
+      "ci95": [
+       -0.06881130382775119,
+       -0.051999034212128224
+      ],
+      "mean": -0.06103430582026096,
+      "n": 6821,
+      "n_clusters": 8,
+      "n_contracts": 658,
+      "n_decisions": 6821,
+      "n_games": 8,
+      "n_obs": 6821,
+      "n_player_games": 99,
+      "n_theses": 377,
+      "roi": -0.12466611168339602,
+      "se": 0.004311565122256404,
+      "suppressed": false,
+      "z": -14.155951282099485
+     },
+     "0.6-0.8": {
+      "ci95": [
+       -0.0641326841144249,
+       0.02080938151759411
+      ],
+      "mean": -0.02092360906682367,
+      "n": 6794,
+      "n_clusters": 8,
+      "n_contracts": 973,
+      "n_decisions": 6794,
+      "n_games": 8,
+      "n_obs": 6794,
+      "n_player_games": 99,
+      "n_theses": 378,
+      "roi": -0.030046478989340934,
+      "se": 0.021622582284875527,
+      "suppressed": false,
+      "z": -0.9676739249344528
+     },
+     "0.8-1.0": {
+      "ci95": [
+       -0.10718186005587095,
+       -0.022826046233450747
+      ],
+      "mean": -0.06268962331930615,
+      "n": 9743,
+      "n_clusters": 8,
+      "n_contracts": 1316,
+      "n_decisions": 9743,
+      "n_games": 8,
+      "n_obs": 9743,
+      "n_player_games": 100,
+      "n_theses": 406,
+      "roi": -0.06912186592880512,
+      "se": 0.0220061925773871,
+      "suppressed": false,
+      "z": -2.848726470917287
+     }
+    },
+    "side": {
+     "NO": {
+      "ci95": [
+       -0.19117340180639583,
+       -0.08967428443398856
+      ],
+      "mean": -0.13898244022203246,
+      "n": 18736,
+      "n_clusters": 8,
+      "n_contracts": 2234,
+      "n_decisions": 18736,
+      "n_games": 8,
+      "n_obs": 18736,
+      "n_player_games": 100,
+      "n_theses": 407,
+      "roi": -0.22767531998569476,
+      "se": 0.02664026964881911,
+      "suppressed": false,
+      "z": -5.217005760607726
+     },
+     "YES": {
+      "ci95": [
+       -0.025112286892869637,
+       0.07427283719907662
+      ],
+      "mean": 0.02392960076857387,
+      "n": 18736,
+      "n_clusters": 8,
+      "n_contracts": 2234,
+      "n_decisions": 18736,
+      "n_games": 8,
+      "n_obs": 18736,
+      "n_player_games": 100,
+      "n_theses": 407,
+      "roi": 0.05285560186031157,
+      "se": 0.025963786903060927,
+      "suppressed": false,
+      "z": 0.9216529490832001
+     }
+    },
+    "strategy_id": {
+     "PF_ALL_CANDIDATES_V1": {
+      "ci95": [
+       -0.0605388504523683,
+       -0.05406702311514363
+      ],
+      "mean": -0.0575264197267293,
+      "n": 37472,
+      "n_clusters": 8,
+      "n_contracts": 2234,
+      "n_decisions": 37472,
+      "n_games": 8,
+      "n_obs": 37472,
+      "n_player_games": 100,
+      "n_theses": 407,
+      "roi": -0.10821609584089698,
+      "se": 0.0016747290744351835,
+      "suppressed": false,
+      "z": -34.349687125441804
+     }
+    },
+    "team": {
+     "ATL": {
+      "n": 2542,
+      "n_contracts": 148,
+      "n_decisions": 2542,
+      "n_games": 1,
+      "n_player_games": 8,
+      "n_theses": 33,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09720306972840098,
+      "suppressed": true
+     },
+     "BKN": {
+      "n": 1556,
+      "n_contracts": 98,
+      "n_decisions": 1556,
+      "n_games": 1,
+      "n_player_games": 6,
+      "n_theses": 21,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09335102788120075,
+      "suppressed": true
+     },
+     "CHA": {
+      "n": 1498,
+      "n_contracts": 111,
+      "n_decisions": 1498,
+      "n_games": 1,
+      "n_player_games": 6,
+      "n_theses": 22,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.1234541998864562,
+      "suppressed": true
+     },
+     "CHI": {
+      "n": 2380,
+      "n_contracts": 136,
+      "n_decisions": 2380,
+      "n_games": 1,
+      "n_player_games": 7,
+      "n_theses": 28,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09869745884609238,
+      "suppressed": true
+     },
+     "CLE": {
+      "n": 2496,
+      "n_contracts": 158,
+      "n_decisions": 2496,
+      "n_games": 1,
+      "n_player_games": 8,
+      "n_theses": 33,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09461114513165954,
+      "suppressed": true
+     },
+     "DAL": {
+      "n": 1786,
+      "n_contracts": 104,
+      "n_decisions": 1786,
+      "n_games": 1,
+      "n_player_games": 7,
+      "n_theses": 23,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.15414909420831716,
+      "suppressed": true
+     },
+     "DEN": {
+      "n": 2660,
+      "n_contracts": 136,
+      "n_decisions": 2660,
+      "n_games": 1,
+      "n_player_games": 6,
+      "n_theses": 25,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.11657504277339914,
+      "suppressed": true
+     },
+     "GSW": {
+      "n": 1122,
+      "n_contracts": 60,
+      "n_decisions": 1122,
+      "n_games": 1,
+      "n_player_games": 3,
+      "n_theses": 10,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.11072179397337072,
+      "suppressed": true
+     },
+     "HOU": {
+      "n": 2166,
+      "n_contracts": 135,
+      "n_decisions": 2166,
+      "n_games": 1,
+      "n_player_games": 8,
+      "n_theses": 26,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.13173759015159842,
+      "suppressed": true
+     },
+     "MIA": {
+      "n": 1780,
+      "n_contracts": 131,
+      "n_decisions": 1780,
+      "n_games": 1,
+      "n_player_games": 7,
+      "n_theses": 27,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.11087119097525777,
+      "suppressed": true
+     },
+     "MIL": {
+      "n": 1788,
+      "n_contracts": 114,
+      "n_decisions": 1788,
+      "n_games": 1,
+      "n_player_games": 7,
+      "n_theses": 25,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.1071150487173552,
+      "suppressed": true
+     },
+     "NOP": {
+      "n": 2202,
+      "n_contracts": 125,
+      "n_decisions": 2202,
+      "n_games": 1,
+      "n_player_games": 7,
+      "n_theses": 29,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.11328506311062819,
+      "suppressed": true
+     },
+     "PHI": {
+      "n": 2126,
+      "n_contracts": 141,
+      "n_decisions": 2126,
+      "n_games": 1,
+      "n_player_games": 7,
+      "n_theses": 26,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.12378879554259349,
+      "suppressed": true
+     },
+     "PHX": {
+      "n": 2572,
+      "n_contracts": 131,
+      "n_decisions": 2572,
+      "n_games": 1,
+      "n_player_games": 6,
+      "n_theses": 25,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.12403011667337202,
+      "suppressed": true
+     },
+     "SAS": {
+      "n": 2652,
+      "n_contracts": 154,
+      "n_decisions": 2652,
+      "n_games": 1,
+      "n_player_games": 8,
+      "n_theses": 30,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09972047018348625,
+      "suppressed": true
+     },
+     "WAS": {
+      "n": 2086,
+      "n_contracts": 120,
+      "n_decisions": 2086,
+      "n_games": 1,
+      "n_player_games": 7,
+      "n_theses": 24,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.10656604455691626,
+      "suppressed": true
+     },
+     "nan": {
+      "ci95": [
+       -0.03695729480330257,
+       -0.03561359979101358
+      ],
+      "mean": -0.03630541871921182,
+      "n": 4060,
+      "n_clusters": 8,
+      "n_contracts": 232,
+      "n_decisions": 4060,
+      "n_games": 8,
+      "n_obs": 4060,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.07113110031222401,
+      "se": 0.00034077001493892635,
+      "suppressed": false,
+      "z": -106.5393582992288
+     }
+    },
+    "threshold": {
+     "0.5": {
+      "ci95": [
+       -0.10580285036412891,
+       -0.07250681555676998
+      ],
+      "mean": -0.088152,
+      "n": 1250,
+      "n_clusters": 8,
+      "n_contracts": 77,
+      "n_decisions": 1250,
+      "n_games": 8,
+      "n_obs": 1250,
+      "n_player_games": 77,
+      "n_theses": 77,
+      "roi": -0.15710904528344935,
+      "se": 0.008361810934539334,
+      "suppressed": false,
+      "z": -10.542213964187942
+     },
+     "1.5": {
+      "ci95": [
+       -0.09931106225647793,
+       -0.07774329244690305
+      ],
+      "mean": -0.08878912685337727,
+      "n": 3642,
+      "n_clusters": 8,
+      "n_contracts": 222,
+      "n_decisions": 3642,
+      "n_games": 8,
+      "n_obs": 3642,
+      "n_player_games": 97,
+      "n_theses": 214,
+      "roi": -0.15809853473943594,
+      "se": 0.005620799974717796,
+      "suppressed": false,
+      "z": -15.796528475083319
+     },
+     "10.5": {
+      "ci95": [
+       -0.037476785714285726,
+       -0.033217117616934126
+      ],
+      "mean": -0.03544444444444446,
+      "n": 180,
+      "n_clusters": 8,
+      "n_contracts": 10,
+      "n_decisions": 180,
+      "n_games": 8,
+      "n_obs": 180,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.06974964469224885,
+      "se": 0.0011547399542007853,
+      "suppressed": false,
+      "z": -30.694741543758347
+     },
+     "100.5": {
+      "n": 90,
+      "n_contracts": 5,
+      "n_decisions": 90,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08192150975766674,
+      "suppressed": true
+     },
+     "101.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0874742386077399,
+      "suppressed": true
+     },
+     "102.5": {
+      "n": 108,
+      "n_contracts": 6,
+      "n_decisions": 108,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0864461045891142,
+      "suppressed": true
+     },
+     "103.5": {
+      "n": 118,
+      "n_contracts": 7,
+      "n_decisions": 118,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08200754469411185,
+      "suppressed": true
+     },
+     "104.5": {
+      "n": 126,
+      "n_contracts": 7,
+      "n_decisions": 126,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08722884204094102,
+      "suppressed": true
+     },
+     "105.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07826339480180049,
+      "suppressed": true
+     },
+     "106.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08722618105040908,
+      "suppressed": true
+     },
+     "107.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08013331401246197,
+      "suppressed": true
+     },
+     "108.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0795847750865052,
+      "suppressed": true
+     },
+     "109.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08009286128845035,
+      "suppressed": true
+     },
+     "11.5": {
+      "ci95": [
+       -0.053661241883116884,
+       -0.04644566191902521
+      ],
+      "mean": -0.04949664429530201,
+      "n": 596,
+      "n_clusters": 8,
+      "n_contracts": 36,
+      "n_decisions": 596,
+      "n_games": 8,
+      "n_obs": 596,
+      "n_player_games": 31,
+      "n_theses": 33,
+      "roi": -0.09444835755907023,
+      "se": 0.0018399076413959435,
+      "suppressed": false,
+      "z": -26.901700488481453
+     },
+     "110.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08091562416821933,
+      "suppressed": true
+     },
+     "111.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07949912638322656,
+      "suppressed": true
+     },
+     "112.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08522500995619274,
+      "suppressed": true
+     },
+     "113.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08236321303841676,
+      "suppressed": true
+     },
+     "114.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08519701810436636,
+      "suppressed": true
+     },
+     "115.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08071814333673918,
+      "suppressed": true
+     },
+     "116.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08604867668572952,
+      "suppressed": true
+     },
+     "117.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08432683919744115,
+      "suppressed": true
+     },
+     "118.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08367699880271387,
+      "suppressed": true
+     },
+     "119.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08303039115893557,
+      "suppressed": true
+     },
+     "12.5": {
+      "ci95": [
+       -0.0359341517857143,
+       -0.03166613924050634
+      ],
+      "mean": -0.034187499999999996,
+      "n": 160,
+      "n_clusters": 8,
+      "n_contracts": 9,
+      "n_decisions": 160,
+      "n_games": 8,
+      "n_obs": 160,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.06724858618146054,
+      "se": 0.0010918981175139137,
+      "suppressed": false,
+      "z": -31.310155637816962
+     },
+     "120.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08273476988560788,
+      "suppressed": true
+     },
+     "121.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0828617036714555,
+      "suppressed": true
+     },
+     "122.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0851233094669849,
+      "suppressed": true
+     },
+     "123.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07901234567901234,
+      "suppressed": true
+     },
+     "124.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08538522637013506,
+      "suppressed": true
+     },
+     "125.5": {
+      "n": 134,
+      "n_contracts": 8,
+      "n_decisions": 134,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07617527568195008,
+      "suppressed": true
+     },
+     "126.5": {
+      "n": 146,
+      "n_contracts": 8,
+      "n_decisions": 146,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07765957446808508,
+      "suppressed": true
+     },
+     "127.5": {
+      "n": 118,
+      "n_contracts": 7,
+      "n_decisions": 118,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07251404030393128,
+      "suppressed": true
+     },
+     "128.5": {
+      "n": 108,
+      "n_contracts": 6,
+      "n_decisions": 108,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07571660356949704,
+      "suppressed": true
+     },
+     "129.5": {
+      "n": 102,
+      "n_contracts": 6,
+      "n_decisions": 102,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07972665148063782,
+      "suppressed": true
+     },
+     "13.5": {
+      "ci95": [
+       -0.058038666398529073,
+       -0.040413793103448274
+      ],
+      "mean": -0.04877659574468086,
+      "n": 376,
+      "n_clusters": 8,
+      "n_contracts": 22,
+      "n_decisions": 376,
+      "n_games": 8,
+      "n_obs": 376,
+      "n_player_games": 18,
+      "n_theses": 19,
+      "roi": -0.0929596026154392,
+      "se": 0.0046263018841846216,
+      "suppressed": false,
+      "z": -10.543323147896489
+     },
+     "130.5": {
+      "n": 108,
+      "n_contracts": 6,
+      "n_decisions": 108,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07369942196531791,
+      "suppressed": true
+     },
+     "131.5": {
+      "n": 102,
+      "n_contracts": 6,
+      "n_decisions": 102,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08202608202608203,
+      "suppressed": true
+     },
+     "132.5": {
+      "n": 108,
+      "n_contracts": 6,
+      "n_decisions": 108,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08197892480800141,
+      "suppressed": true
+     },
+     "133.5": {
+      "n": 68,
+      "n_contracts": 4,
+      "n_decisions": 68,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07760090960773165,
+      "suppressed": true
+     },
+     "134.5": {
+      "n": 70,
+      "n_contracts": 4,
+      "n_decisions": 70,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07792567942318357,
+      "suppressed": true
+     },
+     "135.5": {
+      "n": 50,
+      "n_contracts": 3,
+      "n_decisions": 50,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07593955831073226,
+      "suppressed": true
+     },
+     "136.5": {
+      "n": 70,
+      "n_contracts": 4,
+      "n_decisions": 70,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07144835225699252,
+      "suppressed": true
+     },
+     "137.5": {
+      "n": 50,
+      "n_contracts": 3,
+      "n_decisions": 50,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0716221447928765,
+      "suppressed": true
+     },
+     "138.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0794520547945206,
+      "suppressed": true
+     },
+     "139.5": {
+      "n": 50,
+      "n_contracts": 3,
+      "n_decisions": 50,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07443116081758581,
+      "suppressed": true
+     },
+     "14.5": {
+      "ci95": [
+       -0.06161600261644124,
+       -0.055241568914956025
+      ],
+      "mean": -0.058517406962785116,
+      "n": 1666,
+      "n_clusters": 8,
+      "n_contracts": 102,
+      "n_decisions": 1666,
+      "n_games": 8,
+      "n_obs": 1666,
+      "n_player_games": 96,
+      "n_theses": 101,
+      "roi": -0.11015694737912565,
+      "se": 0.0016182233563234454,
+      "suppressed": false,
+      "z": -36.161514252108496
+     },
+     "140.5": {
+      "n": 38,
+      "n_contracts": 2,
+      "n_decisions": 38,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0717557251908397,
+      "suppressed": true
+     },
+     "141.5": {
+      "n": 16,
+      "n_contracts": 1,
+      "n_decisions": 16,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.05990220048899756,
+      "suppressed": true
+     },
+     "142.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0813397129186603,
+      "suppressed": true
+     },
+     "15.5": {
+      "ci95": [
+       -0.0529136690647482,
+       -0.034381443298969076
+      ],
+      "mean": -0.043145161290322566,
+      "n": 248,
+      "n_clusters": 8,
+      "n_contracts": 14,
+      "n_decisions": 248,
+      "n_games": 8,
+      "n_obs": 248,
+      "n_player_games": 12,
+      "n_theses": 12,
+      "roi": -0.08311325151468074,
+      "se": 0.004846104290828936,
+      "suppressed": false,
+      "z": -8.903060830113192
+     },
+     "16.5": {
+      "ci95": [
+       -0.036143271221532096,
+       -0.030280329705505774
+      ],
+      "mean": -0.03349999999999999,
+      "n": 140,
+      "n_clusters": 8,
+      "n_contracts": 8,
+      "n_decisions": 140,
+      "n_games": 8,
+      "n_obs": 140,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.06580608951873161,
+      "se": 0.001559182458847239,
+      "suppressed": false,
+      "z": -21.485618831786866
+     },
+     "17.5": {
+      "n": 124,
+      "n_contracts": 7,
+      "n_decisions": 124,
+      "n_games": 6,
+      "n_player_games": 7,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07921875000000002,
+      "suppressed": true
+     },
+     "18.5": {
+      "n": 120,
+      "n_contracts": 7,
+      "n_decisions": 120,
+      "n_games": 7,
+      "n_player_games": 7,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06306306306306309,
+      "suppressed": true
+     },
+     "19.5": {
+      "ci95": [
+       -0.0654305652544259,
+       -0.05451839747262539
+      ],
+      "mean": -0.05994897959183673,
+      "n": 1764,
+      "n_clusters": 8,
+      "n_contracts": 105,
+      "n_decisions": 1764,
+      "n_games": 8,
+      "n_obs": 1764,
+      "n_player_games": 90,
+      "n_theses": 105,
+      "roi": -0.11222302402580868,
+      "se": 0.002813395053800875,
+      "suppressed": false,
+      "z": -21.30841152608345
+     },
+     "197.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.060665362035225046,
+      "suppressed": true
+     },
+     "199.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06341463414634148,
+      "suppressed": true
+     },
+     "2.5": {
+      "ci95": [
+       -0.05390259740259739,
+       -0.04898978607382551
+      ],
+      "mean": -0.05155660377358491,
+      "n": 1484,
+      "n_clusters": 8,
+      "n_contracts": 91,
+      "n_decisions": 1484,
+      "n_games": 8,
+      "n_obs": 1484,
+      "n_player_games": 87,
+      "n_theses": 87,
+      "roi": -0.09822196546633291,
+      "se": 0.0012267728587883634,
+      "suppressed": false,
+      "z": -42.026201838623486
+     },
+     "20.5": {
+      "n": 120,
+      "n_contracts": 7,
+      "n_decisions": 120,
+      "n_games": 7,
+      "n_player_games": 7,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06382978723404258,
+      "suppressed": true
+     },
+     "201.5": {
+      "n": 36,
+      "n_contracts": 2,
+      "n_decisions": 36,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06137968495382946,
+      "suppressed": true
+     },
+     "202.5": {
+      "n": 52,
+      "n_contracts": 3,
+      "n_decisions": 52,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06376594148537135,
+      "suppressed": true
+     },
+     "203.5": {
+      "n": 36,
+      "n_contracts": 2,
+      "n_decisions": 36,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.057283142389525386,
+      "suppressed": true
+     },
+     "204.5": {
+      "n": 66,
+      "n_contracts": 4,
+      "n_decisions": 66,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06216696269982238,
+      "suppressed": true
+     },
+     "205.5": {
+      "n": 36,
+      "n_contracts": 2,
+      "n_decisions": 36,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06630434782608695,
+      "suppressed": true
+     },
+     "206.5": {
+      "n": 66,
+      "n_contracts": 4,
+      "n_decisions": 66,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06188925081433224,
+      "suppressed": true
+     },
+     "207.5": {
+      "n": 36,
+      "n_contracts": 2,
+      "n_decisions": 36,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07123436650353454,
+      "suppressed": true
+     },
+     "208.5": {
+      "n": 66,
+      "n_contracts": 4,
+      "n_decisions": 66,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06188925081433224,
+      "suppressed": true
+     },
+     "209.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06517168885774353,
+      "suppressed": true
+     },
+     "21.5": {
+      "n": 90,
+      "n_contracts": 5,
+      "n_decisions": 90,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.065359477124183,
+      "suppressed": true
+     },
+     "210.5": {
+      "n": 66,
+      "n_contracts": 4,
+      "n_decisions": 66,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0688127584170112,
+      "suppressed": true
+     },
+     "211.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06764808973010866,
+      "suppressed": true
+     },
+     "212.5": {
+      "n": 66,
+      "n_contracts": 4,
+      "n_decisions": 66,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07142857142857138,
+      "suppressed": true
+     },
+     "213.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07399650959860388,
+      "suppressed": true
+     },
+     "214.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06927921623512946,
+      "suppressed": true
+     },
+     "215.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07788595271210012,
+      "suppressed": true
+     },
+     "216.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07726218097447796,
+      "suppressed": true
+     },
+     "217.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07499128008371114,
+      "suppressed": true
+     },
+     "218.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0751687223644403,
+      "suppressed": true
+     },
+     "219.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06783831282952547,
+      "suppressed": true
+     },
+     "22.5": {
+      "n": 100,
+      "n_contracts": 6,
+      "n_decisions": 100,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07117716073523661,
+      "suppressed": true
+     },
+     "220.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07117771013814096,
+      "suppressed": true
+     },
+     "221.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06997187060478202,
+      "suppressed": true
+     },
+     "222.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07595526561043801,
+      "suppressed": true
+     },
+     "223.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07205623901581724,
+      "suppressed": true
+     },
+     "224.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0733644859813084,
+      "suppressed": true
+     },
+     "225.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07323943661971831,
+      "suppressed": true
+     },
+     "226.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07395272642171775,
+      "suppressed": true
+     },
+     "227.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07551808921671933,
+      "suppressed": true
+     },
+     "228.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07268464243845249,
+      "suppressed": true
+     },
+     "229.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07746232036452853,
+      "suppressed": true
+     },
+     "23.5": {
+      "n": 90,
+      "n_contracts": 5,
+      "n_decisions": 90,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.061575282854656216,
+      "suppressed": true
+     },
+     "230.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07454289732770746,
+      "suppressed": true
+     },
+     "231.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07389162561576348,
+      "suppressed": true
+     },
+     "232.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07215041128084608,
+      "suppressed": true
+     },
+     "233.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07421737601125576,
+      "suppressed": true
+     },
+     "234.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07649122807017546,
+      "suppressed": true
+     },
+     "235.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07616707616707617,
+      "suppressed": true
+     },
+     "236.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07519325368938862,
+      "suppressed": true
+     },
+     "237.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07318789584799433,
+      "suppressed": true
+     },
+     "238.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0751932536893886,
+      "suppressed": true
+     },
+     "239.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07525376268813438,
+      "suppressed": true
+     },
+     "24.5": {
+      "ci95": [
+       -0.08324774387623551,
+       -0.06557998657018695
+      ],
+      "mean": -0.07358240223463687,
+      "n": 1432,
+      "n_clusters": 8,
+      "n_contracts": 82,
+      "n_decisions": 1432,
+      "n_games": 8,
+      "n_obs": 1432,
+      "n_player_games": 61,
+      "n_theses": 82,
+      "roi": -0.1343165623526113,
+      "se": 0.004525115240401726,
+      "suppressed": false,
+      "z": -16.260890237152157
+     },
+     "240.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07410881801125707,
+      "suppressed": true
+     },
+     "241.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07080266386260081,
+      "suppressed": true
+     },
+     "242.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07794632438739789,
+      "suppressed": true
+     },
+     "243.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07175358767938392,
+      "suppressed": true
+     },
+     "244.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07559496033597761,
+      "suppressed": true
+     },
+     "245.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06927921623512942,
+      "suppressed": true
+     },
+     "246.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07139524031731218,
+      "suppressed": true
+     },
+     "247.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0684835779175402,
+      "suppressed": true
+     },
+     "248.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0723424052105141,
+      "suppressed": true
+     },
+     "249.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07135398538113469,
+      "suppressed": true
+     },
+     "25.5": {
+      "n": 90,
+      "n_contracts": 5,
+      "n_decisions": 90,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.060191221208170366,
+      "suppressed": true
+     },
+     "250.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06542056074766354,
+      "suppressed": true
+     },
+     "251.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07103064066852373,
+      "suppressed": true
+     },
+     "252.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0655470025658969,
+      "suppressed": true
+     },
+     "253.5": {
+      "n": 56,
+      "n_contracts": 3,
+      "n_decisions": 56,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0713539853811347,
+      "suppressed": true
+     },
+     "254.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06804458894565725,
+      "suppressed": true
+     },
+     "255.5": {
+      "n": 36,
+      "n_contracts": 2,
+      "n_decisions": 36,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07389428263214672,
+      "suppressed": true
+     },
+     "256.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06564245810055867,
+      "suppressed": true
+     },
+     "257.5": {
+      "n": 36,
+      "n_contracts": 2,
+      "n_decisions": 36,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06883468834688342,
+      "suppressed": true
+     },
+     "258.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07061819865709656,
+      "suppressed": true
+     },
+     "259.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.056102362204724456,
+      "suppressed": true
+     },
+     "26.5": {
+      "n": 86,
+      "n_contracts": 5,
+      "n_decisions": 86,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06403269754768393,
+      "suppressed": true
+     },
+     "260.5": {
+      "n": 32,
+      "n_contracts": 2,
+      "n_decisions": 32,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06976744186046513,
+      "suppressed": true
+     },
+     "261.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07957813998082461,
+      "suppressed": true
+     },
+     "262.5": {
+      "n": 18,
+      "n_contracts": 1,
+      "n_decisions": 18,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06761177753544168,
+      "suppressed": true
+     },
+     "263.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07603464870067371,
+      "suppressed": true
+     },
+     "264.5": {
+      "n": 18,
+      "n_contracts": 1,
+      "n_decisions": 18,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06297502714440827,
+      "suppressed": true
+     },
+     "265.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06341463414634142,
+      "suppressed": true
+     },
+     "266.5": {
+      "n": 18,
+      "n_contracts": 1,
+      "n_decisions": 18,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06695464362850972,
+      "suppressed": true
+     },
+     "268.5": {
+      "n": 18,
+      "n_contracts": 1,
+      "n_decisions": 18,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07494646680942187,
+      "suppressed": true
+     },
+     "27.5": {
+      "n": 90,
+      "n_contracts": 5,
+      "n_decisions": 90,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.059002169197396974,
+      "suppressed": true
+     },
+     "270.5": {
+      "n": 18,
+      "n_contracts": 1,
+      "n_decisions": 18,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06493506493506493,
+      "suppressed": true
+     },
+     "28.5": {
+      "n": 50,
+      "n_contracts": 3,
+      "n_decisions": 50,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.05562130177514792,
+      "suppressed": true
+     },
+     "29.5": {
+      "ci95": [
+       -0.10584247753292879,
+       -0.07723279186110894
+      ],
+      "mean": -0.09120335820895523,
+      "n": 1072,
+      "n_clusters": 8,
+      "n_contracts": 62,
+      "n_decisions": 1072,
+      "n_games": 8,
+      "n_obs": 1072,
+      "n_player_games": 43,
+      "n_theses": 62,
+      "roi": -0.16147252638359014,
+      "se": 0.0074728503995593306,
+      "suppressed": false,
+      "z": -12.204627863864829
+     },
+     "3.5": {
+      "ci95": [
+       -0.06511834442863404,
+       -0.054919783442982484
+      ],
+      "mean": -0.06007909604519773,
+      "n": 3540,
+      "n_clusters": 8,
+      "n_contracts": 222,
+      "n_decisions": 3540,
+      "n_games": 8,
+      "n_obs": 3540,
+      "n_player_games": 96,
+      "n_theses": 219,
+      "roi": -0.11257973162533418,
+      "se": 0.002574690034792626,
+      "suppressed": false,
+      "z": -23.334496670795055
+     },
+     "30.5": {
+      "n": 50,
+      "n_contracts": 3,
+      "n_decisions": 50,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.05660377358490565,
+      "suppressed": true
+     },
+     "31.5": {
+      "n": 40,
+      "n_contracts": 2,
+      "n_decisions": 40,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0656934306569343,
+      "suppressed": true
+     },
+     "32.5": {
+      "n": 50,
+      "n_contracts": 3,
+      "n_decisions": 50,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.05548996458087367,
+      "suppressed": true
+     },
+     "33.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07957813998082452,
+      "suppressed": true
+     },
+     "34.5": {
+      "ci95": [
+       -0.10460548987715053,
+       -0.08029710331343898
+      ],
+      "mean": -0.09104166666666667,
+      "n": 624,
+      "n_clusters": 8,
+      "n_contracts": 38,
+      "n_decisions": 624,
+      "n_games": 8,
+      "n_obs": 624,
+      "n_player_games": 31,
+      "n_theses": 38,
+      "roi": -0.1610443360925275,
+      "se": 0.006314801471268321,
+      "suppressed": false,
+      "z": -14.417185889516341
+     },
+     "35.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08309455587392549,
+      "suppressed": true
+     },
+     "36.5": {
+      "n": 50,
+      "n_contracts": 3,
+      "n_decisions": 50,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06130417805544709,
+      "suppressed": true
+     },
+     "37.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06647398843930635,
+      "suppressed": true
+     },
+     "38.5": {
+      "n": 16,
+      "n_contracts": 1,
+      "n_decisions": 16,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06090133982947626,
+      "suppressed": true
+     },
+     "39.5": {
+      "ci95": [
+       -0.154020979020979,
+       -0.10080942743597293
+      ],
+      "mean": -0.12830578512396695,
+      "n": 242,
+      "n_clusters": 8,
+      "n_contracts": 14,
+      "n_decisions": 242,
+      "n_games": 8,
+      "n_obs": 242,
+      "n_player_games": 14,
+      "n_theses": 14,
+      "roi": -0.21328479186701466,
+      "se": 0.013677729487055954,
+      "suppressed": false,
+      "z": -9.380634793617634
+     },
+     "4.5": {
+      "ci95": [
+       -0.047866622689200035,
+       -0.041862068965517245
+      ],
+      "mean": -0.044360655737704924,
+      "n": 610,
+      "n_clusters": 8,
+      "n_contracts": 46,
+      "n_decisions": 610,
+      "n_games": 8,
+      "n_obs": 610,
+      "n_player_games": 42,
+      "n_theses": 42,
+      "roi": -0.08518810011018417,
+      "se": 0.0015650840302192989,
+      "suppressed": false,
+      "z": -28.343945041397635
+     },
+     "44.5": {
+      "n": 82,
+      "n_contracts": 5,
+      "n_decisions": 82,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.2168284789644013,
+      "suppressed": true
+     },
+     "49.5": {
+      "n": 52,
+      "n_contracts": 3,
+      "n_decisions": 52,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.21751592356687896,
+      "suppressed": true
+     },
+     "5.5": {
+      "ci95": [
+       -0.05898837106003069,
+       -0.05153352354077761
+      ],
+      "mean": -0.055111498257839724,
+      "n": 2870,
+      "n_clusters": 8,
+      "n_contracts": 174,
+      "n_decisions": 2870,
+      "n_games": 8,
+      "n_obs": 2870,
+      "n_player_games": 94,
+      "n_theses": 170,
+      "roi": -0.10391086409533754,
+      "se": 0.0018959478720678585,
+      "suppressed": false,
+      "z": -29.068045102807137
+     },
+     "54.5": {
+      "n": 20,
+      "n_contracts": 1,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.23026851098454038,
+      "suppressed": true
+     },
+     "6.5": {
+      "ci95": [
+       -0.03728155339805825,
+       -0.034395161290322565
+      ],
+      "mean": -0.03582608695652174,
+      "n": 230,
+      "n_clusters": 8,
+      "n_contracts": 13,
+      "n_decisions": 230,
+      "n_games": 8,
+      "n_obs": 230,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.07058420421449373,
+      "se": 0.0007302724049265275,
+      "suppressed": false,
+      "z": -49.05852489404442
+     },
+     "7.5": {
+      "ci95": [
+       -0.05682007291666668,
+       -0.04889389397892774
+      ],
+      "mean": -0.05306618407445708,
+      "n": 1934,
+      "n_clusters": 8,
+      "n_contracts": 119,
+      "n_decisions": 1934,
+      "n_games": 8,
+      "n_obs": 1934,
+      "n_player_games": 88,
+      "n_theses": 116,
+      "roi": -0.10035887857778474,
+      "se": 0.0020081846963859,
+      "suppressed": false,
+      "z": -26.424951932936995
+     },
+     "8.5": {
+      "ci95": [
+       -0.03651898734177215,
+       -0.033333333333333326
+      ],
+      "mean": -0.03479381443298968,
+      "n": 194,
+      "n_clusters": 8,
+      "n_contracts": 11,
+      "n_decisions": 194,
+      "n_games": 8,
+      "n_obs": 194,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.06864639479304384,
+      "se": 0.0008087998629840869,
+      "suppressed": false,
+      "z": -43.01906568655569
+     },
+     "89.5": {
+      "n": 16,
+      "n_contracts": 1,
+      "n_decisions": 16,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.06424242424242424,
+      "suppressed": true
+     },
+     "9.5": {
+      "ci95": [
+       -0.0602162090723211,
+       -0.053077995483415547
+      ],
+      "mean": -0.056347482724580455,
+      "n": 2026,
+      "n_clusters": 8,
+      "n_contracts": 126,
+      "n_decisions": 2026,
+      "n_games": 8,
+      "n_obs": 2026,
+      "n_player_games": 93,
+      "n_theses": 123,
+      "roi": -0.10649452415157004,
+      "se": 0.0018642161731394517,
+      "suppressed": false,
+      "z": -30.22583085398724
+     },
+     "90.5": {
+      "n": 38,
+      "n_contracts": 2,
+      "n_decisions": 38,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09846610588817417,
+      "suppressed": true
+     },
+     "91.5": {
+      "n": 32,
+      "n_contracts": 2,
+      "n_decisions": 32,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07581227436823104,
+      "suppressed": true
+     },
+     "92.5": {
+      "n": 38,
+      "n_contracts": 2,
+      "n_decisions": 38,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09122632103688935,
+      "suppressed": true
+     },
+     "93.5": {
+      "n": 32,
+      "n_contracts": 2,
+      "n_decisions": 32,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0813397129186603,
+      "suppressed": true
+     },
+     "94.5": {
+      "n": 38,
+      "n_contracts": 2,
+      "n_decisions": 38,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09445277361319337,
+      "suppressed": true
+     },
+     "95.5": {
+      "n": 66,
+      "n_contracts": 4,
+      "n_decisions": 66,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07451782583284627,
+      "suppressed": true
+     },
+     "96.5": {
+      "n": 76,
+      "n_contracts": 4,
+      "n_decisions": 76,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.0785859613428281,
+      "suppressed": true
+     },
+     "97.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08530482256596908,
+      "suppressed": true
+     },
+     "98.5": {
+      "n": 76,
+      "n_contracts": 4,
+      "n_decisions": 76,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.08948827829594151,
+      "suppressed": true
+     },
+     "99.5": {
+      "n": 84,
+      "n_contracts": 5,
+      "n_decisions": 84,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.07752472969864276,
+      "suppressed": true
+     },
+     "nan": {
+      "ci95": [
+       -0.036344929245283035,
+       -0.03197202877397832
+      ],
+      "mean": -0.03428240740740741,
+      "n": 432,
+      "n_clusters": 8,
+      "n_contracts": 16,
+      "n_decisions": 432,
+      "n_games": 8,
+      "n_obs": 432,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "roi": -0.06769666773323582,
+      "se": 0.0011408872588737982,
+      "suppressed": false,
+      "z": -30.04890022283931
+     }
+    }
+   },
+   "selected_trades": {
+    "family": {
+     "game_spread": {
+      "n": 40,
+      "n_contracts": 11,
+      "n_decisions": 40,
+      "n_games": 6,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.011725293132328354,
+      "suppressed": true
+     },
+     "game_total": {
+      "n": 39,
+      "n_contracts": 9,
+      "n_decisions": 39,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.21577017114914424,
+      "suppressed": true
+     },
+     "game_winner": {
+      "n": 10,
+      "n_contracts": 10,
+      "n_decisions": 10,
+      "n_games": 7,
+      "n_player_games": 7,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.4411764705882353,
+      "suppressed": true
+     },
+     "player_assists": {
+      "n": 83,
+      "n_contracts": 22,
+      "n_decisions": 83,
+      "n_games": 7,
+      "n_player_games": 21,
+      "n_theses": 21,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.005641402992396348,
+      "suppressed": true
+     },
+     "player_points": {
+      "ci95": [
+       -0.289666095890411,
+       0.05677857142857142
+      ],
+      "mean": -0.12918518518518518,
+      "n": 135,
+      "n_clusters": 8,
+      "n_contracts": 41,
+      "n_decisions": 135,
+      "n_games": 8,
+      "n_obs": 135,
+      "n_player_games": 34,
+      "n_theses": 34,
+      "roi": -0.3131621476028012,
+      "se": 0.08899602588025105,
+      "suppressed": false,
+      "z": -1.4515837522791277
+     },
+     "player_pra": {
+      "n": 57,
+      "n_contracts": 16,
+      "n_decisions": 57,
+      "n_games": 7,
+      "n_player_games": 15,
+      "n_theses": 15,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.4292832502874664,
+      "suppressed": true
+     },
+     "player_rebounds": {
+      "n": 10,
+      "n_contracts": 6,
+      "n_decisions": 10,
+      "n_games": 5,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.8627450980392158,
+      "suppressed": true
+     },
+     "player_threes": {
+      "n": 21,
+      "n_contracts": 9,
+      "n_decisions": 21,
+      "n_games": 6,
+      "n_player_games": 9,
+      "n_theses": 9,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.3506625891946993,
+      "suppressed": true
+     },
+     "team_total": {
+      "n": 29,
+      "n_contracts": 8,
+      "n_decisions": 29,
+      "n_games": 4,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09553571428571442,
+      "suppressed": true
+     }
+    },
+    "freshness": {
+     "2-6h": {
+      "ci95": [
+       -0.17512388828858788,
+       0.09143131985143783
+      ],
+      "mean": -0.03486842105263157,
+      "n": 228,
+      "n_clusters": 8,
+      "n_contracts": 88,
+      "n_decisions": 228,
+      "n_games": 8,
+      "n_obs": 228,
+      "n_player_games": 49,
+      "n_theses": 74,
+      "roi": -0.08333333333333344,
+      "se": 0.07003288229445377,
+      "suppressed": false,
+      "z": -0.4978864200680337
+     },
+     "6-12h": {
+      "ci95": [
+       -0.17218884698275863,
+       0.014542545320014734
+      ],
+      "mean": -0.08857142857142859,
+      "n": 56,
+      "n_clusters": 8,
+      "n_contracts": 56,
+      "n_decisions": 56,
+      "n_games": 8,
+      "n_obs": 56,
+      "n_player_games": 41,
+      "n_theses": 56,
+      "roi": -0.1962025316455696,
+      "se": 0.04879693569166439,
+      "suppressed": false,
+      "z": -1.8151022664842984
+     },
+     "<2h": {
+      "n": 210,
+      "n_contracts": 77,
+      "n_decisions": 210,
+      "n_games": 7,
+      "n_player_games": 42,
+      "n_theses": 62,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.1434078643022359,
+      "suppressed": true
+     },
+     ">12h": {
+      "n": 10,
+      "n_contracts": 10,
+      "n_decisions": 10,
+      "n_games": 7,
+      "n_player_games": 7,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.4411764705882353,
+      "suppressed": true
+     }
+    },
+    "gate": {
+     "PASS": {
+      "ci95": [
+       -0.20176976950354614,
+       0.1979185689201053
+      ],
+      "mean": -0.029050632911392406,
+      "n": 158,
+      "n_clusters": 8,
+      "n_contracts": 33,
+      "n_decisions": 158,
+      "n_games": 8,
+      "n_obs": 158,
+      "n_player_games": 21,
+      "n_theses": 28,
+      "roi": -0.0685688676426651,
+      "se": 0.10171804400954595,
+      "suppressed": false,
+      "z": -0.28559960225607645
+     },
+     "REVIEW": {
+      "ci95": [
+       -0.183,
+       0.06425373134328362
+      ],
+      "mean": -0.06500000000000002,
+      "n": 154,
+      "n_clusters": 8,
+      "n_contracts": 67,
+      "n_decisions": 154,
+      "n_games": 8,
+      "n_obs": 154,
+      "n_player_games": 39,
+      "n_theses": 63,
+      "roi": -0.1378028634361233,
+      "se": 0.061276839406331045,
+      "suppressed": false,
+      "z": -1.0607596708599873
+     },
+     "unknown": {
+      "ci95": [
+       -0.2832426343776947,
+       0.28899862258953163
+      ],
+      "mean": -0.05286956521739131,
+      "n": 115,
+      "n_clusters": 8,
+      "n_contracts": 36,
+      "n_decisions": 115,
+      "n_games": 8,
+      "n_obs": 115,
+      "n_player_games": 8,
+      "n_theses": 17,
+      "roi": -0.14601344860710855,
+      "se": 0.14992761713587346,
+      "suppressed": false,
+      "z": -0.3526339324760809
+     }
+    },
+    "horizon": {
+     "LIVE": {
+      "ci95": [
+       -0.1472950626381725,
+       -0.020263541666666697
+      ],
+      "mean": -0.08576576576576576,
+      "n": 111,
+      "n_clusters": 8,
+      "n_contracts": 98,
+      "n_decisions": 111,
+      "n_games": 8,
+      "n_obs": 111,
+      "n_player_games": 56,
+      "n_theses": 88,
+      "roi": -0.20058997050147498,
+      "se": 0.033139931371061256,
+      "suppressed": false,
+      "z": -2.5879886353856154
+     },
+     "T-10": {
+      "ci95": [
+       -0.10557532051282052,
+       0.10193055555555552
+      ],
+      "mean": -0.006037735849056601,
+      "n": 53,
+      "n_clusters": 8,
+      "n_contracts": 53,
+      "n_decisions": 53,
+      "n_games": 8,
+      "n_obs": 53,
+      "n_player_games": 38,
+      "n_theses": 53,
+      "roi": -0.013485040033712602,
+      "se": 0.05394177035063857,
+      "suppressed": false,
+      "z": -0.11193062092344037
+     },
+     "T-30": {
+      "ci95": [
+       -0.1711776769741886,
+       0.07059627222982208
+      ],
+      "mean": -0.05744186046511628,
+      "n": 86,
+      "n_clusters": 8,
+      "n_contracts": 61,
+      "n_decisions": 86,
+      "n_games": 8,
+      "n_obs": 86,
+      "n_player_games": 44,
+      "n_theses": 61,
+      "roi": -0.13966638394119313,
+      "se": 0.06333014569417873,
+      "suppressed": false,
+      "z": -0.9070223956613493
+     },
+     "T-60": {
+      "ci95": [
+       -0.14594950738916257,
+       0.11060975609756098
+      ],
+      "mean": -0.01802325581395348,
+      "n": 86,
+      "n_clusters": 8,
+      "n_contracts": 59,
+      "n_decisions": 86,
+      "n_games": 8,
+      "n_obs": 86,
+      "n_player_games": 42,
+      "n_theses": 59,
+      "roi": -0.04189189189189187,
+      "se": 0.06528249042092554,
+      "suppressed": false,
+      "z": -0.276081008824019
+     },
+     "T-90": {
+      "ci95": [
+       -0.1642259736620902,
+       0.07754488017429184
+      ],
+      "mean": -0.04776470588235296,
+      "n": 85,
+      "n_clusters": 8,
+      "n_contracts": 60,
+      "n_decisions": 85,
+      "n_games": 8,
+      "n_obs": 85,
+      "n_player_games": 43,
+      "n_theses": 59,
+      "roi": -0.11423747889701741,
+      "se": 0.06367938608068213,
+      "suppressed": false,
+      "z": -0.7500811302080521
+     }
+    },
+    "p_sd_tercile": {
+     "high_unc": {
+      "ci95": [
+       -0.14320094696969699,
+       0.2860517017155506
+      ],
+      "mean": 0.03822222222222222,
+      "n": 135,
+      "n_clusters": 8,
+      "n_contracts": 43,
+      "n_decisions": 135,
+      "n_games": 8,
+      "n_obs": 135,
+      "n_player_games": 23,
+      "n_theses": 35,
+      "roi": 0.09416058394160587,
+      "se": 0.11393345312820334,
+      "suppressed": false,
+      "z": 0.33547848478894743
+     },
+     "low_unc": {
+      "ci95": [
+       -0.3658596196868008,
+       0.09317880794701984
+      ],
+      "mean": -0.10953333333333333,
+      "n": 150,
+      "n_clusters": 8,
+      "n_contracts": 44,
+      "n_decisions": 150,
+      "n_games": 8,
+      "n_obs": 150,
+      "n_player_games": 33,
+      "n_theses": 39,
+      "roi": -0.24533373152157673,
+      "se": 0.12130671350214586,
+      "suppressed": false,
+      "z": -0.9029453537325923
+     },
+     "mid_unc": {
+      "ci95": [
+       -0.20387280465949822,
+       0.0914386760177897
+      ],
+      "mean": -0.056351351351351366,
+      "n": 148,
+      "n_clusters": 8,
+      "n_contracts": 50,
+      "n_decisions": 148,
+      "n_games": 8,
+      "n_obs": 148,
+      "n_player_games": 40,
+      "n_theses": 49,
+      "roi": -0.13408360128617364,
+      "se": 0.07670401366936624,
+      "suppressed": false,
+      "z": -0.7346597479794822
+     }
+    },
+    "price_range": {
+     "0.0-0.2": {
+      "n": 17,
+      "n_contracts": 8,
+      "n_decisions": 17,
+      "n_games": 4,
+      "n_player_games": 6,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 1.0143884892086328,
+      "suppressed": true
+     },
+     "0.2-0.4": {
+      "ci95": [
+       -0.2596376223462919,
+       0.1315416943521593
+      ],
+      "mean": -0.10755905511811023,
+      "n": 127,
+      "n_clusters": 8,
+      "n_contracts": 44,
+      "n_decisions": 127,
+      "n_games": 8,
+      "n_obs": 127,
+      "n_player_games": 29,
+      "n_theses": 36,
+      "roi": -0.3681940700808629,
+      "se": 0.10123706285249301,
+      "suppressed": false,
+      "z": -1.0624474089576132
+     },
+     "0.4-0.6": {
+      "ci95": [
+       -0.17342192162541684,
+       0.08493383786608759
+      ],
+      "mean": -0.03565217391304347,
+      "n": 253,
+      "n_clusters": 8,
+      "n_contracts": 78,
+      "n_decisions": 253,
+      "n_games": 8,
+      "n_obs": 253,
+      "n_player_games": 41,
+      "n_theses": 72,
+      "roi": -0.07552541237545006,
+      "se": 0.06678266908022852,
+      "suppressed": false,
+      "z": -0.5338536839582314
+     },
+     "0.6-0.8": {
+      "n": 45,
+      "n_contracts": 17,
+      "n_decisions": 45,
+      "n_games": 6,
+      "n_player_games": 16,
+      "n_theses": 17,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.05429382540809084,
+      "suppressed": true
+     }
+    },
+    "side": {
+     "NO": {
+      "ci95": [
+       -0.2510077822433321,
+       0.08684210526315786
+      ],
+      "mean": -0.06974452554744526,
+      "n": 274,
+      "n_clusters": 8,
+      "n_contracts": 82,
+      "n_decisions": 274,
+      "n_games": 8,
+      "n_obs": 274,
+      "n_player_games": 41,
+      "n_theses": 71,
+      "roi": -0.1506028843880526,
+      "se": 0.0889615576855856,
+      "suppressed": false,
+      "z": -0.7839849858962837
+     },
+     "YES": {
+      "ci95": [
+       -0.212640350877193,
+       0.3120464566929132
+      ],
+      "mean": -0.008707482993197287,
+      "n": 147,
+      "n_clusters": 8,
+      "n_contracts": 49,
+      "n_decisions": 147,
+      "n_games": 8,
+      "n_obs": 147,
+      "n_player_games": 28,
+      "n_theses": 37,
+      "roi": -0.0245163761731469,
+      "se": 0.13603489215818604,
+      "suppressed": false,
+      "z": -0.06400918804766595
+     }
+    },
+    "strategy_id": {
+     "PF_EDGE_STRICT_V1": {
+      "ci95": [
+       -0.18292641509433963,
+       0.0903186026936026
+      ],
+      "mean": -0.05135593220338982,
+      "n": 118,
+      "n_clusters": 8,
+      "n_contracts": 50,
+      "n_decisions": 118,
+      "n_games": 8,
+      "n_obs": 118,
+      "n_player_games": 24,
+      "n_theses": 38,
+      "roi": -0.12744479495268138,
+      "se": 0.06983750061507539,
+      "suppressed": false,
+      "z": -0.7353632611574866
+     },
+     "PF_EDGE_V1": {
+      "ci95": [
+       -0.12480645161290317,
+       0.0391149366643207
+      ],
+      "mean": -0.04729372937293729,
+      "n": 303,
+      "n_clusters": 8,
+      "n_contracts": 121,
+      "n_decisions": 303,
+      "n_games": 8,
+      "n_obs": 303,
+      "n_player_games": 57,
+      "n_theses": 96,
+      "roi": -0.10893196503230705,
+      "se": 0.043232886743897206,
+      "suppressed": false,
+      "z": -1.093929481348208
+     }
+    },
+    "team": {
+     "ATL": {
+      "n": 20,
+      "n_contracts": 10,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 5,
+      "n_theses": 10,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.41495124593716143,
+      "suppressed": true
+     },
+     "BKN": {
+      "n": 25,
+      "n_contracts": 6,
+      "n_decisions": 25,
+      "n_games": 1,
+      "n_player_games": 5,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.5911214953271028,
+      "suppressed": true
+     },
+     "CHA": {
+      "n": 22,
+      "n_contracts": 11,
+      "n_decisions": 22,
+      "n_games": 1,
+      "n_player_games": 4,
+      "n_theses": 10,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.2486486486486486,
+      "suppressed": true
+     },
+     "CHI": {
+      "n": 27,
+      "n_contracts": 7,
+      "n_decisions": 27,
+      "n_games": 1,
+      "n_player_games": 4,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.5935039370078741,
+      "suppressed": true
+     },
+     "CLE": {
+      "n": 27,
+      "n_contracts": 8,
+      "n_decisions": 27,
+      "n_games": 1,
+      "n_player_games": 4,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 1.0494382022471909,
+      "suppressed": true
+     },
+     "DAL": {
+      "n": 22,
+      "n_contracts": 10,
+      "n_decisions": 22,
+      "n_games": 1,
+      "n_player_games": 6,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.9224704336399474,
+      "suppressed": true
+     },
+     "DEN": {
+      "n": 29,
+      "n_contracts": 7,
+      "n_decisions": 29,
+      "n_games": 1,
+      "n_player_games": 4,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.229757785467128,
+      "suppressed": true
+     },
+     "GSW": {
+      "n": 22,
+      "n_contracts": 5,
+      "n_decisions": 22,
+      "n_games": 1,
+      "n_player_games": 3,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.03364485981308418,
+      "suppressed": true
+     },
+     "HOU": {
+      "n": 28,
+      "n_contracts": 5,
+      "n_decisions": 28,
+      "n_games": 1,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.8045248868778283,
+      "suppressed": true
+     },
+     "MIA": {
+      "n": 25,
+      "n_contracts": 5,
+      "n_decisions": 25,
+      "n_games": 1,
+      "n_player_games": 2,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 1.1866546438232641,
+      "suppressed": true
+     },
+     "MIL": {
+      "n": 17,
+      "n_contracts": 5,
+      "n_decisions": 17,
+      "n_games": 1,
+      "n_player_games": 3,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.4018691588785047,
+      "suppressed": true
+     },
+     "NOP": {
+      "n": 20,
+      "n_contracts": 9,
+      "n_decisions": 20,
+      "n_games": 1,
+      "n_player_games": 6,
+      "n_theses": 9,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.16853932584269665,
+      "suppressed": true
+     },
+     "PHI": {
+      "n": 27,
+      "n_contracts": 9,
+      "n_decisions": 27,
+      "n_games": 1,
+      "n_player_games": 3,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.6369785794813979,
+      "suppressed": true
+     },
+     "PHX": {
+      "n": 29,
+      "n_contracts": 8,
+      "n_decisions": 29,
+      "n_games": 1,
+      "n_player_games": 5,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.5462620281273132,
+      "suppressed": true
+     },
+     "SAS": {
+      "n": 24,
+      "n_contracts": 9,
+      "n_decisions": 24,
+      "n_games": 1,
+      "n_player_games": 5,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.39310344827586213,
+      "suppressed": true
+     },
+     "WAS": {
+      "n": 18,
+      "n_contracts": 7,
+      "n_decisions": 18,
+      "n_games": 1,
+      "n_player_games": 3,
+      "n_theses": 6,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.40786240786240796,
+      "suppressed": true
+     },
+     "nan": {
+      "n": 39,
+      "n_contracts": 9,
+      "n_decisions": 39,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.21577017114914424,
+      "suppressed": true
+     }
+    },
+    "threshold": {
+     "0.5": {
+      "n": 5,
+      "n_contracts": 2,
+      "n_decisions": 5,
+      "n_games": 1,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.6958041958041957,
+      "suppressed": true
+     },
+     "1.5": {
+      "n": 28,
+      "n_contracts": 9,
+      "n_decisions": 28,
+      "n_games": 6,
+      "n_player_games": 9,
+      "n_theses": 9,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.03054032889584965,
+      "suppressed": true
+     },
+     "104.5": {
+      "n": 1,
+      "n_contracts": 1,
+      "n_decisions": 1,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.732142857142857,
+      "suppressed": true
+     },
+     "108.5": {
+      "n": 9,
+      "n_contracts": 1,
+      "n_decisions": 9,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 1.425,
+      "suppressed": true
+     },
+     "11.5": {
+      "n": 1,
+      "n_contracts": 1,
+      "n_decisions": 1,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.6724137931034484,
+      "suppressed": true
+     },
+     "110.5": {
+      "n": 4,
+      "n_contracts": 1,
+      "n_decisions": 4,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.0750000000000002,
+      "suppressed": true
+     },
+     "112.5": {
+      "n": 1,
+      "n_contracts": 1,
+      "n_decisions": 1,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.075,
+      "suppressed": true
+     },
+     "113.5": {
+      "n": 2,
+      "n_contracts": 1,
+      "n_decisions": 2,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 1.0860215053763442,
+      "suppressed": true
+     },
+     "114.5": {
+      "n": 5,
+      "n_contracts": 1,
+      "n_decisions": 5,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.111111111111111,
+      "suppressed": true
+     },
+     "117.5": {
+      "n": 2,
+      "n_contracts": 1,
+      "n_decisions": 2,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.1,
+      "suppressed": true
+     },
+     "119.5": {
+      "n": 1,
+      "n_contracts": 1,
+      "n_decisions": 1,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.1034482758620692,
+      "suppressed": true
+     },
+     "121.5": {
+      "n": 4,
+      "n_contracts": 1,
+      "n_decisions": 4,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.0710059171597635,
+      "suppressed": true
+     },
+     "123.5": {
+      "n": 4,
+      "n_contracts": 1,
+      "n_decisions": 4,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.0606060606060606,
+      "suppressed": true
+     },
+     "14.5": {
+      "n": 57,
+      "n_contracts": 17,
+      "n_decisions": 57,
+      "n_games": 7,
+      "n_player_games": 17,
+      "n_theses": 17,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.6031610422896196,
+      "suppressed": true
+     },
+     "19.5": {
+      "ci95": [
+       -0.12334615384615386,
+       0.365152450980392
+      ],
+      "mean": 0.13500000000000004,
+      "n": 54,
+      "n_clusters": 8,
+      "n_contracts": 16,
+      "n_decisions": 54,
+      "n_games": 8,
+      "n_obs": 54,
+      "n_player_games": 16,
+      "n_theses": 16,
+      "roi": 0.3617866004962779,
+      "se": 0.1254232749582626,
+      "suppressed": false,
+      "z": 1.0763552462246286
+     },
+     "2.5": {
+      "n": 8,
+      "n_contracts": 5,
+      "n_decisions": 8,
+      "n_games": 4,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.34814814814814815,
+      "suppressed": true
+     },
+     "225.5": {
+      "n": 6,
+      "n_contracts": 1,
+      "n_decisions": 6,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 1.356275303643725,
+      "suppressed": true
+     },
+     "227.5": {
+      "n": 4,
+      "n_contracts": 1,
+      "n_decisions": 4,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 1.6216216216216215,
+      "suppressed": true
+     },
+     "228.5": {
+      "n": 9,
+      "n_contracts": 3,
+      "n_decisions": 9,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.590047393364929,
+      "suppressed": true
+     },
+     "230.5": {
+      "n": 12,
+      "n_contracts": 3,
+      "n_decisions": 12,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.27777777777777773,
+      "suppressed": true
+     },
+     "232.5": {
+      "n": 1,
+      "n_contracts": 1,
+      "n_decisions": 1,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.0625,
+      "suppressed": true
+     },
+     "234.5": {
+      "n": 5,
+      "n_contracts": 2,
+      "n_decisions": 5,
+      "n_games": 2,
+      "n_player_games": 2,
+      "n_theses": 2,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.0638297872340425,
+      "suppressed": true
+     },
+     "236.5": {
+      "n": 8,
+      "n_contracts": 1,
+      "n_decisions": 8,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.0857142857142859,
+      "suppressed": true
+     },
+     "24.5": {
+      "n": 23,
+      "n_contracts": 7,
+      "n_decisions": 23,
+      "n_games": 4,
+      "n_player_games": 7,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.8400752587017878,
+      "suppressed": true
+     },
+     "29.5": {
+      "n": 15,
+      "n_contracts": 5,
+      "n_decisions": 15,
+      "n_games": 5,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.34222919937205665,
+      "suppressed": true
+     },
+     "3.5": {
+      "n": 49,
+      "n_contracts": 15,
+      "n_decisions": 49,
+      "n_games": 6,
+      "n_player_games": 14,
+      "n_theses": 15,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.6227236737925573,
+      "suppressed": true
+     },
+     "34.5": {
+      "n": 12,
+      "n_contracts": 4,
+      "n_decisions": 12,
+      "n_games": 3,
+      "n_player_games": 4,
+      "n_theses": 4,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.09727626459143968,
+      "suppressed": true
+     },
+     "4.5": {
+      "n": 14,
+      "n_contracts": 3,
+      "n_decisions": 14,
+      "n_games": 3,
+      "n_player_games": 3,
+      "n_theses": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.2582417582417581,
+      "suppressed": true
+     },
+     "44.5": {
+      "n": 8,
+      "n_contracts": 1,
+      "n_decisions": 8,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.9695431472081218,
+      "suppressed": true
+     },
+     "49.5": {
+      "n": 4,
+      "n_contracts": 1,
+      "n_decisions": 4,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.0612244897959184,
+      "suppressed": true
+     },
+     "5.5": {
+      "n": 32,
+      "n_contracts": 8,
+      "n_decisions": 32,
+      "n_games": 6,
+      "n_player_games": 8,
+      "n_theses": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.4230088495575221,
+      "suppressed": true
+     },
+     "6.5": {
+      "n": 1,
+      "n_contracts": 1,
+      "n_decisions": 1,
+      "n_games": 1,
+      "n_player_games": 1,
+      "n_theses": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -1.12,
+      "suppressed": true
+     },
+     "7.5": {
+      "n": 15,
+      "n_contracts": 5,
+      "n_decisions": 15,
+      "n_games": 4,
+      "n_player_games": 5,
+      "n_theses": 5,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": 0.14611260053619296,
+      "suppressed": true
+     },
+     "9.5": {
+      "n": 32,
+      "n_contracts": 10,
+      "n_decisions": 32,
+      "n_games": 6,
+      "n_player_games": 10,
+      "n_theses": 10,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.7361201828870019,
+      "suppressed": true
+     },
+     "nan": {
+      "n": 10,
+      "n_contracts": 10,
+      "n_decisions": 10,
+      "n_games": 7,
+      "n_player_games": 7,
+      "n_theses": 7,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "roi": -0.4411764705882353,
+      "suppressed": true
+     }
+    }
+   },
+   "status": "OK",
+   "unit_note": "ROI of selected TRADE decisions (all strategies pooled by strategy) collapsed to one per thesis+horizon; model-vs-market from canonical YES contracts"
+  },
+  "projection": {
+   "minutes": {
+    "freshness": {
+     "<2h": {
+      "ci95": [
+       -1.3881484865843747,
+       0.8933443146724488
+      ],
+      "mae": 4.992559523809524,
+      "mean": -0.25875000000000015,
+      "n": 168,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 168,
+      "se": 0.5840784932888418,
+      "suppressed": false,
+      "z": -0.44300552575224106
+     }
+    },
+    "home_away": {
+     "away": {
+      "ci95": [
+       -1.6791955350815027,
+       1.8117289141414135
+      ],
+      "mae": 4.767241379310344,
+      "mean": 0.08379310344827577,
+      "n": 87,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 87,
+      "se": 0.9017273670442563,
+      "suppressed": false,
+      "z": 0.09292509744152332
+     },
+     "home": {
+      "ci95": [
+       -1.6948781250000002,
+       0.5838335157318719
+      ],
+      "mae": 5.234567901234568,
+      "mean": -0.6266666666666669,
+      "n": 81,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 81,
+      "se": 0.5982987535286515,
+      "suppressed": false,
+      "z": -1.0474142942312799
+     }
+    },
+    "injury_status": {
+     "LIKELY_ACTIVE": {
+      "ci95": [
+       -1.2276333910654564,
+       0.9063828998629245
+      ],
+      "mae": 4.9716049382716045,
+      "mean": -0.19962962962962974,
+      "n": 162,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 162,
+      "se": 0.5520878900656695,
+      "suppressed": false,
+      "z": -0.3615903069453023
+     },
+     "UNCERTAIN": {
+      "mae": 5.558333333333333,
+      "n": 6,
+      "n_games": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     }
+    },
+    "minutes_bucket": {
+     "12-20": {
+      "ci95": [
+       -1.0710892857142862,
+       3.579789596273291
+      ],
+      "mae": 6.155897435897436,
+      "mean": 1.5205128205128204,
+      "n": 39,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 39,
+      "se": 1.2421846531794034,
+      "suppressed": false,
+      "z": 1.224063440665628
+     },
+     "20-28": {
+      "ci95": [
+       -3.313189089417556,
+       1.969230769230769
+      ],
+      "mae": 5.132459016393443,
+      "mean": -0.6213114754098364,
+      "n": 61,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 61,
+      "se": 1.3660418234321543,
+      "suppressed": false,
+      "z": -0.4548261003084101
+     },
+     "<12": {
+      "mae": 5.714,
+      "n": 20,
+      "n_games": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     ">28": {
+      "ci95": [
+       -2.6382303974221277,
+       0.2220634191176463
+      ],
+      "mae": 3.5689583333333332,
+      "mean": -1.338125,
+      "n": 48,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 48,
+      "se": 0.7547690899709233,
+      "suppressed": false,
+      "z": -1.7728932169858067
+     }
+    },
+    "opp_def": {
+     "unknown": {
+      "ci95": [
+       -1.3881484865843747,
+       0.8933443146724488
+      ],
+      "mae": 4.992559523809524,
+      "mean": -0.25875000000000015,
+      "n": 168,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 168,
+      "se": 0.5840784932888418,
+      "suppressed": false,
+      "z": -0.44300552575224106
+     }
+    },
+    "player": {
+     "cells": {},
+     "n_players": 168,
+     "n_suppressed": 168
+    },
+    "role_proxy": {
+     "bench(<18 pred min)": {
+      "ci95": [
+       -2.3924090909090907,
+       2.9349547619047605
+      ],
+      "mae": 6.186250000000001,
+      "mean": 0.4000000000000001,
+      "n": 48,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 48,
+      "se": 1.373013858346015,
+      "suppressed": false,
+      "z": 0.2913299072464246
+     },
+     "rotation(18-28)": {
+      "ci95": [
+       -1.83103033625731,
+       2.0779548740671636
+      ],
+      "mae": 5.145833333333333,
+      "mean": 0.021666666666666206,
+      "n": 72,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 72,
+      "se": 1.0255366406332798,
+      "suppressed": false,
+      "z": 0.021127150223795816
+     },
+     "starter-like(>28)": {
+      "ci95": [
+       -2.6382303974221277,
+       0.2220634191176463
+      ],
+      "mae": 3.5689583333333332,
+      "mean": -1.338125,
+      "n": 48,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 48,
+      "se": 0.7547690899709233,
+      "suppressed": false,
+      "z": -1.7728932169858067
+     }
+    },
+    "team": {
+     "ATL": {
+      "mae": 3.994444444444445,
+      "n": 9,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "BKN": {
+      "mae": 4.905454545454545,
+      "n": 11,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "CHA": {
+      "mae": 8.895,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "CHI": {
+      "mae": 4.07,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "CLE": {
+      "mae": 2.583000000000001,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "DAL": {
+      "mae": 6.992499999999999,
+      "n": 12,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "DEN": {
+      "mae": 6.4670000000000005,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "GSW": {
+      "mae": 5.841818181818181,
+      "n": 11,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "HOU": {
+      "mae": 5.022727272727274,
+      "n": 11,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "MIA": {
+      "mae": 6.196,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "MIL": {
+      "mae": 6.054,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "NOP": {
+      "mae": 3.565454545454546,
+      "n": 11,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "PHI": {
+      "mae": 4.064,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "PHX": {
+      "mae": 4.334999999999999,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "SAS": {
+      "mae": 3.197692307692308,
+      "n": 13,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "WAS": {
+      "mae": 3.7989999999999995,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     }
+    }
+   },
+   "notes": {
+    "opp_def": "terciles of points the opponent conceded in earlier final games (NO_DATA/unknown early in the season)",
+    "role_proxy": "starter/bench are PROXIES from predicted minutes (starter flags are not archived on the outcome)"
+   },
+   "points": {
+    "freshness": {
+     "<2h": {
+      "ci95": [
+       -1.3710400805676695,
+       0.23242937853107337
+      ],
+      "mae": 4.596726190476191,
+      "mean": -0.5976785714285716,
+      "n": 168,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 168,
+      "se": 0.41911749062123066,
+      "suppressed": false,
+      "z": -1.4260406325268637
+     }
+    },
+    "home_away": {
+     "away": {
+      "ci95": [
+       -1.256125175070028,
+       0.22022727272727274
+      ],
+      "mae": 4.422758620689656,
+      "mean": -0.4827586206896552,
+      "n": 87,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 87,
+      "se": 0.3774040296367013,
+      "suppressed": false,
+      "z": -1.279155978155217
+     },
+     "home": {
+      "ci95": [
+       -1.9288160601265825,
+       0.43559523809523787
+      ],
+      "mae": 4.783580246913581,
+      "mean": -0.721111111111111,
+      "n": 81,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 81,
+      "se": 0.6125113810244887,
+      "suppressed": false,
+      "z": -1.177302387271528
+     }
+    },
+    "injury_status": {
+     "LIKELY_ACTIVE": {
+      "ci95": [
+       -1.3327760612414445,
+       0.20224504905850915
+      ],
+      "mae": 4.628703703703704,
+      "mean": -0.558456790123457,
+      "n": 162,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 162,
+      "se": 0.39220179706513647,
+      "suppressed": false,
+      "z": -1.4239016605798698
+     },
+     "UNCERTAIN": {
+      "mae": 3.733333333333333,
+      "n": 6,
+      "n_games": 3,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     }
+    },
+    "minutes_bucket": {
+     "12-20": {
+      "ci95": [
+       -1.2829478326612902,
+       2.4347319852941167
+      ],
+      "mae": 3.6512820512820507,
+      "mean": 0.5856410256410255,
+      "n": 39,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 39,
+      "se": 0.9602758621021381,
+      "suppressed": false,
+      "z": 0.6098674857441484
+     },
+     "20-28": {
+      "ci95": [
+       -2.526111954459203,
+       0.07659267857142753
+      ],
+      "mae": 5.447377049180329,
+      "mean": -1.1244262295081968,
+      "n": 61,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 61,
+      "se": 0.6694287639346708,
+      "suppressed": false,
+      "z": -1.6796801841904854
+     },
+     "<12": {
+      "mae": 2.0125,
+      "n": 20,
+      "n_games": 8,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     ">28": {
+      "ci95": [
+       -3.322512755102041,
+       1.0374430769230754
+      ],
+      "mae": 5.360624999999999,
+      "mean": -1.1977083333333336,
+      "n": 48,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 48,
+      "se": 1.138140240841343,
+      "suppressed": false,
+      "z": -1.0523380953896826
+     }
+    },
+    "opp_def": {
+     "unknown": {
+      "ci95": [
+       -1.3710400805676695,
+       0.23242937853107337
+      ],
+      "mae": 4.596726190476191,
+      "mean": -0.5976785714285716,
+      "n": 168,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 168,
+      "se": 0.41911749062123066,
+      "suppressed": false,
+      "z": -1.4260406325268637
+     }
+    },
+    "player": {
+     "cells": {},
+     "n_players": 168,
+     "n_suppressed": 168
+    },
+    "role_proxy": {
+     "bench(<18 pred min)": {
+      "ci95": [
+       -1.2781841868012982,
+       1.2798309523809508
+      ],
+      "mae": 3.079791666666667,
+      "mean": -0.11479166666666672,
+      "n": 48,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 48,
+      "se": 0.6660722150799385,
+      "suppressed": false,
+      "z": -0.17234117272537786
+     },
+     "rotation(18-28)": {
+      "ci95": [
+       -1.6317426286856573,
+       0.37701752232142516
+      ],
+      "mae": 5.09875,
+      "mean": -0.5195833333333335,
+      "n": 72,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 72,
+      "se": 0.5160030071107825,
+      "suppressed": false,
+      "z": -1.0069385762741927
+     },
+     "starter-like(>28)": {
+      "ci95": [
+       -3.322512755102041,
+       1.0374430769230754
+      ],
+      "mae": 5.360624999999999,
+      "mean": -1.1977083333333336,
+      "n": 48,
+      "n_clusters": 8,
+      "n_games": 8,
+      "n_obs": 48,
+      "se": 1.138140240841343,
+      "suppressed": false,
+      "z": -1.0523380953896826
+     }
+    },
+    "team": {
+     "ATL": {
+      "mae": 3.7422222222222223,
+      "n": 9,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "BKN": {
+      "mae": 4.211818181818183,
+      "n": 11,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "CHA": {
+      "mae": 7.056,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "CHI": {
+      "mae": 4.569000000000001,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "CLE": {
+      "mae": 3.2590000000000003,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "DAL": {
+      "mae": 5.6925,
+      "n": 12,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "DEN": {
+      "mae": 5.758000000000001,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "GSW": {
+      "mae": 6.510909090909092,
+      "n": 11,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "HOU": {
+      "mae": 4.240909090909091,
+      "n": 11,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "MIA": {
+      "mae": 5.406000000000001,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "MIL": {
+      "mae": 4.577,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "NOP": {
+      "mae": 4.181818181818182,
+      "n": 11,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "PHI": {
+      "mae": 2.9210000000000003,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "PHX": {
+      "mae": 4.985,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "SAS": {
+      "mae": 2.791538461538462,
+      "n": 13,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     },
+     "WAS": {
+      "mae": 3.806,
+      "n": 10,
+      "n_games": 1,
+      "reason": "INSUFFICIENT_SAMPLE (needs n>=30 and games>=8)",
+      "suppressed": true
+     }
+    }
+   },
+   "stat_family": {
+    "assists": {
+     "ci95": [
+      -0.5269142857142857,
+      -0.03659794734493534
+     ],
+     "mae": 1.2983928571428571,
+     "mean": -0.2688690476190476,
+     "n": 168,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 168,
+     "se": 0.12913496793865412,
+     "suppressed": false,
+     "z": -2.082077781958908
+    },
+    "fga": {
+     "ci95": [
+      -0.6106363125404872,
+      0.39602484243697456
+     ],
+     "mae": 2.7350000000000003,
+     "mean": -0.09976190476190483,
+     "n": 168,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 168,
+     "se": 0.2622819483557862,
+     "suppressed": false,
+     "z": -0.3803613073156583
+    },
+    "pra": {
+     "ci95": [
+      -2.400209666427547,
+      -0.26530715875864125
+     ],
+     "mae": 6.336369047619048,
+     "mean": -1.3229166666666667,
+     "n": 168,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 168,
+     "se": 0.5544641498428095,
+     "suppressed": false,
+     "z": -2.3859372459729156
+    },
+    "rebounds": {
+     "ci95": [
+      -0.7458682634730539,
+      -0.03939393939393937
+     ],
+     "mae": 1.7904166666666665,
+     "mean": -0.36136904761904765,
+     "n": 168,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 168,
+     "se": 0.18364828065336333,
+     "suppressed": false,
+     "z": -1.9677235546851255
+    },
+    "threes": {
+     "ci95": [
+      -0.27395329341317365,
+      0.003604651162790688
+     ],
+     "mae": 0.9483333333333333,
+     "mean": -0.13845238095238094,
+     "n": 168,
+     "n_clusters": 8,
+     "n_games": 8,
+     "n_obs": 168,
+     "se": 0.07142403116225376,
+     "suppressed": false,
+     "z": -1.9384565488590118
+    }
+   },
+   "status": "OK",
+   "unit_note": "bias = pred - actual, conditional on playing; cells below the minimum are suppressed"
+  }
+ },
+ "window": {
+  "day_et": "2026-10-24",
+  "days": null,
+  "prospective_only": true,
+  "prospective_start_utc": "2026-10-20T00:00:00Z"
+ }
+}
