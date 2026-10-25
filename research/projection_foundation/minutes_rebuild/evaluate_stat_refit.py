@@ -10,7 +10,7 @@ import numpy as np, pandas as pd
 from nba.common import FAMILIES
 from nba.evaluate import diff_ci
 from archive_rules import assess
-from challenger_rules import challenger_ok, FREEZE
+from challenger_rules import challenger_ok, judge, FREEZE
 
 arch, prod, code, out_path = sys.argv[1:5]
 monitor = "--monitor" in sys.argv
@@ -22,6 +22,7 @@ fmt = lambda r: "—" if r is None else f"{r['mean_diff']:+.3f} [{r['ci95'][0]:+
 fmt4 = lambda r: "—" if r is None else f"{r['mean_diff']:+.4f} [{r['ci95'][0]:+.4f}, {r['ci95'][1]:+.4f}]"
 STAT = {"points": "pts", "rebounds": "reb", "assists": "ast", "threes": "fg3m", "pra": "pra", "fga": "fga"}
 OUTCOME_FAM = {"points": "points", "rebounds": "rebounds", "assists": "assists", "threes": "threes", "pra": "pra", "fga": "fga"}
+
 
 # ---- eligible rows
 rows, files = [], []
@@ -64,6 +65,9 @@ for f in sorted(glob.glob(os.path.join(prod, "outcomes", "nba", "*", "*.jsonl.gz
             a[o["family"]] = float(o["actual"])
 settled = {g for g, _ in act}
 A = A[A.game_id.isin(settled)].copy()
+if A.empty:
+    out("Settled games 0; played player-games 0.\n\n**INSUFFICIENT**: none of the eligible challenger games has settled yet.")
+    open(out_path, "w").write("\n".join(lines) + "\n"); print("\n".join(lines)); sys.exit(0)
 A["played"] = [act.get((g, p), {}).get("played", False) for g, p in zip(A.game_id, A.player_id)]
 P = A[A.played].copy()
 n_games, n_rows = P.game_id.nunique(), len(P)
@@ -102,14 +106,9 @@ for fam, (col, gkey, rungs) in FAMILIES.items():
         f"{np.nanmean(b0):.4f} / {np.nanmean(b1):.4f} / {np.nanmean(b2):.4f} | {fmt4(dbr)} |")
 out("\n## Pre-registered criteria\n")
 out("| family | 1 accuracy non-inferiority (upper ΔMAE < +2% of P0 MAE) | 2 bias (\\|bias P2\\| ≤ 5% of mean and ≤ \\|bias P0\\| + 2%) | 3 rung Brier (upper Δ < +0.003) |\n|---|---|---|---|")
-allok = True
-for fam, r in res.items():
-    c1 = r["d20"]["ci95"][1] < 0.02 * r["mae0"]
-    c2 = abs(r["bias2"]) <= 0.05 * r["ymean"] and abs(r["bias2"]) <= abs(r["bias0"]) + 0.02 * r["ymean"]
-    c3 = r["dbr"] is not None and r["dbr"]["ci95"][1] < 0.003
-    allok &= bool(c1 and c2 and c3)
+crit, allok = judge(res)
+for fam, c1, c2, c3, r in crit:
     out(f"| {fam} | {'PASS' if c1 else 'FAIL'} (upper {r['d20']['ci95'][1]:+.3f} vs {0.02 * r['mae0']:.3f}) | {'PASS' if c2 else 'FAIL'} (bias {r['bias2']:+.3f}, P0 {r['bias0']:+.3f}, mean {r['ymean']:.2f}) | {'PASS' if c3 else 'FAIL'} ({fmt4(r['dbr'])}) |")
-allok &= len(res) == len(FAMILIES)
 if meets:
     out(f"\n**Pre-registered verdict for criteria 1-3 (criterion 4, the minutes rules, is evaluated by evaluate_prospective.py on the same games): {'PASS' if allok else 'FAIL'}.**")
 else:

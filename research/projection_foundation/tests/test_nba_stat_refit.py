@@ -39,3 +39,25 @@ def test_the_challenger_rules_refuse_unfrozen_or_unlabelled_snapshots(monkeypatc
     assert not ok and "no stats.jrm_refit" in why
     ok, why = CR.challenger_ok(str(HERE.parent), {"stats_refit_included": True, "code_commit": "b" * 40})
     assert not ok                                                               # unknown commits are never eligible
+
+
+def _res(d_hi, b0, b2, br_hi, mae0=4.0, ymean=10.0):
+    return {"n": 600, "mae0": mae0, "d20": {"ci95": (-0.2, d_hi), "mean_diff": -0.05}, "bias0": b0, "bias2": b2, "ymean": ymean,
+            "dbr": None if br_hi is None else {"ci95": (-0.004, br_hi), "mean_diff": -0.001}}
+
+
+def test_the_prereg_decision_rule_needs_every_criterion_in_every_family():
+    from nba.common import FAMILIES
+    EJ = CR
+    good = {f: _res(0.03, 0.1, 0.2, 0.001) for f in FAMILIES}
+    assert EJ.judge(good)[1] is True
+    # accuracy: upper bound of dMAE must stay below +2% of the P0 MAE (0.08 here)
+    bad = dict(good, points=_res(0.09, 0.1, 0.2, 0.001)); assert EJ.judge(bad)[1] is False
+    # bias: absolute bias above 5% of the mean fails; so does a bias worse than P0's by more than 2% of the mean
+    bad = dict(good, pra=_res(0.0, 0.0, 0.6, 0.001)); assert EJ.judge(bad)[1] is False
+    bad = dict(good, fga=_res(0.0, 0.1, 0.4, 0.001)); assert EJ.judge(bad)[1] is False          # 0.4 <= 0.5 but > 0.1 + 0.2
+    # betting probabilities: no interval, or an upper bound at/over +0.003, fails
+    bad = dict(good, assists=_res(0.0, 0.1, 0.2, None)); assert EJ.judge(bad)[1] is False
+    bad = dict(good, threes=_res(0.0, 0.1, 0.2, 0.003)); assert EJ.judge(bad)[1] is False
+    # a missing family is not a pass
+    assert EJ.judge({k: v for k, v in good.items() if k != "rebounds"})[1] is False
