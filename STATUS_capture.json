@@ -1,33 +1,37 @@
 {
- "last_capture_utc": "2026-10-25T21:40:31Z",
- "n_markets": 11162,
+ "last_capture_utc": "2026-10-25T21:45:31Z",
+ "n_markets": 11163,
  "n_series": 300,
- "requests": 918,
+ "requests": 919,
  "run_id": "40216046475",
  "markets_written": {
-  "encoding": "checkpoint",
-  "reason": "chain reached 24 deltas (limit 24)",
-  "path": "kalshi/markets/dt=2026-10-25/kalshi_markets_20261025T214031Z_40216046475.jsonl.gz",
-  "bytes": 951701,
-  "n_markets": 11162,
-  "board_sha256": "823b73b71fae80a138fccb7166927938dc0853b6e33eb69dbc5a75b40637f4c3"
+  "encoding": "delta",
+  "seq": 1,
+  "path": "kalshi/markets_delta/dt=2026-10-25/kalshi_markets_delta_20261025T214531Z_40216046475.json.gz",
+  "bytes": 66344,
+  "n_markets": 11163,
+  "n_changed": 3358,
+  "changed_pct": 30.082,
+  "board_sha256": "3f06be5ebe68471b624074c06ed7da7c380551ac4badd351c92b01b05461b4c2"
  },
  "orderbooks_written": {
-  "encoding": "checkpoint",
-  "reason": "chain reached 24 deltas (limit 24)",
-  "path": "kalshi/orderbooks/dt=2026-10-25/kalshi_orderbooks_20261025T214031Z_40216046475.jsonl.gz",
-  "bytes": 40786,
+  "encoding": "delta",
+  "seq": 1,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-25/kalshi_orderbooks_delta_20261025T214531Z_40216046475.json.gz",
+  "bytes": 40089,
   "n_markets": 300,
-  "board_sha256": "eccbdd9c54dab699ab5463c41335f147a99cf0f6f2d197dacdfc002d26be49e7"
+  "n_changed": 299,
+  "changed_pct": 99.667,
+  "board_sha256": "1e1e6dc33c800390822dfcbc9a7d423d04681a4f75359fa8eab487bb05195d5d"
  },
  "by_status": {
   "active": 11161,
-  "initialized": 1
+  "initialized": 2
  },
  "by_support": {
-  "BUILDABLE": 2248,
-  "MODELABLE": 1923,
-  "RESEARCH": 1880,
+  "BUILDABLE": 2249,
+  "MODELABLE": 1925,
+  "RESEARCH": 1878,
   "UNMODELABLE": 1630,
   "UNRESOLVED": 3481
  },
@@ -42,7 +46,7 @@
   "franchise_business": 26,
   "game_overtime": 16,
   "game_points_leader": 79,
-  "game_race_to": 92,
+  "game_race_to": 90,
   "game_spread": 231,
   "game_total": 203,
   "game_unknown": 192,
@@ -57,10 +61,10 @@
   "player_assists": 246,
   "player_blocks": 78,
   "player_double_double": 28,
-  "player_points": 278,
+  "player_points": 277,
   "player_pra": 128,
-  "player_rebounds": 310,
-  "player_steals": 146,
+  "player_rebounds": 311,
+  "player_steals": 147,
   "player_stocks": 85,
   "player_threes": 325,
   "player_triple_double": 9,
@@ -74,7 +78,7 @@
   "season_unknown": 785,
   "season_wins": 312,
   "starting_lineup": 12,
-  "team_total": 266,
+  "team_total": 268,
   "transactions": 501,
   "unknown": 894
  },
