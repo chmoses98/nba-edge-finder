@@ -1,6 +1,6 @@
 # Issue #53 - T-60 availability study (research only; PRIMARY new experiment; dormant until a separate activation change)
 
-**Status.** Merged as inactive code, protocol, docs and results. Nothing here is enabled: the sealing chain still runs only the `control` lane (`SEAL_LANES: "control"`). No model, rule, stake,
+**Status.** Code, protocol, docs and results merged (PRs #55, #57). The activation change (this PR, draft until reviewed) lists `t60a` in `SEAL_LANES`; before it merges the sealing chain runs only the `control` lane (`SEAL_LANES: "control"`). No model, rule, stake,
 wagering authority or production default changes. The strict T-60 control (`ISSUE53_EXEC_SHADOW_V1`, `exec_shadow_config_v2.json`, sha256 `f84e4067436e2515ea7f35f7417a4e9e66ad69f62ae66ea004a7c6c23244c3e8`)
 is byte-identical, keeps its ledger branch (`exec-shadow-seals`), its start (2026-10-24T06:00Z) and its evidence counts. The T-45 study (`ISSUE53_T45_AVAILABILITY.md`) stays inactive and exploratory;
 it is not part of the primary comparison.
@@ -68,11 +68,11 @@ Residual risk: a runner queue that runs into an *opening* window. It is bounded 
 
 ## 4. Activation is a separate change
 
-This change leaves `SEAL_LANES: "control"`. Activation (`"control,t60a"`) will be its own reviewed PR, made only after the following are demonstrated for the lane:
-1. the pretip dry run of both lanes on a runner (PR rehearsal, no publication);
-2. publication: the first publish bootstraps `exec-shadow-seals-t60a` through the Git Data API (server timestamps, fast-forward only, additions only), after the existing `selftest`;
-3. verification: `verify_seal` / `evaluate` pass on the first seals (immutability, deadline against the server commit time, board committed by D), as `BEFORE_PROSPECTIVE_START` burn-in seals that are explicitly uncounted;
-4. if activation slips past 2026-10-27T06:00Z the protocol is versioned and the start moved to a later future instant before any countable seal.
+The activation PR changes exactly one setting, `SEAL_LANES: "control"` -> `"control,t60a"` (plus the test that pins it). It stays a draft until the owner reviews it; nothing is merged or activated before that.
+
+Readiness shown before activation: (1) the pretip dry rehearsal of both lanes on a runner on real archived data, publishing nothing (PR #57 CI); (2) an offline, read-only verification of t60a seals built from archived data: `verify_seal` / `evaluate` and the settlement join run against a scratch ledger, nothing published, no archive written, no historical result counted as prospective (`results/issue53_t60a/offline_verification.md`).
+
+To be verified **after** activation (burn-in seals before 2026-10-27T06:00Z are uncounted by rule, `BEFORE_PROSPECTIVE_START`): the first real publication bootstraps `exec-shadow-seals-t60a` through the Git Data API (server commit time, fast-forward only, additions only, deadline against the server time); the seals are immutable (write-once paths); `verify_seal` / `evaluate` and the settlement join behave as in the offline run. If activation slips past 2026-10-27T06:00Z the protocol is versioned and the start moved to a later future instant before any countable seal.
 
 ## 5. Comparison, measured on the archive so far
 

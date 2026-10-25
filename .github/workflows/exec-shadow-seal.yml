@@ -11,8 +11,8 @@ name: exec-shadow-seal
 #     with neither a seal nor a MISSED marker, or on any MISSED marker (nba.paper.seal_monitor).
 #   * Only runs from the default branch can produce COUNTED seals (verified offline: code sha must be reachable from main). Pull-request runs and dry dispatches perform ONE
 #     rehearsal iteration on a fixed past instant and publish nothing.
-#   * Lanes: the same chain can seal a second, separately preregistered study (`t60a`, the T-60 availability study: own protocol / ledger branch / counts) - no extra scheduler. It is OFF in
-#     SEAL_LANES until its activation PR (the exploratory, inactive `t45` lane is kept in the code but is never enabled).
+#   * Lanes: the same chain can seal a second, separately preregistered study (`t60a`, the T-60 availability study: own protocol / ledger branch / counts) - no extra scheduler. It is ON in
+#     SEAL_LANES from its activation PR (the exploratory, inactive `t45` lane is kept in the code but is never enabled).
 #   * Does not touch the live ticker, capture worker, projection-foundation, the paper protocol, or any original archive.
 on:
   schedule:
@@ -53,9 +53,9 @@ env:
   PY: "3.13"
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
   # Sealing lanes. `control` = the original strict T-60 study. `t60a` = the separately preregistered T-60 availability study (exec_shadow_config_t60a_v1.json; own ledger branch, own
-  # evidence counts). Adding t60a to SEAL_LANES is the ACTIVATION step (a separate reviewed change after its dry run, publication and verification are demonstrated); the rehearsal
+  # evidence counts). t60a is ACTIVATED by listing it in SEAL_LANES (this separate reviewed change, after the dry rehearsal and an offline verification on real data); seals before its prospective start 2026-10-27T06:00Z are burn-in and stay uncounted. The rehearsal
   # below exercises both lanes dry on real archived data. The exploratory `t45` lane is never listed here.
-  SEAL_LANES: "control"
+  SEAL_LANES: "control,t60a"
   REHEARSAL_LANES: "control,t60a"
   REHEARSAL_NOW: "2026-10-21T01:00:00Z"        # OKC@SAS window (opens 00:40Z, closes 01:20Z, tip 01:30Z) on real archived data: the dry iteration exercises the whole path
 
