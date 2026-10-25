@@ -164,6 +164,7 @@ jobs:
           PF_WORK: ${{ runner.temp }}/pf_work
           # dry run only; empty (pull_request, scheduled) = the frozen engine in production
           PF_NBA_MINUTES_ENGINE: ${{ github.event.inputs.minutes_engine }}
+          PF_DRY_STAGES: "capture,project,publish"   # TEST BRANCH ONLY: the audit needs the projection, not the paper/settlement stages (the full chain exceeded 30 min on accumulated data)
           PF_KEEP_DRY: "1"   # TEST BRANCH ONLY: keep the throwaway archive copy so the checker can read what THIS run published
         run: |
           set -euo pipefail
@@ -172,7 +173,7 @@ jobs:
           WIN="${{ github.event.inputs.window_hours }}"
           # pull requests: a wide window so the dry run always has a real slate to project (before opening night: the 2026-10-20 games)
           if [ -z "$WIN" ]; then if [ "${{ github.event_name }}" = pull_request ]; then WIN=96; else WIN=30; fi; fi
-          python -m nba.live.run --stage all --dry-run --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" \
+          python -m nba.live.run --stage "${PF_DRY_STAGES:-all}" --dry-run --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" \
             --shadow "$RUNNER_TEMP/m/shadow" --pit "$RUNNER_TEMP/m/pit" --context "$RUNNER_TEMP/m/data-archive" \
             --season-types "$SEASON" --window-hours "$WIN" ${NOW:+--now "$NOW"}
       - name: Activation check of the dry-run output (report only; the JRM feed must also pass F1)
