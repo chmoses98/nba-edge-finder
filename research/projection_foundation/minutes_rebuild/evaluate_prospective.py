@@ -98,7 +98,8 @@ for f in sorted(glob.glob(os.path.join(prod, "outcomes", "nba", "*", "*.jsonl.gz
         k = (o["game_id"], o["entity_id"])
         a = act.setdefault(k, {"played": False, "started": bool(o.get("started"))})
         if o["family"] == "participation":
-            a["played"] = bool(o.get("participated"))
+            # the outcome is `actual` (1.0 appeared in the box score, 0.0 did not); the `participated` flag on this family's row is True for every row and must not be read
+            a["played"] = o.get("actual") is not None and float(o["actual"]) >= 0.5
         elif o.get("actual") is not None and not (isinstance(o["actual"], float) and math.isnan(o["actual"])):
             a[o["family"]] = float(o["actual"])
 for f in sorted(glob.glob(os.path.join(pure, "outcomes", "box", "*", "*.jsonl.gz"))):
