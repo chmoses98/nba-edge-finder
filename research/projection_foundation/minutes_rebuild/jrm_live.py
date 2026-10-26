@@ -8,6 +8,7 @@ the joint rotation model. Nothing is written to the production archives; the out
 """
 import json, sys, time, os
 sys.path.insert(0, ".."); sys.path.insert(0, ".")
+import pit_patch; pit_patch.install()      # observed-outcome ridge rating (see pit_patch.py); needed once a feed spans a weekly rating block
 import numpy as np, pandas as pd
 from pf_core import models
 from nba import data, features, minutes as M, pipeline, distributions as D

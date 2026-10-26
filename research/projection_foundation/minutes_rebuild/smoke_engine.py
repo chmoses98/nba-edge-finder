@@ -2,6 +2,7 @@
 python smoke_engine.py FEED.json OUT_PREFIX"""
 import sys, json, gzip, os
 sys.path.insert(0, ".."); sys.path.insert(0, ".")
+import pit_patch; pit_patch.install()      # observed-outcome ridge rating (see pit_patch.py); needed once a feed spans a weekly rating block
 import numpy as np, pandas as pd
 from nba import project as PRJ, data
 from nba.live import activation_check as AC
