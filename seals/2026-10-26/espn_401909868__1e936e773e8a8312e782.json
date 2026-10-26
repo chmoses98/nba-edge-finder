@@ -1,0 +1,236 @@
+{
+ "board": {
+  "commit_utc": "2026-10-26T21:58:06Z",
+  "gap_s": 318.0,
+  "rule": "latest_committed_by_decision",
+  "tick_observed_utc": "2026-10-26T21:54:42Z"
+ },
+ "body_sha256": "d2052a96799f55e84474fa7a35b8fb2828ad273329e040fddfe9d47178f7ccfa",
+ "candidates": {
+  "file": "espn_401909868__candidates.jsonl.gz",
+  "n_eligible": 0,
+  "n_sides": 564,
+  "n_trades": 0,
+  "primary_reason_histogram": {
+   "DEPTH_CONFLICT_ORDERBOOK": 15,
+   "GATE_STATUS": 503,
+   "QUALITY_GATE:EXTREME_PRICE": 24,
+   "QUALITY_GATE:NO_SIZE": 14,
+   "QUALITY_GATE:SPREAD_WIDE": 8
+  },
+  "sha256": "6e1955a851b86e09c7cf1b21d747a026eb5168ae30e4fae48934177169828f7d"
+ },
+ "checkpoint_utc": "2026-10-26T22:00:00Z",
+ "clocks": {
+  "board_commit_index_ticks": 2650,
+  "forecast_commit_index_ids": 43575
+ },
+ "code": {
+  "default_branch": "main",
+  "dirty": false,
+  "event": "workflow_dispatch",
+  "protocol_effective_commit_utc": "2026-10-23T19:48:32Z",
+  "protocol_path": "research/projection_foundation/nba/paper/exec_shadow_config_t60a_v1.json",
+  "ref": "refs/heads/main",
+  "run_attempt": "1",
+  "run_id": "40396754734",
+  "sha": "77d3d6c785da9ed7df4d3f9857778ff628601baf",
+  "workflow": "exec-shadow-seal"
+ },
+ "computed_utc": "2026-10-26T22:11:07Z",
+ "decision_mode": "sealed_pretip_asof",
+ "dry_run": false,
+ "forecast_ids_sha256": "1af9c13420ba3d92a89e014bbd2b39735f091bc20df20385eeb3b838d306e967",
+ "forecasts": {
+  "n_game_records_used": 6,
+  "n_player_records_late_or_unverified": 0,
+  "n_player_records_used": 1650
+ },
+ "game": {
+  "away": "WAS",
+  "game_date_et": "2026-10-26",
+  "game_id": "espn:401909868",
+  "home": "CHA",
+  "schedule_file": "context_schedule_20261026T212213Z_40385771794.jsonl.gz",
+  "schedule_observed_utc": "2026-10-26T21:22:13Z",
+  "schedule_sha256": "42d3a5bf9ac127af23abd801a74472a8f9c4b0a338a5bbbb956bafbf68e1397f",
+  "start_utc": "2026-10-26T23:00:00Z"
+ },
+ "game_reason": "GATE_STATUS=503; QUALITY_GATE:EXTREME_PRICE=24; DEPTH_CONFLICT_ORDERBOOK=15; QUALITY_GATE:NO_SIZE=14",
+ "inputs": {
+  "coverage": {
+   "UNSUPPORTED_SERIES:KXNBA1HTEAMTOTAL": 22,
+   "UNSUPPORTED_SERIES:KXNBA2D": 3,
+   "UNSUPPORTED_SERIES:KXNBA3PTPROT": 44,
+   "UNSUPPORTED_SERIES:KXNBAASTPROT": 38,
+   "UNSUPPORTED_SERIES:KXNBABLK": 10,
+   "UNSUPPORTED_SERIES:KXNBAOT": 1,
+   "UNSUPPORTED_SERIES:KXNBAPTSLEADER": 13,
+   "UNSUPPORTED_SERIES:KXNBAPTSPROT": 39,
+   "UNSUPPORTED_SERIES:KXNBAREBPROT": 47,
+   "UNSUPPORTED_SERIES:KXNBASTL": 14,
+   "UNSUPPORTED_SERIES:KXNBASTOCK": 8,
+   "UNSUPPORTED_SERIES:KXNBAWINMARGIN": 8,
+   "markets": 480,
+   "quote:TWO_SIDED": 480
+  },
+  "data_archive_head": "dac4476065c6370cfb6a99cca10eb8e4886d3166",
+  "n_snapshot_rows": 480,
+  "projection_data_head": "c00bd2010b90bc32f057fbafd57a1f311ebe7194"
+ },
+ "ledger_after": {
+  "n_game": {
+   "espn:401909861": 1,
+   "espn:401909862": 3,
+   "espn:401909863": 6,
+   "espn:401909864": 3,
+   "espn:401909865": 3,
+   "espn:401909866": 4
+  },
+  "n_team": {
+   "espn:401909861|LAL": 1,
+   "espn:401909862|BKN": 3,
+   "espn:401909863|NYK": 3,
+   "espn:401909863|ORL": 3,
+   "espn:401909864|TOR": 3,
+   "espn:401909865|OKC": 3,
+   "espn:401909866|DET": 3,
+   "espn:401909866|PHI": 1
+  },
+  "n_unit": {
+   "espn:401909861|espn:3945274": 1,
+   "espn:401909862|espn:3064514": 2,
+   "espn:401909862|espn:4278104": 1,
+   "espn:401909863|espn:3147657": 1,
+   "espn:401909863|espn:4066320": 2,
+   "espn:401909863|espn:4431823": 2,
+   "espn:401909863|espn:4566434": 1,
+   "espn:401909864|espn:4395625": 1,
+   "espn:401909864|espn:4432241": 1,
+   "espn:401909864|espn:5093267": 1,
+   "espn:401909865|espn:4433255": 1,
+   "espn:401909865|espn:4683778": 1,
+   "espn:401909865|espn:4900671": 1,
+   "espn:401909866|espn:3908845": 1,
+   "espn:401909866|espn:4432166": 2,
+   "espn:401909866|espn:5124612": 1
+  },
+  "notional_day": {
+   "2026-10-25": 9.34
+  },
+  "notional_game": {
+   "espn:401909861": 0.47,
+   "espn:401909862": 1.49,
+   "espn:401909863": 2.79,
+   "espn:401909864": 1.22,
+   "espn:401909865": 1.38,
+   "espn:401909866": 1.99
+  },
+  "theses": [
+   "espn:401909861|player|espn:3945274|assists",
+   "espn:401909862|player|espn:3064514|assists",
+   "espn:401909862|player|espn:3064514|pra",
+   "espn:401909862|player|espn:4278104|points",
+   "espn:401909863|player|espn:3147657|points",
+   "espn:401909863|player|espn:4066320|assists",
+   "espn:401909863|player|espn:4066320|points",
+   "espn:401909863|player|espn:4431823|points",
+   "espn:401909863|player|espn:4431823|threes",
+   "espn:401909863|player|espn:4566434|assists",
+   "espn:401909864|player|espn:4395625|pra",
+   "espn:401909864|player|espn:4432241|assists",
+   "espn:401909864|player|espn:5093267|rebounds",
+   "espn:401909865|player|espn:4433255|rebounds",
+   "espn:401909865|player|espn:4683778|threes",
+   "espn:401909865|player|espn:4900671|threes",
+   "espn:401909866|player|espn:3908845|points",
+   "espn:401909866|player|espn:4432166|points",
+   "espn:401909866|player|espn:4432166|rebounds",
+   "espn:401909866|player|espn:5124612|assists"
+  ]
+ },
+ "ledger_before": {
+  "n_game": {
+   "espn:401909861": 1,
+   "espn:401909862": 3,
+   "espn:401909863": 6,
+   "espn:401909864": 3,
+   "espn:401909865": 3,
+   "espn:401909866": 4
+  },
+  "n_team": {
+   "espn:401909861|LAL": 1,
+   "espn:401909862|BKN": 3,
+   "espn:401909863|NYK": 3,
+   "espn:401909863|ORL": 3,
+   "espn:401909864|TOR": 3,
+   "espn:401909865|OKC": 3,
+   "espn:401909866|DET": 3,
+   "espn:401909866|PHI": 1
+  },
+  "n_unit": {
+   "espn:401909861|espn:3945274": 1,
+   "espn:401909862|espn:3064514": 2,
+   "espn:401909862|espn:4278104": 1,
+   "espn:401909863|espn:3147657": 1,
+   "espn:401909863|espn:4066320": 2,
+   "espn:401909863|espn:4431823": 2,
+   "espn:401909863|espn:4566434": 1,
+   "espn:401909864|espn:4395625": 1,
+   "espn:401909864|espn:4432241": 1,
+   "espn:401909864|espn:5093267": 1,
+   "espn:401909865|espn:4433255": 1,
+   "espn:401909865|espn:4683778": 1,
+   "espn:401909865|espn:4900671": 1,
+   "espn:401909866|espn:3908845": 1,
+   "espn:401909866|espn:4432166": 2,
+   "espn:401909866|espn:5124612": 1
+  },
+  "notional_day": {
+   "2026-10-25": 9.34
+  },
+  "notional_game": {
+   "espn:401909861": 0.47,
+   "espn:401909862": 1.49,
+   "espn:401909863": 2.79,
+   "espn:401909864": 1.22,
+   "espn:401909865": 1.38,
+   "espn:401909866": 1.99
+  },
+  "theses": [
+   "espn:401909861|player|espn:3945274|assists",
+   "espn:401909862|player|espn:3064514|assists",
+   "espn:401909862|player|espn:3064514|pra",
+   "espn:401909862|player|espn:4278104|points",
+   "espn:401909863|player|espn:3147657|points",
+   "espn:401909863|player|espn:4066320|assists",
+   "espn:401909863|player|espn:4066320|points",
+   "espn:401909863|player|espn:4431823|points",
+   "espn:401909863|player|espn:4431823|threes",
+   "espn:401909863|player|espn:4566434|assists",
+   "espn:401909864|player|espn:4395625|pra",
+   "espn:401909864|player|espn:4432241|assists",
+   "espn:401909864|player|espn:5093267|rebounds",
+   "espn:401909865|player|espn:4433255|rebounds",
+   "espn:401909865|player|espn:4683778|threes",
+   "espn:401909865|player|espn:4900671|threes",
+   "espn:401909866|player|espn:3908845|points",
+   "espn:401909866|player|espn:4432166|points",
+   "espn:401909866|player|espn:4432166|rebounds",
+   "espn:401909866|player|espn:5124612|assists"
+  ]
+ },
+ "paper_config_sha256": "d96f667f9744f90b88c82fa55f67bb39e7dc45d8f51e9e0e0fb526ef7b1ef5f6",
+ "protocol_sha256": "aa425cb5f66dee1116de9cf13b7d8be8d1d054370855012a78bcbc83353188d8",
+ "schema": "issue53.exec_seal.v1",
+ "seal_id": "1e936e773e8a8312e782",
+ "selected": [],
+ "status": "NO_TRADE",
+ "strategy_id": "PF_EDGE_STRICT_T60_AVAIL_V1",
+ "study_id": "ISSUE53_EXEC_SHADOW_T60_AVAIL_V1",
+ "study_version": "1.0.0",
+ "window": {
+  "closes_utc": "2026-10-26T22:50:00Z",
+  "opens_utc": "2026-10-26T22:10:00Z"
+ }
+}
