@@ -1,36 +1,32 @@
-# NBA slate 2026-10-26 — generated 2026-10-26T22:44:42Z — nba-sim-0.1.0
+# NBA slate 2026-10-26 — generated 2026-10-26T23:48:00Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
-Market snapshot age: 3 min · injury snapshot age: 24 min (official)
+Market snapshot age: 3 min · injury snapshot age: 28 min (official)
 
 ## Coverage
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 2374 |
-| MODELABLE | 2491 |
-| RESEARCH | 169 |
-| UNRESOLVED | 1851 |
+| BUILDABLE | 1303 |
+| MODELABLE | 1381 |
+| RESEARCH | 94 |
+| UNRESOLVED | 1089 |
 
 ## Games
 
 | game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |
 |---|---|---:|---|---|---:|---:|---|
-| WAS @ CHA | 2026-10-26T23:00:00Z | 0.952 | +26.3±15.7 | 229.6±19.9 | 0.032 | 40000 | ok |
-| MIN @ CLE | 2026-10-26T23:00:00Z | 0.579 | +3.2±16.1 | 226.1±20.2 | 0.047 | 40000 | ok |
-| CHI @ BOS | 2026-10-26T23:30:00Z | 0.900 | +20.6±16.2 | 226.7±20.6 | 0.049 | 40000 | ok |
-| DAL @ MIA | 2026-10-26T23:30:00Z | 0.761 | +11.5±16.3 | 238.9±20.5 | 0.047 | 60000 | ok |
-| IND @ MIL | 2026-10-27T00:00:00Z | 0.466 | -1.4±16.8 | 235.3±20.9 | 0.049 | 60000 | ok |
-| PHX @ OKC | 2026-10-27T00:00:00Z | 0.857 | +17.0±15.9 | 221.5±20.1 | 0.049 | 40000 | ok |
-| ATL @ HOU | 2026-10-27T00:30:00Z | 0.594 | +3.8±16.2 | 219.6±20.0 | 0.049 | 60000 | ok |
-| MEM @ UTA | 2026-10-27T01:00:00Z | 0.466 | -1.5±16.8 | 239.8±20.8 | 0.049 | 40000 | ok |
-| GSW @ DEN | 2026-10-27T02:00:00Z | 0.751 | +11.1±16.4 | 238.1±20.6 | 0.047 | 40000 | ok |
+| IND @ MIL | 2026-10-27T00:00:00Z | 0.502 | +0.1±16.8 | 231.1±20.8 | 0.049 | 40000 | ok |
+| PHX @ OKC | 2026-10-27T00:00:00Z | 0.836 | +15.4±15.9 | 217.4±20.0 | 0.048 | 40000 | ok |
+| ATL @ HOU | 2026-10-27T00:30:00Z | 0.593 | +3.8±16.1 | 219.5±20.0 | 0.049 | 40000 | ok |
+| MEM @ UTA | 2026-10-27T01:00:00Z | 0.504 | +0.2±16.7 | 235.4±20.8 | 0.047 | 40000 | ok |
+| GSW @ DEN | 2026-10-27T02:00:00Z | 0.757 | +11.3±16.3 | 238.0±20.5 | 0.048 | 40000 | ok |
 
 ## Contracts (OK gate, sorted by best EV)
 
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 4865, 'UNSUPPORTED': 2020}
+Other gates: {'NO_EDGE': 2684, 'UNSUPPORTED': 1183}
 
