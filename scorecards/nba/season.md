@@ -1,8 +1,8 @@
 ## NBA projection scorecard — season to date
 
-Generated 2026-10-26T18:06:06Z. Research only; nothing here is a betting signal.
+Generated 2026-10-26T22:09:15Z. Research only; nothing here is a betting signal.
 
-Archived pregame forecasts: 124203 across 55 games. Settled: 12908 (void/DNP 6026, stat corrections 49).
+Archived pregame forecasts: 127368 across 56 games. Settled: 12908 (void/DNP 6026, stat corrections 49).
 
 | Stat | Model | n (games) | MAE | Bias | CRPS | 80% range caught | vs incumbent (CRPS) |
 |---|---|---|---|---|---|---|---|
