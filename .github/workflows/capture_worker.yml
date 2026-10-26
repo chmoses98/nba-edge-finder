@@ -103,6 +103,9 @@ jobs:
           # this workflow chooses them, and the safe form costs nothing.
           SUCCESSOR_TOKEN: ${{ inputs.successor_token }}
           LIFETIME_MINUTES: ${{ inputs.lifetime_minutes }}
+          # Publish each capture before the cycle's slow jobs (lag ~214 s -> tens of seconds). OFF unless the repository variable CAPTURE_PUSH_FIRST is "1": it changes the commit lag the
+          # preregistered sealed studies are measured against, so it is the owner's switch (docs/research/ISSUE53_CAPTURE_RELIABILITY.md, section 4).
+          CAPTURE_PUSH_FIRST: ${{ vars.CAPTURE_PUSH_FIRST || '0' }}
         run: |
           set -uo pipefail
           args=(worker --data data --out data/archive --workflow capture_worker.yml)
