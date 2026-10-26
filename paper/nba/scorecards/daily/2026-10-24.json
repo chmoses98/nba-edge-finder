@@ -15,24 +15,24 @@
    "decisions_duplicate_ids_dropped": 0,
    "decisions_forecast_after_asof_excluded": 0,
    "decisions_invalid_price_excluded": 5280,
-   "decisions_raw": 450612,
+   "decisions_raw": 559008,
    "decisions_replay_excluded": 0,
    "paper_corrections_applied": 0,
-   "paper_settlements_orphaned": 92389,
-   "paper_settlements_raw": 130419,
+   "paper_settlements_orphaned": 123197,
+   "paper_settlements_raw": 161227,
    "paper_settlements_strategy_mismatch_excluded": 0,
    "pf_settlements_generated_after_tip_excluded": 0,
    "snapshots_replay_excluded": 0
   },
   "kinds_rows": {
-   "game_forecasts": 212,
-   "market_snapshots": 111017,
+   "game_forecasts": 266,
+   "market_snapshots": 138144,
    "paper_decisions": 112656,
    "pf_settlements": 3636,
-   "team_outcomes": 44
+   "team_outcomes": 59
   }
  },
- "generated_utc": "2026-10-25T11:14:26Z",
+ "generated_utc": "2026-10-26T11:17:29Z",
  "insufficient_sample": [
   "INSUFFICIENT_SAMPLE: 8 games with evidence in this window (the preregistered minimum for a value verdict is 40 games and 200 independent decisions); nothing below is a finding"
  ],
@@ -347,13 +347,13 @@
      "logloss_diff_model_minus_market": {
       "ci95": [
        -0.010570338948267607,
-       0.037100216492790106
+       0.0371002164927901
       ],
       "mean": 0.012235842360670436,
       "n_clusters": 8,
       "n_obs": 2181,
-      "se": 0.011928956686634462,
-      "z": 1.0257261118551815
+      "se": 0.01192895668663446,
+      "z": 1.0257261118551817
      },
      "n_contracts": 2181,
      "n_decisions": 2181,
@@ -411,13 +411,13 @@
      "logloss_diff_model_minus_market": {
       "ci95": [
        -0.010854759158161762,
-       0.03394714912274141
+       0.0339471491227414
       ],
       "mean": 0.010293632450782098,
       "n_clusters": 8,
       "n_obs": 2137,
-      "se": 0.011395700714395466,
-      "z": 0.9032908733535626
+      "se": 0.011395700714395465,
+      "z": 0.9032908733535627
      },
      "n_contracts": 2137,
      "n_decisions": 2137,

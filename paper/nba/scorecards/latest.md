@@ -1,13 +1,13 @@
 # NBA paper-system scorecard (research only)
 
-_generated 2026-10-25T11:14:26Z · window 7 d · prospective_only=True · nothing here is a bet recommendation_
+_generated 2026-10-26T11:17:29Z · window 7 d · prospective_only=True · nothing here is a bet recommendation_
 
 ## Sample (independent units)
 
-- forecast settlements: 16118 rows over 36 games / 1519 player-games; team games 36
-- paper decisions: {'n_games': 43, 'n_player_games': 483, 'n_theses': 2005, 'n_decisions': 760920, 'n_contracts': 11430}; settled 255305
+- forecast settlements: 18934 rows over 43 games / 1789 player-games; team games 43
+- paper decisions: {'n_games': 52, 'n_player_games': 574, 'n_theses': 2365, 'n_decisions': 856140, 'n_contracts': 13360}; settled 286113
 
-**Integrity counters** (excluded / dropped records): decisions_raw=862849, paper_settlements_raw=255305, decisions_bad_identity_excluded=80389, decisions_invalid_price_excluded=21540
+**Integrity counters** (excluded / dropped records): decisions_raw=971245, paper_settlements_raw=286113, decisions_bad_identity_excluded=91261, decisions_invalid_price_excluded=23844
 
 ## Projection accuracy
 
@@ -15,73 +15,73 @@ _generated 2026-10-25T11:14:26Z · window 7 d · prospective_only=True · nothin
 
 | model | n (games) | MAE | bias [95% CI] |
 |---|---|---|---|
-| challenger | 810 (36) | 5.40 | +0.11 [-0.73, +0.91] |
-| incumbent | 599 (35) | 8.62 | +3.05 [+1.14, +5.05] |
-| naive_prior_mean | 424 (22) | 4.81 | -0.67 [-1.46, +0.15] |
+| challenger | 965 (43) | 5.26 | +0.20 [-0.53, +0.88] |
+| incumbent | 696 (40) | 8.25 | +2.35 [+0.64, +4.08] |
+| naive_prior_mean | 569 (29) | 4.77 | -0.69 [-1.38, -0.02] |
 
-Paired challenger - incumbent on 599 player-games: MAE diff -3.60 [-4.49, -2.79]; bias diff -2.87 [-4.87, -1.04] (negative = challenger better)
+Paired challenger - incumbent on 696 player-games: MAE diff -3.32 [-4.10, -2.60]; bias diff -2.16 [-3.91, -0.51] (negative = challenger better)
 
 **Participation Brier**
 
 | model | n | Brier [95% CI] | mean p | played |
 |---|---|---|---|---|
-| challenger | 1247 | +0.1160 [+0.0970, +0.1351] | 0.715 | 0.650 |
-| incumbent | 1033 | +0.1856 [+0.1664, +0.2040] | 0.611 | 0.580 |
+| challenger | 1490 | +0.1146 [+0.0983, +0.1324] | 0.711 | 0.648 |
+| incumbent | 1183 | +0.1838 [+0.1662, +0.2024] | 0.622 | 0.588 |
 
 **Player stats, conditional on playing**
 
 | family | n | MAE | bias [95% CI] | CRPS | 80% cover | vs incumbent MAE diff |
 |---|---|---|---|---|---|---|
-| assists | 810 | 1.31 | -0.06 [-0.21, +0.10] | +0.901 | 79% | -0.362 [-0.495, -0.243] |
-| fga | 810 | 2.83 | +0.01 [-0.25, +0.26] | +1.993 | 79% | n/a |
-| points | 810 | 4.66 | -0.03 [-0.51, +0.45] | +3.247 | 79% | -1.647 [-2.273, -1.093] |
-| pra | 810 | 6.14 | -0.20 [-0.92, +0.50] | +4.341 | 75% | n/a |
-| rebounds | 810 | 1.83 | -0.15 [-0.33, +0.02] | +1.273 | 82% | -0.589 [-0.779, -0.422] |
-| threes | 810 | 0.82 | +0.03 [-0.05, +0.10] | +0.538 | 79% | -0.190 [-0.269, -0.124] |
+| assists | 965 | 1.33 | -0.03 [-0.15, +0.11] | +0.906 | 79% | -0.322 [-0.435, -0.220] |
+| fga | 965 | 2.82 | -0.00 [-0.25, +0.22] | +1.976 | 80% | n/a |
+| points | 965 | 4.64 | +0.01 [-0.41, +0.42] | +3.229 | 79% | -1.504 [-2.032, -1.022] |
+| pra | 965 | 6.15 | -0.14 [-0.76, +0.48] | +4.368 | 75% | n/a |
+| rebounds | 965 | 1.85 | -0.16 [-0.33, -0.01] | +1.294 | 81% | -0.521 [-0.683, -0.374] |
+| threes | 965 | 0.84 | +0.01 [-0.05, +0.08] | +0.547 | 78% | -0.170 [-0.238, -0.110] |
 
-**Participation vs production (points)**: unconditional error +0.14 [-0.07, +0.35]; participation component MSE 2.74, conditional-production component MSE 24.18
+**Participation vs production (points)**: unconditional error +0.16 [-0.02, +0.36]; participation component MSE 2.80, conditional-production component MSE 23.94
 
-**Team**: team points bias +1.67 [-1.21, +4.57], MAE 9.60
+**Team**: team points bias +2.04 [-0.58, +4.78], MAE 9.62
 
 ## Market performance
 
-**Model vs market mid** (36 games, 471 player-games, 10733 contracts): Brier diff (model - market) +0.0059 [+0.0008, +0.0114]; one contract/thesis/horizon: +0.0083 [-0.0009, +0.0181]
-  - T-90: +0.0082 [+0.0029, +0.0138] (n_contracts 10518)
-  - T-60: +0.0079 [+0.0024, +0.0132] (n_contracts 10568)
-  - T-30: +0.0084 [+0.0030, +0.0140] (n_contracts 10619)
-  - T-10: +0.0084 [+0.0035, +0.0136] (n_contracts 10654)
-  - LAST_VALID: +0.0079 [+0.0031, +0.0128] (n_contracts 10637)
+**Model vs market mid** (43 games, 556 player-games, 12689 contracts): Brier diff (model - market) +0.0058 [+0.0012, +0.0105]; one contract/thesis/horizon: +0.0085 [+0.0006, +0.0166]
+  - T-90: +0.0077 [+0.0029, +0.0126] (n_contracts 12110)
+  - T-60: +0.0074 [+0.0029, +0.0122] (n_contracts 12462)
+  - T-30: +0.0081 [+0.0037, +0.0127] (n_contracts 12533)
+  - T-10: +0.0083 [+0.0041, +0.0130] (n_contracts 12588)
+  - LAST_VALID: +0.0078 [+0.0034, +0.0121] (n_contracts 12573)
 
 | strategy | all candidates: n / ROI | selected (1/thesis): n / games / ROI [95% CI] | verdict | CLV cents (valid closes) |
 |---|---|---|---|---|
-| PF_ALL_CANDIDATES_V1 | 252220 / -0.109 | no trades | n/a | n/a |
-| PF_EDGE_STRICT_V1 | 483 / -0.116 | 155 / 34 / -0.104 [-0.329, +0.110] | INSUFFICIENT_SAMPLE | -0.41 [-0.94, +0.18] |
-| PF_EDGE_V1 | 2602 / -0.107 | 473 / 36 / -0.115 [-0.222, -0.005] | INSUFFICIENT_SAMPLE | -0.61 [-1.14, -0.09] |
+| PF_ALL_CANDIDATES_V1 | 282620 / -0.109 | no trades | n/a | n/a |
+| PF_EDGE_STRICT_V1 | 568 / -0.172 | 189 / 41 / -0.148 [-0.346, +0.043] | INSUFFICIENT_SAMPLE | -0.47 [-0.97, +0.01] |
+| PF_EDGE_V1 | 2925 / -0.114 | 549 / 43 / -0.115 [-0.211, -0.021] | NO_EVIDENCE_OF_VALUE | -0.61 [-1.10, -0.14] |
 
 Benchmarks: NO_BET_V1 ROI 0 by definition; MARKET_ONLY_V1 = quote mid (scored above); control SHADOW_PURE_PREREG_V1 is read from nba-shadow-pure by the weekly report.
 
-**Price discovery** (share of OPEN->close Brier improvement achieved by horizon): T-90: 0.68, T-60: 0.79, T-30: 0.94, T-10: 0.95, LAST_VALID: 1.00
+**Price discovery** (share of OPEN->close Brier improvement achieved by horizon): T-90: 0.68, T-60: 0.77, T-30: 0.94, T-10: 0.95, LAST_VALID: 1.00
 
-**Liquidity**: median spread 0.03, quality gate passed 0.8529017505125375, displayed size >= 1: 0.11080665510171897
+**Liquidity**: median spread 0.03, quality gate passed 0.8516469269044782, displayed size >= 1: 0.11180531221529189
 
 ## Segments (cells below the minimum sample are suppressed)
 
-- minutes bias by minutes_bucket: 12-20: +0.60 [-0.50, +1.72] (n=248); 20-28: -1.01 [-2.20, +0.12] (n=283); <12: +1.79 [-0.23, +3.58] (n=98); >28: +0.27 [-1.16, +1.73] (n=181)
-- minutes bias by role_proxy: bench(<18 pred min): +0.97 [-0.27, +2.18] (n=279); rotation(18-28): -0.66 [-1.72, +0.34] (n=350); starter-like(>28): +0.27 [-1.16, +1.73] (n=181)
-- minutes bias by injury_status: LIKELY_ACTIVE: +0.11 [-0.75, +0.92] (n=783) (1 suppressed)
-- minutes bias by freshness: <2h: +0.11 [-0.73, +0.91] (n=810)
-- points bias by minutes_bucket: 12-20: +0.48 [-0.20, +1.18] (n=248); 20-28: -0.76 [-1.57, +0.05] (n=283); <12: +0.34 [-0.43, +1.06] (n=98); >28: +0.19 [-1.16, +1.46] (n=181)
-- points bias by role_proxy: bench(<18 pred min): +0.28 [-0.25, +0.79] (n=279); rotation(18-28): -0.40 [-1.10, +0.27] (n=350); starter-like(>28): +0.19 [-1.16, +1.46] (n=181)
-- points bias by injury_status: LIKELY_ACTIVE: -0.06 [-0.56, +0.42] (n=783) (1 suppressed)
-- points bias by freshness: <2h: -0.03 [-0.51, +0.45] (n=810)
-- selected_trades by side: NO: ROI -0.074 (n=1378, games=36); YES: ROI -0.134 (n=509, games=33)
-- selected_trades by price_range: 0.0-0.2: ROI +0.268 (n=84, games=20); 0.2-0.4: ROI -0.108 (n=760, games=36); 0.4-0.6: ROI -0.110 (n=1074, games=36); 0.6-0.8: ROI +0.102 (n=117, games=29) (1 suppressed)
-- selected_trades by horizon: LIVE: ROI -0.104 (n=553, games=36); T-10: ROI -0.084 (n=236, games=36); T-30: ROI -0.074 (n=368, games=36); T-60: ROI -0.060 (n=367, games=36); T-90: ROI -0.108 (n=363, games=36)
-- selected_trades by family: game_spread: ROI -0.307 (n=105, games=20); game_total: ROI -0.213 (n=136, games=26); player_assists: ROI +0.007 (n=437, games=34); player_points: ROI -0.102 (n=614, games=36); player_pra: ROI +0.049 (n=289, games=34); player_rebounds: ROI -0.416 (n=108, games=27); player_threes: ROI +0.048 (n=98, games=22); team_total: ROI -0.291 (n=91, games=18) (1 suppressed)
-- all_candidates by side: NO: ROI -0.086 (n=126110, games=36); YES: ROI -0.142 (n=126110, games=36)
-- all_candidates by price_range: 0.0-0.2: ROI -0.387 (n=46385, games=36); 0.2-0.4: ROI -0.231 (n=48244, games=36); 0.4-0.6: ROI -0.108 (n=45406, games=36); 0.6-0.8: ROI -0.076 (n=44337, games=36); 0.8-1.0: ROI -0.074 (n=67848, games=36)
-- all_candidates by horizon: LAST_VALID: ROI -0.098 (n=21398, games=36); LIVE: ROI -0.123 (n=145630, games=36); T-10: ROI -0.087 (n=21432, games=36); T-30: ROI -0.086 (n=21358, games=36); T-60: ROI -0.090 (n=21252, games=36); T-90: ROI -0.091 (n=21150, games=36)
-- all_candidates by family: game_spread: ROI -0.066 (n=30690, games=36); game_total: ROI -0.068 (n=27028, games=36); game_winner: ROI -0.069 (n=2016, games=36); player_assists: ROI -0.121 (n=30050, games=36); player_points: ROI -0.107 (n=35146, games=36); player_pra: ROI -0.190 (n=14724, games=36); player_rebounds: ROI -0.141 (n=39382, games=36); player_threes: ROI -0.118 (n=37770, games=36); team_total: ROI -0.087 (n=35414, games=36)
+- minutes bias by minutes_bucket: 12-20: +0.64 [-0.30, +1.59] (n=284); 20-28: -0.70 [-1.78, +0.41] (n=336); <12: +1.61 [-0.10, +3.23] (n=120); >28: +0.22 [-1.06, +1.47] (n=225)
+- minutes bias by role_proxy: bench(<18 pred min): +0.96 [-0.17, +2.01] (n=327); rotation(18-28): -0.42 [-1.37, +0.57] (n=413); starter-like(>28): +0.22 [-1.06, +1.47] (n=225)
+- minutes bias by injury_status: LIKELY_ACTIVE: +0.21 [-0.51, +0.90] (n=934); UNCERTAIN: -0.34 [-2.77, +2.23] (n=31)
+- minutes bias by freshness: <2h: +0.14 [-0.58, +0.87] (n=919) (1 suppressed)
+- points bias by minutes_bucket: 12-20: +0.50 [-0.15, +1.17] (n=284); 20-28: -0.54 [-1.27, +0.18] (n=336); <12: +0.36 [-0.33, +0.94] (n=120); >28: +0.03 [-1.22, +1.22] (n=225)
+- points bias by role_proxy: bench(<18 pred min): +0.30 [-0.21, +0.79] (n=327); rotation(18-28): -0.23 [-0.84, +0.36] (n=413); starter-like(>28): +0.03 [-1.22, +1.22] (n=225)
+- points bias by injury_status: LIKELY_ACTIVE: -0.02 [-0.44, +0.40] (n=934); UNCERTAIN: +0.79 [-0.96, +2.72] (n=31)
+- points bias by freshness: <2h: +0.02 [-0.42, +0.44] (n=919) (1 suppressed)
+- selected_trades by side: NO: ROI -0.071 (n=1594, games=43); YES: ROI -0.240 (n=619, games=40)
+- selected_trades by price_range: 0.0-0.2: ROI +0.245 (n=86, games=22); 0.2-0.4: ROI -0.143 (n=868, games=43); 0.4-0.6: ROI -0.136 (n=1269, games=43); 0.6-0.8: ROI +0.120 (n=145, games=34) (1 suppressed)
+- selected_trades by horizon: LIVE: ROI -0.105 (n=627, games=43); T-10: ROI -0.131 (n=282, games=43); T-30: ROI -0.118 (n=440, games=43); T-60: ROI -0.094 (n=441, games=43); T-90: ROI -0.123 (n=423, games=42)
+- selected_trades by family: game_spread: ROI -0.364 (n=126, games=25); game_total: ROI -0.305 (n=154, games=33); player_assists: ROI -0.070 (n=504, games=41); player_points: ROI -0.094 (n=718, games=43); player_pra: ROI +0.063 (n=319, games=41); player_rebounds: ROI -0.409 (n=139, games=32); player_threes: ROI +0.051 (n=123, games=27); team_total: ROI -0.246 (n=110, games=21) (1 suppressed)
+- all_candidates by side: NO: ROI -0.082 (n=141310, games=43); YES: ROI -0.146 (n=141310, games=43)
+- all_candidates by price_range: 0.0-0.2: ROI -0.384 (n=51886, games=43); 0.2-0.4: ROI -0.216 (n=54157, games=43); 0.4-0.6: ROI -0.108 (n=51057, games=43); 0.6-0.8: ROI -0.080 (n=49670, games=43); 0.8-1.0: ROI -0.075 (n=75850, games=43)
+- all_candidates by horizon: LAST_VALID: ROI -0.099 (n=25338, games=43); LIVE: ROI -0.122 (n=157178, games=43); T-10: ROI -0.089 (n=25368, games=43); T-30: ROI -0.088 (n=25254, games=43); T-60: ROI -0.092 (n=25108, games=43); T-90: ROI -0.092 (n=24374, games=42)
+- all_candidates by family: game_spread: ROI -0.066 (n=34584, games=43); game_total: ROI -0.069 (n=30450, games=43); game_winner: ROI -0.069 (n=2368, games=43); player_assists: ROI -0.120 (n=33572, games=43); player_points: ROI -0.106 (n=39168, games=43); player_pra: ROI -0.194 (n=16606, games=43); player_rebounds: ROI -0.139 (n=43908, games=43); player_threes: ROI -0.116 (n=42066, games=43); team_total: ROI -0.089 (n=39898, games=43)
 
 ## By day
 
@@ -90,3 +90,4 @@ Benchmarks: NO_BET_V1 ROI 0 by definition; MARKET_ONLY_V1 = quote mid (scored ab
 - 2026-10-22: 2 games, 77 player-games, minutes MAE +3.99, bias +1.37
 - 2026-10-23: 12 games, 480 player-games, minutes MAE +5.21, bias +0.94
 - 2026-10-24: 8 games, 322 player-games, minutes MAE +4.99, bias -0.26
+- 2026-10-25: 7 games, 270 player-games, minutes MAE +4.54, bias +0.66
