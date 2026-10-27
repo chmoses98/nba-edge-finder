@@ -1,4 +1,4 @@
-# NBA slate 2026-10-27 — generated 2026-10-27T14:32:24Z — nba-sim-0.1.0
+# NBA slate 2026-10-27 — generated 2026-10-27T15:32:23Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
@@ -9,9 +9,9 @@ Market snapshot age: 3 min · injury snapshot age: 15 min (official)
 | support | contracts |
 |---|---:|
 | BUILDABLE | 1037 |
-| MODELABLE | 1057 |
+| MODELABLE | 1059 |
 | RESEARCH | 71 |
-| UNRESOLVED | 721 |
+| UNRESOLVED | 723 |
 
 ## Games
 
@@ -27,5 +27,5 @@ Market snapshot age: 3 min · injury snapshot age: 15 min (official)
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 2094, 'UNSUPPORTED': 792}
+Other gates: {'NO_EDGE': 2096, 'UNSUPPORTED': 794}
 
