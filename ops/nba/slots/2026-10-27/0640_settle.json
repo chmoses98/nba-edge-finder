@@ -1,0 +1,44 @@
+{
+ "authority": "research_only",
+ "code_sha": "77d3d6c785da9ed7df4d3f9857778ff628601baf",
+ "cron": "",
+ "dry_run": false,
+ "finished_utc": "2026-10-27T10:58:56Z",
+ "github_run_attempt": "1",
+ "github_run_id": "40492183178",
+ "kind": "settle",
+ "lateness_min": 15,
+ "outcome": "EXECUTED_SETTLED",
+ "produced": {
+  "results": {
+   "errors": [],
+   "fetch_errors": 0,
+   "games_considered": 24,
+   "games_final": 24,
+   "games_not_final": 0,
+   "outcomes_unchanged": 6337,
+   "outcomes_written": 1279,
+   "rejected_not_final": 0,
+   "team_outcomes_unchanged": 38,
+   "team_outcomes_written": 10
+  },
+  "settle": {
+   "already_settled": 21179,
+   "corrections": 20,
+   "pending": 1820,
+   "settled": 1387,
+   "void": 440
+  }
+ },
+ "schema": "sift.nba_run_ledger.v1",
+ "slot_id": "2026-10-27@0640",
+ "slot_utc": "2026-10-27T10:40:00+00:00",
+ "stages": [
+  "results",
+  "settle",
+  "score"
+ ],
+ "started_utc": "2026-10-27T10:56:27Z",
+ "trigger": "workflow_dispatch",
+ "warnings": []
+}
