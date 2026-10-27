@@ -1,38 +1,39 @@
 {
- "last_capture_utc": "2026-10-27T11:29:03Z",
- "n_markets": 8783,
+ "last_capture_utc": "2026-10-27T11:44:04Z",
+ "n_markets": 8785,
  "n_series": 300,
- "requests": 914,
+ "requests": 918,
  "run_id": "40493939289",
  "markets_written": {
   "encoding": "delta",
-  "seq": 16,
-  "path": "kalshi/markets_delta/dt=2026-10-27/kalshi_markets_delta_20261027T112903Z_40493939289.json.gz",
-  "bytes": 33167,
-  "n_markets": 8783,
-  "n_changed": 1788,
-  "changed_pct": 20.358,
-  "board_sha256": "9d6e3cd2b18c20b9b7ff0fb9608e8795f0f58316fdeaae3a51ea1300b808b0a5"
+  "seq": 17,
+  "path": "kalshi/markets_delta/dt=2026-10-27/kalshi_markets_delta_20261027T114404Z_40493939289.json.gz",
+  "bytes": 33990,
+  "n_markets": 8785,
+  "n_changed": 1745,
+  "changed_pct": 19.863,
+  "board_sha256": "e2e7cdd5b7086e342efceb571924151ba9ee6d8b50d911453c3edc8f7b13b765"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 16,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-27/kalshi_orderbooks_delta_20261027T112903Z_40493939289.json.gz",
-  "bytes": 33828,
+  "seq": 17,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-27/kalshi_orderbooks_delta_20261027T114404Z_40493939289.json.gz",
+  "bytes": 32641,
   "n_markets": 300,
-  "n_changed": 290,
-  "changed_pct": 96.667,
-  "board_sha256": "915395b3ee0972aa2780a6d79acc416ea75f4f25e65446c70b9ae9ab830810e7"
+  "n_changed": 274,
+  "changed_pct": 91.333,
+  "board_sha256": "d30be99ad6f33ff2839b3f89df599f64c1c1188b83bd673081e3590b1bed4b7c"
  },
  "by_status": {
-  "active": 8783
+  "active": 8783,
+  "initialized": 2
  },
  "by_support": {
   "BUILDABLE": 1192,
-  "MODELABLE": 1196,
+  "MODELABLE": 1197,
   "RESEARCH": 1852,
   "UNMODELABLE": 1631,
-  "UNRESOLVED": 2912
+  "UNRESOLVED": 2913
  },
  "by_family": {
   "all_nba_selections": 371,
@@ -62,12 +63,12 @@
   "player_double_double": 17,
   "player_points": 155,
   "player_pra": 72,
-  "player_rebounds": 174,
+  "player_rebounds": 175,
   "player_steals": 60,
   "player_stocks": 12,
   "player_threes": 183,
   "player_triple_double": 9,
-  "player_unknown": 1096,
+  "player_unknown": 1097,
   "playoff_round_reach": 30,
   "playoff_seed": 900,
   "playoffs_qualify": 60,
@@ -82,7 +83,7 @@
   "unknown": 839
  },
  "alarms": [
-  "2912 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+  "2913 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
   "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
