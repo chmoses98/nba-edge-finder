@@ -75,7 +75,23 @@ def _nearest(sorted_ticks: list[tuple[datetime, str]], t: datetime, tol_s: float
     return best if bd <= tol_s else None
 
 
-def audit(lines: list[str], market_ticks: dict[str, str] | None = None, threshold_min: float = 20.0, since: datetime | None = None) -> dict[str, Any]:
+def _lag_stats(lag: list[float]) -> dict[str, Any]:
+    srt = sorted(lag)
+    return {"n": len(srt), "median": None if not srt else round(statistics.median(srt), 1), "p90": None if not srt else round(srt[min(len(srt) - 1, int(0.9 * len(srt)))], 1),
+            "max": None if not srt else round(srt[-1], 1)}
+
+
+def lag_by_regime(ticks: list[tuple[datetime, datetime]], cutover: datetime, min_n: int = 20) -> dict[str, Any]:
+    """Observed-to-committed lag of the ticks OBSERVED before / at-or-after `cutover` (the recorded instant a capture-publication change took effect).
+
+    The two regimes are reported side by side and never pooled: a tick belongs to the regime in force when it was captured. `comparable` is False until both sides hold `min_n` ticks."""
+    before = [(c - t).total_seconds() for t, c in ticks if t < cutover]
+    after = [(c - t).total_seconds() for t, c in ticks if t >= cutover]
+    return {"cutover_utc": cutover.isoformat(), "before": _lag_stats(before), "after": _lag_stats(after), "min_n_each": min_n, "comparable": len(before) >= min_n and len(after) >= min_n,
+            "rule": "ticks are assigned by observation time; the regimes are never pooled; seals, boards and board ages must be stratified the same way"}
+
+
+def audit(lines: list[str], market_ticks: dict[str, str] | None = None, threshold_min: float = 20.0, since: datetime | None = None, cutover: datetime | None = None) -> dict[str, Any]:
     """`market_ticks` = {tick_stamp_iso: commit_iso} of the market FILES actually added to the branch (ground truth for 'a board exists'); without it the capture-cycle commit messages stand in for ticks.
 
     A gap between consecutive ticks is CAPTURE_GAP_IN_LOOP when the worker recorded cycles inside it that produced no market file (a failed capture: Kalshi / network), otherwise a HANDOVER."""
@@ -141,7 +157,8 @@ def audit(lines: list[str], market_ticks: dict[str, str] | None = None, threshol
     kinds: dict[str, int] = defaultdict(int)
     for g in gaps:
         kinds[g["kind"]] += 1
-    return {
+    regimes = {"commit_lag_by_regime": lag_by_regime(ticks, cutover)} if cutover else {}
+    return regimes | {
         "schema": "issue53.capture_audit.v2", "threshold_min": threshold_min, "tick_source": "market files added to the branch" if market_ticks else "capture cycle commit messages", "n_ticks": len(ticks),
         "first_tick": ticks[0][0].isoformat() if ticks else None, "last_tick": ticks[-1][0].isoformat() if ticks else None,
         "gaps": gaps, "n_gaps": len(gaps), "gap_kinds": dict(kinds), "gap_minutes_total": round(sum(g["gap_min"] for g in gaps), 1),
@@ -162,7 +179,8 @@ def markdown(rep: dict) -> str:
          f"* gaps over the threshold: {rep['n_gaps']} {json.dumps(rep['gap_kinds'])}; total {rep['gap_minutes_total']} min (tick source: {rep['tick_source']})",
          f"* worker handover gap (min), last tick of one worker -> first tick of the next: {json.dumps(rep['worker_handover_gap_min'])}",
          f"* successor wait (min), predecessor's retired commit -> successor's first commit: {json.dumps(rep['successor_wait_min'])}",
-         f"* commit lag of a tick (s): {json.dumps(rep['commit_lag_s'])}", "", rep["reading"], "",
+         f"* commit lag of a tick (s): {json.dumps(rep['commit_lag_s'])}",
+         *([f"* commit lag by regime (never pooled): {json.dumps(rep['commit_lag_by_regime'])}"] if rep.get("commit_lag_by_regime") else []), "", rep["reading"], "",
          "| from tick | to tick | gap min | kind | pre-retire idle | retire tail | successor wait | first cycle | dominant / cycles without data |", "|---|---|---|---|---|---|---|---|---|"]
     for g in rep["gaps"]:
         c = g.get("components") or {}
@@ -184,12 +202,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--since", default="2026-10-20")
     ap.add_argument("--threshold-min", type=float, default=20.0)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--cutover", default=None, help="UTC instant a capture-publication change took effect (e.g. CAPTURE_PUSH_FIRST on); lag is reported before / after, never pooled")
     a = ap.parse_args(argv)
     since_dt = _t(a.since + "T00:00:00Z") if len(a.since) == 10 else _t(a.since)
     # read a day earlier so the first worker of the window is complete
     lines = git_log(a.repo, a.ref, (since_dt - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"))
     from . import exec_shadow as X
-    rep = audit(lines, X.board_commit_index(a.repo, a.ref), a.threshold_min, since_dt)
+    rep = audit(lines, X.board_commit_index(a.repo, a.ref), a.threshold_min, since_dt, _t(a.cutover) if a.cutover else None)
     if a.out:
         os.makedirs(a.out, exist_ok=True)
         json.dump(rep, open(os.path.join(a.out, "capture_gaps.json"), "w"), indent=1, sort_keys=True)
