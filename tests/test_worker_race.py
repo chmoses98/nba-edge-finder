@@ -387,3 +387,16 @@ def test_the_worker_still_does_not_capture_when_neither_gate_opens(tmp_path):
     res = w.run()
     assert not any(c.captured for c in res.cycles)
     assert ["nba", "capture"] not in [c[:2] for c in w._calls]
+
+
+def test_the_conductor_decision_is_made_on_the_workers_clock(tmp_path):
+    """`decide` has an hour-of-day floor (daily off-season slot at 16:00 UTC).
+
+    The worker must apply it to ITS clock, not the wall clock, or a simulated lifetime is judged
+    against whatever hour the test process runs in (this failed in CI only during the 16:00 UTC
+    hour). Both sides are asserted so the floor is pinned, not merely silenced.
+    """
+    at_slot = FakeClock(datetime(2026, 10, 3, 16, 30, tzinfo=UTC))
+    off_slot = FakeClock(datetime(2026, 10, 3, 18, 0, tzinfo=UTC))
+    assert make_worker(tmp_path / "a", at_slot, "run-1", schedule=[])._decide()["capture"] is True
+    assert make_worker(tmp_path / "b", off_slot, "run-1", schedule=[])._decide()["capture"] is False

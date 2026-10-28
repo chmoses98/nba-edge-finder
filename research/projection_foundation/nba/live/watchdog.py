@@ -33,11 +33,22 @@ from .sources import iso, parse_ts
 CRIT, WARN, OK = "CRITICAL", "WARN", "OK"
 
 
-def load_schedule(ctx: str, season_types=("regular",)) -> list[dict]:
-    """Latest schedule snapshot of the data-archive context (every game once, newest observation wins)."""
+def load_schedule(ctx: str, season_types=("regular",), per_day: bool = False) -> list[dict]:
+    """Schedule rows of the data-archive context (every game once, newest observation wins).
+
+    Default: the last 6 snapshot files (enough for the watchdog, which only looks at games around `now`).
+    per_day=True: the last snapshot file of every day (`dt=*`), so a whole week is covered. The weekly report's integrity section used the
+    6-file default and, as snapshots accumulated, silently dropped the games of earlier days (2026-10-27: 9 of the week's 52 games listed)."""
     files = sorted(glob.glob(os.path.join(ctx, "context", "schedule", "dt=*", "*.jsonl.gz")))
+    if per_day:
+        last: dict[str, str] = {}
+        for p in files:
+            last[os.path.dirname(p)] = p
+        files = [last[d] for d in sorted(last)]
+    else:
+        files = files[-6:]
     rows: dict[str, dict] = {}
-    for p in files[-6:]:
+    for p in files:
         with gzip.open(p, "rt") as f:
             for line in f:
                 if line.strip():
