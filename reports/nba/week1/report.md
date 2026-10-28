@@ -1,6 +1,6 @@
 # NBA research report: week 1 (2026-10-20 .. 2026-10-26 ET)
 
-**Status: PRELIMINARY** (version 8, generated 2026-10-27T11:19:03Z). Research / paper only.
+**Status: PRELIMINARY** (version 9, generated 2026-10-28T11:22:42Z). Research / paper only.
 
 > PRELIMINARY: the week is not over or settlements/outcomes are incomplete; numbers will change.
 > SAMPLE SIZE: 52 independent games in this report. Week-1 evidence cannot establish profitability: the preregistered control needs >= 200 independent decisions across >= 40 games with positive clustered lower confidence bounds before any VALIDATED_VALUE language is allowed.
@@ -14,12 +14,55 @@
 
 ### Data integrity (2026-10-20 .. 2026-10-26 ET)
 
-- games scheduled: **9** (0 not yet covered by a projection slot (30 h window)), started: 9, fully complete evidence: **8**
+- games scheduled: **52** (0 not yet covered by a projection slot (30 h window)), started: 52, fully complete evidence: **51**
 - missing evidence counts: {'snapshot_T-60': 1}
-- pregame slots expected 11, executed/covered 11, missed: none
+- pregame slots expected 30, executed/covered 30, missed: none
 
 | game | tip (UTC) | forecasts | obs | game fc | snapshots | decisions | outcome | missing |
 |---|---|---|---|---|---|---|---|---|
+| BOS@DET | 10-20T19:00 | 8 fam / 9 v | 277 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 21986 | y | - |
+| PHI@NYK | 10-20T23:00 | 8 fam / 12 v | 414 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 31104 | y | - |
+| OKC@SAS | 10-21T01:30 | 8 fam / 14 v | 453 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 32947 | y | - |
+| ATL@ORL | 10-21T23:00 | 8 fam / 10 v | 344 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 30082 | y | - |
+| MIL@WAS | 10-21T23:00 | 8 fam / 10 v | 321 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 26470 | y | - |
+| MIN@MIA | 10-21T23:30 | 8 fam / 10 v | 290 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 29440 | y | - |
+| CHA@BKN | 10-21T23:30 | 8 fam / 10 v | 334 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 22426 | y | - |
+| CHI@TOR | 10-21T23:30 | 8 fam / 10 v | 388 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 28006 | y | - |
+| UTA@MEM | 10-22T00:00 | 8 fam / 10 v | 304 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 25594 | y | - |
+| IND@NOP | 10-22T00:00 | 8 fam / 10 v | 313 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 29656 | y | - |
+| DAL@HOU | 10-22T00:30 | 8 fam / 10 v | 372 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 29400 | y | - |
+| GSW@LAL | 10-22T02:00 | 8 fam / 10 v | 365 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 23848 | y | - |
+| PHX@POR | 10-22T02:00 | 8 fam / 10 v | 324 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 28780 | y | - |
+| SAC@LAC | 10-22T02:30 | 8 fam / 10 v | 344 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 24544 | y | - |
+| CLE@PHI | 10-22T23:00 | 8 fam / 8 v | 293 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 27954 | y | - |
+| DEN@OKC | 10-23T01:30 | 8 fam / 8 v | 278 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 25042 | y | - |
+| CHI@MIL | 10-23T20:00 | 8 fam / 7 v | 206 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 21088 | y | - |
+| NYK@BOS | 10-23T23:00 | 8 fam / 8 v | 249 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 28532 | y | - |
+| ATL@CHA | 10-23T23:00 | 8 fam / 8 v | 293 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 22760 | y | - |
+| DAL@IND | 10-23T23:00 | 8 fam / 8 v | 315 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 22238 | y | - |
+| MIN@ORL | 10-23T23:00 | 8 fam / 8 v | 271 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 24410 | y | - |
+| TOR@WAS | 10-23T23:00 | 8 fam / 8 v | 291 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 20936 | y | - |
+| DET@MIA | 10-24T00:00 | 8 fam / 9 v | 303 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 26350 | y | - |
+| HOU@SAS | 10-24T01:30 | 8 fam / 8 v | 318 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 27850 | y | - |
+| NOP@UTA | 10-24T01:30 | 8 fam / 8 v | 290 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 23748 | y | - |
+| MEM@GSW | 10-24T02:00 | 8 fam / 9 v | 349 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 23678 | y | - |
+| LAC@LAL | 10-24T02:00 | 8 fam / 9 v | 361 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 22838 | y | - |
+| POR@SAC | 10-24T02:00 | 8 fam / 9 v | 325 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 23996 | y | - |
+| MIA@CHA | 10-24T22:00 | 8 fam / 9 v | 106 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 13154 | y | - |
+| BKN@CLE | 10-24T23:30 | 8 fam / 8 v | 253 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 15698 | y | - |
+| MIL@PHI | 10-24T23:30 | 8 fam / 8 v | 195 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 15866 | y | - |
+| WAS@CHI | 10-25T00:00 | 8 fam / 9 v | 147 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 17360 | y | - |
+| SAS@DAL | 10-25T00:00 | 8 fam / 9 v | 150 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 17420 | y | - |
+| HOU@ATL | 10-25T00:30 | 8 fam / 9 v | 181 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 18206 | y | - |
+| NOP@DEN | 10-25T01:00 | 8 fam / 9 v | 212 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 19238 | y | - |
+| GSW@PHX | 10-25T02:00 | 8 fam / 9 v | 238 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 15554 | y | - |
+| LAL@UTA | 10-25T21:00 | 8 fam / 8 v | 216 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 14190 | y | - |
+| IND@BKN | 10-25T22:00 | 8 fam / 7 v | 156 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 13380 | y | - |
+| ORL@NYK | 10-25T23:00 | 8 fam / 8 v | 301 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 17154 | y | - |
+| TOR@MIN | 10-25T23:00 | 8 fam / 8 v | 241 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 17496 | y | - |
+| LAC@OKC | 10-25T23:00 | 8 fam / 8 v | 298 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 15498 | y | - |
+| DET@PHI | 10-25T23:30 | 8 fam / 8 v | 217 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 14346 | y | - |
+| MEM@SAC | 10-26T01:00 | 8 fam / 7 v | 214 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60 | 13932 | y | - |
 | WAS@CHA | 10-26T23:00 | 8 fam / 8 v | 304 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 18308 | y | - |
 | MIN@CLE | 10-26T23:00 | 8 fam / 8 v | 193 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 19352 | y | - |
 | CHI@BOS | 10-26T23:30 | 8 fam / 8 v | 285 | y | LAST_VALID,LIVE,OPEN,T-10,T-30,T-60,T-90 | 20048 | y | - |
@@ -71,7 +114,7 @@ Hypothetical net ROI after fees and slippage (paper only). `selected` = one cont
 
 Baselines: NO_BET_V1 = 0 by definition; MARKET_ONLY_V1 = quote mid (see section 3); control SHADOW_PURE_PREREG_V1 is read from the shadow branch (see Control).
 
-**Expression ranking** (which market best expresses a basketball thesis; research only): 9221 theses scored, 32027 NO_TRADE, status OK
+**Expression ranking** (which market best expresses a basketball thesis; research only): 9554 theses scored, 34216 NO_TRADE, status OK
 
 ## 5. Market families
 
@@ -160,8 +203,8 @@ Minutes under-prediction verdict: **INCUMBENT_BIAS_NOT_NEGATIVE**
  "control": {
   "status": "OK",
   "strategy_id": "SHADOW_PURE_PREREG_V1",
-  "evaluated_at": "2026-10-27T04:57:08.490375+00:00",
-  "source_file": "scorecards/value/dt=2026-10-27/scorecards_value_20261027T045708Z_40449215938.jsonl.gz",
+  "evaluated_at": "2026-10-28T04:52:32.718601+00:00",
+  "source_file": "scorecards/value/dt=2026-10-28/scorecards_value_20261028T045232Z_40634648639.jsonl.gz",
   "n_arms": 4,
   "arm": "sim_rotation",
   "capture_window": "pretip",
