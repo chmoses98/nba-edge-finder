@@ -7,7 +7,15 @@ is whether the extra opportunities stay attractive after the execution costs alr
 
 Nothing here is evidence of profitability: with a handful of games every figure is an anecdote; an interval is printed only with at least `MIN_GAMES_FOR_INTERVAL` games.
 
-    python -m nba.paper.burnin_report --archive <projection-data> --market <data-archive> --control <ledger dir> --other <ledger dir> --other-lane t60a --from 2026-10-25T12:00:00Z --out <dir>
+EVIDENCE CLASSES. Every seal is run through the same independent verification the evaluator uses (`exec_seal.evaluate` -> `verify_seal`: body / candidate hashes, additions-only history and the SERVER commit time against the
+tip-10min deadline, protocol and code pins, default-branch reachability, duplicate detection, the board re-derived from the final archive, prospective start) and is put in exactly one class:
+  COUNTED    verified and at/after the lane's prospective start        -> the only seals behind the headline statistics
+  BURN_IN    verified except for BEFORE_PROSPECTIVE_START (nothing else) -> reported separately, labelled NOT EVIDENCE
+  INVALID    any other failure (hash, late commit, modified history, dry run, unpinned code, unverifiable board, malformed ...) -> listed with reasons, in no statistic
+  DUPLICATE  a later seal of an already sealed game                    -> listed, in no statistic
+Without `--repo` (no way to prove code reachability or the final board commits) nothing can be COUNTED: the report fails closed.
+
+    python -m nba.paper.burnin_report --archive <projection-data> --market <data-archive> --repo <code clone with origin/main and origin/data-archive> --control <ledger dir> --other <ledger dir> --other-lane t60a --from 2026-10-25T12:00:00Z --out <dir>
 """
 from __future__ import annotations
 
@@ -15,7 +23,7 @@ import argparse
 import json
 import os
 from collections import Counter, defaultdict
-from datetime import timedelta
+from datetime import UTC, datetime
 from typing import Any
 
 import numpy as np
@@ -34,14 +42,54 @@ def key(r: dict) -> tuple:
     return (r["game_id"], r["ticker"], r["side"])
 
 
-def load(ledger: str, study: dict, from_tip: str) -> tuple[list[dict], list[dict]]:
-    bodies, rows = [], []
+COUNTED, BURN_IN, INVALID, DUPLICATE = "COUNTED", "BURN_IN", "INVALID", "DUPLICATE"
+PRE_START = "BEFORE_PROSPECTIVE_START"
+
+
+def load(ledger: str, from_tip: str) -> list[tuple[str, dict]]:
+    """[(path relative to the ledger, seal body)] for every seal of a game at/after `from_tip`; unreadable files are kept (and become INVALID)."""
+    out = []
     for body, p in SL.iter_seals(ledger):
-        if body["game"]["start_utc"] < from_tip:
+        g = body.get("game") if isinstance(body.get("game"), dict) else None
+        if g is not None and (g.get("start_utc") or "") < from_tip:
+            continue
+        out.append((os.path.relpath(p, ledger), body))
+    return out
+
+
+def classify(entries: list[tuple[str, dict]], ev: dict) -> dict[str, tuple[str, list[str]]]:
+    """rel path -> (class, reasons), from the evaluator's own verdicts. Anything the evaluator did not vouch for is INVALID (never COUNTED by default)."""
+    by_gid = {g["game_id"]: g for g in ev.get("games", []) if g.get("seal_id")}
+    dup_paths = {d["path"] for d in ev.get("duplicates", [])}
+    out: dict[str, tuple[str, list[str]]] = {}
+    for rel, body in entries:
+        gid = (body.get("game") or {}).get("game_id") if isinstance(body.get("game"), dict) else None
+        if body.get("_unreadable") or not gid:
+            out[rel] = (INVALID, ["UNREADABLE_OR_MALFORMED"])
+        elif rel in dup_paths:
+            out[rel] = (DUPLICATE, ["DUPLICATE_SEAL"])
+        else:
+            v = by_gid.get(gid)
+            if v is None or v.get("seal_id") != body.get("seal_id"):
+                out[rel] = (INVALID, ["NOT_VERIFIED_BY_EVALUATOR"])
+            elif v.get("counted") is True and not v.get("uncounted_reasons"):
+                out[rel] = (COUNTED, [])
+            elif list(v.get("uncounted_reasons") or []) == [PRE_START]:
+                out[rel] = (BURN_IN, [PRE_START])
+            else:
+                out[rel] = (INVALID, list(v.get("uncounted_reasons") or ["UNCOUNTED"]))
+    return out
+
+
+def lane_rows(ledger: str, entries: list[tuple[str, dict]], klass: dict, study: dict, wanted: str) -> tuple[list[dict], list[dict]]:
+    """(bodies, hydrated candidate rows) of the seals in class `wanted` only; selections are read from the sealed candidate files, never recomputed."""
+    bodies, rows = [], []
+    for rel, body in entries:
+        if klass[rel][0] != wanted:
             continue
         bodies.append(body)
-        for r in SL.load_candidates(ledger, body, os.path.relpath(p, ledger)):
-            rows.append(SL.hydrate(r, body, study, counted=False))
+        for r in SL.load_candidates(ledger, body, rel):
+            rows.append(SL.hydrate(r, body, study, counted=(wanted == COUNTED)))
     return bodies, rows
 
 
@@ -89,32 +137,16 @@ def per_game_pnl(trades: list[dict]) -> dict[str, float]:
     return dict(d)
 
 
-def build(archive: str, market: str, control_dir: str, other_dir: str, other_lane: str, from_tip: str, now=None, seed: int = 53) -> dict[str, Any]:
-    base = CFG.load()
-    now = now or MK.parse_ts(os.popen("date -u +%Y-%m-%dT%H:%M:%SZ").read().strip())
-    studies = {"control": X.load_study(), other_lane: X.load_lane(SW.lane_study_path(other_lane))}
-    dirs = {"control": control_dir, other_lane: other_dir}
-    lanes: dict[str, Any] = {}
-    allrows: dict[str, list[dict]] = {}
-    for ln, d in dirs.items():
-        bodies, rows = load(d, studies[ln], from_tip)
-        trades = [r for r in rows if r.get("decision") == "TRADE"]
-        st = SL.settle_sealed(trades, archive, market, now, base, strategy_id=X.strategy_id(studies[ln]), horizon=studies[ln]["checkpoint"]["horizon"])
-        start = studies[ln]["prospective_start_utc"]
-        counted_possible = [b for b in bodies if b["checkpoint_utc"] >= start and b["computed_utc"] >= start]
-        lanes[ln] = {"prospective_start_utc": start, "evidence_status": f"{len(counted_possible)} of {len(bodies)} seals are at/after the prospective start (still subject to verification); the rest are BURN-IN and uncounted",
-                     "settle_join": st, **summarize(bodies, trades, market)}
-        allrows[ln] = trades
-    shared_rows, only_ctrl, only_other = split_shared(allrows["control"], allrows[other_lane])
-    shared = shared_rows
-    games_c = {t["game_id"] for t in allrows["control"]}
-    rep: dict[str, Any] = {"schema": "issue53.burnin_report.v1", "authority": "research_only", "from_tip": from_tip, "other_lane": other_lane, "lanes": lanes,
-                           "shared_vs_lane_only": {"shared_trades": len(shared), "control_only_trades": len(only_ctrl), f"{other_lane}_only_trades": len(only_other),
-                                                   f"{other_lane}_only_in_games_the_control_also_traded": sum(1 for t in only_other if t["game_id"] in games_c),
-                                                   f"{other_lane}_only_games": len({t["game_id"] for t in only_other} - games_c),
-                                                   f"{other_lane}_only": summarize([], only_other, market), "shared": summarize([], shared_rows, market)}}
-    diffs = per_game_pnl(allrows[other_lane])
-    for g, v in per_game_pnl(allrows["control"]).items():
+def compare(ctrl: list[dict], other: list[dict], other_lane: str, market: str | None, seed: int) -> dict[str, Any]:
+    """Shared vs lane-only positions and the game-clustered paired P&L difference, over the given trade rows only."""
+    shared_rows, only_ctrl, only_other = split_shared(ctrl, other)
+    games_c = {t["game_id"] for t in ctrl}
+    rep: dict[str, Any] = {"shared_trades": len(shared_rows), "control_only_trades": len(only_ctrl), f"{other_lane}_only_trades": len(only_other),
+                           f"{other_lane}_only_in_games_the_control_also_traded": sum(1 for t in only_other if t["game_id"] in games_c),
+                           f"{other_lane}_only_games": len({t["game_id"] for t in only_other} - games_c),
+                           f"{other_lane}_only": summarize([], only_other, market), "shared": summarize([], shared_rows, market)}
+    diffs = per_game_pnl(other)
+    for g, v in per_game_pnl(ctrl).items():
         diffs[g] = diffs.get(g, 0.0) - v
     games = sorted(set(diffs))
     d = np.asarray([diffs[g] for g in games]) if games else np.asarray([])
@@ -124,15 +156,58 @@ def build(archive: str, market: str, control_dir: str, other_dir: str, other_lan
         bs = np.sort([float(rng.choice(d, size=len(d), replace=True).mean()) for _ in range(2000)])
         ci = {"status": "OK", "n_games": len(d), "mean_per_game": round(float(d.mean()), 4), "lo95": round(bs[49], 4), "hi95": round(bs[1949], 4), "method": "game-clustered bootstrap, seed 53"}
     rep["paired_net_pnl_difference_per_game"] = {f"{other_lane}_minus_control": ci}
-    rep["caveat"] = ("descriptive only: archival quotes are displayed quotes, not proven live fills; costs (1 c slippage, whole-order fee, displayed size) are already inside ev_net_exec; "
-                     "a handful of games supports no inference about profitability; burn-in seals are never counted")
     return rep
 
 
-def markdown(rep: dict) -> str:
+def lane_report(ledger: str, entries: list[tuple[str, dict]], ev: dict, study: dict, archive: str, market: str, now, base: dict) -> dict[str, Any]:
+    """One lane: the class of every seal, then statistics for COUNTED seals (headline) and, apart, for clean BURN_IN seals (labelled not evidence)."""
+    klass = classify(entries, ev)
+    out: dict[str, Any] = {"prospective_start_utc": study["prospective_start_utc"], "seal_classes": dict(Counter(k for k, _ in klass.values())),
+                           "game_categories": ev.get("game_counts", {}),
+                           "excluded_seals": [{"path": rel, "class": k, "reasons": why} for rel, (k, why) in sorted(klass.items()) if k in (INVALID, DUPLICATE)]}
+    trades_by: dict[str, list[dict]] = {}
+    for name, wanted in (("counted", COUNTED), ("burn_in_not_evidence", BURN_IN)):
+        bodies, rows = lane_rows(ledger, entries, klass, study, wanted)
+        trades = [r for r in rows if r.get("decision") == "TRADE"]
+        st = SL.settle_sealed(trades, archive, market, now, base, strategy_id=X.strategy_id(study), horizon=study["checkpoint"]["horizon"])
+        out[name] = {"settle_join": st, **summarize(bodies, trades, market)}
+        trades_by[name] = trades
+    return out | {"_trades": trades_by}
+
+
+def build(archive: str, market: str, control_dir: str, other_dir: str, other_lane: str, from_tip: str, now=None, seed: int = 53, *, code_repo: str | None = None,
+          default_branch_ref: str = "origin/main", data_branch_ref: str = "origin/data-archive") -> dict[str, Any]:
+    base = CFG.load()
+    now = now or datetime.now(UTC)
+    studies = {"control": X.load_study(), other_lane: X.load_lane(SW.lane_study_path(other_lane))}
+    dirs = {"control": control_dir, other_lane: other_dir}
+    schedule = [g for g in SW.schedule_games(market, None, all_history=True) if MK.parse_ts(g["start_utc"]) >= MK.parse_ts(from_tip)]
+    lanes: dict[str, Any] = {}
+    trades: dict[str, dict[str, list[dict]]] = {}
+    for ln, d in dirs.items():
+        study = studies[ln]
+        # board commit index only for the availability rule (as the evaluator and the live sealer do); without a code repo nothing can be proven, so nothing counts
+        bc = X.board_commit_index(code_repo, data_branch_ref) if code_repo and X.board_rule_id(study) == "latest_committed_by_decision" else None
+        ev = SL.evaluate(d, archive, market, now, study, base, code_repo=code_repo, default_branch_ref=default_branch_ref, schedule=schedule, board_commits=bc)
+        entries = load(d, from_tip)
+        rep_l = lane_report(d, entries, ev, study, archive, market, now, base)
+        trades[ln] = rep_l.pop("_trades")
+        lanes[ln] = rep_l
+    rep: dict[str, Any] = {"schema": "issue53.burnin_report.v2", "authority": "research_only", "from_tip": from_tip, "other_lane": other_lane, "lanes": lanes,
+                           "code_repo_verified": bool(code_repo),
+                           "counted": compare(trades["control"]["counted"], trades[other_lane]["counted"], other_lane, market, seed),
+                           "burn_in_not_evidence": compare(trades["control"]["burn_in_not_evidence"], trades[other_lane]["burn_in_not_evidence"], other_lane, market, seed)}
+    rep["caveat"] = ("descriptive only: archival quotes are displayed quotes, not proven live fills; costs (1 c slippage, whole-order fee, displayed size) are already inside ev_net_exec; "
+                     "trades within a game are correlated; a handful of games supports no inference about profitability or calibration; "
+                     "only COUNTED seals (independently verified, at/after the prospective start) are evidence; BURN_IN is shown apart and is never counted")
+    return rep
+
+
+def _table(rep: dict, section: str) -> list[str]:
     o = rep["other_lane"]
-    L = [f"# Control vs {o}: side-by-side (descriptive; burn-in is uncounted)", "", rep["caveat"], "", "| | control | " + o + " |", "|---|---|---|"]
-    c, t = rep["lanes"]["control"], rep["lanes"][o]
+    L = ["| | control | " + o + " |", "|---|---|---|"]
+    c, t = rep["lanes"]["control"][section], rep["lanes"][o][section]
+
     def row(name, f):
         L.append(f"| {name} | {f(c)} | {f(t)} |")
     row("seals", lambda x: x["seals"])
@@ -147,12 +222,32 @@ def markdown(rep: dict) -> str:
     row("board age s (median / p90)", lambda x: f"{x['board_age_s']['median']} / {x['board_age_s']['p90']}")
     row("spread mean / depth median", lambda x: f"{x['spread_mean']} / {x['depth_median']}")
     row("ask drift to next board (mean c, adverse share)", lambda x: f"{((x.get('ask_drift_to_next_board') or {}).get('ask_drift_cents') or {}).get('mean')} / {(x.get('ask_drift_to_next_board') or {}).get('share_adverse')}")
-    s = rep["shared_vs_lane_only"]
-    L += ["", f"## Shared vs {o}-only trades", "", f"* shared {s['shared_trades']}; control-only {s['control_only_trades']}; {o}-only {s[o + '_only_trades']} "
-          f"({s[o + '_only_games']} in games the control did not trade)",
-          f"* shared: {json.dumps({k: s['shared'][k] for k in ('trades', 'settled', 'net_pnl', 'roi_on_outlay', 'hit_rate', 'mean_clv_cents')})}",
-          f"* {o}-only: {json.dumps({k: s[o + '_only'][k] for k in ('trades', 'settled', 'net_pnl', 'roi_on_outlay', 'hit_rate', 'mean_clv_cents', 'predicted', 'board_age_s', 'spread_mean', 'depth_median')})}",
-          "", f"## Paired per-game net P&L ({o} minus control)", "", "* " + json.dumps(rep["paired_net_pnl_difference_per_game"])]
+    return L
+
+
+def _shared(rep: dict, key_: str) -> list[str]:
+    o, s = rep["other_lane"], rep[key_]
+    return [f"* shared {s['shared_trades']}; control-only {s['control_only_trades']}; {o}-only {s[o + '_only_trades']} ({s[o + '_only_games']} in games the control did not trade)",
+            f"* shared: {json.dumps({k: s['shared'][k] for k in ('trades', 'settled', 'net_pnl', 'roi_on_outlay', 'hit_rate', 'mean_clv_cents')})}",
+            f"* {o}-only: {json.dumps({k: s[o + '_only'][k] for k in ('trades', 'settled', 'net_pnl', 'roi_on_outlay', 'hit_rate', 'mean_clv_cents', 'predicted', 'board_age_s', 'spread_mean', 'depth_median')})}",
+            f"* paired per-game net P&L ({o} minus control): {json.dumps(s['paired_net_pnl_difference_per_game'])}"]
+
+
+def markdown(rep: dict) -> str:
+    o = rep["other_lane"]
+    L = [f"# Control vs {o}: side-by-side (descriptive)", "", rep["caveat"], ""]
+    if not rep.get("code_repo_verified"):
+        L += ["**No code repo given: seals cannot be verified, so NOTHING is counted (fail closed).**", ""]
+    L += ["## Seal classes (independent verification)", "", "| | control | " + o + " |", "|---|---|---|"]
+    cl = {ln: rep["lanes"][ln]["seal_classes"] for ln in ("control", o)}
+    for k in (COUNTED, BURN_IN, INVALID, DUPLICATE):
+        L.append(f"| {k} | {cl['control'].get(k, 0)} | {cl[o].get(k, 0)} |")
+    for ln in ("control", o):
+        for e in rep["lanes"][ln]["excluded_seals"]:
+            L.append(f"* {ln} {e['class']}: `{e['path']}` {e['reasons']}")
+    L += ["", f"game categories: control {json.dumps(rep['lanes']['control']['game_categories'])}; {o} {json.dumps(rep['lanes'][o]['game_categories'])}", "",
+          "## COUNTED seals only (the evidence)", ""] + _table(rep, "counted") + [""] + _shared(rep, "counted") + \
+         ["", "## BURN-IN seals (verified but before the prospective start): NOT EVIDENCE, descriptive only", ""] + _table(rep, "burn_in_not_evidence") + [""] + _shared(rep, "burn_in_not_evidence")
     return "\n".join(L) + "\n"
 
 
@@ -160,12 +255,13 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     for a in ("archive", "market", "control", "other", "out"):
         ap.add_argument("--" + a, required=True)
+    ap.add_argument("--repo", default=None, help="code clone holding origin/main and origin/data-archive; without it no seal can be COUNTED")
     ap.add_argument("--other-lane", default="t60a")
     ap.add_argument("--from", dest="from_tip", default="2026-10-25T12:00:00Z")
     ap.add_argument("--now", default=None)
     a = ap.parse_args(argv)
-    now = MK.parse_ts(a.now) if a.now else MK.parse_ts(os.popen("date -u +%Y-%m-%dT%H:%M:%SZ").read().strip()) + timedelta(0)
-    rep = build(a.archive, a.market, a.control, a.other, a.other_lane, a.from_tip, now=now)
+    now = MK.parse_ts(a.now) if a.now else datetime.now(UTC)
+    rep = build(a.archive, a.market, a.control, a.other, a.other_lane, a.from_tip, now=now, code_repo=a.repo)
     os.makedirs(a.out, exist_ok=True)
     json.dump(rep, open(os.path.join(a.out, "burnin_report.json"), "w"), indent=1, sort_keys=True, default=str)
     open(os.path.join(a.out, "burnin_report.md"), "w").write(markdown(rep))
