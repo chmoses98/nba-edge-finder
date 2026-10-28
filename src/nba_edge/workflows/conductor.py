@@ -141,7 +141,7 @@ def _discover_age(data_root: Path) -> float | None:
     return min(known) if known else None
 
 
-def decide_now(data_root: Path) -> dict[str, Any]:
+def decide_now(data_root: Path, now: datetime | None = None) -> dict[str, Any]:
     """The full decision, assembled from the STATUS breadcrumbs on the archive.
 
     Extracted from ``run_conductor`` so the long-lived capture worker can reuse exactly this logic
@@ -154,7 +154,7 @@ def decide_now(data_root: Path) -> dict[str, Any]:
     ledger = Ledger(archive)
     rows = _latest_schedule(ledger) if archive.exists() else []
     return decide(
-        datetime.now(tz=UTC), rows,
+        now or datetime.now(tz=UTC), rows,
         status_age_minutes(archive / "STATUS_capture.json", "last_capture_utc"),
         status_age_minutes(archive / "STATUS_simulate.json", "simulated_at_utc"),
         status_age_minutes(archive / "STATUS_settle.json", "settled_at_utc"),
