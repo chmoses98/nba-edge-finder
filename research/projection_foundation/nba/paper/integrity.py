@@ -47,7 +47,7 @@ def _et_date(ts: str) -> str:
 
 def games_in_window(ctx: str, start_et: str, end_et: str, season_types=("regular",)) -> list[dict]:
     out = []
-    for g in WD.load_schedule(ctx, season_types):
+    for g in WD.load_schedule(ctx, season_types, per_day=True):
         d = g.get("game_date_et") or _et_date(g["start_time_utc"])
         if start_et <= d <= end_et:
             out.append({**g, "game_date_et": d})

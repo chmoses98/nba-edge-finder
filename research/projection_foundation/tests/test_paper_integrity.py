@@ -8,7 +8,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PF = HERE.parent
 sys.path.insert(0, str(PF))
-from nba.live import ledger as LED  # noqa: E402
+from nba.live import ledger as LED, watchdog as WD  # noqa: E402
 from nba.paper import integrity as IG, schema as S, store  # noqa: E402
 from pf_core import prospective as pr  # noqa: E402
 
@@ -116,3 +116,23 @@ def test_a_game_owes_forecasts_only_after_a_slot_whose_window_contained_it(tmp_p
     later = next(g for g in rep["games"] if g["game_id"] == "espn:1")
     assert later["scheduled_later"] and later["missing"] == []
     assert rep["games"][0]["missing"]                                    # the played game still reports its missing evidence
+
+
+def test_integrity_covers_every_game_of_the_week_not_only_the_newest_snapshots(tmp_path):
+    """2026-10-27: the week-1 integrity table listed 9 of the week's 52 games because the schedule loader read only the last 6 snapshot files.
+    With several snapshots per day, earlier days fell out of the table and their missing evidence was never reported."""
+    d = tmp_path / "ctx"
+    for day in ("2026-10-20", "2026-10-21", "2026-10-22"):
+        (d / f"context/schedule/dt={day}").mkdir(parents=True)
+        rows = [{"game_id": f"espn:{day}", "season_type": "regular", "start_time_utc": f"{day}T23:00:00Z", "game_date_et": day,
+                 "home_tricode": "HHH", "away_tricode": "AAA"}]
+        for k in range(8):                                               # eight snapshots per day, like the capture worker writes
+            with gzip.open(d / f"context/schedule/dt={day}/s{k}.jsonl.gz", "wt") as f:
+                f.write("\n".join(json.dumps(r) for r in rows))
+    ctx = str(d)
+    assert {g["game_id"] for g in WD.load_schedule(ctx)} == {"espn:2026-10-22"}                      # watchdog default: recent snapshots only
+    assert {g["game_id"] for g in WD.load_schedule(ctx, per_day=True)} == {f"espn:2026-10-2{i}" for i in (0, 1, 2)}
+    arch = tmp_path / "arch"
+    arch.mkdir()
+    rep = IG.build(str(arch), ctx, "2026-10-20", "2026-10-26", utc("2026-10-27T13:00:00Z"))
+    assert rep["n_games"] == 3 and len(rep["games"]) == 3
