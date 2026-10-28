@@ -81,6 +81,8 @@ class CycleRecord:
     # record (jobs_run lists successes only), so a settlement that failed on every tick of a shift
     # left no trace distinguishable from one that was never due.
     jobs_failed: list[str] = field(default_factory=list)
+    # True when the capture was published BEFORE the cycle's due jobs (CAPTURE_PUSH_FIRST).
+    capture_pushed_first: bool = False
 
 
 @dataclass
@@ -186,6 +188,7 @@ class Worker:
         schedule_fn: Callable[[], list[dict]] | None = None,
         decide_fn: Callable[[], dict] | None = None,
         lifetime_minutes: float | None = None,
+        push_capture_first: bool | None = None,
     ) -> None:
         self.data_root = Path(data_root)
         self.archive_root = Path(archive_root)
@@ -198,6 +201,9 @@ class Worker:
         self.schedule_fn = schedule_fn or self._read_schedule
         self.decide_fn = decide_fn or self._decide
         self.lifetime_minutes = lifetime_minutes
+        # Publish the capture BEFORE the cycle's slow jobs (default OFF; env CAPTURE_PUSH_FIRST=1). See docs/research/ISSUE53_CAPTURE_RELIABILITY.md: the single end-of-cycle push makes a
+        # tick visible only after the due jobs (median ~214 s, up to ~14 min). Off by default because it changes the commit lag that the preregistered sealed studies are measured against.
+        self.push_capture_first = (os.environ.get("CAPTURE_PUSH_FIRST", "0") == "1") if push_capture_first is None else push_capture_first
         self.result: WorkerResult | None = None
 
     # -- archive I/O -------------------------------------------------------------------------
@@ -313,7 +319,7 @@ class Worker:
         # snapshots at all between seasons, which is exactly the sort of quiet evidence loss that is
         # invisible until someone goes looking for data that was never collected.
         should_capture = bool(cyc.should_capture or decision.get("capture"))
-        captured = capture_ok = push_ok = False
+        captured = capture_ok = push_ok = pushed_first = False
         if should_capture:
             captured = True
             rc, out = self.run_cmd(
@@ -326,6 +332,8 @@ class Worker:
                 # next tick is minutes away; dying here would convert a transient API error into a
                 # multi-hour hole, which is precisely the failure this design exists to remove.
                 print(f"worker: capture failed rc={rc}: {out[-600:]}")
+            elif self.push_capture_first:
+                pushed_first = self._push(f"capture: {self.worker_id} at {iso(now)}")
 
         # The worker owns the archive's concurrency group for hours, so every scheduled conductor
         # run queues behind it and is cancelled (E2). Whatever the conductor would have decided to
@@ -351,7 +359,8 @@ class Worker:
                         expected_next_capture_at=cyc.next_cycle_at,
                     ),
                 )
-        push_ok = self._push(f"capture: {self.worker_id} at {iso(now)}")
+        # With the capture already published, this push carries only what the jobs wrote and must not repeat the "capture:" subject (one such commit per tick).
+        push_ok = self._push(f"cycle: {self.worker_id} at {iso(now)}" if pushed_first else f"capture: {self.worker_id} at {iso(now)}")
         return CycleRecord(
             started_at=iso(now),
             jobs_run=jobs_run,
@@ -363,6 +372,7 @@ class Worker:
             hours_to_next_tip=cyc.hours_to_next_tip,
             reason=cyc.reason if cyc.should_capture or not should_capture else "conductor gate: off-window capture due",
             jobs_failed=jobs_failed,
+            capture_pushed_first=pushed_first,
         )
 
     # The capture command, as a constant rather than inline, so a test can compare it against
