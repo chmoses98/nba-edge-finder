@@ -213,11 +213,18 @@ class Worker:
             return []
 
     def _decide(self) -> dict:
-        """The conductor's own decision, reused rather than reimplemented."""
+        """The conductor's own decision, reused rather than reimplemented.
+
+        Decided on the WORKER's clock, not the wall clock: ``decide`` has an hour-of-day floor (the
+        daily off-season capture slot at 16:00 UTC), so a worker driven by an injected clock was
+        otherwise judged against whatever hour the process happened to run in. In production the
+        two clocks are the same; in the simulated-lifetime tests they are not, and one of them
+        failed only when CI ran during the 16:00 UTC hour.
+        """
         try:
             from nba_edge.workflows.conductor import decide_now
 
-            return decide_now(self.data_root)
+            return decide_now(self.data_root, self.now())
         except Exception as e:  # noqa: BLE001 - a bad breadcrumb must not stop capture
             print(f"worker: could not read the conductor decision ({e}); capture-only this cycle")
             return {}
