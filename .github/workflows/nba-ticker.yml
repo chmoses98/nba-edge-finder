@@ -4,6 +4,8 @@ name: nba-ticker
 # settle slot is due but absent from the run ledger on projection-data and dispatches projection-foundation for exactly that slot (a named-slot
 # dispatch). It writes nothing; the slot guard and the write-once ledger make any duplicate dispatch a no-op. It dispatches nothing while a
 # projection-foundation run is already queued or running. Research only.
+# Issue #53: it also keeps the SEALING chain alive between slates (see the "seal keeper" block): the sealing workflow exits when nothing is due and its cron bootstrap
+# measured ~4% delivery, so without this a person had to start it before every slate.
 on:
   schedule:
     - cron: "17 0,5,10,15,20 * * *"        # backstop starts; the concurrency queue + successor dispatch keep it continuous
@@ -57,6 +59,25 @@ jobs:
                   last_dispatch="$last_dispatch,$key@$(date +%s)"; busy=1
                 fi
               done <<< "$due"
+            fi
+            # Seal-chain keeper (Issue #53): every third tick (15 min) ask nba/paper/seal_keeper.py whether the sealing chain needs a start. It says "dispatch" only when NO
+            # non-PR run of exec-shadow-seal.yml is queued/waiting/in progress (and inside the seal hours/season), so a live chain is never duplicated; the workflow's own idle gate
+            # exits in seconds when nothing is due and its concurrency group stays the single-writer guarantee. Best effort: nothing in this block may stop the ticker.
+            if [ $(( i % 3 )) = 1 ]; then
+              seal_runs=$(gh run list --workflow exec-shadow-seal.yml --limit 20 --json status,event,createdAt 2>/dev/null || echo "")
+              if [ -n "$seal_runs" ]; then
+                keeper_args=(--now "$(date -u +%Y-%m-%dT%H:%M:%SZ)")
+                [ -n "${last_seal_dispatch:-}" ] && keeper_args+=(--last-dispatch "$last_seal_dispatch")
+                verdict=$(printf '%s' "$seal_runs" | python3 $PF_DIR/nba/paper/seal_keeper.py "${keeper_args[@]}" 2>&1 || true)
+                echo "seal keeper: $verdict"
+                if [ "${verdict%%:*}" = "dispatch" ]; then
+                  if gh workflow run exec-shadow-seal.yml --ref main -f dry_run=false; then
+                    last_seal_dispatch="$(date -u +%Y-%m-%dT%H:%M:%SZ)"; echo "seal keeper: dispatched exec-shadow-seal.yml at $last_seal_dispatch"
+                  else
+                    echo "seal keeper: dispatch failed (will retry next quarter hour)"
+                  fi
+                fi
+              fi
             fi
             if [ "$i" -ge 50 ] && [ "$successor" = 0 ]; then
               pend=$(gh run list --workflow nba-ticker.yml --limit 10 --json status --jq '[.[]|select(.status=="queued")]|length' 2>/dev/null || echo 0)
