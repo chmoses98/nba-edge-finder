@@ -159,6 +159,12 @@ def compare(ctrl: list[dict], other: list[dict], other_lane: str, market: str | 
     return rep
 
 
+def paired_scope(ctrl: dict[str, set], other: dict[str, set]) -> tuple[set, set]:
+    """(games COUNTED in both lanes, games the other lane has only as BURN_IN that the control has verified seals for)."""
+    return (ctrl.get(COUNTED, set()) & other.get(COUNTED, set()),
+            other.get(BURN_IN, set()) & (ctrl.get(COUNTED, set()) | ctrl.get(BURN_IN, set())))
+
+
 def lane_report(ledger: str, entries: list[tuple[str, dict]], ev: dict, study: dict, archive: str, market: str, now, base: dict) -> dict[str, Any]:
     """One lane: the class of every seal, then statistics for COUNTED seals (headline) and, apart, for clean BURN_IN seals (labelled not evidence)."""
     klass = classify(entries, ev)
@@ -172,7 +178,11 @@ def lane_report(ledger: str, entries: list[tuple[str, dict]], ev: dict, study: d
         st = SL.settle_sealed(trades, archive, market, now, base, strategy_id=X.strategy_id(study), horizon=study["checkpoint"]["horizon"])
         out[name] = {"settle_join": st, **summarize(bodies, trades, market)}
         trades_by[name] = trades
-    return out | {"_trades": trades_by}
+    games_by: dict[str, set] = defaultdict(set)
+    for rel, body in entries:
+        if isinstance(body.get("game"), dict) and body["game"].get("game_id"):
+            games_by[klass[rel][0]].add(body["game"]["game_id"])
+    return out | {"_trades": trades_by, "_games": dict(games_by)}
 
 
 def build(archive: str, market: str, control_dir: str, other_dir: str, other_lane: str, from_tip: str, now=None, seed: int = 53, *, code_repo: str | None = None,
@@ -184,6 +194,7 @@ def build(archive: str, market: str, control_dir: str, other_dir: str, other_lan
     schedule = [g for g in SW.schedule_games(market, None, all_history=True) if MK.parse_ts(g["start_utc"]) >= MK.parse_ts(from_tip)]
     lanes: dict[str, Any] = {}
     trades: dict[str, dict[str, list[dict]]] = {}
+    games: dict[str, dict[str, set]] = {}
     for ln, d in dirs.items():
         study = studies[ln]
         # board commit index only for the availability rule (as the evaluator and the live sealer do); without a code repo nothing can be proven, so nothing counts
@@ -192,11 +203,20 @@ def build(archive: str, market: str, control_dir: str, other_dir: str, other_lan
         entries = load(d, from_tip)
         rep_l = lane_report(d, entries, ev, study, archive, market, now, base)
         trades[ln] = rep_l.pop("_trades")
+        games[ln] = rep_l.pop("_games")
         lanes[ln] = rep_l
+    # A paired comparison is only meaningful on games BOTH lanes have evidence for: otherwise a game one lane has not (yet) counted reads as "no difference".
+    ctrl, oth = games["control"], games[other_lane]
+    joint_counted, burn_games = paired_scope(ctrl, oth)
+    pick = lambda rows, gs: [t for t in rows if t["game_id"] in gs]      # noqa: E731
+    ctrl_all = trades["control"]["counted"] + trades["control"]["burn_in_not_evidence"]
     rep: dict[str, Any] = {"schema": "issue53.burnin_report.v2", "authority": "research_only", "from_tip": from_tip, "other_lane": other_lane, "lanes": lanes,
                            "code_repo_verified": bool(code_repo),
-                           "counted": compare(trades["control"]["counted"], trades[other_lane]["counted"], other_lane, market, seed),
-                           "burn_in_not_evidence": compare(trades["control"]["burn_in_not_evidence"], trades[other_lane]["burn_in_not_evidence"], other_lane, market, seed)}
+                           "coverage": {"games_counted_in_both": len(joint_counted), "games_counted_control_only": len(ctrl.get(COUNTED, set()) - oth.get(COUNTED, set()) - oth.get(BURN_IN, set())),
+                                        f"games_counted_{other_lane}_only": len(oth.get(COUNTED, set()) - ctrl.get(COUNTED, set())),
+                                        f"games_{other_lane}_burn_in_with_a_control_seal": len(burn_games)},
+                           "counted": compare(pick(trades["control"]["counted"], joint_counted), pick(trades[other_lane]["counted"], joint_counted), other_lane, market, seed),
+                           "burn_in_not_evidence": compare(pick(ctrl_all, burn_games), pick(trades[other_lane]["burn_in_not_evidence"], burn_games), other_lane, market, seed)}
     rep["caveat"] = ("descriptive only: archival quotes are displayed quotes, not proven live fills; costs (1 c slippage, whole-order fee, displayed size) are already inside ev_net_exec; "
                      "trades within a game are correlated; a handful of games supports no inference about profitability or calibration; "
                      "only COUNTED seals (independently verified, at/after the prospective start) are evidence; BURN_IN is shown apart and is never counted")
@@ -246,8 +266,10 @@ def markdown(rep: dict) -> str:
         for e in rep["lanes"][ln]["excluded_seals"]:
             L.append(f"* {ln} {e['class']}: `{e['path']}` {e['reasons']}")
     L += ["", f"game categories: control {json.dumps(rep['lanes']['control']['game_categories'])}; {o} {json.dumps(rep['lanes'][o]['game_categories'])}", "",
-          "## COUNTED seals only (the evidence)", ""] + _table(rep, "counted") + [""] + _shared(rep, "counted") + \
-         ["", "## BURN-IN seals (verified but before the prospective start): NOT EVIDENCE, descriptive only", ""] + _table(rep, "burn_in_not_evidence") + [""] + _shared(rep, "burn_in_not_evidence")
+          "## COUNTED seals only (the evidence)", "", "Per-lane statistics cover every COUNTED seal of the lane; the shared / lane-only split and the paired interval below cover only games COUNTED in BOTH lanes "
+          f"({rep['coverage']['games_counted_in_both']} so far; coverage {json.dumps(rep['coverage'])}).", ""] + _table(rep, "counted") + [""] + _shared(rep, "counted") + \
+         ["", "## BURN-IN seals (verified but before the prospective start): NOT EVIDENCE, descriptive only", "",
+          f"Comparison below: the {o} burn-in games against the control's verified seals for the same games ({rep['coverage'][f'games_{o}_burn_in_with_a_control_seal']} games).", ""] + _table(rep, "burn_in_not_evidence") + [""] + _shared(rep, "burn_in_not_evidence")
     return "\n".join(L) + "\n"
 
 

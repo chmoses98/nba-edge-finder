@@ -97,6 +97,15 @@ def test_without_a_code_repo_the_markdown_says_nothing_is_counted():
     cls = {"seal_classes": {B.BURN_IN: 2}, "game_categories": {}, "excluded_seals": [], "counted": B.summarize([], [], None), "burn_in_not_evidence": B.summarize([], [], None)}
     cmp_ = {"shared_trades": 0, "control_only_trades": 0, "t60a_only_trades": 0, "t60a_only_games": 0, "shared": B.summarize([], [], None), "t60a_only": B.summarize([], [], None),
             "paired_net_pnl_difference_per_game": {"t60a_minus_control": {"status": "INSUFFICIENT_GAMES"}}}
-    rep = {"other_lane": "t60a", "caveat": "c", "code_repo_verified": False, "lanes": {"control": cls, "t60a": cls}, "counted": cmp_, "burn_in_not_evidence": cmp_}
+    rep = {"other_lane": "t60a", "caveat": "c", "code_repo_verified": False, "coverage": {"games_counted_in_both": 0, "games_t60a_burn_in_with_a_control_seal": 0}, "lanes": {"control": cls, "t60a": cls}, "counted": cmp_, "burn_in_not_evidence": cmp_}
     md = B.markdown(rep)
     assert "NOTHING is counted" in md and "NOT EVIDENCE" in md
+
+
+def test_paired_scope_only_covers_games_both_lanes_have_evidence_for():
+    ctrl = {B.COUNTED: {"g1", "g2", "g3", "g9"}, B.BURN_IN: {"g4"}}
+    other = {B.COUNTED: {"g3", "g9"}, B.BURN_IN: {"g1", "g2", "g4", "g5"}}
+    joint, burn = B.paired_scope(ctrl, other)
+    assert joint == {"g3", "g9"}                       # a game one lane has not counted is NOT a zero difference
+    assert burn == {"g1", "g2", "g4"}                  # g5: the control has no seal, so there is nothing to compare with
+    assert B.paired_scope({}, {}) == (set(), set())
