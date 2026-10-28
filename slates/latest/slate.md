@@ -1,4 +1,4 @@
-# NBA slate 2026-10-28 — generated 2026-10-28T17:53:49Z — nba-sim-0.1.0
+# NBA slate 2026-10-28 — generated 2026-10-28T19:00:46Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
@@ -8,10 +8,10 @@ Market snapshot age: 3 min · injury snapshot age: 30 min (official)
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 3073 |
-| MODELABLE | 3124 |
-| RESEARCH | 194 |
-| UNRESOLVED | 2144 |
+| BUILDABLE | 3067 |
+| MODELABLE | 3114 |
+| RESEARCH | 196 |
+| UNRESOLVED | 2134 |
 
 ## Games
 
@@ -22,12 +22,12 @@ Market snapshot age: 3 min · injury snapshot age: 30 min (official)
 | CHA @ DET | 2026-10-28T23:00:00Z | 0.595 | +3.9±16.1 | 215.5±19.8 | 0.047 | 40000 | ok |
 | PHI @ IND | 2026-10-28T23:00:00Z | 0.380 | -5.0±16.4 | 231.1±20.4 | 0.048 | 40000 | ok |
 | ORL @ TOR | 2026-10-28T23:30:00Z | 0.593 | +3.8±16.1 | 214.1±19.7 | 0.047 | 40000 | ok |
-| NYK @ CHI | 2026-10-29T00:00:00Z | 0.070 | -23.7±15.9 | 225.8±20.2 | 0.042 | 40000 | ok |
-| HOU @ MIL | 2026-10-29T00:00:00Z | 0.181 | -14.8±16.3 | 221.3±20.4 | 0.049 | 40000 | ok |
+| NYK @ CHI | 2026-10-29T00:00:00Z | 0.069 | -23.7±16.0 | 225.7±20.2 | 0.042 | 40000 | ok |
+| HOU @ MIL | 2026-10-29T00:00:00Z | 0.178 | -15.0±16.2 | 221.3±20.4 | 0.048 | 40000 | ok |
 | GSW @ MIN | 2026-10-29T00:00:00Z | 0.677 | +7.4±16.4 | 222.9±20.2 | 0.049 | 40000 | ok |
-| DEN @ NOP | 2026-10-29T00:00:00Z | 0.240 | -11.3±16.2 | 241.6±20.6 | 0.048 | 40000 | ok |
+| DEN @ NOP | 2026-10-29T00:00:00Z | 0.236 | -11.4±16.1 | 241.6±20.5 | 0.049 | 40000 | ok |
 | SAS @ UTA | 2026-10-29T01:00:00Z | 0.050 | -26.7±16.0 | 232.3±20.2 | 0.032 | 40000 | ok |
-| OKC @ DAL | 2026-10-29T01:30:00Z | 0.070 | -23.0±15.5 | 225.9±19.8 | 0.042 | 40000 | ok |
+| OKC @ DAL | 2026-10-29T01:30:00Z | 0.071 | -22.9±15.6 | 226.1±19.8 | 0.043 | 40000 | ok |
 | LAL @ LAC | 2026-10-29T02:30:00Z | 0.520 | +0.8±16.5 | 231.6±20.6 | 0.048 | 40000 | ok |
 
 ## Contracts (OK gate, sorted by best EV)
@@ -35,5 +35,5 @@ Market snapshot age: 3 min · injury snapshot age: 30 min (official)
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 6197, 'UNSUPPORTED': 2338}
+Other gates: {'UNSUPPORTED': 2330, 'NO_EDGE': 6181}
 
