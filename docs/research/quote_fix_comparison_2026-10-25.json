@@ -1,0 +1,211 @@
+{
+ "passes": 19,
+ "contracts": 29077,
+ "old_with_quote": 0,
+ "new_with_quote": 29077,
+ "gained_quote": 29077,
+ "new_p_market_defined": 25865,
+ "old_p_market_defined": 0,
+ "gate_transitions": {
+  "CANNOT_TRUST_INPUTS->CANNOT_TRUST_INPUTS": 4471,
+  "NO_EDGE->NO_EDGE": 13844,
+  "NO_EDGE->OK": 3861,
+  "UNSUPPORTED->UNSUPPORTED": 6901
+ },
+ "recommendations_old": 0,
+ "recommendations_new": 3861,
+ "new_rec_by_family": {
+  "player_points": 771,
+  "player_rebounds": 751,
+  "player_threes": 727,
+  "player_assists": 527,
+  "player_pra": 247,
+  "player_steals": 169,
+  "game_spread": 145,
+  "team_total": 142,
+  "player_blocks": 113,
+  "game_total": 106,
+  "player_double_double": 63,
+  "period_total": 48,
+  "player_triple_double": 19,
+  "game_winner": 16,
+  "period_spread": 15
+ },
+ "new_rec_by_side": {
+  "no": 2686,
+  "yes": 1175
+ },
+ "ev_new_rec_quantiles": {
+  "0.1": 0.0029,
+  "0.5": 0.0299,
+  "0.9": 0.1541,
+  "0.99": 0.3653
+ },
+ "abs_shift_hybrid_vs_data_median": 0.0724,
+ "model_vs_market_by_scope": {
+  "game": {
+   "n": 15425,
+   "median_abs_p_data_minus_p_market": 0.082,
+   "share_over_0.25": 0.079
+  },
+  "player": {
+   "n": 6436,
+   "median_abs_p_data_minus_p_market": 0.1101,
+   "share_over_0.25": 0.227
+  }
+ },
+ "recs_with_abs_gap_over_0.25": 1523,
+ "unquoted_by_family_new": {},
+ "top_new_recommendations": [
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAPRA-26OCT23DETMIA-MIAGANTETOKOUNMPO7-40",
+   "new_best": "no",
+   "new_ask": 37,
+   "p_data": 2.5e-05,
+   "new_p_market": 0.675,
+   "new_p_hybrid": 0.09522439065729137,
+   "new_ev": 0.5184586093427086
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAPTS-26OCT23DETMIA-MIAGANTETOKOUNMPO7-25",
+   "new_best": "no",
+   "new_ask": 35,
+   "p_data": 0.00035,
+   "new_p_market": 0.6699999999999999,
+   "new_p_hybrid": 0.13108052111175292,
+   "new_ev": 0.5029944788882471
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBA2D-26OCT23TORWAS-WASADAVIS23",
+   "new_best": "no",
+   "new_ask": 38,
+   "p_data": 0.0003,
+   "new_p_market": 0.64,
+   "new_p_hybrid": 0.11601982953129193,
+   "new_ev": 0.487488170468708
+  },
+  {
+   "date": "2026-10-21",
+   "ticker": "KXNBAREB-26OCT21MILWAS-WASADAVIS23-10",
+   "new_best": "no",
+   "new_ask": 36,
+   "p_data": 0.0006833333333333333,
+   "new_p_market": 0.645,
+   "new_p_hybrid": 0.1457463361243187,
+   "new_ev": 0.4781256638756813
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAPTS-26OCT23TORWAS-TORKLEONARD2-20",
+   "new_best": "no",
+   "new_ask": 27,
+   "p_data": 0.001725,
+   "new_p_market": 0.745,
+   "new_p_hybrid": 0.23907526156175374,
+   "new_ev": 0.47712773843824624
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAPRA-26OCT23TORWAS-WASADAVIS23-30",
+   "new_best": "no",
+   "new_ask": 35,
+   "p_data": 0.00065,
+   "new_p_market": 0.7,
+   "new_p_hybrid": 0.16683062274716495,
+   "new_ev": 0.467244377252835
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAREB-26OCT23TORWAS-WASADAVIS23-10",
+   "new_best": "no",
+   "new_ask": 40,
+   "p_data": 0.000425,
+   "new_p_market": 0.625,
+   "new_p_hybrid": 0.12224707422358082,
+   "new_ev": 0.4609529257764192
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAPTS-26OCT23DETMIA-MIAGANTETOKOUNMPO7-20",
+   "new_best": "no",
+   "new_ask": 15,
+   "p_data": 0.00285,
+   "new_p_market": 0.86,
+   "new_p_hybrid": 0.38070152223097364,
+   "new_ev": 0.4603734777690263
+  },
+  {
+   "date": "2026-10-21",
+   "ticker": "KXNBA2D-26OCT21MILWAS-WASADAVIS23",
+   "new_best": "no",
+   "new_ask": 40,
+   "p_data": 0.0005,
+   "new_p_market": 0.615,
+   "new_p_hybrid": 0.12430763285112376,
+   "new_ev": 0.45889236714887627
+  },
+  {
+   "date": "2026-10-21",
+   "ticker": "KXNBAPRA-26OCT21MILWAS-WASADAVIS23-35",
+   "new_best": "no",
+   "new_ask": 45,
+   "p_data": 0.00018333333333333334,
+   "new_p_market": 0.56,
+   "new_p_hybrid": 0.08223254255101049,
+   "new_ev": 0.4504424574489896
+  },
+  {
+   "date": "2026-10-21",
+   "ticker": "KXNBAPRA-26OCT21MILWAS-WASADAVIS23-30",
+   "new_best": "no",
+   "new_ask": 33,
+   "p_data": 0.0012833333333333334,
+   "new_p_market": 0.7150000000000001,
+   "new_p_hybrid": 0.2053399157190901,
+   "new_ev": 0.44918308428090986
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAPTS-26OCT23TORWAS-WASADAVIS23-20",
+   "new_best": "no",
+   "new_ask": 38,
+   "p_data": 0.001075,
+   "new_p_market": 0.635,
+   "new_p_hybrid": 0.15940010668140825,
+   "new_ev": 0.4441078933185918
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAPRA-26OCT23TORWAS-TORKLEONARD2-30",
+   "new_best": "no",
+   "new_ask": 41,
+   "p_data": 0.000475,
+   "new_p_market": 0.655,
+   "new_p_hybrid": 0.13625462774049826,
+   "new_ev": 0.43681237225950187
+  },
+  {
+   "date": "2026-10-23",
+   "ticker": "KXNBAPTS-26OCT23CHIMIL-MILTHERRO11-20",
+   "new_best": "no",
+   "new_ask": 35,
+   "p_data": 0.0023,
+   "new_p_market": 0.655,
+   "new_p_hybrid": 0.2021356677054351,
+   "new_ev": 0.4319393322945649
+  },
+  {
+   "date": "2026-10-21",
+   "ticker": "KXNBAREB-26OCT21MILWAS-WASADAVIS23-8",
+   "new_best": "no",
+   "new_ask": 22,
+   "p_data": 0.0051,
+   "new_p_market": 0.785,
+   "new_p_hybrid": 0.33726895990095784,
+   "new_ev": 0.43071904009904216
+  }
+ ]
+}

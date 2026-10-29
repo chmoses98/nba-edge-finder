@@ -17,6 +17,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import os
 from collections import Counter
 from dataclasses import asdict
 from pathlib import Path
@@ -35,6 +36,7 @@ from nba_edge.identity.normalize import normalize_name
 from nba_edge.identity.teams import registry
 from nba_edge.kalshi.contracts import build_contract
 from nba_edge.kalshi.fees import DEFAULT_SCHEDULE
+from nba_edge.kalshi.normalize import market_to_cents, quote_cents
 from nba_edge.kalshi.ontology import Ontology
 from nba_edge.kalshi.ticker import parse_ticker
 from nba_edge.log import get_logger, kv
@@ -164,6 +166,40 @@ def injuries_by_team(inj_rows: list[dict[str, Any]], names: NameIndex) -> tuple[
     return out, {"source": "official" if official else ("espn" if inj_rows else "none"), "n": len(rows), "unresolved": unresolved[:50]}
 
 
+QUOTE_FIX_ENV = "NBA_EDGE_QUOTE_FIX"
+
+
+def quote_fix_enabled() -> bool:
+    """§5.14 corrected quote handling is OFF unless explicitly enabled (``NBA_EDGE_QUOTE_FIX=1``).
+
+    It changes live-facing values (p_market, p_hybrid, EV, gates, slate recommendations), so merging the code must not
+    activate it; activation is a separate, explicitly approved step (see docs/research/QUOTE_FIX_2026-10-25.md).
+    """
+    return os.environ.get(QUOTE_FIX_ENV, "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def legacy_market_snapshot(m: dict[str, Any]) -> dict[str, Any]:
+    """The pre-fix behaviour, kept byte-for-byte while the fix is not activated: reads bare ``yes_bid`` etc. only."""
+    return {k: m.get(k) for k in ("yes_bid", "yes_ask", "no_bid", "no_ask", "last_price", "volume", "open_interest", "liquidity")} | {"observed_at_utc": m.get("_observed_at_utc")}
+
+
+def market_snapshot(m: dict[str, Any]) -> dict[str, Any]:
+    """Quote snapshot (integer cents) for pricing/economics from a board row.
+
+    §5.14: boards carry Kalshi's dollar-denominated fields (``yes_bid_dollars`` ...) plus the capture-time canonical
+    ``_quote_cents``; bare ``yes_bid`` etc. are absent, so reading them yielded no quote on 444,322 archived predictions.
+    Precedence: the capture-time ``_quote_cents`` (already degenerate-0/100-free) -> a fresh normalisation of the raw row
+    (dollar fields or legacy cent fields). Nothing is invented: a side with no quote stays None.
+    """
+    c = market_to_cents(m)
+    stored = m.get("_quote_cents")
+    q = stored if isinstance(stored, dict) and any(v is not None for v in stored.values()) else quote_cents(m)
+    snap = {k: q.get(k) for k in ("yes_bid", "yes_ask", "no_bid", "no_ask", "last_price")}
+    snap |= {k: c.get(k) for k in ("volume", "open_interest", "liquidity")}
+    snap["observed_at_utc"] = m.get("_observed_at_utc")
+    return snap
+
+
 def _pred_id(ticker: str, ts: str, model: str) -> str:
     return hashlib.sha256(f"{ticker}|{ts}|{model}".encode()).hexdigest()[:32]
 
@@ -287,7 +323,8 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             pr = price_contract(c, sim)
             coverage[c.support if pr.supported else (c.support if c.support not in ("MODELABLE", "BUILDABLE") else "UNRESOLVED")] += 1
             mkt_obs = parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None
-            snap = {k: m.get(k) for k in ("yes_bid", "yes_ask", "no_bid", "no_ask", "last_price", "volume", "open_interest", "liquidity")} | {"observed_at_utc": m.get("_observed_at_utc")}
+            snap = market_snapshot(m) if quote_fix_enabled() else legacy_market_snapshot(m)
+            q = {k: snap.get(k) for k in ("yes_bid", "yes_ask", "no_bid", "no_ask")}
             mi = market_implied_probability(snap)
             p_mkt = mi.p_mid
             p_data = pr.p if pr.supported else None
@@ -318,8 +355,8 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
                 prediction_id=_pred_id(m["ticker"], ts, MODEL_VERSION), ticker=m["ticker"], game_id=gid, family=c.family, predicted_at_utc=now,
                 data_cutoff_utc=cutoff_utc, model_version=MODEL_VERSION, sim_version=SIM_VERSION, feature_version=FEATURE_VERSION, n_sims=sim.n_sims,
                 p_data_only=p_data, p_market=p_mkt, p_hybrid=p_h, p_production=p_h, p_data_only_se=pr.se if pr.supported else None,
-                market_observed_at_utc=mkt_obs, market_yes_bid=m.get("yes_bid"), market_yes_ask=m.get("yes_ask"),
-                market_no_bid=m.get("no_bid"), market_no_ask=m.get("no_ask"), gate=gate, gate_reasons=[str(x) for x in greasons][:8], authority=Authority.RESEARCH, support=c.support,
+                market_observed_at_utc=mkt_obs, market_yes_bid=q["yes_bid"], market_yes_ask=q["yes_ask"],
+                market_no_bid=q["no_bid"], market_no_ask=q["no_ask"], gate=gate, gate_reasons=[str(x) for x in greasons][:8], authority=Authority.RESEARCH, support=c.support,
                 pregame=is_pregame, thesis_group=None, input_snapshot_ids={"markets": mkt_provenance or "", "injuries": inj_entry.path if inj_entry else "", "hybrid_market_weight": str(HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))},
             )
             pred_rows.append(pred.model_dump(mode="json"))
@@ -330,7 +367,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             row = {
                 "ticker": m["ticker"], "game_id": gid, "title": m.get("title"), "family": c.family, "stat": c.stat, "period": c.period, "team_id": c.team_id, "nba_id": c.nba_id,
                 "player": names.names.get(c.nba_id) if c.nba_id else None, "threshold": c.threshold, "comparator": c.comparator, "support": c.support, "semantics": c.semantics_confidence,
-                "yes_bid": m.get("yes_bid"), "yes_ask": m.get("yes_ask"), "no_bid": m.get("no_bid"), "no_ask": m.get("no_ask"), "p_market": p_mkt, "p_data_only": p_data, "p_hybrid": p_h,
+                "yes_bid": q["yes_bid"], "yes_ask": q["yes_ask"], "no_bid": q["no_bid"], "no_ask": q["no_ask"], "p_market": p_mkt, "p_data_only": p_data, "p_hybrid": p_h,
                 "p_production": p_h, "mc_se": pr.se if pr.supported else None, "gate": str(gate), "gate_reasons": [str(x) for x in greasons][:4], "authority": "RESEARCH",
                 "best_side": econ.best_side if econ else None, "ev_yes": econ.yes.ev_per_contract if econ else None, "ev_no": econ.no.ev_per_contract if econ else None,
                 "bet_up_to_yes": econ.yes.bet_up_to_cents if econ else None, "bet_up_to_no": econ.no.bet_up_to_cents if econ else None, "spread_cents": econ.spread_cents if econ else None,
