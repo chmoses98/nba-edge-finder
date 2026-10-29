@@ -1,35 +1,34 @@
 {
- "last_capture_utc": "2026-10-29T09:37:22Z",
- "n_markets": 7213,
+ "last_capture_utc": "2026-10-29T09:52:22Z",
+ "n_markets": 7225,
  "n_series": 300,
- "requests": 921,
+ "requests": 920,
  "run_id": "40848282743",
  "markets_written": {
   "encoding": "delta",
-  "seq": 12,
-  "path": "kalshi/markets_delta/dt=2026-10-29/kalshi_markets_delta_20261029T093722Z_40848282743.json.gz",
-  "bytes": 32901,
-  "n_markets": 7213,
-  "n_changed": 1664,
-  "changed_pct": 23.069,
-  "board_sha256": "4d59e601a2b3a8ab621633f50b38ee3e1dd57d8f88f6a3ddc457a6cfb9b487ce"
+  "seq": 13,
+  "path": "kalshi/markets_delta/dt=2026-10-29/kalshi_markets_delta_20261029T095222Z_40848282743.json.gz",
+  "bytes": 22859,
+  "n_markets": 7225,
+  "n_changed": 1189,
+  "changed_pct": 16.457,
+  "board_sha256": "c5230ff578892a05bebc0c3ac1278bb4906261febbe7f90212bbc8acaf26b105"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 12,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-29/kalshi_orderbooks_delta_20261029T093722Z_40848282743.json.gz",
-  "bytes": 33780,
+  "seq": 13,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-29/kalshi_orderbooks_delta_20261029T095222Z_40848282743.json.gz",
+  "bytes": 32631,
   "n_markets": 300,
-  "n_changed": 290,
-  "changed_pct": 96.667,
-  "board_sha256": "825c516b0d0d0d6e58ff445be4d75b6d983ea4251ce0b2418e047edae4fa0133"
+  "n_changed": 277,
+  "changed_pct": 92.333,
+  "board_sha256": "78bb7cc53dcbd2aa8d037d942e20ce2d810383ef5f05a3a004f178f8a2f66900"
  },
  "by_status": {
-  "active": 7204,
-  "initialized": 9
+  "active": 7225
  },
  "by_support": {
-  "BUILDABLE": 618,
+  "BUILDABLE": 630,
   "MODELABLE": 581,
   "RESEARCH": 1782,
   "UNMODELABLE": 1631,
@@ -59,10 +58,12 @@
   "period_total": 142,
   "period_winner": 216,
   "player_assists": 78,
+  "player_blocks": 3,
   "player_double_double": 8,
   "player_points": 75,
   "player_pra": 36,
   "player_rebounds": 88,
+  "player_steals": 9,
   "player_threes": 92,
   "player_triple_double": 2,
   "player_unknown": 788,
@@ -83,7 +84,7 @@
   "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 7204 live markets, cap 300"
+  "order books sampled by priority: 7225 live markets, cap 300"
  ],
  "alarm": true
 }
