@@ -1,4 +1,4 @@
-# NBA slate 2026-10-29 — generated 2026-10-29T18:43:32Z — nba-sim-0.1.0
+# NBA slate 2026-10-29 — generated 2026-10-29T19:49:47Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
@@ -8,10 +8,10 @@ Market snapshot age: 3 min · injury snapshot age: 10 min (official)
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 800 |
-| MODELABLE | 866 |
+| BUILDABLE | 844 |
+| MODELABLE | 888 |
 | RESEARCH | 52 |
-| UNRESOLVED | 662 |
+| UNRESOLVED | 705 |
 
 ## Games
 
@@ -19,12 +19,12 @@ Market snapshot age: 3 min · injury snapshot age: 10 min (official)
 |---|---|---:|---|---|---:|---:|---|
 | CLE @ ATL | 2026-10-30T00:00:00Z | 0.471 | -1.3±16.4 | 230.9±20.6 | 0.049 | 40000 | ok |
 | SAC @ NOP | 2026-10-30T00:00:00Z | 0.698 | +8.2±16.0 | 237.2±20.4 | 0.048 | 40000 | ok |
-| MEM @ POR | 2026-10-30T02:00:00Z | 0.797 | +13.5±16.4 | 225.2±20.4 | 0.047 | 60000 | ok |
+| MEM @ POR | 2026-10-30T02:00:00Z | 0.791 | +13.4±16.5 | 224.9±20.5 | 0.048 | 40000 | ok |
 
 ## Contracts (OK gate, sorted by best EV)
 
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 1666, 'UNSUPPORTED': 714}
+Other gates: {'NO_EDGE': 1732, 'UNSUPPORTED': 757}
 
