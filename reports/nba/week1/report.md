@@ -1,6 +1,6 @@
 # NBA research report: week 1 (2026-10-20 .. 2026-10-26 ET)
 
-**Status: PRELIMINARY** (version 9, generated 2026-10-28T11:22:42Z). Research / paper only.
+**Status: PRELIMINARY** (version 10, generated 2026-10-29T11:26:41Z). Research / paper only.
 
 > PRELIMINARY: the week is not over or settlements/outcomes are incomplete; numbers will change.
 > SAMPLE SIZE: 52 independent games in this report. Week-1 evidence cannot establish profitability: the preregistered control needs >= 200 independent decisions across >= 40 games with positive clustered lower confidence bounds before any VALIDATED_VALUE language is allowed.
@@ -114,7 +114,7 @@ Hypothetical net ROI after fees and slippage (paper only). `selected` = one cont
 
 Baselines: NO_BET_V1 = 0 by definition; MARKET_ONLY_V1 = quote mid (see section 3); control SHADOW_PURE_PREREG_V1 is read from the shadow branch (see Control).
 
-**Expression ranking** (which market best expresses a basketball thesis; research only): 9554 theses scored, 34216 NO_TRADE, status OK
+**Expression ranking** (which market best expresses a basketball thesis; research only): 10772 theses scored, 39598 NO_TRADE, status OK
 
 ## 5. Market families
 
@@ -203,16 +203,16 @@ Minutes under-prediction verdict: **INCUMBENT_BIAS_NOT_NEGATIVE**
  "control": {
   "status": "OK",
   "strategy_id": "SHADOW_PURE_PREREG_V1",
-  "evaluated_at": "2026-10-28T04:52:32.718601+00:00",
-  "source_file": "scorecards/value/dt=2026-10-28/scorecards_value_20261028T045232Z_40634648639.jsonl.gz",
+  "evaluated_at": "2026-10-29T05:03:36.811934+00:00",
+  "source_file": "scorecards/value/dt=2026-10-29/scorecards_value_20261029T050336Z_40820977572.jsonl.gz",
   "n_arms": 4,
   "arm": "sim_rotation",
   "capture_window": "pretip",
-  "n_decisions": 772,
-  "n_games": 27,
+  "n_decisions": 824,
+  "n_games": 29,
   "verdict": "INSUFFICIENT_SAMPLE",
   "verdict_reasons": [
-   "n_games 27 < preregistered min_games 40"
+   "n_games 29 < preregistered min_games 40"
   ],
   "preregistration_sha256": "af2240994739dbd04a89bd2f9d74f56970f8e7189d1dbe73d5deb069d9b2e05b",
   "thresholds": {
