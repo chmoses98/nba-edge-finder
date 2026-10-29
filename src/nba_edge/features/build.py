@@ -43,6 +43,8 @@ class BuildConfig:
     rate_half_life: float = 20.0  # per-minute rates are far more stable than minutes; weight a longer history
     role_window: int = 5
     include_preseason: bool = False
+    # Rate models (shooting, rebounding, possessions) learn only from rows with ``stats_complete`` True; minutes/availability still use every row.
+    require_complete_box: bool = False
     min_player_games: int = 1
     max_roster: int = 15
     recent_team_games: int = 10  # rotation membership window (team games before cutoff); replaces the earlier per-player proxy
@@ -144,6 +146,8 @@ def team_params(team_id: int, tricode: str, team_games: pd.DataFrame, cutoff_dat
     g = team_games[(team_games["team_id"] == team_id) & (team_games["game_date_et"] < cutoff_date)]
     if not cfg.include_preseason:
         g = g[g["season_type"] != "preseason"]
+    if cfg.require_complete_box and "stats_complete" in g:
+        g = g[g["stats_complete"].fillna(True).astype(bool)]  # possessions-based rates need the shooting/rebounding/turnover lines these rows lack
     g = g.sort_values("game_date_et")
     n = len(g)
     report.team_games_used[team_id] = n
@@ -256,12 +260,19 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
         rot_series = np.array([mins_by_date.get(str(d), 0.0) for d in rot_dates], dtype=float)
         rot_w = _ewm_weights(len(rot_series), cfg.rotation_half_life) if len(rot_series) else np.zeros(0)
         rot = estimate_profile(rot_series, rot_w, p_start=float(np.clip(p_start, 0, 1)))
-        total_min = float(np.sum(w * mins))
+        # Rate estimates (shooting/rebounding/etc.) use only rows that actually carry those stats. A row without them is not "zero attempts", it is unknown.
+        rated = played[played["stats_complete"].fillna(True).astype(bool)] if cfg.require_complete_box and "stats_complete" in played else played
+        if len(rated) != n:
+            report.warnings.append(f"player {name} ({pid}): {n - len(rated)} of {n} games lack shooting stats; rates from {len(rated)} complete games")
+        n_r = len(rated)
+        w_r = _ewm_weights(n_r, cfg.rate_half_life) if n_r else np.zeros(0)
+        total_min = float(np.sum(w_r * rated["minutes"].to_numpy(dtype=float))) if n_r else 0.0
         pm = cfg.player_prior_minutes
+        played, w = rated, w_r  # the rate block below reads `played`/`w`; minutes/role were computed above from the full frame
 
         rate = _rate_fn(played, w, total_min, pm)
         fga_pm = rate("fga", 0.30)
-        fg3a = played["fg3a"].to_numpy(dtype=float) if "fg3a" in played else np.zeros(n)
+        fg3a = played["fg3a"].to_numpy(dtype=float) if "fg3a" in played else np.zeros(len(played))
         fga = played["fga"].to_numpy(dtype=float)
         fgm = played["fgm"].to_numpy(dtype=float) if "fgm" in played else fga * 0.47
         fg3m = played["fg3m"].to_numpy(dtype=float)
