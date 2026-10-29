@@ -49,6 +49,7 @@ from nba_edge.worker.plan import (
     plan_cycle,
     planned_exit,
     should_retire,
+    tip_aware_exit,
     tip_times,
 )
 
@@ -58,6 +59,7 @@ from nba_edge.worker.plan import (
 # worker silently pushed to `data-archive` whatever the workflow said -- which is exactly how a
 # rehearsal intended for a throwaway branch ended up writing to the real archive.
 DEFAULT_ARCHIVE_BRANCH = "data-archive"
+TIP_AWARE_ENV = "NBA_EDGE_TIP_AWARE_RETIREMENT"  # proposal, OFF by default: see docs/research/CAPTURE_CONTINUITY_PROPOSAL_2026-10-25.md
 
 
 def archive_branch() -> str:
@@ -248,6 +250,17 @@ class Worker:
         return rc == 0
 
     # -- lifecycle ---------------------------------------------------------------------------
+    def _exit_for(self, started: datetime) -> datetime:
+        """Planned exit: the measured nominal lifetime, or -- only when explicitly enabled and not overridden -- the tip-aware placement."""
+        if self.lifetime_minutes:
+            return planned_exit(started, self.lifetime_minutes)
+        if os.environ.get(TIP_AWARE_ENV, "").strip().lower() in ("1", "true", "yes", "on"):
+            try:
+                return tip_aware_exit(started, tip_times(self.schedule_fn()))
+            except Exception as e:  # noqa: BLE001 - placement is an optimisation; never let it cost a shift
+                print(f"worker: tip-aware placement unavailable ({e}); using the nominal lifetime")
+        return planned_exit(started)
+
     def acquire(self) -> tuple[bool, str, int]:
         """Take the lease, or refuse to run. Returns (ok, reason, generation)."""
         now = self.now()
@@ -256,16 +269,14 @@ class Worker:
         if not ok:
             return False, why, current.generation if current else 0
         new = lease_mod.takeover(current, self.worker_id, now)
-        exit_at = planned_exit(now, self.lifetime_minutes) if self.lifetime_minutes else planned_exit(now)
+        exit_at = self._exit_for(now)
         new = lease_mod.heartbeat(new, now, planned_exit_at=exit_at, note=why)
         lease_mod.write_lease(self.archive_root, new)
         return True, why, new.generation
 
     def run(self) -> WorkerResult:
         started = self.now()
-        exit_at = (
-            planned_exit(started, self.lifetime_minutes) if self.lifetime_minutes else planned_exit(started)
-        )
+        exit_at = self._exit_for(started)
 
         ok, why, gen = self.acquire()
         res = WorkerResult(worker_id=self.worker_id, generation=gen, exit_reason="")
