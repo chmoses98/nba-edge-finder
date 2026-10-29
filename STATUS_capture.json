@@ -1,38 +1,39 @@
 {
- "last_capture_utc": "2026-10-29T11:37:22Z",
- "n_markets": 7236,
+ "last_capture_utc": "2026-10-29T11:52:21Z",
+ "n_markets": 7246,
  "n_series": 300,
- "requests": 917,
+ "requests": 913,
  "run_id": "40848282743",
  "markets_written": {
   "encoding": "delta",
-  "seq": 20,
-  "path": "kalshi/markets_delta/dt=2026-10-29/kalshi_markets_delta_20261029T113722Z_40848282743.json.gz",
-  "bytes": 20514,
-  "n_markets": 7236,
-  "n_changed": 1136,
-  "changed_pct": 15.699,
-  "board_sha256": "d011cea71f555d71a619e067ef44a83d0f423ed7508ebd55b6a3390e97e4b130"
+  "seq": 21,
+  "path": "kalshi/markets_delta/dt=2026-10-29/kalshi_markets_delta_20261029T115221Z_40848282743.json.gz",
+  "bytes": 23031,
+  "n_markets": 7246,
+  "n_changed": 1215,
+  "changed_pct": 16.768,
+  "board_sha256": "e25c276ae00539e3d6b37d09ada9c756087bbdc15a24ba1c30240b0fa727559e"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 20,
-  "path": "kalshi/orderbooks_delta/dt=2026-10-29/kalshi_orderbooks_delta_20261029T113722Z_40848282743.json.gz",
-  "bytes": 33186,
+  "seq": 21,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-29/kalshi_orderbooks_delta_20261029T115221Z_40848282743.json.gz",
+  "bytes": 33565,
   "n_markets": 300,
   "n_changed": 276,
   "changed_pct": 92.0,
-  "board_sha256": "fcfbb2f009f51e9765808749db3e7ec8802cdf5111d3f607f92c02ad619c356d"
+  "board_sha256": "428fec2a429402eba409191095d5bec8c3c027cc85678ce78a1ca8e17bd6b0e5"
  },
  "by_status": {
-  "active": 7236
+  "active": 7241,
+  "initialized": 5
  },
  "by_support": {
   "BUILDABLE": 630,
-  "MODELABLE": 582,
+  "MODELABLE": 587,
   "RESEARCH": 1791,
   "UNMODELABLE": 1631,
-  "UNRESOLVED": 2602
+  "UNRESOLVED": 2607
  },
  "by_family": {
   "all_nba_selections": 371,
@@ -64,9 +65,9 @@
   "player_pra": 36,
   "player_rebounds": 89,
   "player_steals": 9,
-  "player_threes": 92,
+  "player_threes": 97,
   "player_triple_double": 2,
-  "player_unknown": 789,
+  "player_unknown": 794,
   "playoff_round_reach": 30,
   "playoff_seed": 900,
   "playoffs_qualify": 60,
@@ -80,11 +81,11 @@
   "unknown": 836
  },
  "alarms": [
-  "2602 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+  "2607 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
   "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBALASTTOLOSE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 7236 live markets, cap 300"
+  "order books sampled by priority: 7241 live markets, cap 300"
  ],
  "alarm": true
 }
