@@ -1,32 +1,32 @@
 ## NBA projection scorecard — last 7 days
 
-Generated 2026-10-29T02:03:35Z. Research only; nothing here is a betting signal.
+Generated 2026-10-29T11:03:24Z. Research only; nothing here is a betting signal.
 
-Archived pregame forecasts: 168604 across 71 games. Settled: 18373 (void/DNP 8249, stat corrections 104).
+Archived pregame forecasts: 169144 across 71 games. Settled: 20915 (void/DNP 9256, stat corrections 104).
 
 | Stat | Model | n (games) | MAE | Bias | CRPS | 80% range caught | vs incumbent (CRPS) |
 |---|---|---|---|---|---|---|---|
-| assists | nba_sim_rotation_v1 (incumbent) | 854 (44) | 1.484 | -0.140 | — | — |  |
-| assists | pf-nba-assists (challenger) | 1049 (47) | 1.307 | +0.037 | 0.883 | 82% | — |
-| fga | pf-nba-fga (challenger) | 1049 (47) | 2.796 | +0.218 | 1.948 | 80% | — |
-| minutes | nba_sim_rotation_v1 (incumbent) | 854 (44) | 6.792 | -0.639 | — | — |  |
-| minutes | pf-nba-minutes (challenger) | 1049 (47) | 4.952 | +0.534 | 3.528 | 78% | — |
-| participation (yes/no) | nba_sim_rotation_v1 (incumbent) | 1307 (44) | Brier 0.1422 | calib +0.036 | log loss 0.4968 | — |  |
-| participation (yes/no) | pf-nba-participation (challenger) | 1624 (47) | Brier 0.1029 | calib +0.052 | log loss 0.3006 | — | -0.0710 [-0.0884, -0.0558] (n=1054) (Brier) |
-| points | nba_sim_rotation_v1 (incumbent) | 854 (44) | 5.330 | -0.245 | — | — |  |
-| points | pf-nba-points (challenger) | 1049 (47) | 4.539 | +0.362 | 3.144 | 80% | — |
-| pra | pf-nba-pra (challenger) | 1049 (47) | 6.113 | +0.317 | 4.283 | 75% | — |
-| rebounds | nba_sim_rotation_v1 (incumbent) | 854 (44) | 2.204 | -0.167 | — | — |  |
-| rebounds | pf-nba-rebounds (challenger) | 1049 (47) | 1.902 | -0.089 | 1.319 | 79% | — |
-| threes | nba_sim_rotation_v1 (incumbent) | 854 (44) | 0.954 | -0.025 | — | — |  |
-| threes | pf-nba-threes (challenger) | 1049 (47) | 0.855 | +0.012 | 0.558 | 80% | — |
+| assists | nba_sim_rotation_v1 (incumbent) | 1002 (51) | 1.460 | -0.145 | — | — |  |
+| assists | pf-nba-assists (challenger) | 1202 (54) | 1.288 | +0.041 | 0.871 | 82% | — |
+| fga | pf-nba-fga (challenger) | 1202 (54) | 2.750 | +0.183 | 1.920 | 81% | — |
+| minutes | nba_sim_rotation_v1 (incumbent) | 1002 (51) | 6.532 | -0.867 | — | — |  |
+| minutes | pf-nba-minutes (challenger) | 1202 (54) | 4.853 | +0.463 | 3.448 | 79% | — |
+| participation (yes/no) | nba_sim_rotation_v1 (incumbent) | 1518 (51) | Brier 0.1392 | calib +0.035 | log loss 0.4842 | — |  |
+| participation (yes/no) | pf-nba-participation (challenger) | 1870 (54) | Brier 0.1025 | calib +0.051 | log loss 0.2986 | — | -0.0689 [-0.0833, -0.0555] (n=1242) (Brier) |
+| points | nba_sim_rotation_v1 (incumbent) | 1002 (51) | 5.273 | -0.367 | — | — |  |
+| points | pf-nba-points (challenger) | 1202 (54) | 4.548 | +0.376 | 3.148 | 79% | — |
+| pra | pf-nba-pra (challenger) | 1202 (54) | 6.018 | +0.320 | 4.220 | 76% | — |
+| rebounds | nba_sim_rotation_v1 (incumbent) | 1002 (51) | 2.170 | -0.204 | — | — |  |
+| rebounds | pf-nba-rebounds (challenger) | 1202 (54) | 1.894 | -0.113 | 1.319 | 79% | — |
+| threes | nba_sim_rotation_v1 (incumbent) | 1002 (51) | 0.953 | -0.050 | — | — |  |
+| threes | pf-nba-threes (challenger) | 1202 (54) | 0.864 | +0.005 | 0.562 | 80% | — |
 
 **Drift checks**
 
 - assists: **OK** — within expectations
 - fga: **OK** — within expectations
 - minutes: **OK** — within expectations
-- participation: **ALERT** — bias +0.052 (95% CI +0.025..+0.080) exceeds 5% of the mean
+- participation: **ALERT** — bias +0.051 (95% CI +0.023..+0.080) exceeds 5% of the mean
 - points: **OK** — within expectations
 - pra: **OK** — within expectations
 - rebounds: **OK** — within expectations
@@ -38,37 +38,37 @@ Archived pregame forecasts: 168604 across 71 games. Settled: 18373 (void/DNP 824
 
 | Model | n | Brier |
 |---|---|---|
-| challenger | 1624 | 0.1029 |
-| incumbent | 1307 | 0.1422 |
+| challenger | 1870 | 0.1025 |
+| incumbent | 1518 | 0.1392 |
 
 | Model | Participation status | n | Brier | mean p | played |
 |---|---|---|---|---|---|
-| challenger | CONFIRMED_OUT | 262 | 0.0 | 0.0 | 0.0 |
-| challenger | LIKELY_ACTIVE | 1314 | 0.1184 | 0.843 | 0.778 |
-| challenger | LIKELY_OUT | 4 | 0.0015 | 0.028 | 0.0 |
-| challenger | UNCERTAIN | 44 | 0.2614 | 0.591 | 0.614 |
-| incumbent | n/a | 1307 | 0.1422 | 0.689 | 0.653 |
+| challenger | CONFIRMED_OUT | 310 | 0.0 | 0.0 | 0.0 |
+| challenger | LIKELY_ACTIVE | 1508 | 0.1192 | 0.842 | 0.778 |
+| challenger | LIKELY_OUT | 5 | 0.0012 | 0.023 | 0.0 |
+| challenger | UNCERTAIN | 47 | 0.2523 | 0.59 | 0.617 |
+| incumbent | n/a | 1518 | 0.1392 | 0.695 | 0.66 |
 
 **Challenger minutes by model**
 
 | Minutes model | n | MAE | Bias |
 |---|---|---|---|
 | E | 16 | 4.838 | -2.252 |
-| E_inj | 1033 | 4.954 | +0.577 |
+| E_inj | 1186 | 4.853 | +0.499 |
 
 **New-team / reconciled segments**
 
 | Segment | Value | Family | n | MAE | Bias |
 |---|---|---|---|---|---|
-| new_team | False | minutes | 711 | 4.842 | +0.545 |
-| new_team | True | minutes | 338 | 5.183 | +0.511 |
-| new_team | False | points | 711 | 4.706 | +0.545 |
-| new_team | True | points | 338 | 4.187 | -0.025 |
-| reconciled | minutes | minutes | 130 | 5.5 | -1.896 |
-| reconciled | minutes+usage | minutes | 49 | 6.662 | -1.964 |
-| reconciled | none | minutes | 673 | 4.73 | +0.807 |
-| reconciled | usage | minutes | 197 | 4.924 | +1.826 |
-| reconciled | minutes | points | 130 | 4.777 | -1.071 |
-| reconciled | minutes+usage | points | 49 | 4.872 | -0.167 |
-| reconciled | none | points | 673 | 4.406 | +0.73 |
-| reconciled | usage | points | 197 | 4.754 | +0.182 |
+| new_team | False | minutes | 821 | 4.783 | +0.496 |
+| new_team | True | minutes | 381 | 5.005 | +0.391 |
+| new_team | False | points | 821 | 4.724 | +0.578 |
+| new_team | True | points | 381 | 4.168 | -0.061 |
+| reconciled | minutes | minutes | 167 | 5.246 | -1.61 |
+| reconciled | minutes+usage | minutes | 59 | 6.287 | -1.893 |
+| reconciled | none | minutes | 748 | 4.7 | +0.7 |
+| reconciled | usage | minutes | 228 | 4.696 | +1.814 |
+| reconciled | minutes | points | 167 | 4.695 | -0.612 |
+| reconciled | minutes+usage | points | 59 | 4.844 | -0.169 |
+| reconciled | none | points | 748 | 4.406 | +0.583 |
+| reconciled | usage | points | 228 | 4.829 | +0.559 |
