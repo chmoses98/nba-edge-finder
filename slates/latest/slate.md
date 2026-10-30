@@ -1,30 +1,37 @@
-# NBA slate 2026-10-29 — generated 2026-10-29T23:48:39Z — nba-sim-0.1.0
+# NBA slate 2026-10-30 — generated 2026-10-30T04:47:50Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
-Market snapshot age: 3 min · injury snapshot age: 9 min (official)
+Market snapshot age: 3 min · injury snapshot age: 0 min (official)
 
 ## Coverage
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 853 |
-| MODELABLE | 931 |
-| RESEARCH | 55 |
-| UNRESOLVED | 763 |
+| BUILDABLE | 1728 |
+| MODELABLE | 1640 |
+| RESEARCH | 60 |
+| UNRESOLVED | 457 |
 
 ## Games
 
 | game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |
 |---|---|---:|---|---|---:|---:|---|
-| CLE @ ATL | 2026-10-30T00:00:00Z | 0.470 | -1.3±16.5 | 230.8±20.4 | 0.048 | 40000 | ok |
-| SAC @ NOP | 2026-10-30T00:00:00Z | 0.700 | +8.4±16.1 | 237.7±20.2 | 0.047 | 40000 | ok |
-| MEM @ POR | 2026-10-30T02:00:00Z | 0.791 | +13.4±16.5 | 224.9±20.5 | 0.048 | 40000 | ok |
+| CHA @ WAS | 2026-10-30T23:00:00Z | 0.066 | -23.9±15.8 | 229.2±20.1 | 0.040 | 40000 | ok |
+| CHI @ BOS | 2026-10-30T23:30:00Z | 0.894 | +20.5±16.4 | 226.3±20.5 | 0.048 | 40000 | ok |
+| DET @ BKN | 2026-10-30T23:30:00Z | 0.054 | -24.9±15.5 | 210.5±19.3 | 0.034 | 40000 | ok |
+| NYK @ PHI | 2026-10-30T23:30:00Z | 0.149 | -16.5±16.0 | 222.1±20.0 | 0.046 | 40000 | ok |
+| ORL @ TOR | 2026-10-30T23:30:00Z | 0.595 | +3.9±16.1 | 214.0±19.6 | 0.047 | 40000 | ok |
+| IND @ MIA | 2026-10-31T00:00:00Z | 0.741 | +10.8±16.6 | 240.8±21.0 | 0.047 | 40000 | ok |
+| HOU @ DAL | 2026-10-31T00:00:00Z | 0.215 | -12.5±15.8 | 221.2±19.6 | 0.047 | 40000 | ok |
+| LAC @ MIN | 2026-10-31T00:00:00Z | 0.530 | +1.3±16.3 | 225.9±20.2 | 0.048 | 40000 | ok |
+| LAL @ GSW | 2026-10-31T02:00:00Z | 0.385 | -4.9±16.6 | 228.1±20.7 | 0.048 | 60000 | ok |
+| DEN @ PHX | 2026-10-31T02:00:00Z | 0.357 | -6.0±16.5 | 234.5±20.5 | 0.048 | 40000 | ok |
 
 ## Contracts (OK gate, sorted by best EV)
 
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 1784, 'UNSUPPORTED': 818}
+Other gates: {'NO_EDGE': 3368, 'UNSUPPORTED': 517}
 

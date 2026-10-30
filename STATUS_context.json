@@ -1,29 +1,44 @@
 {
- "refreshed_at_utc": "2026-10-30T03:47:45Z",
+ "refreshed_at_utc": "2026-10-30T04:47:45Z",
  "schedule": {
   "rows": 83,
-  "path": "context/schedule/dt=2026-10-30/context_schedule_20261030T034745Z_40978952450.jsonl.gz",
+  "path": "context/schedule/dt=2026-10-30/context_schedule_20261030T044745Z_40978952450.jsonl.gz",
   "days_ahead": 10
  },
  "injuries_official": {
   "source": "nba_official_pdf",
-  "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-10-29_11_45PM.pdf",
-  "fetched_at_utc": "2026-10-30T03:47:46Z",
-  "n": 116,
-  "bytes": 101663,
-  "slot_et": "2026-10-29T23:45",
-  "report_time_utc": "2026-10-30T03:45:00Z",
+  "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-10-30_12_45AM.pdf",
+  "fetched_at_utc": "2026-10-30T04:47:46Z",
+  "n": 83,
+  "bytes": 97277,
+  "slot_et": "2026-10-30T00:45",
+  "report_time_utc": "2026-10-30T04:45:00Z",
   "report_time_source": "pdf_header",
   "requests": 1,
-  "pages": 8,
-  "n_player_rows": 116,
+  "pages": 6,
+  "n_player_rows": 83,
   "n_dropped_no_team": 0,
-  "header_time_et": "2026-10-29 11:45 PM",
-  "not_yet_submitted": [],
+  "header_time_et": "2026-10-30 12:45 AM",
+  "not_yet_submitted": [
+   "ATL@NOP:1610612737",
+   "ATL@NOP:1610612740",
+   "CLE@MIL:1610612739",
+   "CLE@MIL:1610612749",
+   "MIN@SAS:1610612750",
+   "MIN@SAS:1610612759",
+   "OKC@HOU:1610612745",
+   "OKC@HOU:1610612760",
+   "PHI@CHA:1610612755",
+   "PHI@CHA:1610612766",
+   "POR@UTA:1610612757",
+   "POR@UTA:1610612762",
+   "SAC@MEM:1610612758",
+   "SAC@MEM:1610612763"
+  ],
   "unresolved_team_text": [],
-  "search_newest_slot_et": "2026-10-29T23:45",
-  "search_oldest_slot_et": "2026-10-29T00:00",
-  "search_window_slots": 96,
+  "search_newest_slot_et": "2026-10-30T00:45",
+  "search_oldest_slot_et": "2026-10-29T23:00",
+  "search_window_slots": 8,
   "max_requests": 100,
   "slots_tried": 1,
   "report_age_min": 2.8
@@ -31,16 +46,16 @@
  "injuries_espn": {
   "source": "espn_injuries",
   "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries",
-  "fetched_at_utc": "2026-10-30T03:47:47Z",
-  "n": 95
+  "fetched_at_utc": "2026-10-30T04:47:47Z",
+  "n": 96
  },
  "injuries": {
-  "rows": 211,
-  "path": "context/injuries/dt=2026-10-30/context_injuries_20261030T034745Z_40978952450.jsonl.gz"
+  "rows": 179,
+  "path": "context/injuries/dt=2026-10-30/context_injuries_20261030T044745Z_40978952450.jsonl.gz"
  },
  "rosters": {
   "rows": 521,
-  "path": "context/rosters/dt=2026-10-30/context_rosters_20261030T034745Z_40978952450.jsonl.gz",
+  "path": "context/rosters/dt=2026-10-30/context_rosters_20261030T044745Z_40978952450.jsonl.gz",
   "source": "espn_rosters",
   "n_teams": 30,
   "n_players": 521,
