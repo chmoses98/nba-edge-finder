@@ -1,32 +1,32 @@
 ## NBA projection scorecard — last 28 days
 
-Generated 2026-10-30T01:52:02Z. Research only; nothing here is a betting signal.
+Generated 2026-10-30T10:57:13Z. Research only; nothing here is a betting signal.
 
-Archived pregame forecasts: 184467 across 81 games. Settled: 20915 (void/DNP 9256, stat corrections 120).
+Archived pregame forecasts: 186255 across 81 games. Settled: 21859 (void/DNP 9668, stat corrections 120).
 
 | Stat | Model | n (games) | MAE | Bias | CRPS | 80% range caught | vs incumbent (CRPS) |
 |---|---|---|---|---|---|---|---|
-| assists | nba_sim_rotation_v1 (incumbent) | 1193 (65) | 1.570 | +0.143 | — | — |  |
-| assists | pf-nba-assists (challenger) | 1524 (68) | 1.299 | -0.007 | 0.883 | 79% | — |
-| fga | pf-nba-fga (challenger) | 1524 (68) | 2.807 | +0.093 | 1.963 | 80% | — |
-| minutes | nba_sim_rotation_v1 (incumbent) | 1193 (65) | 7.349 | +1.118 | — | — |  |
-| minutes | pf-nba-minutes (challenger) | 1524 (68) | 5.089 | +0.241 | 3.609 | 77% | — |
-| participation (yes/no) | nba_sim_rotation_v1 (incumbent) | 1927 (65) | Brier 0.1621 | calib +0.031 | log loss 0.5274 | — |  |
-| participation (yes/no) | pf-nba-participation (challenger) | 2355 (68) | Brier 0.1071 | calib +0.055 | log loss 0.3196 | — | -0.0822 [-0.0977, -0.0672] (n=1496) (Brier) |
-| points | nba_sim_rotation_v1 (incumbent) | 1193 (65) | 5.773 | +0.837 | — | — |  |
-| points | pf-nba-points (challenger) | 1524 (68) | 4.579 | +0.196 | 3.176 | 80% | — |
-| pra | pf-nba-pra (challenger) | 1524 (68) | 6.015 | +0.095 | 4.237 | 77% | — |
-| rebounds | nba_sim_rotation_v1 (incumbent) | 1193 (65) | 2.306 | +0.244 | — | — |  |
-| rebounds | pf-nba-rebounds (challenger) | 1524 (68) | 1.874 | -0.130 | 1.306 | 80% | — |
-| threes | nba_sim_rotation_v1 (incumbent) | 1193 (65) | 1.012 | +0.104 | — | — |  |
-| threes | pf-nba-threes (challenger) | 1524 (68) | 0.858 | +0.017 | 0.557 | 77% | — |
+| assists | nba_sim_rotation_v1 (incumbent) | 1251 (68) | 1.576 | +0.115 | — | — |  |
+| assists | pf-nba-assists (challenger) | 1590 (71) | 1.314 | -0.010 | 0.895 | 79% | — |
+| fga | pf-nba-fga (challenger) | 1590 (71) | 2.793 | +0.098 | 1.953 | 80% | — |
+| minutes | nba_sim_rotation_v1 (incumbent) | 1251 (68) | 7.243 | +1.041 | — | — |  |
+| minutes | pf-nba-minutes (challenger) | 1590 (71) | 5.063 | +0.263 | 3.589 | 77% | — |
+| participation (yes/no) | nba_sim_rotation_v1 (incumbent) | 2017 (68) | Brier 0.1604 | calib +0.032 | log loss 0.5282 | — |  |
+| participation (yes/no) | pf-nba-participation (challenger) | 2457 (71) | Brier 0.1066 | calib +0.054 | log loss 0.3184 | — | -0.0808 [-0.0944, -0.0675] (n=1570) (Brier) |
+| points | nba_sim_rotation_v1 (incumbent) | 1251 (68) | 5.764 | +0.778 | — | — |  |
+| points | pf-nba-points (challenger) | 1590 (71) | 4.601 | +0.207 | 3.190 | 79% | — |
+| pra | pf-nba-pra (challenger) | 1590 (71) | 6.057 | +0.098 | 4.264 | 77% | — |
+| rebounds | nba_sim_rotation_v1 (incumbent) | 1251 (68) | 2.291 | +0.215 | — | — |  |
+| rebounds | pf-nba-rebounds (challenger) | 1590 (71) | 1.871 | -0.127 | 1.303 | 80% | — |
+| threes | nba_sim_rotation_v1 (incumbent) | 1251 (68) | 1.011 | +0.095 | — | — |  |
+| threes | pf-nba-threes (challenger) | 1590 (71) | 0.862 | +0.015 | 0.559 | 77% | — |
 
 **Drift checks**
 
 - assists: **OK** — within expectations
 - fga: **OK** — within expectations
 - minutes: **OK** — within expectations
-- participation: **ALERT** — bias +0.055 (95% CI +0.031..+0.083) exceeds 5% of the mean
+- participation: **ALERT** — bias +0.054 (95% CI +0.030..+0.078) exceeds 5% of the mean
 - points: **OK** — within expectations
 - pra: **OK** — within expectations
 - rebounds: **OK** — within expectations
@@ -38,37 +38,37 @@ Archived pregame forecasts: 184467 across 81 games. Settled: 20915 (void/DNP 925
 
 | Model | n | Brier |
 |---|---|---|
-| challenger | 2355 | 0.1071 |
-| incumbent | 1927 | 0.1621 |
+| challenger | 2457 | 0.1066 |
+| incumbent | 2017 | 0.1604 |
 
 | Model | Participation status | n | Brier | mean p | played |
 |---|---|---|---|---|---|
-| challenger | CONFIRMED_OUT | 385 | 0.0 | 0.0 | 0.0 |
-| challenger | LIKELY_ACTIVE | 1897 | 0.1261 | 0.848 | 0.779 |
+| challenger | CONFIRMED_OUT | 404 | 0.0 | 0.0 | 0.0 |
+| challenger | LIKELY_ACTIVE | 1974 | 0.1254 | 0.848 | 0.781 |
 | challenger | LIKELY_OUT | 7 | 0.0009 | 0.019 | 0.0 |
-| challenger | UNCERTAIN | 66 | 0.197 | 0.672 | 0.712 |
-| incumbent | n/a | 1927 | 0.1621 | 0.651 | 0.619 |
+| challenger | UNCERTAIN | 72 | 0.2017 | 0.675 | 0.681 |
+| incumbent | n/a | 2017 | 0.1604 | 0.653 | 0.62 |
 
 **Challenger minutes by model**
 
 | Minutes model | n | MAE | Bias |
 |---|---|---|---|
-| E | 34 | 5.134 | -0.764 |
-| E_inj | 1490 | 5.088 | +0.264 |
+| E | 35 | 5.012 | -0.717 |
+| E_inj | 1555 | 5.064 | +0.285 |
 
 **New-team / reconciled segments**
 
 | Segment | Value | Family | n | MAE | Bias |
 |---|---|---|---|---|---|
-| new_team | False | minutes | 1045 | 4.92 | +0.312 |
-| new_team | True | minutes | 479 | 5.457 | +0.088 |
-| new_team | False | points | 1045 | 4.703 | +0.426 |
-| new_team | True | points | 479 | 4.309 | -0.304 |
-| reconciled | minutes | minutes | 289 | 5.907 | -2.22 |
+| new_team | False | minutes | 1094 | 4.9 | +0.314 |
+| new_team | True | minutes | 496 | 5.424 | +0.152 |
+| new_team | False | points | 1094 | 4.723 | +0.439 |
+| new_team | True | points | 496 | 4.332 | -0.304 |
+| reconciled | minutes | minutes | 304 | 5.81 | -2.023 |
 | reconciled | minutes+usage | minutes | 68 | 6.262 | -2.084 |
-| reconciled | none | minutes | 905 | 4.759 | +0.795 |
-| reconciled | usage | minutes | 262 | 5.02 | +1.648 |
-| reconciled | minutes | points | 289 | 4.85 | -1.114 |
+| reconciled | none | minutes | 946 | 4.765 | +0.791 |
+| reconciled | usage | minutes | 272 | 4.967 | +1.57 |
+| reconciled | minutes | points | 304 | 4.84 | -1.04 |
 | reconciled | minutes+usage | points | 68 | 4.718 | -0.207 |
-| reconciled | none | points | 905 | 4.414 | +0.532 |
-| reconciled | usage | points | 262 | 4.812 | +0.585 |
+| reconciled | none | points | 946 | 4.46 | +0.531 |
+| reconciled | usage | points | 272 | 4.797 | +0.579 |
