@@ -15,24 +15,24 @@
    "decisions_duplicate_ids_dropped": 0,
    "decisions_forecast_after_asof_excluded": 0,
    "decisions_invalid_price_excluded": 3990,
-   "decisions_raw": 398267,
+   "decisions_raw": 483026,
    "decisions_replay_excluded": 0,
    "paper_corrections_applied": 0,
-   "paper_settlements_orphaned": 48829,
-   "paper_settlements_raw": 118150,
+   "paper_settlements_orphaned": 68537,
+   "paper_settlements_raw": 137858,
    "paper_settlements_strategy_mismatch_excluded": 0,
    "pf_settlements_generated_after_tip_excluded": 0,
    "snapshots_replay_excluded": 0
   },
   "kinds_rows": {
-   "game_forecasts": 193,
-   "market_snapshots": 98819,
+   "game_forecasts": 255,
+   "market_snapshots": 119348,
    "paper_decisions": 206568,
    "pf_settlements": 5345,
-   "team_outcomes": 43
+   "team_outcomes": 51
   }
  },
- "generated_utc": "2026-10-29T11:18:35Z",
+ "generated_utc": "2026-10-30T11:12:20Z",
  "insufficient_sample": [
   "INSUFFICIENT_SAMPLE: 12 games with evidence in this window (the preregistered minimum for a value verdict is 40 games and 200 independent decisions); nothing below is a finding"
  ],
@@ -648,13 +648,13 @@
     "brier_model": 0.17925774505449696,
     "logloss_diff_model_minus_market": {
      "ci95": [
-      0.0036665019391410305,
+      0.0036665019391410323,
       0.044727157908085305
      ],
      "mean": 0.023772064296170972,
      "n_clusters": 12,
      "n_obs": 34214,
-     "se": 0.01045079209074786,
+     "se": 0.010450792090747861,
      "z": 2.2746662731159395
     },
     "n_contracts": 3475,

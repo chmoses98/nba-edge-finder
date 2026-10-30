@@ -5,18 +5,18 @@
   "SAMPLE SIZE: 52 independent games in this report. Week-1 evidence cannot establish profitability: the preregistered control needs >= 200 independent decisions across >= 40 games with positive clustered lower confidence bounds before any VALIDATED_VALUE language is allowed.",
   "NO BETTING AUTHORITY: nothing in this report authorises a wager, a stake change or a model promotion. All trades are paper."
  ],
- "content_digest": "2780f141d54e2d6ec56b40de6263b8d6769b1bbd4dc577d6d28c784ba4267bdc",
+ "content_digest": "faacd06c43cce4ebb9117bbd4f49cee24b2c5d92bee9628918a4186167c3b93d",
  "control": {
   "arm": "sim_rotation",
   "capture_window": "pretip",
-  "evaluated_at": "2026-10-29T05:03:36.811934+00:00",
+  "evaluated_at": "2026-10-30T05:02:28.408778+00:00",
   "n_arms": 4,
   "n_decisions": 824,
   "n_games": 29,
   "note": "read-only view of the preregistered control; dry-run diagnostic; no wagering authority",
   "preregistration_sha256": "af2240994739dbd04a89bd2f9d74f56970f8e7189d1dbe73d5deb069d9b2e05b",
   "roi": null,
-  "source_file": "scorecards/value/dt=2026-10-29/scorecards_value_20261029T050336Z_40820977572.jsonl.gz",
+  "source_file": "scorecards/value/dt=2026-10-30/scorecards_value_20261030T050228Z_41006056713.jsonl.gz",
   "status": "OK",
   "strategy_id": "SHADOW_PURE_PREREG_V1",
   "thresholds": {
@@ -99,7 +99,7 @@
    "week1": true
   }
  },
- "generated_utc": "2026-10-29T11:26:41Z",
+ "generated_utc": "2026-10-30T11:21:57Z",
  "methods": {
   "bootstrap": {
    "cluster": "game",
@@ -116,7 +116,7 @@
  "prospective_only": true,
  "prospective_start_utc": "2026-10-20T00:00:00Z",
  "report_id": "nba_week1",
- "report_version": 10,
+ "report_version": 11,
  "schema": "sift.weekly_report.v1",
  "sections": {
   "10_next_week_plan": {
@@ -2493,7 +2493,7 @@
      "started": true
     }
    ],
-   "generated_utc": "2026-10-29T11:26:41Z",
+   "generated_utc": "2026-10-30T11:21:57Z",
    "ledger_warnings": [],
    "missing_counts": {
     "snapshot_T-60": 1
@@ -4246,11 +4246,11 @@
        0.01221898661916782,
        0.0343161632355535
       ],
-      "mean": 0.023074519011519173,
+      "mean": 0.023074519011519176,
       "n_clusters": 52,
       "n_obs": 15258,
       "se": 0.00577248264014325,
-      "z": 3.997330169700875
+      "z": 3.997330169700876
      },
      "n_contracts": 15258,
      "n_decisions": 15258,
@@ -4374,11 +4374,11 @@
        0.010060074004946556,
        0.034882383612474595
       ],
-      "mean": 0.022454769186178263,
+      "mean": 0.02245476918617826,
       "n_clusters": 51,
       "n_obs": 14727,
       "se": 0.00625203709113296,
-      "z": 3.5915924456086574
+      "z": 3.5915924456086565
      },
      "n_contracts": 14727,
      "n_decisions": 14727,
@@ -4547,7 +4547,7 @@
     "logloss_diff_model_minus_market": {
      "ci95": [
       0.009815097441366554,
-      0.045135181404276074
+      0.04513518140427607
      ],
      "mean": 0.026861658431354872,
      "n_clusters": 52,
@@ -4616,50 +4616,50 @@
     "comparisons": {
      "vs_cheapest_price": {
       "ci95_game_clustered": [
-       0.01311,
-       0.05246
+       0.00616,
+       0.04781
       ],
-      "mean_pnl_diff_best_minus_comparator": 0.03343,
-      "n_games": 68,
-      "n_theses": 10772,
+      "mean_pnl_diff_best_minus_comparator": 0.0273,
+      "n_games": 71,
+      "n_theses": 11176,
       "reading": "sample meets the preregistered minimums; still research only",
-      "share_same_selection": 0.214,
+      "share_same_selection": 0.208,
       "status": "ESTIMATED"
      },
      "vs_highest_win_probability": {
       "ci95_game_clustered": [
-       -0.0086,
-       0.04355
+       -0.0082,
+       0.04098
       ],
-      "mean_pnl_diff_best_minus_comparator": 0.01688,
-      "n_games": 68,
-      "n_theses": 10772,
+      "mean_pnl_diff_best_minus_comparator": 0.01663,
+      "n_games": 71,
+      "n_theses": 11176,
       "reading": "sample meets the preregistered minimums; still research only",
-      "share_same_selection": 0.113,
+      "share_same_selection": 0.117,
       "status": "ESTIMATED"
      },
      "vs_other_expressions": {
       "ci95_game_clustered": [
-       0.03419,
-       0.07504
+       0.02846,
+       0.07098
       ],
-      "mean_pnl_diff_best_minus_comparator": 0.05467,
-      "n_games": 68,
-      "n_theses": 10758,
+      "mean_pnl_diff_best_minus_comparator": 0.0506,
+      "n_games": 71,
+      "n_theses": 11162,
       "reading": "sample meets the preregistered minimums; still research only",
       "status": "ESTIMATED"
      }
     },
     "independence": "game-clustered; theses of one game are correlated and share a cluster; expressions of one thesis are one exposure",
-    "mean_net_pnl_best_per_thesis": -0.01671,
-    "n_games": 68,
-    "n_no_trade": 39598,
-    "n_theses_scored": 10772,
-    "n_theses_with_best": 10788,
-    "n_unsettled": 16,
+    "mean_net_pnl_best_per_thesis": -0.01802,
+    "n_games": 71,
+    "n_no_trade": 41724,
+    "n_theses_scored": 11176,
+    "n_theses_with_best": 11224,
+    "n_unsettled": 48,
     "status": "OK"
    },
-   "markdown": "Hypothetical net ROI after fees and slippage (paper only). `selected` = one contract per thesis per horizon; `all candidates` rows are not independent.\n\n| strategy | view | decisions | contracts | theses | games | ROI | ROI CI | hit rate |\n|---|---|---|---|---|---|---|---|---|\n| PF_ALL_CANDIDATES_V1 | all candidates | 332962 | 15528 | 2821 | 52 | -0.106 | [-0.110, -0.103] | +0.500 |\n| PF_EDGE_STRICT_V1 | selected | 228 | 228 | 228 | 50 | -0.152 | [-0.331, +0.010] | +0.377 |\n| PF_EDGE_STRICT_V1 | all candidates | 699 | 281 | 228 | 50 | -0.191 | [-0.359, -0.018] | +0.362 |\n| PF_EDGE_V1 | selected | 659 | 659 | 659 | 52 | -0.122 | [-0.207, -0.041] | +0.416 |\n| PF_EDGE_V1 | all candidates | 3444 | 943 | 659 | 52 | -0.117 | [-0.222, -0.010] | +0.398 |\n\nBaselines: NO_BET_V1 = 0 by definition; MARKET_ONLY_V1 = quote mid (see section 3); control SHADOW_PURE_PREREG_V1 is read from the shadow branch (see Control).\n\n**Expression ranking** (which market best expresses a basketball thesis; research only): 10772 theses scored, 39598 NO_TRADE, status OK",
+   "markdown": "Hypothetical net ROI after fees and slippage (paper only). `selected` = one contract per thesis per horizon; `all candidates` rows are not independent.\n\n| strategy | view | decisions | contracts | theses | games | ROI | ROI CI | hit rate |\n|---|---|---|---|---|---|---|---|---|\n| PF_ALL_CANDIDATES_V1 | all candidates | 332962 | 15528 | 2821 | 52 | -0.106 | [-0.110, -0.103] | +0.500 |\n| PF_EDGE_STRICT_V1 | selected | 228 | 228 | 228 | 50 | -0.152 | [-0.331, +0.010] | +0.377 |\n| PF_EDGE_STRICT_V1 | all candidates | 699 | 281 | 228 | 50 | -0.191 | [-0.359, -0.018] | +0.362 |\n| PF_EDGE_V1 | selected | 659 | 659 | 659 | 52 | -0.122 | [-0.207, -0.041] | +0.416 |\n| PF_EDGE_V1 | all candidates | 3444 | 943 | 659 | 52 | -0.117 | [-0.222, -0.010] | +0.398 |\n\nBaselines: NO_BET_V1 = 0 by definition; MARKET_ONLY_V1 = quote mid (see section 3); control SHADOW_PURE_PREREG_V1 is read from the shadow branch (see Control).\n\n**Expression ranking** (which market best expresses a basketball thesis; research only): 11176 theses scored, 41724 NO_TRADE, status OK",
    "status": "OK",
    "strategies": {
     "PF_ALL_CANDIDATES_V1": {
@@ -5649,11 +5649,11 @@
        0.01221898661916782,
        0.0343161632355535
       ],
-      "mean": 0.023074519011519173,
+      "mean": 0.023074519011519176,
       "n_clusters": 52,
       "n_obs": 15258,
       "se": 0.00577248264014325,
-      "z": 3.997330169700875
+      "z": 3.997330169700876
      },
      "n_contracts": 15258,
      "n_decisions": 15258,
@@ -5777,11 +5777,11 @@
        0.010060074004946556,
        0.034882383612474595
       ],
-      "mean": 0.022454769186178263,
+      "mean": 0.02245476918617826,
       "n_clusters": 51,
       "n_obs": 14727,
       "se": 0.00625203709113296,
-      "z": 3.5915924456086574
+      "z": 3.5915924456086565
      },
      "n_contracts": 14727,
      "n_decisions": 14727,
@@ -13489,7 +13489,7 @@
     "note": "every scanned cell is counted in the BH correction; flagged cells are leads for a pre-declared prospective test, nothing more",
     "status": "OK"
    },
-   "generated_utc": "2026-10-29T11:26:41Z",
+   "generated_utc": "2026-10-30T11:21:57Z",
    "hypotheses": [
     {
      "ci95": [
@@ -14006,11 +14006,11 @@
     "decisions_duplicate_ids_dropped": 0,
     "decisions_forecast_after_asof_excluded": 0,
     "decisions_invalid_price_excluded": 24222,
-    "decisions_raw": 1438760,
+    "decisions_raw": 1523519,
     "decisions_replay_excluded": 0,
     "paper_corrections_applied": 0,
-    "paper_settlements_orphaned": 90376,
-    "paper_settlements_raw": 427481,
+    "paper_settlements_orphaned": 110084,
+    "paper_settlements_raw": 447189,
     "paper_settlements_strategy_mismatch_excluded": 0,
     "pf_settlements_generated_after_tip_excluded": 0,
     "snapshots_replay_excluded": 0
@@ -15629,7 +15629,7 @@
      }
     }
    ],
-   "generated_utc": "2026-10-29T11:26:41Z",
+   "generated_utc": "2026-10-30T11:21:57Z",
    "insufficient_sample": false,
    "integrity": {
     "decisions_asof_at_or_after_tip_excluded": 0,
@@ -15637,11 +15637,11 @@
     "decisions_duplicate_ids_dropped": 0,
     "decisions_forecast_after_asof_excluded": 0,
     "decisions_invalid_price_excluded": 24222,
-    "decisions_raw": 1438760,
+    "decisions_raw": 1523519,
     "decisions_replay_excluded": 0,
     "paper_corrections_applied": 0,
-    "paper_settlements_orphaned": 90376,
-    "paper_settlements_raw": 427481,
+    "paper_settlements_orphaned": 110084,
+    "paper_settlements_raw": 447189,
     "paper_settlements_strategy_mismatch_excluded": 0,
     "pf_settlements_generated_after_tip_excluded": 0,
     "snapshots_replay_excluded": 0
