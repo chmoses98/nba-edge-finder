@@ -1,31 +1,36 @@
 {
- "last_capture_utc": "2026-10-31T13:33:50Z",
- "n_markets": 10682,
+ "last_capture_utc": "2026-10-31T13:43:50Z",
+ "n_markets": 10684,
  "n_series": 300,
- "requests": 920,
+ "requests": 922,
  "run_id": "41198595972",
  "markets_written": {
-  "encoding": "checkpoint",
-  "reason": "chain reached 24 deltas (limit 24)",
-  "path": "kalshi/markets/dt=2026-10-31/kalshi_markets_20261031T133350Z_41198595972.jsonl.gz",
-  "bytes": 923114,
-  "n_markets": 10682,
-  "board_sha256": "c8410b2bb69bd2c6203d4d3e31510c864c5069ba52748509037896155b4c4f06"
+  "encoding": "delta",
+  "seq": 1,
+  "path": "kalshi/markets_delta/dt=2026-10-31/kalshi_markets_delta_20261031T134350Z_41198595972.json.gz",
+  "bytes": 48761,
+  "n_markets": 10684,
+  "n_changed": 2560,
+  "changed_pct": 23.961,
+  "board_sha256": "ad8f96f6b69e6bea0eae2eed9d4c1f010ef5c7ee55740c5a41b82dd71adb0078"
  },
  "orderbooks_written": {
-  "encoding": "checkpoint",
-  "reason": "chain reached 24 deltas (limit 24)",
-  "path": "kalshi/orderbooks/dt=2026-10-31/kalshi_orderbooks_20261031T133350Z_41198595972.jsonl.gz",
-  "bytes": 42007,
+  "encoding": "delta",
+  "seq": 1,
+  "path": "kalshi/orderbooks_delta/dt=2026-10-31/kalshi_orderbooks_delta_20261031T134350Z_41198595972.json.gz",
+  "bytes": 38551,
   "n_markets": 300,
-  "board_sha256": "3ec3b2563ff88d0290eac0236b6b8ff5d595b4b5dfb7fd288188dbbbb7385ff8"
+  "n_changed": 279,
+  "changed_pct": 93.0,
+  "board_sha256": "0e156a985b9c4229c96ac020068f8faaa64d3ccd7b537bf753b10c74195e32fa"
  },
  "by_status": {
-  "active": 10682
+  "active": 10682,
+  "initialized": 2
  },
  "by_support": {
-  "BUILDABLE": 1775,
-  "MODELABLE": 1929,
+  "BUILDABLE": 1776,
+  "MODELABLE": 1930,
   "RESEARCH": 1839,
   "UNMODELABLE": 1631,
   "UNRESOLVED": 3508
@@ -57,11 +62,11 @@
   "player_blocks": 37,
   "player_double_double": 26,
   "player_points": 279,
-  "player_pra": 113,
+  "player_pra": 114,
   "player_rebounds": 316,
   "player_steals": 90,
   "player_stocks": 22,
-  "player_threes": 329,
+  "player_threes": 330,
   "player_triple_double": 10,
   "player_unknown": 1632,
   "playoff_round_reach": 30,
