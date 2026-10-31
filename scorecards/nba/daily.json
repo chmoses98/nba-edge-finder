@@ -18,7 +18,7 @@
   {
    "family": "participation",
    "status": "ALERT",
-   "what": "bias +0.042 (95% CI +0.017..+0.068) exceeds 5% of the mean"
+   "what": "bias +0.043 (95% CI +0.021..+0.067) exceeds 5% of the mean"
   },
   {
    "family": "points",
@@ -44,80 +44,57 @@
  "authority": "research_only",
  "capture": {
   "availability": {
-   "coverage": 0.7831,
-   "errors": [],
-   "max_newest_age_minutes": 42.2,
-   "official": {
-    "last_modified_utc": "2026-10-31T03:30:04Z",
-    "official_explicit": 40,
-    "official_implicit": 134,
-    "report_time_utc": "2026-10-31T03:30:00Z",
-    "rows_unmatched_player": 3,
-    "status": "ok",
-    "via": "nba_official_live"
-   },
-   "official_report_game_share": 0.8571
+   "coverage": null,
+   "errors": null,
+   "max_newest_age_minutes": null,
+   "official": {},
+   "official_report_game_share": null
   },
-  "challenger_archive": {
-   "duplicates": 0,
-   "invalid": 0,
-   "late_rejected": 0,
-   "written": 1754
-  },
-  "forecasts_archived": 205159,
+  "challenger_archive": null,
+  "forecasts_archived": 206419,
   "games": 88,
-  "incumbent": {
-   "duplicates": 0,
-   "games": 0,
-   "invalid": 0,
-   "late_rejected": 0,
-   "paths": [],
-   "records_built": 0,
-   "shadow_rows_read": 0,
-   "status": "ok",
-   "written": 0
-  }
+  "incumbent": null
  },
  "families": [
   {
    "family": "assists",
    "models": [
     {
-     "bias": -0.21624287211740043,
+     "bias": -0.21195999999999998,
      "bias_ci95": [
-      -0.3244597504215133,
-      -0.09724655570300533
+      -0.3246803245135616,
+      -0.10211474814642968
      ],
-     "mae": 1.4726604821802933,
-     "mean_actual": 2.6373165618448637,
+     "mae": 1.4713240201005024,
+     "mean_actual": 2.641206030150754,
      "model_id": "nba_sim_rotation_v1",
      "model_role": "incumbent",
-     "n": 954,
-     "n_games": 49,
-     "outcome_type": "continuous_or_count",
-     "primary_metric": "mae",
-     "rmse": 2.0236857982326586
-    },
-    {
-     "bias": -0.007312775330396476,
-     "bias_ci95": [
-      -0.10931717177607057,
-      0.0895180061683599
-     ],
-     "cover_50": 0.5162995594713656,
-     "cover_80": 0.8008810572687225,
-     "cover_90": 0.9048458149779736,
-     "crps": 0.8813011477121157,
-     "mae": 1.2986079295154185,
-     "mean_actual": 2.3955947136563878,
-     "model_id": "pf-nba-assists",
-     "model_role": "challenger",
-     "n": 1135,
+     "n": 995,
      "n_games": 51,
      "outcome_type": "continuous_or_count",
-     "pit_var_ratio": 0.9792753563339311,
+     "primary_metric": "mae",
+     "rmse": 2.0147562629348434
+    },
+    {
+     "bias": -0.00971137521222411,
+     "bias_ci95": [
+      -0.1111818349713792,
+      0.08385408883753544
+     ],
+     "cover_50": 0.5161290322580645,
+     "cover_80": 0.8005093378607809,
+     "cover_90": 0.9057724957555179,
+     "crps": 0.8831001347255771,
+     "mae": 1.3026655348047538,
+     "mean_actual": 2.403225806451613,
+     "model_id": "pf-nba-assists",
+     "model_role": "challenger",
+     "n": 1178,
+     "n_games": 53,
+     "outcome_type": "continuous_or_count",
+     "pit_var_ratio": 0.9798100911823616,
      "primary_metric": "crps",
-     "rmse": 1.7855999127626967
+     "rmse": 1.7868531871404232
     }
    ],
    "outcome_type": "continuous_or_count",
@@ -125,17 +102,17 @@
     "ambiguous_keys": 0,
     "mae_diff": {
      "ci95": [
-      -0.15097853065539113,
-      -0.06187703078318932
+      -0.1419003557151212,
+      -0.060200616877732586
      ],
-     "mean_diff": -0.10544874213836478,
-     "n_clusters": 49,
-     "n_obs": 954,
-     "se": 0.02250482918229735,
-     "z": -4.685605088765232
+     "mean_diff": -0.10064060301507537,
+     "n_clusters": 51,
+     "n_obs": 995,
+     "se": 0.02137344213631972,
+     "z": -4.708675484893357
     },
-    "n": 954,
-    "n_games": 49,
+    "n": 995,
+    "n_games": 51,
     "primary_metric": "mae"
    },
    "scoring_version": "1.3.0"
@@ -144,25 +121,25 @@
    "family": "fga",
    "models": [
     {
-     "bias": 0.19313656387665193,
+     "bias": 0.192258064516129,
      "bias_ci95": [
-      -0.02378336339044184,
-      0.3788886873302962
+      0.0012465444017990177,
+      0.37170713104764935
      ],
-     "cover_50": 0.5145374449339207,
-     "cover_80": 0.826431718061674,
-     "cover_90": 0.9154185022026432,
-     "crps": 1.8857017519163908,
-     "mae": 2.7071453744493392,
-     "mean_actual": 8.005286343612335,
+     "cover_50": 0.5127334465195246,
+     "cover_80": 0.8225806451612904,
+     "cover_90": 0.9134125636672326,
+     "crps": 1.8986155872698633,
+     "mae": 2.7264855687606113,
+     "mean_actual": 8.005942275042445,
      "model_id": "pf-nba-fga",
      "model_role": "challenger",
-     "n": 1135,
-     "n_games": 51,
+     "n": 1178,
+     "n_games": 53,
      "outcome_type": "continuous_or_count",
-     "pit_var_ratio": 0.9496735649565058,
+     "pit_var_ratio": 0.9567088455709103,
      "primary_metric": "crps",
-     "rmse": 3.5340686140994766
+     "rmse": 3.5585992360646914
     }
    ],
    "outcome_type": "continuous_or_count",
@@ -172,41 +149,41 @@
    "family": "minutes",
    "models": [
     {
-     "bias": -1.018022327044025,
+     "bias": -0.9737472361809045,
      "bias_ci95": [
-      -1.645758632762687,
-      -0.3812249432310411
+      -1.554119650997435,
+      -0.44234696048850614
      ],
-     "mae": 5.9661772536687625,
-     "mean_actual": 23.5041928721174,
+     "mae": 5.906022814070352,
+     "mean_actual": 23.497487437185928,
      "model_id": "nba_sim_rotation_v1",
      "model_role": "incumbent",
-     "n": 954,
-     "n_games": 49,
-     "outcome_type": "continuous_or_count",
-     "primary_metric": "mae",
-     "rmse": 7.699338131155958
-    },
-    {
-     "bias": 0.42263436123348,
-     "bias_ci95": [
-      -0.03298049305238772,
-      0.8700161540097913
-     ],
-     "cover_50": 0.5277533039647577,
-     "cover_80": 0.8026431718061674,
-     "cover_90": 0.9092511013215859,
-     "crps": 3.3311974678936744,
-     "mae": 4.727867841409692,
-     "mean_actual": 21.758590308370046,
-     "model_id": "pf-nba-minutes",
-     "model_role": "challenger",
-     "n": 1135,
+     "n": 995,
      "n_games": 51,
      "outcome_type": "continuous_or_count",
-     "pit_var_ratio": 0.972579380260248,
+     "primary_metric": "mae",
+     "rmse": 7.628106591994118
+    },
+    {
+     "bias": 0.43220713073005085,
+     "bias_ci95": [
+      -0.0015353583053877382,
+      0.8258501375740747
+     ],
+     "cover_50": 0.5263157894736842,
+     "cover_80": 0.8047538200339559,
+     "cover_90": 0.9108658743633277,
+     "crps": 3.3094911753813077,
+     "mae": 4.706095076400679,
+     "mean_actual": 21.77843803056027,
+     "model_id": "pf-nba-minutes",
+     "model_role": "challenger",
+     "n": 1178,
+     "n_games": 53,
+     "outcome_type": "continuous_or_count",
+     "pit_var_ratio": 0.9684625411471509,
      "primary_metric": "crps",
-     "rmse": 6.084551326582345
+     "rmse": 6.045696627186947
     }
    ],
    "outcome_type": "continuous_or_count",
@@ -214,17 +191,17 @@
     "ambiguous_keys": 0,
     "mae_diff": {
      "ci95": [
-      -1.6816435085757708,
-      -1.0741786386292838
+      -1.670504316803015,
+      -1.068813037196543
      ],
-     "mean_diff": -1.3778334381551363,
-     "n_clusters": 49,
-     "n_obs": 954,
-     "se": 0.15353793109784802,
-     "z": -8.973896080943401
+     "mean_diff": -1.3373695477386933,
+     "n_clusters": 51,
+     "n_obs": 995,
+     "se": 0.15376521429355797,
+     "z": -8.69747786508774
     },
-    "n": 954,
-    "n_games": 49,
+    "n": 995,
+    "n_games": 51,
     "primary_metric": "mae"
    },
    "scoring_version": "1.3.0"
@@ -233,15 +210,15 @@
    "family": "participation",
    "models": [
     {
-     "base_rate": 0.6534246575342466,
-     "bias": 0.0422832191780822,
+     "base_rate": 0.6546052631578947,
+     "bias": 0.04090197368421056,
      "bias_ci95": [
-      0.02524132075669775,
-      0.06160918076059767
+      0.022524931951749618,
+      0.05947230536772999
      ],
-     "brier": 0.13267435359589042,
+     "brier": 0.13156035263157895,
      "calibration": {
-      "in_the_large": 0.0422832191780822,
+      "in_the_large": 0.04090197368421056,
       "reliability": [
        {
         "bin": [
@@ -257,61 +234,61 @@
          0.2,
          0.3
         ],
-        "mean_prob": 0.25989285714285715,
-        "n": 42,
-        "observed_rate": 0.14285714285714285
+        "mean_prob": 0.26045555555555555,
+        "n": 45,
+        "observed_rate": 0.13333333333333333
        },
        {
         "bin": [
          0.3,
          0.5
         ],
-        "mean_prob": 0.4128921052631579,
-        "n": 380,
-        "observed_rate": 0.1368421052631579
+        "mean_prob": 0.4123857868020304,
+        "n": 394,
+        "observed_rate": 0.13451776649746192
        },
        {
         "bin": [
          0.5,
          1.0
         ],
-        "mean_prob": 0.8279115347018573,
-        "n": 1023,
-        "observed_rate": 0.8748778103616813
+        "mean_prob": 0.8273968105065667,
+        "n": 1066,
+        "observed_rate": 0.8771106941838649
        }
       ]
      },
-     "crps": 0.13267435359589042,
-     "log_loss": 0.4736412689752535,
-     "mae": 0.2836496575342466,
-     "mean_actual": 0.6534246575342466,
-     "mean_prob": 0.6957078767123288,
+     "crps": 0.13156035263157895,
+     "log_loss": 0.4685052842756203,
+     "mae": 0.28269605263157893,
+     "mean_actual": 0.6546052631578947,
+     "mean_prob": 0.6955072368421052,
      "model_id": "nba_sim_rotation_v1",
      "model_role": "incumbent",
-     "n": 1460,
-     "n_games": 49,
+     "n": 1520,
+     "n_games": 51,
      "outcome_type": "binary",
      "primary_metric": "brier",
-     "rmse": 0.3642449088125878
+     "rmse": 0.3627124930734795
     },
     {
-     "base_rate": 0.6437889960294951,
-     "bias": 0.041952183777651864,
+     "base_rate": 0.6423118865866958,
+     "bias": 0.04309820065430736,
      "bias_ci95": [
-      0.0165524243988707,
-      0.06772428599616312
+      0.020659010880565896,
+      0.06728705036213903
      ],
-     "brier": 0.09887491943845717,
+     "brier": 0.10002570396401309,
      "calibration": {
-      "in_the_large": 0.041952183777651864,
+      "in_the_large": 0.04309820065430736,
       "reliability": [
        {
         "bin": [
          0.0,
          0.05
         ],
-        "mean_prob": 0.0001016025641025641,
-        "n": 312,
+        "mean_prob": 9.969040247678018e-05,
+        "n": 323,
         "observed_rate": 0.0
        },
        {
@@ -328,51 +305,51 @@
          0.1,
          0.2
         ],
-        "mean_prob": 0.17915,
-        "n": 6,
-        "observed_rate": 0.16666666666666666
+        "mean_prob": 0.16975714285714286,
+        "n": 7,
+        "observed_rate": 0.2857142857142857
        },
        {
         "bin": [
          0.2,
          0.3
         ],
-        "mean_prob": 0.2610583333333334,
-        "n": 12,
-        "observed_rate": 0.5
+        "mean_prob": 0.25850000000000006,
+        "n": 13,
+        "observed_rate": 0.5384615384615384
        },
        {
         "bin": [
          0.3,
          0.5
         ],
-        "mean_prob": 0.42856559139784944,
-        "n": 93,
-        "observed_rate": 0.3870967741935484
+        "mean_prob": 0.4288765306122448,
+        "n": 98,
+        "observed_rate": 0.3877551020408163
        },
        {
         "bin": [
          0.5,
          1.0
         ],
-        "mean_prob": 0.8711018698578907,
-        "n": 1337,
-        "observed_rate": 0.8167539267015707
+        "mean_prob": 0.8706680575539568,
+        "n": 1390,
+        "observed_rate": 0.8136690647482014
        }
       ]
      },
-     "crps": 0.09887491943845717,
-     "log_loss": 0.2887687638292253,
-     "mae": 0.181232955190017,
-     "mean_actual": 0.6437889960294951,
-     "mean_prob": 0.685741179807147,
+     "crps": 0.10002570396401309,
+     "log_loss": 0.2917278144939635,
+     "mae": 0.1826553435114504,
+     "mean_actual": 0.6423118865866958,
+     "mean_prob": 0.6854100872410032,
      "model_id": "pf-nba-participation",
      "model_role": "challenger",
-     "n": 1763,
-     "n_games": 51,
+     "n": 1834,
+     "n_games": 53,
      "outcome_type": "binary",
      "primary_metric": "brier",
-     "rmse": 0.31444382556898326
+     "rmse": 0.3162684049411403
     }
    ],
    "outcome_type": "binary",
@@ -380,39 +357,39 @@
     "ambiguous_keys": 0,
     "brier_diff": {
      "ci95": [
-      -0.08312227712524753,
-      -0.05633776344983144
+      -0.08022248075879417,
+      -0.05391172022230271
      ],
-     "mean_diff": -0.06869064034252298,
-     "n_clusters": 49,
-     "n_obs": 1197,
-     "se": 0.006814183950688003,
-     "z": -10.080538013005583
+     "mean_diff": -0.06649423245585875,
+     "n_clusters": 51,
+     "n_obs": 1246,
+     "se": 0.006728775606417038,
+     "z": -9.882070133598322
     },
     "crps_diff": {
      "ci95": [
-      -0.08312227712524753,
-      -0.05633776344983144
+      -0.08022248075879417,
+      -0.05391172022230271
      ],
-     "mean_diff": -0.06869064034252298,
-     "n_clusters": 49,
-     "n_obs": 1197,
-     "se": 0.006814183950688003,
-     "z": -10.080538013005583
+     "mean_diff": -0.06649423245585875,
+     "n_clusters": 51,
+     "n_obs": 1246,
+     "se": 0.006728775606417038,
+     "z": -9.882070133598322
     },
     "log_loss_diff": {
      "ci95": [
-      -0.3435486330366712,
-      -0.22139433128617422
+      -0.3296199050610555,
+      -0.216240725927963
      ],
-     "mean_diff": -0.27890719094033195,
-     "n_clusters": 49,
-     "n_obs": 1197,
-     "se": 0.031121040296688187,
-     "z": -8.962013746372497
+     "mean_diff": -0.2701688684981797,
+     "n_clusters": 51,
+     "n_obs": 1246,
+     "se": 0.03071048556883772,
+     "z": -8.7972841683859
     },
-    "n": 1197,
-    "n_games": 49,
+    "n": 1246,
+    "n_games": 51,
     "primary_metric": "brier"
    },
    "scoring_version": "1.3.0"
@@ -421,41 +398,41 @@
    "family": "points",
    "models": [
     {
-     "bias": -0.5155087002096436,
+     "bias": -0.47070442211055274,
      "bias_ci95": [
-      -0.9341271607511773,
-      -0.13043236374038364
+      -0.8469377718116413,
+      -0.10908097750973307
      ],
-     "mae": 5.152138679245283,
-     "mean_actual": 11.230607966457024,
+     "mae": 5.175875075376885,
+     "mean_actual": 11.224120603015075,
      "model_id": "nba_sim_rotation_v1",
      "model_role": "incumbent",
-     "n": 954,
-     "n_games": 49,
-     "outcome_type": "continuous_or_count",
-     "primary_metric": "mae",
-     "rmse": 6.595094665552541
-    },
-    {
-     "bias": 0.34865198237885453,
-     "bias_ci95": [
-      -0.0011112803768153507,
-      0.680577556504288
-     ],
-     "cover_50": 0.4881057268722467,
-     "cover_80": 0.801762114537445,
-     "cover_90": 0.9004405286343612,
-     "crps": 3.1231309888806904,
-     "mae": 4.5004229074889865,
-     "mean_actual": 10.28546255506608,
-     "model_id": "pf-nba-points",
-     "model_role": "challenger",
-     "n": 1135,
+     "n": 995,
      "n_games": 51,
      "outcome_type": "continuous_or_count",
-     "pit_var_ratio": 1.0153211274094647,
+     "primary_metric": "mae",
+     "rmse": 6.623077790497778
+    },
+    {
+     "bias": 0.3562308998302207,
+     "bias_ci95": [
+      0.0224404933765745,
+      0.675588223309602
+     ],
+     "cover_50": 0.48811544991511036,
+     "cover_80": 0.7988115449915111,
+     "cover_90": 0.8981324278438031,
+     "crps": 3.147559362255655,
+     "mae": 4.535704584040747,
+     "mean_actual": 10.29541595925297,
+     "model_id": "pf-nba-points",
+     "model_role": "challenger",
+     "n": 1178,
+     "n_games": 53,
+     "outcome_type": "continuous_or_count",
+     "pit_var_ratio": 1.0193818394924021,
      "primary_metric": "crps",
-     "rmse": 5.873750537301473
+     "rmse": 5.919871373585432
     }
    ],
    "outcome_type": "continuous_or_count",
@@ -463,17 +440,17 @@
     "ambiguous_keys": 0,
     "mae_diff": {
      "ci95": [
-      -0.6830332789693354,
-      -0.28012657850164846
+      -0.6551763524905345,
+      -0.2502709449790434
      ],
-     "mean_diff": -0.46976970649895183,
-     "n_clusters": 49,
-     "n_obs": 954,
-     "se": 0.10050672925069917,
-     "z": -4.674012476589311
+     "mean_diff": -0.4552017085427135,
+     "n_clusters": 51,
+     "n_obs": 995,
+     "se": 0.10242442538421222,
+     "z": -4.444269097289744
     },
-    "n": 954,
-    "n_games": 49,
+    "n": 995,
+    "n_games": 51,
     "primary_metric": "mae"
    },
    "scoring_version": "1.3.0"
@@ -482,25 +459,25 @@
    "family": "pra",
    "models": [
     {
-     "bias": 0.20523348017621146,
+     "bias": 0.22163837011884552,
      "bias_ci95": [
-      -0.2799853079019074,
-      0.6761466046625146
+      -0.23891834780452217,
+      0.6773156804481039
      ],
-     "cover_50": 0.4555066079295154,
-     "cover_80": 0.7735682819383259,
-     "cover_90": 0.8704845814977974,
-     "crps": 4.18418884377328,
-     "mae": 5.98990308370044,
-     "mean_actual": 16.686343612334802,
+     "cover_50": 0.45500848896434637,
+     "cover_80": 0.7699490662139219,
+     "cover_90": 0.870118845500849,
+     "crps": 4.208554988776266,
+     "mae": 6.01939728353141,
+     "mean_actual": 16.70288624787776,
      "model_id": "pf-nba-pra",
      "model_role": "challenger",
-     "n": 1135,
-     "n_games": 51,
+     "n": 1178,
+     "n_games": 53,
      "outcome_type": "continuous_or_count",
-     "pit_var_ratio": 1.086325424347878,
+     "pit_var_ratio": 1.091251481750553,
      "primary_metric": "crps",
-     "rmse": 7.707771545825886
+     "rmse": 7.751539049767336
     }
    ],
    "outcome_type": "continuous_or_count",
@@ -510,41 +487,41 @@
    "family": "rebounds",
    "models": [
     {
-     "bias": -0.2284156184486373,
+     "bias": -0.21632,
      "bias_ci95": [
-      -0.4180072502599766,
-      -0.05364020527779366
+      -0.41675272978491085,
+      -0.05087044957709834
      ],
-     "mae": 2.1027344863731656,
-     "mean_actual": 4.359538784067086,
+     "mae": 2.09304040201005,
+     "mean_actual": 4.351758793969849,
      "model_id": "nba_sim_rotation_v1",
      "model_role": "incumbent",
-     "n": 954,
-     "n_games": 49,
-     "outcome_type": "continuous_or_count",
-     "primary_metric": "mae",
-     "rmse": 2.7697834746087886
-    },
-    {
-     "bias": -0.11544493392070485,
-     "bias_ci95": [
-      -0.2831216079715222,
-      0.028796946515555942
-     ],
-     "cover_50": 0.4960352422907489,
-     "cover_80": 0.7964757709251101,
-     "cover_90": 0.8916299559471366,
-     "crps": 1.3023906947919266,
-     "mae": 1.873700440528634,
-     "mean_actual": 4.005286343612335,
-     "model_id": "pf-nba-rebounds",
-     "model_role": "challenger",
-     "n": 1135,
+     "n": 995,
      "n_games": 51,
      "outcome_type": "continuous_or_count",
-     "pit_var_ratio": 1.0208377586078192,
+     "primary_metric": "mae",
+     "rmse": 2.7606978764917995
+    },
+    {
+     "bias": -0.10691001697792872,
+     "bias_ci95": [
+      -0.2700980287680838,
+      0.03582258774043411
+     ],
+     "cover_50": 0.4966044142614601,
+     "cover_80": 0.7954159592529711,
+     "cover_90": 0.8921901528013583,
+     "crps": 1.3004987764937495,
+     "mae": 1.869949066213922,
+     "mean_actual": 4.004244482173175,
+     "model_id": "pf-nba-rebounds",
+     "model_role": "challenger",
+     "n": 1178,
+     "n_games": 53,
+     "outcome_type": "continuous_or_count",
+     "pit_var_ratio": 1.0183262246039382,
      "primary_metric": "crps",
-     "rmse": 2.4838695653397633
+     "rmse": 2.4813253961465773
     }
    ],
    "outcome_type": "continuous_or_count",
@@ -552,17 +529,17 @@
     "ambiguous_keys": 0,
     "mae_diff": {
      "ci95": [
-      -0.2416069404684801,
-      -0.11896684344520328
+      -0.23199012642836256,
+      -0.11337930057717294
      ],
-     "mean_diff": -0.17880366876310275,
-     "n_clusters": 49,
-     "n_obs": 954,
-     "se": 0.0323924506601113,
-     "z": -5.519917916654731
+     "mean_diff": -0.17351276381909547,
+     "n_clusters": 51,
+     "n_obs": 995,
+     "se": 0.029703884828571666,
+     "z": -5.841416529200802
     },
-    "n": 954,
-    "n_games": 49,
+    "n": 995,
+    "n_games": 51,
     "primary_metric": "mae"
    },
    "scoring_version": "1.3.0"
@@ -571,41 +548,41 @@
    "family": "threes",
    "models": [
     {
-     "bias": -0.07182138364779875,
+     "bias": -0.08437155778894473,
      "bias_ci95": [
-      -0.1429931960886651,
-      -0.006481530573840006
+      -0.15761016467065866,
+      -0.024203470717435848
      ],
-     "mae": 0.9650257861635221,
-     "mean_actual": 1.2976939203354299,
+     "mae": 0.9750479396984926,
+     "mean_actual": 1.315577889447236,
      "model_id": "nba_sim_rotation_v1",
      "model_role": "incumbent",
-     "n": 954,
-     "n_games": 49,
-     "outcome_type": "continuous_or_count",
-     "primary_metric": "mae",
-     "rmse": 1.2684299573604998
-    },
-    {
-     "bias": -0.011092511013215865,
-     "bias_ci95": [
-      -0.07338258753306552,
-      0.048790480465893044
-     ],
-     "cover_50": 0.4731277533039648,
-     "cover_80": 0.7973568281938326,
-     "cover_90": 0.8933920704845815,
-     "crps": 0.5768829376889574,
-     "mae": 0.8925198237885463,
-     "mean_actual": 1.2008810572687225,
-     "model_id": "pf-nba-threes",
-     "model_role": "challenger",
-     "n": 1135,
+     "n": 995,
      "n_games": 51,
      "outcome_type": "continuous_or_count",
-     "pit_var_ratio": 1.0460002773996027,
+     "primary_metric": "mae",
+     "rmse": 1.289736041885584
+    },
+    {
+     "bias": -0.02306451612903227,
+     "bias_ci95": [
+      -0.08115961256155346,
+      0.03887658901479416
+     ],
+     "cover_50": 0.47113752122241087,
+     "cover_80": 0.7954159592529711,
+     "cover_90": 0.8921901528013583,
+     "crps": 0.5841097316722192,
+     "mae": 0.9021307300509338,
+     "mean_actual": 1.2173174872665535,
+     "model_id": "pf-nba-threes",
+     "model_role": "challenger",
+     "n": 1178,
+     "n_games": 53,
+     "outcome_type": "continuous_or_count",
+     "pit_var_ratio": 1.048672212879299,
      "primary_metric": "crps",
-     "rmse": 1.1878954477198977
+     "rmse": 1.2082630407124861
     }
    ],
    "outcome_type": "continuous_or_count",
@@ -613,62 +590,62 @@
     "ambiguous_keys": 0,
     "mae_diff": {
      "ci95": [
-      -0.058076686633872845,
-      -0.01097828808049537
+      -0.05493982996689405,
+      -0.011114408415770698
      ],
-     "mean_diff": -0.03301320754716982,
-     "n_clusters": 49,
-     "n_obs": 954,
-     "se": 0.011827874265811271,
-     "z": -2.791136158979574
+     "mean_diff": -0.032173567839195984,
+     "n_clusters": 51,
+     "n_obs": 995,
+     "se": 0.011470272676944514,
+     "z": -2.804952309796917
     },
-    "n": 954,
-    "n_games": 49,
+    "n": 995,
+    "n_games": 51,
     "primary_metric": "mae"
    },
    "scoring_version": "1.3.0"
   }
  ],
- "generated_utc": "2026-10-31T03:36:08Z",
+ "generated_utc": "2026-10-31T10:57:42Z",
  "nba_segments": {
   "early_season_and_reconciliation": [
    {
-    "bias": 0.489,
+    "bias": 0.48,
     "family": "minutes",
-    "mae": 4.671,
-    "n": 811,
+    "mae": 4.641,
+    "n": 848,
     "segment": "new_team",
     "value": "False"
    },
    {
-    "bias": 0.257,
+    "bias": 0.309,
     "family": "minutes",
-    "mae": 4.87,
-    "n": 324,
+    "mae": 4.874,
+    "n": 330,
     "segment": "new_team",
     "value": "True"
    },
    {
-    "bias": 0.504,
+    "bias": 0.483,
     "family": "points",
-    "mae": 4.697,
-    "n": 811,
+    "mae": 4.717,
+    "n": 848,
     "segment": "new_team",
     "value": "False"
    },
    {
-    "bias": -0.04,
+    "bias": 0.031,
     "family": "points",
-    "mae": 4.007,
-    "n": 324,
+    "mae": 4.07,
+    "n": 330,
     "segment": "new_team",
     "value": "True"
    },
    {
-    "bias": -0.8,
+    "bias": -0.662,
     "family": "minutes",
-    "mae": 4.919,
-    "n": 120,
+    "mae": 4.826,
+    "n": 132,
     "segment": "reconciled",
     "value": "minutes"
    },
@@ -681,10 +658,10 @@
     "value": "minutes+usage"
    },
    {
-    "bias": 0.415,
+    "bias": 0.425,
     "family": "minutes",
-    "mae": 4.637,
-    "n": 758,
+    "mae": 4.621,
+    "n": 789,
     "segment": "reconciled",
     "value": "none"
    },
@@ -697,10 +674,10 @@
     "value": "usage"
    },
    {
-    "bias": -0.144,
+    "bias": -0.105,
     "family": "points",
-    "mae": 4.476,
-    "n": 120,
+    "mae": 4.534,
+    "n": 132,
     "segment": "reconciled",
     "value": "minutes"
    },
@@ -713,10 +690,10 @@
     "value": "minutes+usage"
    },
    {
-    "bias": 0.37,
+    "bias": 0.381,
     "family": "points",
-    "mae": 4.457,
-    "n": 758,
+    "mae": 4.502,
+    "n": 789,
     "segment": "reconciled",
     "value": "none"
    },
@@ -731,72 +708,72 @@
   ],
   "minutes_by_model": [
    {
-    "bias": -2.586,
-    "mae": 4.977,
+    "bias": -2.536,
+    "mae": 4.777,
     "minutes_model": "E",
-    "n": 15
+    "n": 16
    },
    {
-    "bias": 0.463,
-    "mae": 4.725,
+    "bias": 0.473,
+    "mae": 4.705,
     "minutes_model": "E_inj",
-    "n": 1120
+    "n": 1162
    }
   ],
-  "n_settled": 35136,
+  "n_settled": 36064,
   "participation_brier": {
    "by_status": [
     {
      "brier": 0.0,
      "mean_p": 0.0,
      "model_role": "challenger",
-     "n": 307,
+     "n": 317,
      "participation_status": "CONFIRMED_OUT",
      "played_rate": 0.0
     },
     {
-     "brier": 0.1152,
+     "brier": 0.1158,
      "mean_p": 0.842,
      "model_role": "challenger",
-     "n": 1400,
+     "n": 1456,
      "participation_status": "LIKELY_ACTIVE",
-     "played_rate": 0.79
+     "played_rate": 0.786
     },
     {
-     "brier": 0.0009,
-     "mean_p": 0.018,
+     "brier": 0.0008,
+     "mean_p": 0.016,
      "model_role": "challenger",
-     "n": 7,
+     "n": 8,
      "participation_status": "LIKELY_OUT",
      "played_rate": 0.0
     },
     {
-     "brier": 0.2666,
-     "mean_p": 0.605,
+     "brier": 0.2792,
+     "mean_p": 0.589,
      "model_role": "challenger",
-     "n": 49,
+     "n": 53,
      "participation_status": "UNCERTAIN",
-     "played_rate": 0.592
+     "played_rate": 0.623
     },
     {
-     "brier": 0.1327,
+     "brier": 0.1316,
      "mean_p": 0.696,
      "model_role": "incumbent",
-     "n": 1460,
+     "n": 1520,
      "participation_status": "n/a",
-     "played_rate": 0.653
+     "played_rate": 0.655
     }
    ],
    "overall": [
     {
-     "brier": 0.0989,
+     "brier": 0.1,
      "model_role": "challenger",
-     "n": 1763
+     "n": 1834
     },
     {
-     "brier": 0.1327,
+     "brier": 0.1316,
      "model_role": "incumbent",
-     "n": 1460
+     "n": 1520
     }
    ],
    "study_reference": "2025-26 held-out: hurdle 0.132 -> report-aware 0.087"
@@ -806,12 +783,12 @@
  "scoring_version": "1.3.0",
  "settlement": {
   "corrections": 135,
-  "settled": 24463,
-  "void": 10673
+  "settled": 25100,
+  "void": 10964
  },
  "sport": "NBA",
  "window": {
   "days": 7,
-  "since_utc": "2026-10-24T03:36:08Z"
+  "since_utc": "2026-10-24T10:57:42Z"
  }
 }
