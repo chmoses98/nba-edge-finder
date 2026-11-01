@@ -31,6 +31,30 @@ def _numbers(err: list[float]) -> dict:
     return {"n": len(a), "mae": float(np.mean(np.abs(a))), "rmse": float(np.sqrt(np.mean(a ** 2)))}
 
 
+
+def _paired_game_bootstrap_ci(rows: list[dict], candidate_key: str, *, affected_only: bool = False,
+                              draws: int = 1000, seed: int = 811) -> list[float]:
+    """95% paired RMSE-gain interval, resampling games not correlated team rows."""
+    df = pd.DataFrame(rows)
+    if df.empty or candidate_key not in df:
+        return [float("nan"), float("nan")]
+    if affected_only:
+        df = df[df["pit_affected"] == True]  # noqa: E712
+    df = df.dropna(subset=["baseline_error", candidate_key])
+    if df["game_id"].nunique() < 20:
+        return [float("nan"), float("nan")]
+    df["sq0"] = df["baseline_error"] ** 2
+    df["sq1"] = df[candidate_key] ** 2
+    sums = df.groupby("game_id")[["sq0", "sq1"]].sum().to_numpy()
+    counts = df.groupby("game_id").size().to_numpy(dtype=float)
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(sums), size=(draws, len(sums)))
+    totals = sums[idx].sum(axis=1)
+    n = counts[idx].sum(axis=1)
+    gain = np.sqrt(totals[:, 0] / n) - np.sqrt(totals[:, 1] / n)
+    return [float(x) for x in np.quantile(gain, [0.025, 0.975])]
+
+
 def _pit_minutes_delta(
     prior: pd.DataFrame, recent_games: list[str], known_out: set[int], model,
 ) -> tuple[float, float, float]:
@@ -199,7 +223,11 @@ def run(history: Path, *, max_games: int = 500) -> dict:
     db, dc = _numbers(depleted_base), _numbers(depleted_candidate)
     pb, pc = _numbers(pit_base), _numbers(pit_candidate)
     ab, ac = _numbers(pit_affected_base), _numbers(pit_affected_candidate)
-    pit_valid = pb["n"] > 0 and ab["n"] >= 20 and pc["rmse"] < pb["rmse"] and ac["rmse"] < ab["rmse"]
+    pit_ci = _paired_game_bootstrap_ci(recs, "pit_error")
+    affected_ci = _paired_game_bootstrap_ci(recs, "pit_error", affected_only=True)
+    pit_valid = (pb["n"] > 0 and ab["n"] >= 20
+                 and pc["rmse"] < pb["rmse"] and ac["rmse"] < ab["rmse"]
+                 and pit_ci[0] > 0 and affected_ci[0] > 0)
     return {
         "training": "2024-25 certified stints only", "holdout": "2025-26 regular season",
         "oracle_minutes_warning": "Actual game minutes are NOT available pregame. This is an upper-bound test.",
@@ -209,7 +237,9 @@ def run(history: Path, *, max_games: int = 500) -> dict:
         "rmse_gain": b["rmse"] - c["rmse"],
         "t60_pit": {"baseline": pb, "candidate": pc, "affected_baseline": ab, "affected_candidate": ac,
                     "overall_rmse_gain": pb["rmse"] - pc["rmse"],
+                    "overall_gain_ci95_game_clustered": pit_ci,
                     "affected_rmse_gain": ab["rmse"] - ac["rmse"],
+                    "affected_gain_ci95_game_clustered": affected_ci,
                     "status": "RESEARCH_PASS" if pit_valid else "REJECT_OR_INSUFFICIENT",
                     "asof": "latest certified official NBA injury report strictly before tip-minus-60",
                     "identity": "matched only if player had a pretip historical team box record",
