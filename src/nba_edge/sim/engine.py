@@ -241,6 +241,13 @@ def simulate_batch(gp: GameParams, n: int, rng: np.random.Generator) -> SimResul
         shock = rng.normal(0.0, LEAGUE["team_shooting_shock_sd"], n) + env_shock
         draws.append(_TeamDraw(team, played, started, minutes, mu, shock))
     h, a = draws
+    # Opponent defensive injury response. Apply after both availability draws to
+    # preserve baseline RNG order (the zero-impact production path is unchanged).
+    for offense, defense in ((h, a), (a, h)):
+        for j, player in enumerate(defense.team.players):
+            if player.impact_def_ppp:
+                baseline = 1.0 if player.p_play_baseline is None else player.p_play_baseline
+                offense.ppp_mu -= (defense.played[:, j].astype(float) - baseline) * player.impact_def_ppp
 
     # pass 1: shoot with the base rotation
     _shoot(rng, h, poss, h.minutes)
@@ -396,7 +403,7 @@ def simulate(gp: GameParams, n_sims: int, seed: int, batch: int = 20000) -> SimR
     # redistribution still happens either way), and nothing populates it today -- so this is 0.0 in
     # production. A reader of a slate would otherwise reasonably assume injuries are priced. They
     # are not, and a silent 0.0 is exactly how that assumption survives.
-    n_impact = sum(1 for t in (gp.home, gp.away) for pl in t.players if pl.impact_ppp)
+    n_impact = sum(1 for t in (gp.home, gp.away) for pl in t.players if pl.impact_ppp or pl.impact_def_ppp)
     res.diagnostics = {
         "ot_rate": float((res.n_ot > 0).mean()), "home_pts_mean": float(res.home_pts.mean()), "home_pts_sd": float(res.home_pts.std()),
         "margin_sd": float(res.margin.std()), "total_sd": float(res.total.std()), "poss_mean": float(res.possessions.mean()),
