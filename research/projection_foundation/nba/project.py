@@ -447,9 +447,10 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
            "mode": mode, "slate_date": str(pd.Timestamp(F["date"].iloc[0]).date()) if len(F) else None,
            "history_through": str(pd.Timestamp(hist_last).date()),
            "inputs": files, "families": fam_out, "games": games, "players": player_rows,
-           "reconciliation": recs, "injury_lineup_research": injury_team_audit,
-           "runtime_s": round(time.time() - t0, 1), "game_forecasts": game_forecasts,
+           "reconciliation": recs, "runtime_s": round(time.time() - t0, 1), "game_forecasts": game_forecasts,
            "game_forecast_errors": game_forecast_errors}
+    if lineup_model is not None:
+        res["injury_lineup_research"] = injury_team_audit
     if out:
         os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
         pub = dict(res, players=[{k: v for k, v in p.items() if not k.startswith("_")} for p in player_rows])
