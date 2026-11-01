@@ -104,6 +104,25 @@ def test_official_report_to_observations_and_resolution(official_jan15, tmp_path
     assert s["coverage"]["mean_coverage"] > 0.9 and s["coverage"]["max_newest_age_minutes"] < 5
 
 
+
+def test_official_confirmed_out_zeroes_expected_minutes_before_reconciliation():
+    # The calibrated hurdle has a strictly positive probability even for OUT.
+    # An official confirmed OUT must not consume any minutes or points.
+    p = PART.enforce_confirmed_out(
+        np.array([0.04, 0.08, 0.45, 0.88]),
+        [{"status": "CONFIRMED_OUT"}, {"status": "LIKELY_OUT"},
+         {"status": "UNCERTAIN"}, {"status": "LIKELY_ACTIVE"}],
+    )
+    np.testing.assert_array_equal(p, [0.0, 0.08, 0.45, 0.88])
+    df = pd.DataFrame({"game_id": [1] * 4, "team": ["BOS"] * 4,
+                       "p_play": p, "minutes": [36.0, 30.0, 32.0, 30.0],
+                       "pts": [30.0, 22.0, 18.0, 12.0]})
+    _, recs = REC.reconcile(df, {(1, "BOS"): 110.0})
+    assert recs[0]["minutes_sum_raw"] == round(0.08 * 30 + 0.45 * 32 + 0.88 * 30, 1)
+    assert recs[0]["points_sum_raw"] == round(0.08 * 22 + 0.45 * 18 + 0.88 * 12, 1)
+
+
+
 def test_calibrated_p_play_orders_by_designation():
     cal = PART.load_calibration()
     cls = ["OUT", "DOUBTFUL", "QUESTIONABLE", "AVAILABLE", "PROBABLE", None, "STARTER_CONFIRMED"]
