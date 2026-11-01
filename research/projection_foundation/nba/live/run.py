@@ -141,7 +141,19 @@ def stage_project(a, now: datetime, work: str) -> dict:
     sl["asof"] = max([ctx["captured_utc"]] + used) if used else ctx["captured_utc"]
     sl["asof"] = min(sl["asof"], iso(now))
     out = os.path.join(work, "projections.json")
-    res = project_slate(sl, out, availability=avail, calib=calib, now_utc=iso(now))
+    lineup_model = None
+    if a.injury_lineup_model:
+        from nba_edge.research.lineup_impact import LineupImpactModel
+        with open(a.injury_lineup_model) as f:
+            fitted = json.load(f)
+        lineup_model = LineupImpactModel(
+            offense={int(k): float(v) for k, v in fitted["offense"].items()},
+            defense={int(k): float(v) for k, v in fitted["defense"].items()},
+            n_games=int(fitted["n_games"]), n_stints=int(fitted["n_stints"]),
+            n_players=int(fitted["n_players"]), training_cutoff=str(fitted["training_cutoff"]),
+        )
+    res = project_slate(sl, out, availability=avail, calib=calib, now_utc=iso(now),
+                        lineup_model=lineup_model)
     recs = FC.challenger_records(res)
     ar = pr.archive_forecasts(recs, a.archive, iso(now))
     try:                                      # team-points pmfs (game markets need them); a failure here is a warning, never a lost projection
@@ -459,6 +471,7 @@ def run(argv=None, sources: Sources | None = None) -> int:
     ap.add_argument("--context", default=None, help="read-only data-archive checkout (fallback schedule / rosters)")
     ap.add_argument("--now", default=None, help="ISO timestamp; default = the wall clock at each stage")
     ap.add_argument("--dry-run", action="store_true", help="work on a temporary copy of the archive; write nothing else")
+    ap.add_argument("--injury-lineup-model", default=None, help="JSON certified-stint model; research dry-run only")
     ap.add_argument("--window-hours", type=float, default=30.0)
     ap.add_argument("--season-types", default="regular", help="comma separated: regular,preseason,playoffs")
     ap.add_argument("--slot-id", default=None, help="schedule slot this run serves (nba.live.schedule_plan); ledger key")
@@ -470,6 +483,8 @@ def run(argv=None, sources: Sources | None = None) -> int:
     ap.add_argument("--started-utc", default=None)
     ap.add_argument("--market", default=None, help="data-archive checkout with kalshi/markets*, kalshi/orderbooks* (default: --context)")
     a = ap.parse_args(argv)
+    if a.injury_lineup_model and not a.dry_run:
+        raise SystemExit("injury-lineup-model is research-only: --dry-run required until validated")
     sources = sources or Sources()
     stages = STAGES if a.stage == "all" else a.stage.split(",")
     for s in stages:
