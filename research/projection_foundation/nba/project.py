@@ -260,6 +260,11 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     else:
         F["p_play"] = F["p_hurdle"]
         basis = ["hurdle"] * len(F)
+    # A definitive OUT cannot consume even fractional minutes in reconciliation.
+    # Calibrated logistic probabilities are not exact zeros, but official OUT is.
+    # This also covers legacy ESPN-context OUT when a live observation is absent.
+    confirmed_out = np.array([p.get("status") == "CONFIRMED_OUT" for p in part], dtype=bool)
+    F.loc[confirmed_out, "p_play"] = 0.0
     # minutes: report-aware E_inj where the official report covers the game, else the frozen best (E)
     from .live.availability import SRC_OFFICIAL
     report_cov = np.array([bool(p.get("source") == SRC_OFFICIAL) for p in part])
