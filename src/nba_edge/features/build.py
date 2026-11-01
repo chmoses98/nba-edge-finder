@@ -27,6 +27,7 @@ import numpy as np
 import pandas as pd
 
 from nba_edge.features.injury_impact import estimate_team_injury_impacts
+from nba_edge.research.lineup_impact import LineupImpactModel
 from nba_edge.schemas.core import InjuryStatus
 from nba_edge.sim.params import LEAGUE, GameParams, PlayerParams, TeamParams
 from nba_edge.sim.rotation import estimate_profile
@@ -73,7 +74,7 @@ class BuildConfig:
     drop_departed_players: bool = False
     # Candidate only. The earlier game-level ridge study worsened holdout error;
     # never enable for production/autorouting without fresh walk-forward evidence.
-    injury_response_mode: str = "off"  # off | shadow
+    injury_response_mode: str = "off"  # off | shadow (box-score candidate) | lineup_shadow
 
 
 @dataclass
@@ -296,13 +297,18 @@ def player_params(team_id: int, player_games: pd.DataFrame, cutoff_date: str, cf
     return out
 
 
-def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_games: pd.DataFrame, cutoff_date: str, injuries_by_team: dict[int, dict[int, InjuryStatus]], rosters: dict[int, list[int]] | None = None, cfg: BuildConfig | None = None) -> tuple[GameParams, BuildReport]:
+def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_games: pd.DataFrame, cutoff_date: str, injuries_by_team: dict[int, dict[int, InjuryStatus]], rosters: dict[int, list[int]] | None = None, cfg: BuildConfig | None = None, lineup_model: LineupImpactModel | None = None) -> tuple[GameParams, BuildReport]:
     cfg = cfg or BuildConfig()
-    if cfg.injury_response_mode not in ("off", "shadow"):
-        raise ValueError("injury_response_mode must be 'off' or 'shadow'")
+    if cfg.injury_response_mode not in ("off", "shadow", "lineup_shadow"):
+        raise ValueError("invalid injury_response_mode")
+    if cfg.injury_response_mode == "lineup_shadow":
+        if lineup_model is None or not lineup_model.n_players or lineup_model.training_cutoff > cutoff_date:
+            raise ValueError("lineup_shadow requires a fitted, strictly historical lineup model")
     report = BuildReport(cutoff_date=cutoff_date)
     if cfg.injury_response_mode == "shadow":
         report.feature_version = "features-injury-shadow-v1"
+    if cfg.injury_response_mode == "lineup_shadow":
+        report.feature_version = "features-lineup-shadow-v1"
     league = league_rates(team_games[team_games["game_date_et"] < cutoff_date]) if not team_games.empty else league_rates(team_games)
     report.league = league
     ratings = opponent_adjusted_ratings(team_games, cutoff_date, cfg.team_half_life, cfg.team_prior_games, league, include_preseason=cfg.include_preseason) if not team_games.empty else {}
@@ -352,6 +358,33 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
             report.warnings.append(
                 f"team {tp.tricode}: injury SHADOW only, {len(estimates)} empirically estimable players; "
                 f"major unavailable players without on/off evidence: {', '.join(missing) or 'none'}"
+            )
+        if cfg.injury_response_mode == "lineup_shadow" and lineup_model is not None:
+            # Only historical box-score minutes establish the baseline that the
+            # trailing team rating already reflects; do not use today's report.
+            hist = team_games.loc[(team_games["team_id"] == tid) & (team_games["game_date_et"] < cutoff_date)]
+            if "season_type" in hist:
+                hist = hist.loc[hist["season_type"] != "preseason"]
+            dates = hist.sort_values("game_date_et").tail(20)["game_id"].unique()
+            prior = player_games.loc[(player_games["team_id"] == tid) & (player_games["game_id"].isin(dates)) & (player_games["game_date_et"] < cutoff_date)]
+            played_min = prior.groupby(["game_id", "nba_id"])["minutes"].max() if len(prior) else pd.Series(dtype=float)
+            missing = []
+            for player in tp.players:
+                off = lineup_model.offensive_absence_ppp(player.nba_id)
+                defense = lineup_model.defensive_absence_ppp(player.nba_id)
+                if not off and not defense:
+                    if player.min_mean >= 24 and player.p_play < 0.85:
+                        missing.append(player.name)
+                    continue
+                prior_min = [max(0.0, float(played_min.get((gid, player.nba_id), 0.0))) for gid in dates]
+                typical_min = float(np.mean(prior_min)) if prior_min else 0.0
+                baseline = float(np.clip(typical_min / max(player.min_mean, 1.0), 0.0, 1.0))
+                time_share = float(np.clip(player.min_mean / 48.0, 0.0, 1.0))
+                player.p_play_baseline = baseline
+                player.impact_ppp = off * time_share
+                player.impact_def_ppp = defense * time_share
+            report.warnings.append(
+                f"team {tp.tricode}: LINEUP SHADOW ONLY (offence + defense); unsupported key injuries: {', '.join(missing) or 'none'}"
             )
         if len([p for p in tp.players if p.p_play > 0]) < 8:
             report.warnings.append(f"team {tp.tricode}: fewer than 8 available players known; CANNOT_TRUST_INPUTS")
