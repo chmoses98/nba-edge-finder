@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install -e ".[dev]" scikit-learn
+        run: pip install -e ".[dev]" scikit-learn lightgbm
       - name: Verify official OUT cannot consume live projection minutes
         run: PYTHONPATH=research/projection_foundation:src pytest -q research/projection_foundation/tests/test_nba_live.py -k "confirmed_out_zeroes or live_lineup_injury_response"
       - name: Fit train-season-only certified-lineup model
