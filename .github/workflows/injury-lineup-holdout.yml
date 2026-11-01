@@ -10,6 +10,8 @@ on:
       - "research/projection_foundation/nba/live/injury_team.py"
       - "research/projection_foundation/tests/test_nba_live.py"
       - "scripts/injury_lineup_holdout.py"
+      - "scripts/fit_injury_lineup_model.py"
+      - "research/projection_foundation/nba/live/run.py"
       - ".github/workflows/injury-lineup-holdout.yml"
   workflow_dispatch:
 permissions:
@@ -30,7 +32,9 @@ jobs:
         run: pip install -e ".[dev]" scikit-learn
       - name: Verify official OUT cannot consume live projection minutes
         run: PYTHONPATH=research/projection_foundation:src pytest -q research/projection_foundation/tests/test_nba_live.py -k "confirmed_out_zeroes or live_lineup_injury_response"
-      - name: Run frozen-season oracle ceiling test
+      - name: Fit train-season-only certified-lineup model
+        run: python scripts/fit_injury_lineup_model.py --out /tmp/nba_lineup_injury_model_2024-25.json
+      - name: Run frozen-season oracle and official T-60 holdouts
         run: |
           python scripts/injury_lineup_holdout.py --max-games 500 --out /tmp/injury_lineup_holdout.json
       - name: Preserve full paired outcome table
@@ -38,5 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: injury-lineup-holdout
-          path: /tmp/injury_lineup_holdout.json
+          path: |
+            /tmp/injury_lineup_holdout.json
+            /tmp/nba_lineup_injury_model_2024-25.json
           if-no-files-found: warn
