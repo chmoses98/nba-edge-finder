@@ -1,4 +1,4 @@
-# NBA slate 2026-10-31 — generated 2026-10-31T23:38:33Z — nba-sim-0.1.0
+# NBA slate 2026-11-01 — generated 2026-11-01T04:41:00Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
@@ -8,24 +8,24 @@ Market snapshot age: 4 min · injury snapshot age: 0 min (official)
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 1044 |
-| MODELABLE | 1082 |
-| RESEARCH | 74 |
-| UNRESOLVED | 792 |
+| BUILDABLE | 711 |
+| MODELABLE | 842 |
+| RESEARCH | 24 |
+| UNRESOLVED | 494 |
 
 ## Games
 
 | game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |
 |---|---|---:|---|---|---:|---:|---|
-| SAC @ MEM | 2026-11-01T00:00:00Z | 0.560 | +2.4±16.4 | 239.3±20.5 | 0.046 | 40000 | ok |
-| CLE @ MIL | 2026-11-01T00:00:00Z | 0.186 | -14.5±16.3 | 232.0±20.5 | 0.047 | 40000 | ok |
-| MIN @ SAS | 2026-11-01T00:00:00Z | 0.831 | +15.2±15.9 | 213.6±19.9 | 0.048 | 40000 | ok |
-| OKC @ HOU | 2026-11-01T00:30:00Z | 0.251 | -10.4±15.6 | 211.9±19.5 | 0.048 | 40000 | ok |
+| BOS @ ORL | 2026-11-01T20:30:00Z | 0.315 | -7.8±16.6 | 213.6±20.1 | 0.049 | 40000 | ok |
+| BKN @ IND | 2026-11-01T22:00:00Z | 0.742 | +10.5±16.4 | 223.1±20.3 | 0.049 | 40000 | ok |
+| LAC @ GSW | 2026-11-02T01:30:00Z | 0.383 | -4.9±16.5 | 230.9±20.7 | 0.048 | 40000 | ok |
+| TOR @ LAL | 2026-11-02T02:00:00Z | 0.520 | +0.8±16.2 | 224.0±20.2 | 0.048 | 40000 | ok |
 
 ## Contracts (OK gate, sorted by best EV)
 
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 2126, 'UNSUPPORTED': 866}
+Other gates: {'NO_EDGE': 1553, 'UNSUPPORTED': 518}
 
