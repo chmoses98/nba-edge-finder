@@ -96,7 +96,7 @@ def _pit_minutes_delta(
     return float(do), float(dd), lost
 
 
-def _official_t60_out(history: Path) -> tuple[dict[tuple[str, int], set[int]], set[str]]:
+def _official_t60_out(history: Path) -> tuple[dict[str, list[tuple[int, str]]], set[str]]:
     """Read the verified official report published before tip-minus-60 only."""
     root = history / "injury_reports"
     snaps = pd.read_parquet(root / "game_snapshots_2025-26.parquet")
@@ -120,7 +120,6 @@ def _official_t60_out(history: Path) -> tuple[dict[tuple[str, int], set[int]], s
     for r in official.itertuples(index=False):
         out.setdefault(str(r.game_id), []).append((int(r.team_id), str(r.player_name_raw)))
     return out, eligible
-
 
 
 def run(history: Path, *, max_games: int = 500) -> dict:
