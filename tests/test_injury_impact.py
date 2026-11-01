@@ -2,6 +2,7 @@
 from dataclasses import replace
 
 import pandas as pd
+
 from nba_edge.features.injury_impact import estimate_team_injury_impacts
 from nba_edge.sim.params import LEAGUE, PlayerParams
 
