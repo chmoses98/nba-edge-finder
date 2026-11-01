@@ -7,6 +7,7 @@ on:
       - "src/nba_edge/sim/**"
       - "research/projection_foundation/nba/project.py"
       - "research/projection_foundation/nba/live/participation.py"
+      - "research/projection_foundation/nba/live/injury_team.py"
       - "research/projection_foundation/tests/test_nba_live.py"
       - "scripts/injury_lineup_holdout.py"
       - ".github/workflows/injury-lineup-holdout.yml"
@@ -28,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: pip install -e ".[dev]" scikit-learn
       - name: Verify official OUT cannot consume live projection minutes
-        run: PYTHONPATH=research/projection_foundation:src pytest -q research/projection_foundation/tests/test_nba_live.py -k confirmed_out_zeroes
+        run: PYTHONPATH=research/projection_foundation:src pytest -q research/projection_foundation/tests/test_nba_live.py -k "confirmed_out_zeroes or live_lineup_injury_response"
       - name: Run frozen-season oracle ceiling test
         run: |
           python scripts/injury_lineup_holdout.py --max-games 500 --out /tmp/injury_lineup_holdout.json
