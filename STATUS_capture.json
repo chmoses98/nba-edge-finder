@@ -1,39 +1,38 @@
 {
- "last_capture_utc": "2026-11-01T21:43:37Z",
- "n_markets": 8702,
+ "last_capture_utc": "2026-11-01T21:52:06Z",
+ "n_markets": 8703,
  "n_series": 300,
- "requests": 918,
+ "requests": 908,
  "run_id": "41331842509",
  "markets_written": {
   "encoding": "delta",
-  "seq": 1,
-  "path": "kalshi/markets_delta/dt=2026-11-01/kalshi_markets_delta_20261101T214337Z_41331842509.json.gz",
-  "bytes": 56708,
-  "n_markets": 8702,
-  "n_changed": 2982,
-  "changed_pct": 34.268,
-  "board_sha256": "cec1b3f5028e6199926568b90c8d8ea0c1d56b334062d22c2cf545073e234638"
+  "seq": 2,
+  "path": "kalshi/markets_delta/dt=2026-11-01/kalshi_markets_delta_20261101T215206Z_41331842509.json.gz",
+  "bytes": 44252,
+  "n_markets": 8703,
+  "n_changed": 1940,
+  "changed_pct": 22.291,
+  "board_sha256": "dd3a3e8ec7eb5f999e22a20a2bbf6e9da28b01a750645034672d0f3b25d88954"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 1,
-  "path": "kalshi/orderbooks_delta/dt=2026-11-01/kalshi_orderbooks_delta_20261101T214337Z_41331842509.json.gz",
-  "bytes": 40663,
+  "seq": 2,
+  "path": "kalshi/orderbooks_delta/dt=2026-11-01/kalshi_orderbooks_delta_20261101T215206Z_41331842509.json.gz",
+  "bytes": 39213,
   "n_markets": 300,
-  "n_changed": 301,
-  "changed_pct": 100.333,
-  "board_sha256": "aad4b5926a7a98c59cae54f020687a557816d2b3d2f93849b1b987f7dfbda5ac"
+  "n_changed": 299,
+  "changed_pct": 99.667,
+  "board_sha256": "8569883010d8c989de1a5b35aa5adfc2b53bf1f080132963e7afeb2627fada7d"
  },
  "by_status": {
-  "active": 8700,
-  "initialized": 2
+  "active": 8703
  },
  "by_support": {
   "BUILDABLE": 1320,
   "MODELABLE": 1033,
   "RESEARCH": 1857,
   "UNMODELABLE": 1637,
-  "UNRESOLVED": 2855
+  "UNRESOLVED": 2856
  },
  "by_family": {
   "all_nba_selections": 371,
@@ -68,7 +67,7 @@
   "player_stocks": 14,
   "player_threes": 166,
   "player_triple_double": 4,
-  "player_unknown": 1017,
+  "player_unknown": 1018,
   "playoff_round_reach": 30,
   "playoff_seed": 900,
   "playoffs_qualify": 60,
@@ -82,11 +81,11 @@
   "unknown": 862
  },
  "alarms": [
-  "2855 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAESCALATOR3PT', 'KXNBAESCALATORPTS', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+  "2856 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAESCALATOR3PT', 'KXNBAESCALATORPTS', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
   "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAESCALATOR3PT', 'KXNBAESCALATORPTS', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 8700 live markets, cap 300"
+  "order books sampled by priority: 8703 live markets, cap 300"
  ],
  "alarm": true
 }
