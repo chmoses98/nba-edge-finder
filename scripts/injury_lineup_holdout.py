@@ -14,6 +14,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from nba_edge.availability.identity import PlayerIndex
 from nba_edge.config import REPO_ROOT
 from nba_edge.research.lineup_impact import fit_lineup_impact
 from nba_edge.sim.params import LEAGUE
@@ -111,10 +112,13 @@ def _official_t60_out(history: Path) -> tuple[dict[tuple[str, int], set[int]], s
     reports["game_id"] = reports["game_id"].astype(str)
     official = reports.merge(good, on=["game_id", "slot_et"], how="inner")
     official = official[official["status"].astype(str).str.lower().isin(["out", "doubtful"])]
-    official = official.dropna(subset=["nba_id", "team_id"])
-    out: dict[tuple[str, int], set[int]] = {}
+    official = official.dropna(subset=["team_id", "player_name_raw"])
+    # Ignore the backfill's retrospective nba_id entirely. It was joined to
+    # the full-season box (including the game itself), which leaks identity.
+    # Resolve raw official names below against only PRIOR game box rows.
+    out: dict[str, list[tuple[int, str]]] = {}
     for r in official.itertuples(index=False):
-        out.setdefault((str(r.game_id), int(r.team_id)), set()).add(int(r.nba_id))
+        out.setdefault(str(r.game_id), []).append((int(r.team_id), str(r.player_name_raw)))
     return out, eligible
 
 
@@ -160,6 +164,15 @@ def run(history: Path, *, max_games: int = 500) -> dict:
             continue
         predicted = {}
         pit_effects = {}
+        official_by_team: dict[int, set[int]] = {}
+        if gid in official_eligible:
+            # Resolve the official report's raw names using only previously
+            # played games. Never use the backfill's full-season ID join.
+            prior_index = PlayerIndex.from_player_games(players[players["game_date_et"] < date])
+            for team_id, raw_name in official_out.get(gid, []):
+                pid, _ = prior_index.resolve(team_id, raw_name)
+                if pid is not None:
+                    official_by_team.setdefault(team_id, set()).add(pid)
         depleted = False
         for tid, opp, at_home in ((home_id, away_id, True), (away_id, home_id, False)):
             h, o = historical[tid], historical[opp]
@@ -182,7 +195,7 @@ def run(history: Path, *, max_games: int = 500) -> dict:
                 prior = prior[prior["game_date_et"] < date]
                 prior_games = [str(x) for x in h.tail(10)["game_id"]]
                 pit_effects[tid] = _pit_minutes_delta(
-                    prior, prior_games, official_out.get((gid, tid), set()), model
+                    prior, prior_games, official_by_team.get(tid, set()), model
                 )
             # Meaningful depletion: a usual 24+ minute player from the last 15 games is absent.
             recent = h.tail(15)
@@ -242,7 +255,7 @@ def run(history: Path, *, max_games: int = 500) -> dict:
                     "affected_gain_ci95_game_clustered": affected_ci,
                     "status": "RESEARCH_PASS" if pit_valid else "REJECT_OR_INSUFFICIENT",
                     "asof": "latest certified official NBA injury report strictly before tip-minus-60",
-                    "identity": "matched only if player had a pretip historical team box record",
+                    "identity": "raw official names resolved exclusively against strictly earlier box scores; retrospective backfill IDs ignored",
                     "minutes": "trailing 10 team games, OUT/DOUBTFUL zeroed, minutes redistributed; no actual current minutes"},
         "depleted_rmse_gain": db["rmse"] - dc["rmse"],
         "decision": ("CANDIDATE_FOR_PROSPECTIVE_TEST" if pit_valid and
