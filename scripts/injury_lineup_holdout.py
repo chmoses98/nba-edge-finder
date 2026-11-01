@@ -31,6 +31,70 @@ def _numbers(err: list[float]) -> dict:
     return {"n": len(a), "mae": float(np.mean(np.abs(a))), "rmse": float(np.sqrt(np.mean(a ** 2)))}
 
 
+def _pit_minutes_delta(
+    prior: pd.DataFrame, recent_games: list[str], known_out: set[int], model,
+) -> tuple[float, float, float]:
+    """Expected offence/defence changes using only pregame box minutes + T-60 OUT.
+
+    The trailing team efficiency rating already incorporates the trailing roster,
+    so apply only the DIFFERENCE from that roster. Freed minutes go to existing
+    rotation players (capped at 42); no actual game minutes enter this function.
+    """
+    if not recent_games:
+        return 0.0, 0.0, 0.0
+    x = prior[prior["game_id"].astype(str).isin(recent_games)]
+    avg = x.groupby("nba_id")["minutes"].sum() / len(recent_games)
+    if avg.sum() < 180:
+        return 0.0, 0.0, 0.0
+    # A full-season retrospective name->ID lookup is not proof of a PIT roster.
+    # Only a player with an observed prior game is eligible for this replay.
+    removed = avg.index.intersection(list(known_out))
+    lost = float(avg.reindex(removed).sum())
+    if lost < 0.01:
+        return 0.0, 0.0, 0.0
+    expected = avg.copy()
+    expected.loc[removed] = 0.0
+    # Redistribution is deterministic, conservative and preserves the 240-min
+    # budget whenever existing rotation players have sufficient capacity.
+    remaining = lost
+    for _ in range(8):
+        eligible = expected[(expected > 0) & (expected < 42 - 1e-6)]
+        if eligible.empty or remaining <= 1e-6:
+            break
+        weight = eligible / eligible.sum()
+        add = np.minimum(weight * remaining, 42.0 - eligible)
+        expected.loc[eligible.index] += add
+        remaining -= float(add.sum())
+    delta = expected - avg
+    do = sum(float(v) * model.offensive_absence_ppp(int(pid)) for pid, v in delta.items()) / 48.0
+    dd = sum(float(v) * model.defensive_absence_ppp(int(pid)) for pid, v in delta.items()) / 48.0
+    return float(do), float(dd), lost
+
+
+def _official_t60_out(history: Path) -> tuple[dict[tuple[str, int], set[int]], set[str]]:
+    """Read the verified official report published before tip-minus-60 only."""
+    root = history / "injury_reports"
+    snaps = pd.read_parquet(root / "game_snapshots_2025-26.parquet")
+    reports = pd.read_parquet(root / "report_rows_2025-26.parquet")
+    good = snaps[
+        snaps["t_minus_60_pit_ok"].fillna(False).astype(bool)
+        & snaps["t_minus_60_before_cutoff"].fillna(False).astype(bool)
+        & (snaps["t_minus_60_teams_listed"] == 2)
+    ][["game_id", "t_minus_60_slot_et"]].copy()
+    good["game_id"] = good["game_id"].astype(str)
+    good = good.rename(columns={"t_minus_60_slot_et": "slot_et"})
+    eligible = set(good["game_id"])
+    reports["game_id"] = reports["game_id"].astype(str)
+    official = reports.merge(good, on=["game_id", "slot_et"], how="inner")
+    official = official[official["status"].astype(str).str.lower().isin(["out", "doubtful"])]
+    official = official.dropna(subset=["nba_id", "team_id"])
+    out: dict[tuple[str, int], set[int]] = {}
+    for r in official.itertuples(index=False):
+        out.setdefault((str(r.game_id), int(r.team_id)), set()).add(int(r.nba_id))
+    return out, eligible
+
+
+
 def run(history: Path, *, max_games: int = 500) -> dict:
     train = pd.read_parquet(history / "espn" / "team_games_2024-25.parquet")
     test = pd.read_parquet(history / "espn" / "team_games_2025-26.parquet")
@@ -50,11 +114,14 @@ def run(history: Path, *, max_games: int = 500) -> dict:
     q = players.groupby(["game_id", "team_id"])[["o", "d"]].sum()
     # Per-game actual playing time is retrospective oracle data. NEVER pass it as pretip evidence.
     minutes = players.groupby(["game_id", "team_id", "nba_id"])["minutes"].max()
+    official_out, official_eligible = _official_t60_out(history)
+    by_player_team = {int(t): p for t, p in players.groupby("team_id")}
     home = test[(test["home"] == True) & (test["season_type"] == "regular")]  # noqa: E712
     home = home.sort_values(["game_date_et", "game_id"]).tail(max_games)
     by_team = {int(t): d.sort_values(["game_date_et", "game_id"])
                for t, d in rows.groupby("team_id")}
     base_errors, candidate_errors, depleted_base, depleted_candidate = [], [], [], []
+    pit_base, pit_candidate, pit_affected_base, pit_affected_candidate = [], [], [], []
     recs = []
     for g in home.itertuples(index=False):
         date, home_id, away_id, gid = str(g.game_date_et), int(g.team_id), int(g.opp_team_id), str(g.game_id)
@@ -68,6 +135,7 @@ def run(history: Path, *, max_games: int = 500) -> dict:
         if len(historical) != 2:
             continue
         predicted = {}
+        pit_effects = {}
         depleted = False
         for tid, opp, at_home in ((home_id, away_id, True), (away_id, home_id, False)):
             h, o = historical[tid], historical[opp]
@@ -83,6 +151,15 @@ def run(history: Path, *, max_games: int = 500) -> dict:
                 float(other["d"]) - float(historical_opp_q["d"].mean())
             )
             predicted[tid] = (pred, pred + delta)
+            if gid in official_eligible:
+                # Official status and player identity are usable only when a
+                # historical player row existed before this game date.
+                prior = by_player_team.get(tid, players.iloc[:0])
+                prior = prior[prior["game_date_et"] < date]
+                prior_games = [str(x) for x in h.tail(10)["game_id"]]
+                pit_effects[tid] = _pit_minutes_delta(
+                    prior, prior_games, official_out.get((gid, tid), set()), model
+                )
             # Meaningful depletion: a usual 24+ minute player from the last 15 games is absent.
             recent = h.tail(15)
             previous = players[(players["game_id"].isin(recent["game_id"])) & (players["team_id"] == tid)]
@@ -103,10 +180,26 @@ def run(history: Path, *, max_games: int = 500) -> dict:
             if depleted:
                 depleted_base.append(e0)
                 depleted_candidate.append(e1)
-            recs.append({"game_id": gid, "team_id": tid, "depleted": depleted,
-                         "baseline_error": e0, "lineup_error": e1})
+            row = {"game_id": gid, "team_id": tid, "depleted": depleted,
+                   "baseline_error": e0, "lineup_error": e1}
+            if len(pit_effects) == 2:
+                own, other = pit_effects[tid], pit_effects[away_id if tid == home_id else home_id]
+                pit_delta = own[0] - other[1]
+                pe = e0 + pit_delta
+                pit_base.append(e0)
+                pit_candidate.append(pe)
+                affected = own[2] >= 8 or other[2] >= 8
+                if affected:
+                    pit_affected_base.append(e0)
+                    pit_affected_candidate.append(pe)
+                row.update({"pit_error": pe, "pit_delta_ppp": pit_delta,
+                            "pit_affected": affected, "pit_removed_minutes": own[2]})
+            recs.append(row)
     b, c = _numbers(base_errors), _numbers(candidate_errors)
     db, dc = _numbers(depleted_base), _numbers(depleted_candidate)
+    pb, pc = _numbers(pit_base), _numbers(pit_candidate)
+    ab, ac = _numbers(pit_affected_base), _numbers(pit_affected_candidate)
+    pit_valid = pb["n"] > 0 and ab["n"] >= 20 and pc["rmse"] < pb["rmse"] and ac["rmse"] < ab["rmse"]
     return {
         "training": "2024-25 certified stints only", "holdout": "2025-26 regular season",
         "oracle_minutes_warning": "Actual game minutes are NOT available pregame. This is an upper-bound test.",
@@ -114,9 +207,16 @@ def run(history: Path, *, max_games: int = 500) -> dict:
         "n_fit_players": model.n_players, "baseline": b, "lineup": c,
         "depleted_baseline": db, "depleted_lineup": dc,
         "rmse_gain": b["rmse"] - c["rmse"],
+        "t60_pit": {"baseline": pb, "candidate": pc, "affected_baseline": ab, "affected_candidate": ac,
+                    "overall_rmse_gain": pb["rmse"] - pc["rmse"],
+                    "affected_rmse_gain": ab["rmse"] - ac["rmse"],
+                    "status": "RESEARCH_PASS" if pit_valid else "REJECT_OR_INSUFFICIENT",
+                    "asof": "latest certified official NBA injury report strictly before tip-minus-60",
+                    "identity": "matched only if player had a pretip historical team box record",
+                    "minutes": "trailing 10 team games, OUT/DOUBTFUL zeroed, minutes redistributed; no actual current minutes"},
         "depleted_rmse_gain": db["rmse"] - dc["rmse"],
-        "decision": ("CANDIDATE_FOR_PROSPECTIVE_TEST" if c["rmse"] < b["rmse"] and
-                     dc["rmse"] < db["rmse"] else "REJECT_FOR_PRODUCTION"),
+        "decision": ("CANDIDATE_FOR_PROSPECTIVE_TEST" if pit_valid and
+                     c["rmse"] < b["rmse"] and dc["rmse"] < db["rmse"] else "REJECT_FOR_PRODUCTION"),
         "rows": recs,
     }
 
