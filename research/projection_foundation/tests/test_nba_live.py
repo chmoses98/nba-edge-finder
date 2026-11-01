@@ -123,6 +123,50 @@ def test_official_confirmed_out_zeroes_expected_minutes_before_reconciliation():
 
 
 
+
+def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
+    from nba.live.injury_team import lineup_team_deltas
+    from nba_edge.research.lineup_impact import LineupImpactModel
+
+    # Two teams, each with a complete 240-minute historical rotation.
+    # BOS loses a 36-minute two-way player; replacement minutes go to six
+    # teammates. The missing BOS defender must raise NYK's projected points.
+    hist, slate, part = [], [], []
+    date = pd.Timestamp("2026-01-11")
+    for team, opp, base in (("BOS", "NYK", 100), ("NYK", "BOS", 200)):
+        for k in range(10):
+            for i in range(7):
+                hist.append({"game_id": k + 1, "date": date - pd.Timedelta(days=11-k),
+                             "team": team, "pid": base + i,
+                             "minutes": 36.0 if i == 0 else 34.0})
+        for i in range(7):
+            absent = team == "BOS" and i == 0
+            slate.append({"game_id": 99, "date": date, "team": team, "opp": opp,
+                          "pid": base + i, "p_play": 0.0 if absent else 1.0,
+                          "min_pub": 40.0 if team == "BOS" and i else
+                          (36.0 if i == 0 else 34.0)})
+            part.append({"source": AV.SRC_OFFICIAL,
+                         "status": "CONFIRMED_OUT" if absent else "LIKELY_ACTIVE"})
+    model = LineupImpactModel(offense={-100: 0.05}, defense={-100: 0.04},
+                              n_players=1, training_cutoff="2025-07-01")
+    shifts, audit = lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                                       part, model, pace_by_game={(99, "BOS"): 98.0,
+                                                                  (99, "NYK"): 98.0})
+    assert len(audit) == 2
+    assert shifts[(99, "BOS")] < -3.0
+    assert shifts[(99, "NYK")] > 2.5
+    # Future box rows are ignored by construction.
+    future = pd.DataFrame(hist + [{"game_id": 999, "date": date + pd.Timedelta(days=1),
+                                   "team": "BOS", "pid": 100, "minutes": 48000.0}])
+    assert lineup_team_deltas(pd.DataFrame(slate), future, part, model,
+                              pace_by_game={(99, "BOS"): 98.0, (99, "NYK"): 98.0})[0] == shifts
+    # If the official injury report has not covered both teams, fail closed.
+    no_report = [{**p, "source": "unverified"} if i >= 7 else p for i, p in enumerate(part)]
+    assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                              no_report, model)[0] == {}
+
+
+
 def test_calibrated_p_play_orders_by_designation():
     cal = PART.load_calibration()
     cls = ["OUT", "DOUBTFUL", "QUESTIONABLE", "AVAILABLE", "PROBABLE", None, "STARTER_CONFIRMED"]
