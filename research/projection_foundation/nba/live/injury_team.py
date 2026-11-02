@@ -74,25 +74,55 @@ def lineup_team_deltas(
             # incorrectly labels ordinary role changes, trades and model
             # noise as injury effects, even when everybody is available.
             affected = players[players["_injury_new"]]
-            injury_shock_minutes = sum(
-                float(baseline.get(int(pid), 0.0)) * max(0.0, 1.0 - float(p_play))
-                for pid, p_play in zip(affected["pid"], affected["p_play"])
-            )
+            # The historical team rating already includes the prior rotation.
+            # A new official absence may remove some of those minutes, but
+            # unrelated changes in today's published rotation must NOT become
+            # injury effects. Construct a counterfactual from historical
+            # minutes, moving ONLY the officially lost minutes.
+            lost_by_pid: dict[int, float] = {}
+            for pid, p_play in zip(affected["pid"], affected["p_play"]):
+                pid = int(pid)
+                lost = float(baseline.get(pid, 0.0)) * (
+                    1.0 - float(np.clip(p_play, 0.0, 1.0))
+                )
+                if lost > 0:
+                    lost_by_pid[pid] = lost_by_pid.get(pid, 0.0) + lost
+            injury_shock_minutes = sum(lost_by_pid.values())
             if injury_shock_minutes < 2.0:
                 # A healthy opponent still contributes its unchanged defensive
-                # rating. Omitting it suppresses a genuine one-sided injury:
-                # both teams must have a covered, historical baseline, but
-                # only one team needs a new official availability shock.
+                # rating. Only one team needs a new official injury shock.
                 effects[team] = (0.0, 0.0)
                 continue
+            current = baseline.copy()
+            for pid, lost in lost_by_pid.items():
+                current.loc[pid] = max(0.0, float(current.loc[pid]) - lost)
+
+            # Use current pretip conditional-minute forecasts as replacement
+            # WEIGHTS, not as direct changes to historical roster minutes.
+            # This keeps the adjustment causal to the official injury while
+            # allowing the forecast to choose who absorbs the vacated time.
+            published = players.drop_duplicates("pid").set_index("pid")["min_pub"]
+            remaining = injury_shock_minutes
+            for _ in range(12):
+                eligible = current[
+                    (current > 0) & (current < 42.0 - 1e-6)
+                    & (~current.index.isin(lost_by_pid))
+                ]
+                if eligible.empty or remaining < 1e-6:
+                    break
+                weights = published.reindex(eligible.index).fillna(0.0).clip(lower=0.0)
+                if float(weights.sum()) <= 0:
+                    weights = eligible
+                added = np.minimum(weights / float(weights.sum()) * remaining,
+                                   42.0 - eligible)
+                current.loc[eligible.index] += added
+                remaining -= float(added.sum())
+            if remaining > 1.0:
+                # An implausibly thin historical rotation cannot support a
+                # defensible replacement forecast. Fail closed for this game.
+                effects.clear()
+                break
             has_official_shock = True
-            current = (players.set_index("pid")["p_play"].astype(float)
-                       * players.set_index("pid")["min_pub"].astype(float))
-            if current.sum() <= 0:
-                continue
-            # Preserve expected 240 regulation minutes; a known confirmed OUT
-            # already has exactly zero P(play) before this calculation.
-            current *= 240.0 / current.sum()
             all_ids = baseline.index.union(current.index)
             delta = current.reindex(all_ids, fill_value=0.0) - baseline.reindex(all_ids, fill_value=0.0)
             offense = sum(float(v) * model.offensive_absence_ppp(-int(pid))
