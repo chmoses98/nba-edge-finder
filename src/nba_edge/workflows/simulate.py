@@ -152,16 +152,21 @@ class NameIndex:
 def injuries_by_team(inj_rows: list[dict[str, Any]], names: NameIndex) -> tuple[dict[int, dict[int, InjuryStatus]], dict[str, Any]]:
     out: dict[int, dict[int, InjuryStatus]] = {}
     unresolved = []
+    unresolved_out_by_team: dict[int, list[str]] = {}
     official = [r for r in inj_rows if r.get("source") == "nba_official_pdf"]
     rows = official or inj_rows  # prefer the official report when present
     for r in rows:
         tid = int(r["team_id"])
+        status = InjuryStatus(r.get("status", "unknown"))
         pid = names.resolve_name(r.get("player_name_raw", ""), tid)
         if pid is None:
             unresolved.append(f"{r.get('player_name_raw')}@{tid}")
+            if r.get("source") == "nba_official_pdf" and status == InjuryStatus.OUT:
+                unresolved_out_by_team.setdefault(tid, []).append(str(r.get("player_name_raw") or "unknown"))
             continue
-        out.setdefault(tid, {})[pid] = InjuryStatus(r.get("status", "unknown"))
-    return out, {"source": "official" if official else ("espn" if inj_rows else "none"), "n": len(rows), "unresolved": unresolved[:50]}
+        out.setdefault(tid, {})[pid] = status
+    return out, {"source": "official" if official else ("espn" if inj_rows else "none"), "n": len(rows),
+                 "unresolved": unresolved[:50], "unresolved_official_out_by_team": unresolved_out_by_team}
 
 
 def _pred_id(ticker: str, ts: str, model: str) -> str:
@@ -247,6 +252,13 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             reasons.append(f"injury snapshot missing/stale ({None if inj_age_min is None else round(inj_age_min)} min)")
         if inj_prov.get("source") != "official":
             reasons.append(f"injury source is {inj_prov.get('source')} not official report")
+        # If an official OUT player could not be mapped to a player ID, the
+        # simulator may still give him positive minutes. Never trust that
+        # game's markets until identity resolution is repaired.
+        unknown_out = [name for tid in (home_id, away_id)
+                       for name in inj_prov.get("unresolved_official_out_by_team", {}).get(tid, [])]
+        if unknown_out:
+            reasons.append("official OUT injury identity unresolved: " + ", ".join(unknown_out[:5]))
         if mkt_age_min is None or mkt_age_min > STALE_MARKET_MIN:
             reasons.append(f"market snapshot missing/stale ({None if mkt_age_min is None else round(mkt_age_min)} min)")
         if rep.team_games_used.get(home_id, 0) < 5 or rep.team_games_used.get(away_id, 0) < 5:
@@ -284,13 +296,20 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
                     c = c.model_copy(update={"support": "UNRESOLVED", "semantics_confidence": "low", "notes": c.notes + [f"player identity {how}"]})
                 else:
                     c = c.model_copy(update={"notes": c.notes + [f"player identity {how}"]})
+            # An officially OUT player cannot settle a normal points/rebounds
+            # distribution. Kalshi DNP rules may void the contract, so never
+            # interpret his zero simulated stats as an automatic NO/under edge.
+            confirmed_dnp = (c.scope == "player" and c.nba_id is not None
+                             and inj_prov.get("source") == "official"
+                             and any(inj_map.get(tid, {}).get(c.nba_id) == InjuryStatus.OUT
+                                     for tid in (home_id, away_id)))
             pr = price_contract(c, sim)
             coverage[c.support if pr.supported else (c.support if c.support not in ("MODELABLE", "BUILDABLE") else "UNRESOLVED")] += 1
             mkt_obs = parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None
             snap = {k: m.get(k) for k in ("yes_bid", "yes_ask", "no_bid", "no_ask", "last_price", "volume", "open_interest", "liquidity")} | {"observed_at_utc": m.get("_observed_at_utc")}
             mi = market_implied_probability(snap)
             p_mkt = mi.p_mid
-            p_data = pr.p if pr.supported else None
+            p_data = pr.p if pr.supported and not confirmed_dnp else None
             p_h = _hybrid(p_data, p_mkt, HYBRID_WEIGHT_BY_SCOPE.get(c.scope, HYBRID_MARKET_WEIGHT))
             # `p_data or 0.5` was a live mispricing bug: 0.0 is a perfectly legitimate probability for a
             # deep-OTM ladder leg, but it is falsy, so the fair value silently became 50%. On a one-sided
@@ -300,7 +319,11 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             # value; the guard below already guarantees at least one of the two is not None.
             p_used = p_h if p_h is not None else p_data
             econ = compute_economics(snap, p_used, pr.se or 0.0, schedule=DEFAULT_SCHEDULE, config=EconomicsConfig(max_age_min=STALE_MARKET_MIN), observed_at=parse_iso(m["_observed_at_utc"]) if m.get("_observed_at_utc") else None, now=now) if (p_h is not None or p_data is not None) else None
-            if not pr.supported:
+            if confirmed_dnp:
+                gate, greasons = Gate.CANNOT_TRUST_INPUTS, [
+                    "Official OUT: player DNP market may void; do not price or recommend either side"
+                ]
+            elif not pr.supported:
                 gate, greasons = Gate.UNSUPPORTED, [pr.reason]
             elif not trust:
                 gate, greasons = Gate.CANNOT_TRUST_INPUTS, reasons
@@ -325,7 +348,7 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             pred_rows.append(pred.model_dump(mode="json"))
             contract_rows.append(c.model_dump(mode="json"))
             contracts.append(c)
-            if pr.supported:
+            if pr.supported and not confirmed_dnp:
                 probs[m["ticker"]] = pr.p
             row = {
                 "ticker": m["ticker"], "game_id": gid, "title": m.get("title"), "family": c.family, "stat": c.stat, "period": c.period, "team_id": c.team_id, "nba_id": c.nba_id,
@@ -334,7 +357,8 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
                 "p_production": p_h, "mc_se": pr.se if pr.supported else None, "gate": str(gate), "gate_reasons": [str(x) for x in greasons][:4], "authority": "RESEARCH",
                 "best_side": econ.best_side if econ else None, "ev_yes": econ.yes.ev_per_contract if econ else None, "ev_no": econ.no.ev_per_contract if econ else None,
                 "bet_up_to_yes": econ.yes.bet_up_to_cents if econ else None, "bet_up_to_no": econ.no.bet_up_to_cents if econ else None, "spread_cents": econ.spread_cents if econ else None,
-                "flags": (econ.reasons if econ else []) + pr.notes, "market_ts": m.get("_observed_at_utc"), "model_ts": ts, "prediction_id": pred.prediction_id,
+                "flags": (econ.reasons if econ else []) + pr.notes + (["OFFICIAL_OUT_DNP_VOID_RISK"] if confirmed_dnp else []),
+                "market_ts": m.get("_observed_at_utc"), "model_ts": ts, "prediction_id": pred.prediction_id,
             }
             slate_contracts.append(row)
             game_contracts_out.append(row)
