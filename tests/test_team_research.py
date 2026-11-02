@@ -70,7 +70,7 @@ def test_adjusted_ratings_are_league_centered_and_remove_schedule(hist):
 
 
 def test_weight_on_current_season_is_continuous_in_games():
-    p = TB.BlendParams(a=0.6, b=1.6, cbar=0.64, tau2=18.0, sigma2=200.0, n_transitions=2, n_team_seasons=60, k_tuned=4.0)
+    p = TB.BlendParams(rho_max=0.8, gamma=2.0, cbar=0.64, tau2=18.0, sigma2=200.0, n_transitions=2, n_team_seasons=60, k_tuned=4.0)
     ws = [p.weight_current(n) for n in range(0, 83)]
     assert ws[0] == 0.0 and ws == sorted(ws)                       # monotone: more games, more weight on this season
     assert all(b - a < 0.25 for a, b in zip(ws, ws[1:]))           # no step/cutoff anywhere
@@ -78,13 +78,14 @@ def test_weight_on_current_season_is_continuous_in_games():
 
 
 def test_blend_moves_from_prior_to_current_as_games_accumulate():
-    p = TB.BlendParams(a=0.6, b=1.6, cbar=0.64, tau2=18.0, sigma2=200.0, n_transitions=2, n_team_seasons=60, k_tuned=4.0)
+    p = TB.BlendParams(rho_max=0.8, gamma=2.0, cbar=0.64, tau2=18.0, sigma2=200.0, n_transitions=2, n_team_seasons=60, k_tuned=4.0)
     prior = TR.Adj(off=4.0, dfn=-2.0, n=82)                         # a strong team last year (net +6)
     est = [TB.estimate(p, prior, TR.Adj(off=-3.0, dfn=3.0, n=n), 0.64).net for n in (1, 5, 20, 60)]   # starts the season at net -6
     assert est == sorted(est, reverse=True)                        # slides monotonically toward the current evidence
     assert est[0] > 0 > est[-1] - 3
     none = TB.estimate(p, prior, None, 0.64)
     assert none.w_current == 0.0 and none.net == pytest.approx(p.rho(0.64) * 6.0)
+    assert all(p.rho(c) < 1.0 for c in (0.0, 0.5, 1.0))   # last season is never carried over in full
     assert TB.estimate(p, None, TR.Adj(2.0, -1.0, 10), None).prior_net is None   # a team with no history uses the league as its prior
 
 
@@ -107,7 +108,7 @@ def test_committed_parameters_are_the_fit_and_validated_out_of_sample():
     cal = json.loads(PARAMS.read_text())
     ck = cal["validation"]["checkpoints"]
     assert cal["params"]["n_transitions"] >= 2 and cal["params"]["tau2"] >= TB.MIN_TAU2
-    assert 0.3 < cal["params"]["a"] < 0.9
+    assert 0.5 < cal["params"]["rho_max"] < 1.0 and cal["params"]["gamma"] > 0
     for n in ("5", "10", "20"):                                    # where the prior still matters, the blend beats both single sources, held out
         assert ck[n]["rmse_blend"] <= ck[n]["rmse_prior_only"] and ck[n]["rmse_blend"] <= ck[n]["rmse_current_only"] + 1e-9
     assert ck["60"]["rmse_blend"] - ck["60"]["rmse_current_only"] < 0.15   # late season: prior carries ~5% weight; no meaningful loss

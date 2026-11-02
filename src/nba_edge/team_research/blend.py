@@ -3,10 +3,10 @@
 Model (all ratings are opponent-adjusted points per 100 possessions relative to the league, so the league mean is 0):
 
   1. Carry-over.  What a team was last season predicts its true strength this season, shrunk toward the league:
-         prior_i = rho(c_i) * R_prev_i,        rho(c) = a + b * (c - cbar)
+         prior_i = rho(c_i) * R_prev_i,        rho(c) = rho_max * c**gamma     (0 <= c <= 1, so rho <= rho_max < 1: regression to the mean)
      where c_i is the share of last season's minutes played by players who have appeared for the team this season (roster continuity,
-     minutes-weighted, so a long-term absence and a departure both lower it). a, b are fitted by least squares on every stored season
-     transition. tau2, the variance of true strength around `prior`, is the fitted residual variance minus the sampling noise of the
+     minutes-weighted, so a long-term absence and a departure both lower it). rho_max and gamma are fitted by least squares on every stored
+     season transition (a saturating form: binned slopes in the stored data are ~0.25 at c<0.55 and ~0.75 above 0.6, which a linear term overshoots). tau2, the variance of true strength around `prior`, is the fitted residual variance minus the sampling noise of the
      target measurement.
   2. Update.  Each game adds independent evidence with variance sigma2 (the per-game variance of a team's net rating, measured).
      Normal-normal conjugate update:  blended = (prior/tau2 + n*obs/sigma2) / (1/tau2 + n/sigma2) = w*obs + (1-w)*prior,  w = n/(n+k),
@@ -38,9 +38,9 @@ MIN_TAU2 = 1.0   # points^2 per 100 poss; floor so a noisy fit can never give th
 
 @dataclass
 class BlendParams:
-    a: float                 # carry-over at average continuity
-    b: float                 # carry-over slope per unit of continuity
-    cbar: float              # mean continuity in the fit
+    rho_max: float           # carry-over of last season's rating at full roster continuity
+    gamma: float             # how fast carry-over falls as continuity falls
+    cbar: float              # mean continuity in the fit (used when a team's continuity is unknown)
     tau2: float              # prior variance of true strength around the carried prior
     sigma2: float            # per-game variance of a team's net rating
     n_transitions: int
@@ -57,7 +57,7 @@ class BlendParams:
         return self.k_tuned if self.k_tuned is not None else self.k_conjugate
 
     def rho(self, c: float) -> float:
-        return float(np.clip(self.a + self.b * (c - self.cbar), 0.0, 1.0))
+        return float(self.rho_max * np.clip(c, 0.0, 1.0) ** self.gamma)
 
     def weight_current(self, n: float) -> float:
         return float(n / (n + self.k)) if n > 0 else 0.0
@@ -122,18 +122,25 @@ def transition_frame(tg: pd.DataFrame, pg: pd.DataFrame, prev: str, cur: str, ea
     return pd.DataFrame(rows)
 
 
+RHO_MAX_CAP = 0.95   # a prior-season deviation is never carried over in full, whatever a 60-team fit says (the unconstrained fit exceeds 1 and is clipped)
+GAMMA_GRID = tuple(np.round(np.arange(0.25, 6.01, 0.25), 2))
+
+
 def fit(frames: list[pd.DataFrame], sigma2: float, n_full: float) -> BlendParams:
     d = pd.concat(frames, ignore_index=True)
-    cbar = float(d["c"].mean())
-    X = np.column_stack([d["x"].to_numpy(), d["x"].to_numpy() * (d["c"].to_numpy() - cbar)])
-    y = d["y"].to_numpy()
-    beta, *_ = np.linalg.lstsq(X, y, rcond=None)
-    resid = y - X @ beta
-    dof = max(1, len(y) - 2)
-    resid_var = float((resid ** 2).sum() / dof)
+    x, y, c = d["x"].to_numpy(float), d["y"].to_numpy(float), np.clip(d["c"].to_numpy(float), 1e-6, 1.0)
+    best = None
+    for g in GAMMA_GRID:                      # for each gamma the best rho_max is closed-form least squares
+        xg = x * c ** g
+        rho_max = float(np.clip((xg @ y) / (xg @ xg), 0.0, RHO_MAX_CAP))
+        sse = float(((y - rho_max * xg) ** 2).sum())
+        if best is None or sse < best[0]:
+            best = (sse, rho_max, float(g))
+    sse, rho_max, gamma = best
+    resid_var = sse / max(1, len(y) - 2)
     tau2 = max(MIN_TAU2, resid_var - sigma2 / n_full)   # remove the sampling noise of the full-season target
-    return BlendParams(a=float(beta[0]), b=float(beta[1]), cbar=cbar, tau2=tau2, sigma2=sigma2, n_transitions=len(frames),
-                       n_team_seasons=len(d), fitted_on=sorted({f"{p}->{c}" for f in frames for p, c in zip(f["prev"], f["cur"])}))
+    return BlendParams(rho_max=rho_max, gamma=gamma, cbar=float(d["c"].mean()), tau2=tau2, sigma2=sigma2, n_transitions=len(frames),
+                       n_team_seasons=len(d), fitted_on=sorted({f"{p}->{q}" for f in frames for p, q in zip(f["prev"], f["cur"])}))
 
 
 K_GRID = (1.0, 2.0, 3.0, 4.0, 6.0, 8.0, 10.0, 13.0, 16.0, 20.0, 30.0)
@@ -168,7 +175,7 @@ def _cases(tg: pd.DataFrame, pg: pd.DataFrame, pair: tuple[str, str]) -> pd.Data
 def _predict(params: BlendParams, cases: pd.DataFrame, k: float | None = None) -> np.ndarray:
     kk = params.k if k is None else k
     c = cases["c"].fillna(params.cbar).to_numpy(float)
-    rho = np.clip(params.a + params.b * (c - params.cbar), 0.0, 1.0)
+    rho = params.rho_max * np.clip(c, 0.0, 1.0) ** params.gamma
     w = cases["n_cur"].to_numpy(float) / (cases["n_cur"].to_numpy(float) + kk)
     return w * cases["cur"].to_numpy(float) + (1 - w) * rho * cases["prev"].to_numpy(float)
 
