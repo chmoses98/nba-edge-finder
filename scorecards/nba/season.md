@@ -1,32 +1,32 @@
 ## NBA projection scorecard — season to date
 
-Generated 2026-11-02T03:39:33Z. Research only; nothing here is a betting signal.
+Generated 2026-11-02T12:07:30Z. Research only; nothing here is a betting signal.
 
-Archived pregame forecasts: 234897 across 107 games. Settled: 27974 (void/DNP 12186, stat corrections 155).
+Archived pregame forecasts: 237597 across 107 games. Settled: 28664 (void/DNP 12385, stat corrections 155).
 
 | Stat | Model | n (games) | MAE | Bias | CRPS | 80% range caught | vs incumbent (CRPS) |
 |---|---|---|---|---|---|---|---|
-| assists | nba_sim_rotation_v1 (incumbent) | 1627 (87) | 1.543 | +0.060 | — | — |  |
-| assists | pf-nba-assists (challenger) | 2020 (90) | 1.312 | -0.001 | 0.891 | 79% | — |
-| fga | pf-nba-fga (challenger) | 2020 (90) | 2.795 | +0.185 | 1.948 | 80% | — |
-| minutes | nba_sim_rotation_v1 (incumbent) | 1627 (87) | 6.786 | +0.736 | — | — |  |
-| minutes | pf-nba-minutes (challenger) | 2020 (90) | 5.003 | +0.429 | 3.527 | 78% | — |
-| participation (yes/no) | nba_sim_rotation_v1 (incumbent) | 2583 (87) | Brier 0.1486 | calib +0.032 | log loss 0.4952 | — |  |
-| participation (yes/no) | pf-nba-participation (challenger) | 3116 (90) | Brier 0.1016 | calib +0.045 | log loss 0.3028 | — | -0.0735 [-0.0849, -0.0616] (n=2043) (Brier) |
-| points | nba_sim_rotation_v1 (incumbent) | 1627 (87) | 5.611 | +0.629 | — | — |  |
-| points | pf-nba-points (challenger) | 2020 (90) | 4.611 | +0.326 | 3.193 | 79% | — |
-| pra | pf-nba-pra (challenger) | 2020 (90) | 6.053 | +0.264 | 4.239 | 76% | — |
-| rebounds | nba_sim_rotation_v1 (incumbent) | 1627 (87) | 2.201 | +0.191 | — | — |  |
-| rebounds | pf-nba-rebounds (challenger) | 2020 (90) | 1.840 | -0.075 | 1.276 | 80% | — |
-| threes | nba_sim_rotation_v1 (incumbent) | 1627 (87) | 1.012 | +0.061 | — | — |  |
-| threes | pf-nba-threes (challenger) | 2020 (90) | 0.875 | +0.012 | 0.569 | 77% | — |
+| assists | nba_sim_rotation_v1 (incumbent) | 1669 (89) | 1.532 | +0.051 | — | — |  |
+| assists | pf-nba-assists (challenger) | 2070 (92) | 1.308 | -0.009 | 0.888 | 79% | — |
+| fga | pf-nba-fga (challenger) | 2070 (92) | 2.781 | +0.177 | 1.939 | 80% | — |
+| minutes | nba_sim_rotation_v1 (incumbent) | 1669 (89) | 6.726 | +0.721 | — | — |  |
+| minutes | pf-nba-minutes (challenger) | 2070 (92) | 4.991 | +0.473 | 3.519 | 78% | — |
+| participation (yes/no) | nba_sim_rotation_v1 (incumbent) | 2641 (89) | Brier 0.1483 | calib +0.031 | log loss 0.4950 | — |  |
+| participation (yes/no) | pf-nba-participation (challenger) | 3188 (92) | Brier 0.1011 | calib +0.043 | log loss 0.3018 | — | -0.0738 [-0.0858, -0.0616] (n=2090) (Brier) |
+| points | nba_sim_rotation_v1 (incumbent) | 1669 (89) | 5.590 | +0.591 | — | — |  |
+| points | pf-nba-points (challenger) | 2070 (92) | 4.605 | +0.306 | 3.189 | 79% | — |
+| pra | pf-nba-pra (challenger) | 2070 (92) | 6.048 | +0.228 | 4.234 | 76% | — |
+| rebounds | nba_sim_rotation_v1 (incumbent) | 1669 (89) | 2.199 | +0.181 | — | — |  |
+| rebounds | pf-nba-rebounds (challenger) | 2070 (92) | 1.841 | -0.083 | 1.276 | 80% | — |
+| threes | nba_sim_rotation_v1 (incumbent) | 1669 (89) | 1.014 | +0.051 | — | — |  |
+| threes | pf-nba-threes (challenger) | 2070 (92) | 0.879 | +0.003 | 0.573 | 77% | — |
 
 **Drift checks**
 
 - assists: **OK** — within expectations
 - fga: **OK** — within expectations
 - minutes: **OK** — within expectations
-- participation: **ALERT** — bias +0.045 (95% CI +0.022..+0.064) exceeds 5% of the mean
+- participation: **ALERT** — bias +0.043 (95% CI +0.022..+0.062) exceeds 5% of the mean
 - points: **OK** — within expectations
 - pra: **OK** — within expectations
 - rebounds: **OK** — within expectations
@@ -38,37 +38,37 @@ Archived pregame forecasts: 234897 across 107 games. Settled: 27974 (void/DNP 12
 
 | Model | n | Brier |
 |---|---|---|
-| challenger | 3116 | 0.1016 |
-| incumbent | 2583 | 0.1486 |
+| challenger | 3188 | 0.1011 |
+| incumbent | 2641 | 0.1483 |
 
 | Model | Participation status | n | Brier | mean p | played |
 |---|---|---|---|---|---|
-| challenger | CONFIRMED_OUT | 534 | 0.0 | 0.0 | 0.0 |
-| challenger | LIKELY_ACTIVE | 2482 | 0.1188 | 0.847 | 0.79 |
+| challenger | CONFIRMED_OUT | 549 | 0.0 | 0.0 | 0.0 |
+| challenger | LIKELY_ACTIVE | 2539 | 0.1184 | 0.846 | 0.792 |
 | challenger | LIKELY_OUT | 11 | 0.0006 | 0.014 | 0.0 |
 | challenger | UNCERTAIN | 89 | 0.2437 | 0.651 | 0.674 |
-| incumbent | n/a | 2583 | 0.1486 | 0.662 | 0.63 |
+| incumbent | n/a | 2641 | 0.1483 | 0.663 | 0.632 |
 
 **Challenger minutes by model**
 
 | Minutes model | n | MAE | Bias |
 |---|---|---|---|
 | E | 39 | 5.112 | -1.253 |
-| E_inj | 1981 | 5.0 | +0.462 |
+| E_inj | 2031 | 4.989 | +0.506 |
 
 **New-team / reconciled segments**
 
 | Segment | Value | Family | n | MAE | Bias |
 |---|---|---|---|---|---|
-| new_team | False | minutes | 1489 | 4.84 | +0.432 |
-| new_team | True | minutes | 531 | 5.458 | +0.422 |
-| new_team | False | points | 1489 | 4.714 | +0.505 |
-| new_team | True | points | 531 | 4.321 | -0.175 |
+| new_team | False | minutes | 1537 | 4.826 | +0.48 |
+| new_team | True | minutes | 533 | 5.467 | +0.45 |
+| new_team | False | points | 1537 | 4.707 | +0.47 |
+| new_team | True | points | 533 | 4.313 | -0.167 |
 | reconciled | minutes | minutes | 328 | 5.664 | -1.926 |
-| reconciled | minutes+usage | minutes | 94 | 6.021 | -1.065 |
-| reconciled | none | minutes | 1305 | 4.777 | +0.875 |
+| reconciled | minutes+usage | minutes | 108 | 6.085 | -0.596 |
+| reconciled | none | minutes | 1341 | 4.75 | +0.908 |
 | reconciled | usage | minutes | 293 | 4.941 | +1.559 |
 | reconciled | minutes | points | 328 | 4.86 | -0.963 |
-| reconciled | minutes+usage | points | 94 | 4.184 | +0.471 |
-| reconciled | none | points | 1305 | 4.539 | +0.565 |
+| reconciled | minutes+usage | points | 108 | 4.295 | +0.52 |
+| reconciled | none | points | 1341 | 4.528 | +0.522 |
 | reconciled | usage | points | 293 | 4.79 | +0.66 |
