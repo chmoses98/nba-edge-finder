@@ -381,6 +381,8 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
             "median": int(d.median[i]), "p10": int(d.quantile(0.1)[i]), "p90": int(d.quantile(0.9)[i]),
             "thresholds": th,
             "opportunity": {"family": "minutes", "mean": round(float(mdist.mean[i]), 1),
+                            "expected_mean": round(float(mdist.mean[i]) * float(r["p_play"]), 1),
+                            "conditional_on_playing": True,
                             "p10": int(mdist.quantile(0.1)[i]), "p90": int(mdist.quantile(0.9)[i])},
             "opponent_adjustment": {"factor": round(opp_f, 4), "sample_games": int(opp_n)},
             "adjustments": adj, "readiness": fz_readiness,
