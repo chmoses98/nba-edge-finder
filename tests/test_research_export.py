@@ -39,7 +39,7 @@ EXPECTED_CAPABILITIES = {
     "usage": "PARTIAL", "lineups": "UNAVAILABLE", "injuries": "PARTIAL", "matchup_metrics": "RESEARCH",
     "projection_distributions": "RESEARCH", "raw_projections": "RESEARCH", "market_prices": "PARTIAL",
     "market_price_history": "PARTIAL", "advanced_stats": "PARTIAL", "situational_splits": "PARTIAL", "player_props": "PARTIAL",
-    "team_props": "PARTIAL", "game_markets": "PARTIAL", "play_by_play": "PARTIAL", "weather": "UNAVAILABLE",
+    "team_props": "PARTIAL", "game_markets": "PARTIAL", "play_by_play": "UNAVAILABLE", "weather": "UNAVAILABLE",
     "venue_effects": "UNAVAILABLE", "calibration": "RESEARCH", "historical_accuracy": "RESEARCH", "clv": "UNAVAILABLE",
     "wager_history": "UNAVAILABLE", "rankings": "PARTIAL", "time_series": "PARTIAL", "comparisons": "PARTIAL", "search": "PARTIAL",
 }
