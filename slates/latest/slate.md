@@ -1,4 +1,4 @@
-# NBA slate 2026-11-02 — generated 2026-11-02T17:50:08Z — nba-sim-0.1.0
+# NBA slate 2026-11-02 — generated 2026-11-02T18:55:06Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
@@ -8,20 +8,20 @@ Market snapshot age: 3 min · injury snapshot age: 30 min (official)
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 3862 |
-| MODELABLE | 3867 |
-| RESEARCH | 267 |
-| UNRESOLVED | 2781 |
+| BUILDABLE | 4241 |
+| MODELABLE | 4118 |
+| RESEARCH | 263 |
+| UNRESOLVED | 3031 |
 
 ## Games
 
 | game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |
 |---|---|---:|---|---|---:|---:|---|
 | OKC @ CLE | 2026-11-03T00:00:00Z | 0.284 | -9.0±16.0 | 226.7±20.1 | 0.048 | 40000 | ok |
-| DET @ CHA | 2026-11-03T00:30:00Z | 0.467 | -1.4±16.2 | 215.0±19.9 | 0.047 | 40000 | ok |
-| ATL @ IND | 2026-11-03T00:30:00Z | 0.279 | -9.7±16.7 | 231.8±20.6 | 0.047 | 40000 | ok |
-| BKN @ NYK | 2026-11-03T00:30:00Z | 0.986 | +34.1±15.6 | 213.1±19.3 | 0.013 | 40000 | ok |
-| WAS @ ORL | 2026-11-03T00:30:00Z | 0.890 | +19.3±15.8 | 218.8±19.9 | 0.049 | 40000 | ok |
+| DET @ CHA | 2026-11-03T00:30:00Z | 0.468 | -1.3±16.3 | 215.0±19.9 | 0.048 | 40000 | ok |
+| ATL @ IND | 2026-11-03T00:30:00Z | 0.273 | -10.0±16.7 | 231.7±20.7 | 0.048 | 40000 | ok |
+| BKN @ NYK | 2026-11-03T00:30:00Z | 0.984 | +33.8±15.6 | 213.1±19.3 | 0.013 | 40000 | ok |
+| WAS @ ORL | 2026-11-03T00:30:00Z | 0.890 | +19.3±15.8 | 218.8±20.0 | 0.048 | 40000 | ok |
 | CHI @ PHI | 2026-11-03T00:30:00Z | 0.678 | +7.4±16.4 | 228.4±20.4 | 0.048 | 40000 | ok |
 | SAC @ DAL | 2026-11-03T01:00:00Z | 0.627 | +5.2±16.1 | 234.5±20.0 | 0.049 | 40000 | ok |
 | NOP @ MEM | 2026-11-03T01:00:00Z | 0.380 | -4.9±16.3 | 236.8±20.4 | 0.048 | 40000 | ok |
@@ -38,5 +38,5 @@ Market snapshot age: 3 min · injury snapshot age: 30 min (official)
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 7729, 'UNSUPPORTED': 3048}
+Other gates: {'NO_EDGE': 8359, 'UNSUPPORTED': 3294}
 
