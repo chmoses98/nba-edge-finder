@@ -165,9 +165,9 @@ def withhold_likely_out(pa: dict, findings: list[dict], status: str) -> tuple[li
 
 
 def _legacy_participation(status: str | None) -> dict:
-    """Participation block for runs without a live availability feed (ESPN context statuses only)."""
+    """Legacy ESPN context has no official point-in-time confirmation: never label its OUT as CONFIRMED_OUT."""
     s = (status or "UNKNOWN").upper()
-    m = {"OUT": ("CONFIRMED_OUT", "OUT"), "DOUBTFUL": ("LIKELY_OUT", "DOUBTFUL"), "QUESTIONABLE": ("UNCERTAIN", "QUESTIONABLE"),
+    m = {"OUT": ("LIKELY_OUT", "OUT"), "DOUBTFUL": ("LIKELY_OUT", "DOUBTFUL"), "QUESTIONABLE": ("UNCERTAIN", "QUESTIONABLE"),
          "DAY-TO-DAY": ("UNCERTAIN", "DAY-TO-DAY"), "ACTIVE": ("UNVERIFIED", "UNKNOWN")}.get(s, ("UNVERIFIED", "UNKNOWN"))
     return {"status": m[0], "certainty": "UNKNOWN", "source": "espn_context_injuries", "captured_utc": None, "age_minutes": None,
             "reasons": ["legacy run: ESPN context injury status only, no point-in-time observation"], "designation": s,
