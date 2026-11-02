@@ -36,6 +36,12 @@ def lineup_team_deltas(
         raise ValueError("fitted certified-lineup model required")
     x = slate.copy()
     x["_official"] = [p.get("source") == SRC_OFFICIAL for p in participation]
+    x["_injury_new"] = [
+        p.get("source") == SRC_OFFICIAL
+        and (p.get("status") in ("CONFIRMED_OUT", "LIKELY_OUT")
+             or str(p.get("designation") or "").upper() in ("OUT", "DOUBTFUL", "QUESTIONABLE"))
+        for p in participation
+    ]
     if "date" not in x or "date" not in history:
         raise ValueError("point-in-time dates required")
     history = history.copy()
@@ -66,17 +72,11 @@ def lineup_team_deltas(
             # rotation against historical box minutes without this gate
             # incorrectly labels ordinary role changes, trades and model
             # noise as injury effects, even when everybody is available.
-            injury_shock_minutes = 0.0
-            for row, observation in zip(players.itertuples(index=False), (
-                    participation[int(i)] for i in players.index)):
-                if observation.get("source") != SRC_OFFICIAL:
-                    continue
-                designation = str(observation.get("designation") or "").upper()
-                if not (observation.get("status") in ("CONFIRMED_OUT", "LIKELY_OUT")
-                        or designation in ("OUT", "DOUBTFUL", "QUESTIONABLE")):
-                    continue
-                prior_minutes = float(baseline.get(int(row.pid), 0.0))
-                injury_shock_minutes += prior_minutes * max(0.0, 1.0 - float(row.p_play))
+            affected = players[players["_injury_new"]]
+            injury_shock_minutes = sum(
+                float(baseline.get(int(pid), 0.0)) * max(0.0, 1.0 - float(p_play))
+                for pid, p_play in zip(affected["pid"], affected["p_play"])
+            )
             if injury_shock_minutes < 2.0:
                 continue
             current = (players.set_index("pid")["p_play"].astype(float)
