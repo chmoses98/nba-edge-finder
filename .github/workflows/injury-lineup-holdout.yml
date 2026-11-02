@@ -36,7 +36,33 @@ jobs:
         run: python scripts/fit_injury_lineup_model.py --out /tmp/nba_lineup_injury_model_2024-25.json
       - name: Run frozen-season oracle and official T-60 holdouts
         run: |
-          python scripts/injury_lineup_holdout.py --max-games 500 --out /tmp/injury_lineup_holdout.json
+          python scripts/injury_lineup_holdout.py --max-games 1300 --out /tmp/injury_lineup_holdout.json
+      - name: Report measured research decision (green workflow does not imply promotion)
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path("/tmp/injury_lineup_holdout.json")
+          if not path.exists():
+              print("No holdout report was produced; research result unavailable.")
+          else:
+              r = json.loads(path.read_text())
+              p = r["t60_pit"]
+              lines = [
+                  "## NBA injury-lineup frozen holdout",
+                  f"**Decision: {r['decision']}** — a successful workflow means the experiment ran, NOT that the model improved.",
+                  f"2024-25 fit: {r['n_fit_games']} games / {r['n_fit_stints']} certified stints.",
+                  f"2025-26 T-60 paired team rows: {p['baseline']['n']}.",
+                  f"Baseline RMSE: {p['baseline']['rmse']:.6f}; candidate RMSE: {p['candidate']['rmse']:.6f}.",
+                  f"RMSE gain: {p['overall_rmse_gain']:+.6f} (95% game-clustered CI {p['overall_gain_ci95_game_clustered']}).",
+                  f"Affected RMSE gain: {p['affected_rmse_gain']:+.6f} (95% CI {p['affected_gain_ci95_game_clustered']}).",
+                  "Offense-only and defense-only ablations are diagnostics, not validated candidate selections.",
+              ]
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+                  f.write("\\n".join(lines) + "\\n")
+              print("\\n".join(lines))
+          PY
       - name: Preserve full paired outcome table
         if: always()
         uses: actions/upload-artifact@v4
