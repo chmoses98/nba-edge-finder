@@ -61,6 +61,24 @@ def lineup_team_deltas(
             baseline = prior.groupby("pid")["minutes"].sum() / len(recent_games)
             if baseline.sum() < 180:
                 continue
+            # Only a new, explicit official injury change may move the
+            # lineup-injury research forecast. Comparing today's projected
+            # rotation against historical box minutes without this gate
+            # incorrectly labels ordinary role changes, trades and model
+            # noise as injury effects, even when everybody is available.
+            injury_shock_minutes = 0.0
+            for row, observation in zip(players.itertuples(index=False), (
+                    participation[int(i)] for i in players.index)):
+                if observation.get("source") != SRC_OFFICIAL:
+                    continue
+                designation = str(observation.get("designation") or "").upper()
+                if not (observation.get("status") in ("CONFIRMED_OUT", "LIKELY_OUT")
+                        or designation in ("OUT", "DOUBTFUL", "QUESTIONABLE")):
+                    continue
+                prior_minutes = float(baseline.get(int(row.pid), 0.0))
+                injury_shock_minutes += prior_minutes * max(0.0, 1.0 - float(row.p_play))
+            if injury_shock_minutes < 2.0:
+                continue
             current = (players.set_index("pid")["p_play"].astype(float)
                        * players.set_index("pid")["min_pub"].astype(float))
             if current.sum() <= 0:
