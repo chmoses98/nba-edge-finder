@@ -178,3 +178,25 @@ def test_validate_explorer_rejects_stale_wrong_season_or_missing_blend(tmp_path)
     (d / "t3.json").write_text(json.dumps(_team_doc("2026-27", "2026-11-02T01:00:00Z", n=0)))
     ok, rep = validate_explorer(tmp_path, season="2026-27", now=now)
     assert not ok and len(rep["problems"]) == 4
+
+
+@pytest.mark.skipif(not (ESPN / "team_games_2026-27.parquet").exists(), reason="2026-27 box scores not committed in this checkout")
+def test_real_2026_27_games_feed_the_published_ratings(tmp_path):
+    """REAL data (pulled by history.yml from ESPN): every team's current-season rating is built from exactly its stored 2026-27 regular-season games."""
+    from nba_edge.research_export import _blend_inputs
+    seasons = ["2025-26", "2026-27"]
+    tg = pd.concat([pd.read_parquet(ESPN / f"team_games_{s}.parquet") for s in seasons])
+    pg = pd.concat([pd.read_parquet(ESPN / f"player_games_{s}.parquet") for s in seasons])
+    (tmp_path / "research").mkdir()
+    (tmp_path / "research" / "blend_params.json").write_bytes(PARAMS.read_bytes())
+    warns: list[str] = []
+    out, meta = _blend_inputs(tg.to_dict("records"), pg.to_dict("records"), "2026-27", tmp_path, warns)
+    reg = tg[(tg.season == "2026-27") & (tg.season_type == "regular")].groupby("team_id").size()
+    assert meta["prior_season"] == "2025-26" and len(out) == 30 and warns == []
+    for t, v in out.items():
+        assert v["n"] == int(reg[t])                                   # nothing dropped, nothing from another season
+        assert v["prior_net"] is not None and v["continuity"] is not None
+        assert 0 < v["w"] < 1
+    assert max(tg[(tg.season == "2026-27") & (tg.season_type == "regular")].game_date_et) >= "2026-10-30"
+    assert 3 <= min(v["n"] for v in out.values())                       # the early-season sample: small, which is why the weight on last season is still material
+    assert max(v["w"] for v in out.values()) < 0.75
