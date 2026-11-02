@@ -564,3 +564,18 @@ def test_confirmed_out_has_participation_only_and_no_actionable_prop_forecast():
     assert records[0]["family"] == "participation"
     assert records[0]["mean"] == 0.0
     assert records[0]["probs"] == [1.0, 0.0]
+
+
+def test_legacy_espn_out_never_impersonates_official_confirmation():
+    from nba.project import _legacy_participation, withhold_likely_out
+
+    legacy = _legacy_participation("OUT")
+    assert legacy["status"] == "LIKELY_OUT"
+    assert legacy["certainty"] == "UNKNOWN"
+    assert legacy["source"] == "espn_context_injuries"
+    # A historical ESPN label still withholds a risky conditional prop,
+    # but cannot force an officially confirmed 0% participation assumption.
+    p = PART.enforce_confirmed_out(np.array([0.37]), [legacy])
+    assert p[0] == 0.37
+    _, status = withhold_likely_out(legacy, [], "PASS")
+    assert status == "BLOCK"
