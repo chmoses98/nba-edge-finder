@@ -158,9 +158,10 @@ def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
     assert len(audit) == 2
     assert shifts[(99, "BOS")] < -3.0
     assert shifts[(99, "NYK")] > 2.5
-    # An unrelated change in a healthy player's P(play) must not be
-    # misattributed to the official absence. The counterfactual may only
-    # remove minutes from players with an official injury shock.
+    # P(play) and E[minutes | play] are distinct: an unrelated player's
+    # lower availability does not create a NEW injury shock, but it must
+    # reduce that player's capacity to absorb a confirmed OUT's lost minutes.
+    # Otherwise a 15%-available player receives a full 34+ minute role.
     two_way = LineupImpactModel(
         offense={-100: 0.05, -101: 0.06},
         defense={-100: 0.04, -101: 0.04},
@@ -171,8 +172,10 @@ def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
     uncertain = pd.DataFrame(slate)
     uncertain.loc[(uncertain["team"] == "BOS") & (uncertain["pid"] == 101),
                   "p_play"] = 0.15
-    assert lineup_team_deltas(uncertain, pd.DataFrame(hist),
-                              part, two_way)[0] == clean
+    low_availability, _ = lineup_team_deltas(uncertain, pd.DataFrame(hist),
+                                             part, two_way)
+    assert low_availability[(99, "BOS")] < clean[(99, "BOS")]
+    assert low_availability[(99, "NYK")] > clean[(99, "NYK")]
     # Conditional-minute forecasts affect who absorbs lost minutes but
     # cannot change the total number of officially removed minutes.
     changed_minutes = pd.DataFrame(slate)
@@ -271,6 +274,15 @@ def test_injury_replacements_require_current_roster_and_include_active_newcomers
     unavailable.loc[unavailable["pid"] == 107, "p_play"] = 0.0
     without, _ = lineup_team_deltas(unavailable, pd.DataFrame(hist), part, model)
     assert full[(99, "BOS")] < without[(99, "BOS")] - 1.0
+    # Even with an 80-minute conditional forecast, a newcomer who has only
+    # a 10% chance of playing cannot absorb more than 4.2 expected minutes.
+    doubtful_newcomer = pd.DataFrame(slate)
+    doubtful_newcomer.loc[doubtful_newcomer["pid"] == 107, "p_play"] = 0.10
+    uncertain_replacement, _ = lineup_team_deltas(
+        doubtful_newcomer, pd.DataFrame(hist), part, model
+    )
+    assert full[(99, "BOS")] < uncertain_replacement[(99, "BOS")] - 1.0
+    assert uncertain_replacement[(99, "BOS")] < without[(99, "BOS")]
     # If the remaining pretip roster cannot absorb the lost minutes, reject.
     no_capacity = pd.DataFrame(slate)
     no_capacity.loc[(no_capacity["team"] == "BOS") & (no_capacity["pid"] != 100),
