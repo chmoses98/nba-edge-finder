@@ -48,6 +48,7 @@ def lineup_team_deltas(
             return False
 
     x["_official"] = [current_official(p) for p in participation]
+    x["_confirmed_out"] = [p.get("status") == "CONFIRMED_OUT" for p in participation]
     x["_injury_new"] = [
         current_official(p) and not p.get("implicit", False)
         and p.get("certainty") in ("REPORTED", "CONFIRMED")
@@ -96,7 +97,7 @@ def lineup_team_deltas(
             # injury effects. Construct a counterfactual from historical
             # minutes, moving ONLY the officially lost minutes.
             lost_by_pid: dict[int, float] = {}
-            for pid, p_play, status in zip(affected["pid"], affected["p_play"], affected["status"]):
+            for pid, p_play, confirmed_out in zip(affected["pid"], affected["p_play"], affected["_confirmed_out"]):
                 pid = int(pid)
                 if not np.isfinite(float(p_play)):
                     # Missing participation probability is not an injury forecast.
@@ -104,7 +105,7 @@ def lineup_team_deltas(
                     break
                 # A definitive OUT has zero participation even if a caller
                 # accidentally passed the raw logistic probability.
-                prob = 0.0 if status == "CONFIRMED_OUT" else float(np.clip(p_play, 0.0, 1.0))
+                prob = 0.0 if confirmed_out else float(np.clip(p_play, 0.0, 1.0))
                 lost = float(baseline.get(pid, 0.0)) * (1.0 - prob)
                 if lost > 0:
                     lost_by_pid[pid] = lost_by_pid.get(pid, 0.0) + lost
