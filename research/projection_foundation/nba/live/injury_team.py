@@ -131,11 +131,13 @@ def lineup_team_deltas(
             today = players.drop_duplicates("pid").set_index("pid")
             published = pd.to_numeric(today["min_pub"], errors="coerce").fillna(0.0).clip(lower=0.0)
             active_prob = pd.to_numeric(today["p_play"], errors="coerce").fillna(0.0).clip(lower=0.0, upper=1.0)
-            # Conditional-minute forecasts already encode the intended role.
-            # P(play) gates impossible replacements but must not scale their
-            # conditional minutes a second time (nor let an unrelated hurdle
-            # fluctuation masquerade as an injury-response change).
-            replacement_weights = published.where(active_prob > 0.0, 0.0)
+            # min_pub is E[minutes | plays], NOT unconditional expected
+            # minutes (see nba.live.reconcile). Replacement opportunity must
+            # account for P(play) exactly once. Merely gating on p > 0 would
+            # assign a DOUBTFUL teammate a full active-player replacement role.
+            # A low-P(play) player also cannot absorb more than 42*p expected
+            # minutes in the counterfactual.
+            replacement_weights = published * active_prob
             replacement_ids = replacement_weights.index[
                 (replacement_weights > 0) & (~replacement_weights.index.isin(lost_by_pid))
             ]
@@ -144,17 +146,17 @@ def lineup_team_deltas(
             current = current.reindex(current.index.union(replacement_ids), fill_value=0.0)
             remaining = injury_shock_minutes
             for _ in range(12):
-                eligible = current[
-                    (current < 42.0 - 1e-6)
-                    & current.index.isin(replacement_ids)
-                ]
+                # Cap the *unconditional* expected rotation contribution;
+                # historical baseline minutes are already in current.
+                cap = 42.0 * active_prob.reindex(current.index).fillna(0.0)
+                capacity = (cap - current).clip(lower=0.0)
+                eligible = capacity[(capacity > 1e-6) & capacity.index.isin(replacement_ids)]
                 if eligible.empty or remaining < 1e-6:
                     break
                 weights = replacement_weights.reindex(eligible.index).fillna(0.0)
                 if float(weights.sum()) <= 0:
                     break
-                added = np.minimum(weights / float(weights.sum()) * remaining,
-                                   42.0 - eligible)
+                added = np.minimum(weights / float(weights.sum()) * remaining, eligible)
                 current.loc[eligible.index] += added
                 remaining -= float(added.sum())
             if remaining > 1.0:
