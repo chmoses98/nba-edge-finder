@@ -30,8 +30,8 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: pip install -e ".[dev]" scikit-learn lightgbm
-      - name: Verify official OUT cannot consume live projection minutes
-        run: PYTHONPATH=research/projection_foundation:src pytest -q research/projection_foundation/tests/test_nba_live.py -k "confirmed_out_zeroes or live_lineup_injury_response"
+      - name: Verify official OUT, two-way injury effects, and eligible replacement minutes
+        run: PYTHONPATH=research/projection_foundation:src pytest -q research/projection_foundation/tests/test_nba_live.py -k "confirmed_out_zeroes or live_lineup_injury_response or injury_replacements_require_current_roster"
       - name: Fit train-season-only certified-lineup model
         run: python scripts/fit_injury_lineup_model.py --out /tmp/nba_lineup_injury_model_2024-25.json
       - name: Run frozen-season oracle and official T-60 holdouts
