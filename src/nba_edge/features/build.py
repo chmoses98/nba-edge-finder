@@ -302,7 +302,7 @@ def build_game_params(game: dict[str, Any], team_games: pd.DataFrame, player_gam
     if cfg.injury_response_mode not in ("off", "shadow", "lineup_shadow"):
         raise ValueError("invalid injury_response_mode")
     if cfg.injury_response_mode == "lineup_shadow":
-        if lineup_model is None or not lineup_model.n_players or lineup_model.training_cutoff > cutoff_date:
+        if lineup_model is None or not lineup_model.n_players or lineup_model.training_cutoff >= cutoff_date:
             raise ValueError("lineup_shadow requires a fitted, strictly historical lineup model")
     report = BuildReport(cutoff_date=cutoff_date)
     if cfg.injury_response_mode == "shadow":
