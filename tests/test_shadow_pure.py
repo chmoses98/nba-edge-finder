@@ -176,6 +176,13 @@ def test_listings_are_a_separate_family_and_do_not_change_projections(captured):
 
 def test_outcomes_then_evaluation_full_and_listed_cohorts(captured):
     store, rec, kickoff, d, root = captured
+    # xdist may schedule this test on a different worker from the listings test.
+    # Build its own listing evidence rather than depending on another test's side effects.
+    if not _rows(store, "market/listings"):
+        arch = _fake_archive(root, kickoff, d, parse_iso(rec["as_of"]) - timedelta(minutes=10))
+        _tg, pg, _s, _i = C.assemble_history(DATA, store, parse_iso(rec["as_of"]))
+        status = C.capture_listings(store, arch, parse_iso(rec["as_of"]), rec["games"], pg, rec["slot"], rec["mode"])
+        assert status["status"] == "OK" and status["n_listings"] == 1
     out = C.collect_outcomes(store, [d], FakeESPN(kickoff, completed=True))
     assert out["n_games"] == 1 and out["files"]
     gate_rows = _rows(store, "outcomes/gate")
