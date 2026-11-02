@@ -39,7 +39,7 @@ EXPECTED_CAPABILITIES = {
     "usage": "PARTIAL", "lineups": "UNAVAILABLE", "injuries": "PARTIAL", "matchup_metrics": "RESEARCH",
     "projection_distributions": "RESEARCH", "raw_projections": "RESEARCH", "market_prices": "PARTIAL",
     "market_price_history": "PARTIAL", "advanced_stats": "PARTIAL", "situational_splits": "PARTIAL", "player_props": "PARTIAL",
-    "team_props": "PARTIAL", "game_markets": "PARTIAL", "play_by_play": "UNAVAILABLE", "weather": "UNAVAILABLE",
+    "team_props": "PARTIAL", "game_markets": "PARTIAL", "weather": "UNAVAILABLE",
     "venue_effects": "UNAVAILABLE", "calibration": "RESEARCH", "historical_accuracy": "RESEARCH", "clv": "UNAVAILABLE",
     "wager_history": "UNAVAILABLE", "rankings": "PARTIAL", "time_series": "PARTIAL", "comparisons": "PARTIAL", "search": "PARTIAL",
 }
@@ -175,8 +175,18 @@ def test_capability_statuses_equal_the_audit(published):
     _index, docs = _docs(out)
     caps = docs["capabilities.json"]
     assert caps["audit_date"] == "2026-10-03"
-    assert EXPECTED_CAPABILITIES.items() <= {x["capability"]: x["status"] for x in caps["items"]}.items()  # new documented capabilities may be added
     by = {c["capability"]: c for c in caps["items"]}
+    actual = {name: item["status"] for name, item in by.items()}
+    mismatches = {name: (expected, actual.get(name)) for name, expected in EXPECTED_CAPABILITIES.items()
+                  if actual.get(name) != expected}
+    assert not mismatches, mismatches  # new documented capabilities may be added
+    # Shot-only play-by-play is conditional on the fixture's actual shot events.
+    # Never claim PARTIAL when no shot events are stored, nor UNAVAILABLE when evidence exists.
+    pbp = by["play_by_play"]
+    if pbp["status"] == "PARTIAL":
+        assert pbp["evidence"] and pbp["limitations"] and "shooting plays only" in pbp["summary"]
+    else:
+        assert pbp["status"] == "UNAVAILABLE" and pbp["reasons"] and not pbp["evidence"]
     assert any("5.14" in n for n in caps["notes"]) and any("market beats model in all 8 families" in n for n in caps["notes"])
     assert any("§5.14" in lim for lim in by["projection_distributions"]["limitations"])
     for c in caps["items"]:
