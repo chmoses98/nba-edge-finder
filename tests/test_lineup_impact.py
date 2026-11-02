@@ -62,6 +62,15 @@ def test_lineup_shadow_requires_fitted_historical_model():
             pd.DataFrame(), pd.DataFrame(), "2026-11-01", {},
             cfg=BuildConfig(injury_response_mode="lineup_shadow"), lineup_model=bad,
         )
+    same_day = LineupImpactModel(offense={10: 0.01}, defense={},
+                                 n_players=1, training_cutoff="2026-11-01")
+    with pytest.raises(ValueError, match="strictly historical"):
+        build_game_params(
+            {"game_id": "x", "home_team_id": 1, "away_team_id": 2},
+            pd.DataFrame(), pd.DataFrame(), "2026-11-01", {},
+            cfg=BuildConfig(injury_response_mode="lineup_shadow"),
+            lineup_model=same_day,
+        )
 
 
 def test_t60_pit_statuses_are_probabilistic_and_future_minutes_cannot_leak():
