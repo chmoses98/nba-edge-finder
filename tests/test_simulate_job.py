@@ -88,3 +88,48 @@ def test_run_simulate_no_games_writes_status(tmp_path):
     assert run_simulate(tmp_path / "archive", tmp_path, date="2026-10-20", now=now) == 0
     st = json.loads((tmp_path / "archive" / "STATUS_simulate.json").read_text())
     assert st["n_games"] == 0
+
+
+@pytest.mark.slow
+def test_official_out_player_prop_is_blocked_not_an_automatic_under(tmp_path):
+    """Actual simulator -> contract -> frozen prediction: DNP is void-risk, never a zero-stat NO edge."""
+    now = datetime(2026, 10, 20, 18, 0, tzinfo=UTC)
+    _history(tmp_path)
+    led = _archive(tmp_path, now)
+    led.append_rows("context/injuries", [{
+        "game_id": None, "game_date_et": "2026-10-20", "team_id": SAS, "nba_id": None,
+        "player_name_raw": "Player 75900", "status": "out", "reason": "Knee",
+        "report_time_utc": (now - timedelta(minutes=30)).isoformat(),
+        "source": "nba_official_pdf",
+    }], observed_at=now - timedelta(minutes=1))
+    assert run_simulate(tmp_path / "archive", tmp_path, date="2026-10-20", n_sims=1000, seed=4, now=now) == 0
+    slate = json.loads((tmp_path / "archive" / "slates" / "latest" / "slate.json").read_text())
+    assert slate["games"][0]["inputs_trusted"], slate["games"][0]["input_reasons"]
+    prop = next(c for c in slate["contracts"] if c["ticker"].startswith("KXNBAPTS"))
+    assert prop["nba_id"] == -75900
+    assert prop["gate"] == "CANNOT_TRUST_INPUTS"
+    assert prop["p_data_only"] is None and prop["p_hybrid"] is None
+    assert prop["best_side"] is None and prop["bet_up_to_no"] is None
+    assert "OFFICIAL_OUT_DNP_VOID_RISK" in prop["flags"]
+    frozen = next(x for x in led.iter_rows("predictions") if x["ticker"] == prop["ticker"])
+    assert frozen["p_data_only"] is None and frozen["gate"] == "CANNOT_TRUST_INPUTS"
+
+
+@pytest.mark.slow
+def test_unresolved_official_out_blocks_entire_game_not_silent_minutes(tmp_path):
+    """An unmatched official OUT could otherwise still consume 30+ simulated minutes."""
+    now = datetime(2026, 10, 20, 18, 0, tzinfo=UTC)
+    _history(tmp_path)
+    led = _archive(tmp_path, now)
+    led.append_rows("context/injuries", [{
+        "game_id": None, "game_date_et": "2026-10-20", "team_id": SAS, "nba_id": None,
+        "player_name_raw": "Unmatched Injured Starter", "status": "out", "reason": "Knee",
+        "report_time_utc": (now - timedelta(minutes=30)).isoformat(),
+        "source": "nba_official_pdf",
+    }], observed_at=now - timedelta(minutes=1))
+    assert run_simulate(tmp_path / "archive", tmp_path, date="2026-10-20", n_sims=1000, seed=4, now=now) == 0
+    slate = json.loads((tmp_path / "archive" / "slates" / "latest" / "slate.json").read_text())
+    assert not slate["games"][0]["inputs_trusted"]
+    assert any("official OUT injury identity unresolved" in x for x in slate["games"][0]["input_reasons"])
+    assert all(c["gate"] != "OK" for c in slate["contracts"])
+    assert slate["injury_provenance"]["unresolved_official_out_by_team"][str(SAS)] == ["Unmatched Injured Starter"]
