@@ -60,8 +60,8 @@ jobs:
                   "Offense-only and defense-only ablations are diagnostics, not validated candidate selections.",
               ]
               with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
-                  f.write("\\n".join(lines) + "\\n")
-              print("\\n".join(lines))
+                  f.write("\n".join(lines) + "\n")
+              print("\n".join(lines))
           PY
       - name: Preserve full paired outcome table
         if: always()
