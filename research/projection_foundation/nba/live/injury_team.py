@@ -122,22 +122,33 @@ def lineup_team_deltas(
             for pid, lost in lost_by_pid.items():
                 current.loc[pid] = max(0.0, float(current.loc[pid]) - lost)
 
-            # Use current pretip conditional-minute forecasts as replacement
-            # WEIGHTS, not as direct changes to historical roster minutes.
-            # This keeps the adjustment causal to the official injury while
-            # allowing the forecast to choose who absorbs the vacated time.
-            published = players.drop_duplicates("pid").set_index("pid")["min_pub"]
+            # Use pretip conditional-minute forecasts to select replacements.
+            # Only players on TODAY'S slate may absorb vacated minutes: the
+            # historical rotation can include traded/waived players. Conversely,
+            # a new active teammate with no historical minutes must be eligible.
+            # This is still a counterfactual to the historical team rating:
+            # only officially lost minutes are moved, never unrelated role changes.
+            today = players.drop_duplicates("pid").set_index("pid")
+            published = pd.to_numeric(today["min_pub"], errors="coerce").fillna(0.0).clip(lower=0.0)
+            active_prob = pd.to_numeric(today["p_play"], errors="coerce").fillna(0.0).clip(lower=0.0, upper=1.0)
+            replacement_weights = published * active_prob
+            replacement_ids = replacement_weights.index[
+                (replacement_weights > 0) & (~replacement_weights.index.isin(lost_by_pid))
+            ]
+            # Include eligible newcomers at zero historical minutes. Do not
+            # invent their pregame availability or retroactively alter baseline.
+            current = current.reindex(current.index.union(replacement_ids), fill_value=0.0)
             remaining = injury_shock_minutes
             for _ in range(12):
                 eligible = current[
-                    (current > 0) & (current < 42.0 - 1e-6)
-                    & (~current.index.isin(lost_by_pid))
+                    (current < 42.0 - 1e-6)
+                    & current.index.isin(replacement_ids)
                 ]
                 if eligible.empty or remaining < 1e-6:
                     break
-                weights = published.reindex(eligible.index).fillna(0.0).clip(lower=0.0)
+                weights = replacement_weights.reindex(eligible.index).fillna(0.0)
                 if float(weights.sum()) <= 0:
-                    weights = eligible
+                    break
                 added = np.minimum(weights / float(weights.sum()) * remaining,
                                    42.0 - eligible)
                 current.loc[eligible.index] += added
