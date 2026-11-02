@@ -489,3 +489,38 @@ def test_an_unmatched_official_row_with_a_rostered_namesake_is_reported_not_gues
     assert st["possible_identity_miss_names"] == ["PHI: Maxey, Marcus (OUT)"]
     unmatched = [o for o in obs if o.entity_id.startswith("unmatched:")]
     assert len(unmatched) == 1 and unmatched[0].status == "OUT"
+
+
+def test_confirmed_out_hard_zero_precedes_reconciliation_and_withholds_props():
+    """A 30-point conditional model cannot leak any OUT player points/minutes into team projections."""
+    from nba.project import withhold_likely_out
+
+    part = [
+        {"status": "CONFIRMED_OUT", "certainty": "REPORTED", "source": AV.SRC_OFFICIAL,
+         "designation": "OUT"},
+        {"status": "LIKELY_OUT", "certainty": "PROJECTED", "source": AV.SRC_ESPN_INJ,
+         "designation": "OUT"},
+        {"status": "UNCERTAIN", "certainty": "REPORTED", "designation": "QUESTIONABLE"},
+        {"status": "LIKELY_ACTIVE", "certainty": "PROJECTED", "designation": "AVAILABLE"},
+    ]
+    raw_p = np.array([0.02, 0.10, 0.45, 0.90])
+    p = PART.enforce_confirmed_out(raw_p, part)
+    np.testing.assert_array_equal(p, [0.0, 0.10, 0.45, 0.90])
+    df = pd.DataFrame({"game_id": [1] * 4, "team": ["BOS"] * 4,
+                       "p_play": p, "minutes": [38.0, 32.0, 28.0, 35.0],
+                       "pts": [30.0, 22.0, 20.0, 24.0]})
+    _, rec = REC.reconcile(df, {(1, "BOS"): 110.0})
+    assert rec[0]["minutes_sum_raw"] == round(0.10 * 32 + 0.45 * 28 + 0.90 * 35, 1)
+    assert rec[0]["points_sum_raw"] == round(0.10 * 22 + 0.45 * 20 + 0.90 * 24, 1)
+    findings, status = withhold_likely_out(part[0], [], "PASS")
+    assert status == "BLOCK"
+    assert findings[0]["severity"] == "BLOCK"
+    assert "zero expected team contribution" in findings[0]["action"].lower()
+    assert raw_p[0] * 30 > 0  # the regression being guarded against
+
+
+def test_confirmed_out_length_mismatch_fails_closed():
+    import pytest
+
+    with pytest.raises(ValueError, match="length"):
+        PART.enforce_confirmed_out(np.array([0.5]), [{"status": "CONFIRMED_OUT"}, {"status": "LIKELY_ACTIVE"}])
