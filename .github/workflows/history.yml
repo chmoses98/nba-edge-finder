@@ -7,7 +7,7 @@ on:
     inputs:
       seasons:
         description: "Comma list of seasons (YYYY-YY)"
-        default: "2023-24,2024-25,2025-26"
+        default: "2025-26,2026-27"
       what:
         description: "Comma list of datasets (espn | team_logs | player_logs)"
         default: "espn"
@@ -17,7 +17,7 @@ on:
 
 env:
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-  SEASONS: ${{ inputs.seasons || '2023-24,2024-25,2025-26' }}
+  SEASONS: ${{ inputs.seasons || '2025-26,2026-27' }}
   WHAT: ${{ inputs.what || 'espn' }}
 
 permissions:
