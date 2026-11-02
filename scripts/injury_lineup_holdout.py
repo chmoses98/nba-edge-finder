@@ -57,9 +57,9 @@ def _paired_game_bootstrap_ci(rows: list[dict], candidate_key: str, *, affected_
 
 
 def _pit_minutes_delta(
-    prior: pd.DataFrame, recent_games: list[str], known_out: set[int], model,
+    prior: pd.DataFrame, recent_games: list[str], official_p_play: dict[int, float], model,
 ) -> tuple[float, float, float]:
-    """Expected offence/defence changes using only pregame box minutes + T-60 OUT.
+    """Expected offence/defence changes using only pregame box minutes + T-60 status.
 
     The trailing team efficiency rating already incorporates the trailing roster,
     so apply only the DIFFERENCE from that roster. Freed minutes go to existing
@@ -73,17 +73,24 @@ def _pit_minutes_delta(
         return 0.0, 0.0, 0.0
     # A full-season retrospective name->ID lookup is not proof of a PIT roster.
     # Only a player with an observed prior game is eligible for this replay.
-    removed = avg.index.intersection(list(known_out))
-    lost = float(avg.reindex(removed).sum())
+    # Official OUT is a certain absence. DOUBTFUL and QUESTIONABLE are
+    # probabilistic, not equivalent to OUT; use only the pretip designation.
+    lost_by_pid = {
+        pid: float(avg.get(pid, 0.0)) * (1.0 - float(np.clip(p_play, 0.0, 1.0)))
+        for pid, p_play in official_p_play.items() if pid in avg.index
+    }
+    lost = float(sum(lost_by_pid.values()))
     if lost < 0.01:
         return 0.0, 0.0, 0.0
     expected = avg.copy()
-    expected.loc[removed] = 0.0
+    for pid, removed_minutes in lost_by_pid.items():
+        expected.loc[pid] -= removed_minutes
     # Redistribution is deterministic, conservative and preserves the 240-min
     # budget whenever existing rotation players have sufficient capacity.
     remaining = lost
     for _ in range(8):
-        eligible = expected[(expected > 0) & (expected < 42 - 1e-6)]
+        eligible = expected[(expected > 0) & (expected < 42 - 1e-6)
+                            & (~expected.index.isin(lost_by_pid))]
         if eligible.empty or remaining <= 1e-6:
             break
         weight = eligible / eligible.sum()
@@ -96,7 +103,7 @@ def _pit_minutes_delta(
     return float(do), float(dd), lost
 
 
-def _official_t60_out(history: Path) -> tuple[dict[str, list[tuple[int, str]]], set[str]]:
+def _official_t60_out(history: Path) -> tuple[dict[str, list[tuple[int, str, float]]], set[str]]:
     """Read the verified official report published before tip-minus-60 only."""
     root = history / "injury_reports"
     snaps = pd.read_parquet(root / "game_snapshots_2025-26.parquet")
@@ -111,14 +118,16 @@ def _official_t60_out(history: Path) -> tuple[dict[str, list[tuple[int, str]]], 
     eligible = set(good["game_id"])
     reports["game_id"] = reports["game_id"].astype(str)
     official = reports.merge(good, on=["game_id", "slot_et"], how="inner")
-    official = official[official["status"].astype(str).str.lower().isin(["out", "doubtful"])]
+    status_probability = {"out": 0.0, "doubtful": 0.08, "questionable": 0.45}
+    official["pit_p_play"] = official["status"].astype(str).str.lower().map(status_probability)
+    official = official.dropna(subset=["pit_p_play"])
     official = official.dropna(subset=["team_id", "player_name_raw"])
     # Ignore the backfill's retrospective nba_id entirely. It was joined to
     # the full-season box (including the game itself), which leaks identity.
     # Resolve raw official names below against only PRIOR game box rows.
-    out: dict[str, list[tuple[int, str]]] = {}
+    out: dict[str, list[tuple[int, str, float]]] = {}
     for r in official.itertuples(index=False):
-        out.setdefault(str(r.game_id), []).append((int(r.team_id), str(r.player_name_raw)))
+        out.setdefault(str(r.game_id), []).append((int(r.team_id), str(r.player_name_raw), float(r.pit_p_play)))
     return out, eligible
 
 
@@ -165,15 +174,15 @@ def run(history: Path, *, max_games: int = 1300) -> dict:
             continue
         predicted = {}
         pit_effects = {}
-        official_by_team: dict[int, set[int]] = {}
+        official_by_team: dict[int, dict[int, float]] = {}
         if gid in official_eligible:
             # Resolve the official report's raw names using only previously
             # played games. Never use the backfill's full-season ID join.
             prior_index = PlayerIndex.from_player_games(players[players["game_date_et"] < date])
-            for team_id, raw_name in official_out.get(gid, []):
+            for team_id, raw_name, p_play in official_out.get(gid, []):
                 pid, _ = prior_index.resolve(team_id, raw_name)
                 if pid is not None:
-                    official_by_team.setdefault(team_id, set()).add(pid)
+                    official_by_team.setdefault(team_id, {})[pid] = p_play
         depleted = False
         for tid, opp, at_home in ((home_id, away_id, True), (away_id, home_id, False)):
             h, o = historical[tid], historical[opp]
@@ -196,7 +205,7 @@ def run(history: Path, *, max_games: int = 1300) -> dict:
                 prior = prior[prior["game_date_et"] < date]
                 prior_games = [str(x) for x in h.tail(10)["game_id"]]
                 pit_effects[tid] = _pit_minutes_delta(
-                    prior, prior_games, official_by_team.get(tid, set()), model
+                    prior, prior_games, official_by_team.get(tid, {}), model
                 )
             # Meaningful depletion: a usual 24+ minute player from the last 15 games is absent.
             recent = h.tail(15)
