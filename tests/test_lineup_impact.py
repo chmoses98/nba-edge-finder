@@ -96,3 +96,14 @@ def test_t60_pit_statuses_are_probabilistic_and_future_minutes_cannot_leak():
         {"game_id": "future", "nba_id": 100, "minutes": 48000.0}
     ])], ignore_index=True)
     assert _pit_minutes_delta(future, games, {100: 0.08}, model) == doubtful
+    # An incomplete mirror is not evidence that 40 player-minutes disappeared.
+    incomplete = prior.copy()
+    incomplete["minutes"] *= 0.8
+    assert _pit_minutes_delta(incomplete, games, {100: 0.0}, model) == (0.0, 0.0, 0.0)
+    # Five teammates already at 40 minutes cannot each absorb another eight;
+    # the 42-minute cap makes this rotation invalid, so fail closed.
+    capped = pd.DataFrame([
+        {"game_id": gid, "nba_id": pid, "minutes": 40.0}
+        for gid in games for pid in range(200, 206)
+    ])
+    assert _pit_minutes_delta(capped, games, {200: 0.0}, model) == (0.0, 0.0, 0.0)
