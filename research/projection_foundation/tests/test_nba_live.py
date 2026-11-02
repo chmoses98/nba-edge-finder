@@ -234,6 +234,50 @@ def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
 
 
 
+
+def test_injury_replacements_require_current_roster_and_include_active_newcomers():
+    from nba.live.injury_team import lineup_team_deltas
+    from nba_edge.research.lineup_impact import LineupImpactModel
+
+    # Prior 240-minute rotation includes a teammate who has since departed.
+    # An active newcomer (no historical minutes) must be allowed to replace
+    # the injured starter; the departed player must not receive extra minutes.
+    hist, slate, part = [], [], []
+    day = pd.Timestamp("2026-01-11")
+    for team, opp, base in (("BOS", "NYK", 100), ("NYK", "BOS", 200)):
+        for k in range(10):
+            for i in range(7):
+                hist.append({"game_id": k + 1, "date": day - pd.Timedelta(days=11-k),
+                             "team": team, "pid": base + i,
+                             "minutes": 36.0 if i == 0 else 34.0})
+        for i in range(7):
+            pid = 107 if team == "BOS" and i == 1 else base + i
+            out = team == "BOS" and i == 0
+            slate.append({"game_id": 99, "date": day, "team": team, "opp": opp,
+                          "pid": pid, "p_play": 0.0 if out else 1.0,
+                          "min_pub": 80.0 if pid == 107 else 1.0})
+            part.append({"source": AV.SRC_OFFICIAL,
+                         "status": "CONFIRMED_OUT" if out else "LIKELY_ACTIVE",
+                         "designation": "OUT" if out else "AVAILABLE",
+                         "certainty": "REPORTED" if out else "PROJECTED",
+                         "implicit": not out, "age_minutes": 30.0})
+    model = LineupImpactModel(offense={-100: 0.05, -101: 0.06, -107: -0.04},
+                              defense={-100: 0.04}, n_players=3,
+                              training_cutoff="2025-07-01")
+    full, audit = lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist), part, model)
+    assert len(audit) == 2 and full[(99, "BOS")] < -5.0
+    # If the newcomer is unavailable, he cannot receive replacement minutes.
+    unavailable = pd.DataFrame(slate)
+    unavailable.loc[unavailable["pid"] == 107, "p_play"] = 0.0
+    without, _ = lineup_team_deltas(unavailable, pd.DataFrame(hist), part, model)
+    assert full[(99, "BOS")] < without[(99, "BOS")] - 1.0
+    # If the remaining pretip roster cannot absorb the lost minutes, reject.
+    no_capacity = pd.DataFrame(slate)
+    no_capacity.loc[(no_capacity["team"] == "BOS") & (no_capacity["pid"] != 100),
+                    "p_play"] = 0.0
+    assert lineup_team_deltas(no_capacity, pd.DataFrame(hist), part, model)[0] == {}
+
+
 def test_calibrated_p_play_orders_by_designation():
     cal = PART.load_calibration()
     cls = ["OUT", "DOUBTFUL", "QUESTIONABLE", "AVAILABLE", "PROBABLE", None, "STARTER_CONFIRMED"]
