@@ -52,6 +52,22 @@ def calibrated_p_play(p_hurdle, cls: list[str | None], calib: dict) -> np.ndarra
     return out
 
 
+def enforce_confirmed_out(p_play: np.ndarray, participation: list[dict]) -> np.ndarray:
+    """Force confirmed OUT to zero regardless of calibrated or raw hurdle P(play).
+
+    Other statuses retain their probabilities; an aggregator's projected OUT is
+    not falsely upgraded to an official confirmation. Reconciliation uses this
+    vector so an unavailable player contributes *zero* team minutes and points.
+    Conditional prop projections for OUT players must also be withheld.
+    """
+    p = np.asarray(p_play, dtype=float).copy()
+    if len(p) != len(participation):
+        raise ValueError("participation length differs from probability vector")
+    out = np.array([row.get("status") == "CONFIRMED_OUT" for row in participation], dtype=bool)
+    p[out] = 0.0
+    return p
+
+
 def _latest_by(rows: Iterable[dict], cutoff: str, event_id: str, pred) -> dict[tuple, dict]:
     return av.asof([r for r in rows if pred(r)], cutoff, event_id)
 
