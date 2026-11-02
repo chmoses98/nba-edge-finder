@@ -122,7 +122,7 @@ def _official_t60_out(history: Path) -> tuple[dict[str, list[tuple[int, str]]], 
     return out, eligible
 
 
-def run(history: Path, *, max_games: int = 500) -> dict:
+def run(history: Path, *, max_games: int = 1300) -> dict:
     train = pd.read_parquet(history / "espn" / "team_games_2024-25.parquet")
     test = pd.read_parquet(history / "espn" / "team_games_2025-26.parquet")
     stints = pd.read_parquet(history / "espn_pbp" / "stints_2024-25.parquet")
@@ -149,6 +149,8 @@ def run(history: Path, *, max_games: int = 500) -> dict:
                for t, d in rows.groupby("team_id")}
     base_errors, candidate_errors, depleted_base, depleted_candidate = [], [], [], []
     pit_base, pit_candidate, pit_affected_base, pit_affected_candidate = [], [], [], []
+    pit_offense_only, pit_defense_only = [], []
+    pit_affected_offense_only, pit_affected_defense_only = [], []
     recs = []
     for g in home.itertuples(index=False):
         date, home_id, away_id, gid = str(g.game_date_et), int(g.team_id), int(g.opp_team_id), str(g.game_id)
@@ -220,15 +222,26 @@ def run(history: Path, *, max_games: int = 500) -> dict:
                    "baseline_error": e0, "lineup_error": e1}
             if len(pit_effects) == 2:
                 own, other = pit_effects[tid], pit_effects[away_id if tid == home_id else home_id]
-                pit_delta = own[0] - other[1]
+                # Diagnostic ablations isolate which fitted component contributes to
+                # the candidate's held-out error. These are post-hoc diagnostics,
+                # NOT independently selected/promotable betting models.
+                off_delta, def_delta = own[0], -other[1]
+                pit_delta = off_delta + def_delta
                 pe = e0 + pit_delta
+                oe, de = e0 + off_delta, e0 + def_delta
                 pit_base.append(e0)
                 pit_candidate.append(pe)
+                pit_offense_only.append(oe)
+                pit_defense_only.append(de)
                 affected = own[2] >= 8 or other[2] >= 8
                 if affected:
                     pit_affected_base.append(e0)
                     pit_affected_candidate.append(pe)
+                    pit_affected_offense_only.append(oe)
+                    pit_affected_defense_only.append(de)
                 row.update({"pit_error": pe, "pit_delta_ppp": pit_delta,
+                            "pit_offense_only_error": oe, "pit_defense_only_error": de,
+                            "pit_offense_delta_ppp": off_delta, "pit_defense_delta_ppp": def_delta,
                             "pit_affected": affected, "pit_removed_minutes": own[2]})
             recs.append(row)
     b, c = _numbers(base_errors), _numbers(candidate_errors)
@@ -237,6 +250,19 @@ def run(history: Path, *, max_games: int = 500) -> dict:
     ab, ac = _numbers(pit_affected_base), _numbers(pit_affected_candidate)
     pit_ci = _paired_game_bootstrap_ci(recs, "pit_error")
     affected_ci = _paired_game_bootstrap_ci(recs, "pit_error", affected_only=True)
+    diagnostic_ablations = {}
+    for name, full, affected, key in (
+        ("offense_only", pit_offense_only, pit_affected_offense_only, "pit_offense_only_error"),
+        ("defense_only", pit_defense_only, pit_affected_defense_only, "pit_defense_only_error"),
+    ):
+        diagnostic_ablations[name] = {
+            "all": _numbers(full), "affected": _numbers(affected),
+            "rmse_gain_vs_baseline": pb["rmse"] - _numbers(full)["rmse"],
+            "affected_rmse_gain_vs_baseline": ab["rmse"] - _numbers(affected)["rmse"],
+            "gain_ci95_game_clustered": _paired_game_bootstrap_ci(recs, key),
+            "affected_gain_ci95_game_clustered": _paired_game_bootstrap_ci(recs, key, affected_only=True),
+            "selection_status": "DIAGNOSTIC_ONLY_NOT_PROMOTABLE",
+        }
     pit_valid = (pb["n"] > 0 and ab["n"] >= 20
                  and pc["rmse"] < pb["rmse"] and ac["rmse"] < ab["rmse"]
                  and pit_ci[0] > 0 and affected_ci[0] > 0)
@@ -249,6 +275,7 @@ def run(history: Path, *, max_games: int = 500) -> dict:
         "rmse_gain": b["rmse"] - c["rmse"],
         "t60_pit": {"baseline": pb, "candidate": pc, "affected_baseline": ab, "affected_candidate": ac,
                     "overall_rmse_gain": pb["rmse"] - pc["rmse"],
+                    "component_ablations": diagnostic_ablations,
                     "overall_gain_ci95_game_clustered": pit_ci,
                     "affected_rmse_gain": ab["rmse"] - ac["rmse"],
                     "affected_gain_ci95_game_clustered": affected_ci,
@@ -267,7 +294,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--history", type=Path, default=REPO_ROOT / "data" / "history")
     ap.add_argument("--out", type=Path, default=Path("/tmp/nba_injury_lineup_holdout.json"))
-    ap.add_argument("--max-games", type=int, default=500)
+    ap.add_argument("--max-games", type=int, default=1300)
     a = ap.parse_args()
     report = run(a.history, max_games=a.max_games)
     a.out.parent.mkdir(parents=True, exist_ok=True)
