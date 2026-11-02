@@ -194,6 +194,12 @@ def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
     no_report = [{**p, "source": "unverified"} if i >= 7 else p for i, p in enumerate(part)]
     assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
                               no_report, model)[0] == {}
+    # Partial coverage is not enough: five of seven official roster rows
+    # previously passed the >=5 heuristic and created a false adjustment.
+    partial_report = [{**p, "source": "unverified"} if i in (5, 6) else p
+                      for i, p in enumerate(part)]
+    assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                              partial_report, model)[0] == {}
     # Old official snapshots must never be mistaken for a current injury.
     stale = [{**p, "age_minutes": 2000.0} for p in part]
     assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
