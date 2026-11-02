@@ -146,7 +146,10 @@ def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
                           "min_pub": 40.0 if team == "BOS" and i else
                           (36.0 if i == 0 else 34.0)})
             part.append({"source": AV.SRC_OFFICIAL,
-                         "status": "CONFIRMED_OUT" if absent else "LIKELY_ACTIVE"})
+                         "status": "CONFIRMED_OUT" if absent else "LIKELY_ACTIVE",
+                         "designation": "OUT" if absent else "AVAILABLE",
+                         "certainty": "REPORTED" if absent else "PROJECTED",
+                         "implicit": not absent, "age_minutes": 30.0})
     model = LineupImpactModel(offense={-100: 0.05}, defense={-100: 0.04},
                               n_players=1, training_cutoff="2025-07-01")
     shifts, audit = lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
@@ -188,6 +191,32 @@ def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
     no_report = [{**p, "source": "unverified"} if i >= 7 else p for i, p in enumerate(part)]
     assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
                               no_report, model)[0] == {}
+    # Old official snapshots must never be mistaken for a current injury.
+    stale = [{**p, "age_minutes": 2000.0} for p in part]
+    assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                              stale, model)[0] == {}
+    # A source-tagged but unconfirmed PROJECTED OUT is not an official shock.
+    projected = [{**p, "certainty": "PROJECTED"} for p in part]
+    assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                              projected, model)[0] == {}
+    # An official confirmed OUT must be zero even if the caller forgot to
+    # enforce the hard-zero participation override before this calculation.
+    raw_logit = pd.DataFrame(slate)
+    raw_logit.loc[(raw_logit["team"] == "BOS") & (raw_logit["pid"] == 100),
+                  "p_play"] = 0.08
+    assert lineup_team_deltas(raw_logit, pd.DataFrame(hist), part, model,
+                              pace_by_game={(99, "BOS"): 98.0,
+                                            (99, "NYK"): 98.0})[0] == shifts
+    # A broken mirror with only 200 recorded player-minutes is not a
+    # legitimate replacement rotation: fail closed, not a fabricated edge.
+    incomplete = pd.DataFrame(hist)
+    incomplete.loc[incomplete["team"] == "BOS", "minutes"] *= 0.8
+    assert lineup_team_deltas(pd.DataFrame(slate), incomplete, part, model)[0] == {}
+    # Invalid uncertain P(play) cannot be used to move a team forecast.
+    nan_prob = pd.DataFrame(slate)
+    nan_prob.loc[(nan_prob["team"] == "BOS") & (nan_prob["pid"] == 100),
+                 "p_play"] = np.nan
+    assert lineup_team_deltas(nan_prob, pd.DataFrame(hist), part, model)[0] == {}
     # Normal role/minutes changes are not official injury shocks.
     available = [{**p, "status": "LIKELY_ACTIVE", "designation": "AVAILABLE"} for p in part]
     healthy = pd.DataFrame(slate)
