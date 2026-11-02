@@ -62,3 +62,28 @@ def test_lineup_shadow_requires_fitted_historical_model():
             pd.DataFrame(), pd.DataFrame(), "2026-11-01", {},
             cfg=BuildConfig(injury_response_mode="lineup_shadow"), lineup_model=bad,
         )
+
+
+def test_t60_pit_statuses_are_probabilistic_and_future_minutes_cannot_leak():
+    from scripts.injury_lineup_holdout import _pit_minutes_delta
+
+    games = [f"g{i}" for i in range(10)]
+    prior = pd.DataFrame([
+        {"game_id": gid, "nba_id": pid, "minutes": 36.0 if pid == 100 else 34.0}
+        for gid in games for pid in range(100, 107)
+    ])
+    model = LineupImpactModel(offense={100: 0.05, 101: 0.02},
+                              defense={100: 0.04, 101: 0.01})
+    hard_out = _pit_minutes_delta(prior, games, {100: 0.0}, model)
+    doubtful = _pit_minutes_delta(prior, games, {100: 0.08}, model)
+    questionable = _pit_minutes_delta(prior, games, {100: 0.45}, model)
+    assert hard_out[2] == pytest.approx(36.0)
+    assert doubtful[2] == pytest.approx(33.12)
+    assert questionable[2] == pytest.approx(19.8)
+    assert hard_out[0] < doubtful[0] < questionable[0] < 0
+    assert _pit_minutes_delta(prior, games, {}, model) == (0.0, 0.0, 0.0)
+    # Even a corrupted postgame box must not enter the T-60 replacement.
+    future = pd.concat([prior, pd.DataFrame([
+        {"game_id": "future", "nba_id": 100, "minutes": 48000.0}
+    ])], ignore_index=True)
+    assert _pit_minutes_delta(future, games, {100: 0.08}, model) == doubtful
