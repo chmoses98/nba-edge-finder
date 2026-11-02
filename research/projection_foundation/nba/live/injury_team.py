@@ -69,6 +69,7 @@ def lineup_team_deltas(
         if model.training_cutoff >= str(date.date()):
             raise ValueError("lineup model fitted on or after projection date")
         effects: dict[str, tuple[float, float]] = {}
+        minute_audit: dict[str, dict] = {}
         has_official_shock = False
         for team, players in g.groupby("team"):
             # Five official rows are not proof that a 15-player roster is
@@ -122,6 +123,7 @@ def lineup_team_deltas(
                 # A healthy opponent still contributes its unchanged defensive
                 # rating. Only one team needs a new official injury shock.
                 effects[team] = (0.0, 0.0)
+                minute_audit[team] = {"lost_minutes": 0.0, "replacement_minutes": {}}
                 continue
             current = baseline.copy()
             for pid, lost in lost_by_pid.items():
@@ -173,6 +175,17 @@ def lineup_team_deltas(
                 effects.clear()
                 break
             has_official_shock = True
+            replacement_added = (
+                current.reindex(replacement_ids, fill_value=0.0)
+                - baseline.reindex(replacement_ids, fill_value=0.0)
+            ).clip(lower=0.0)
+            minute_audit[team] = {
+                "lost_minutes": round(float(injury_shock_minutes), 3),
+                "replacement_minutes": {
+                    int(pid): round(float(m), 3) for pid, m in replacement_added.items()
+                    if m > 1e-6
+                },
+            }
             all_ids = baseline.index.union(current.index)
             delta = current.reindex(all_ids, fill_value=0.0) - baseline.reindex(all_ids, fill_value=0.0)
             offense = sum(float(v) * model.offensive_absence_ppp(-int(pid))
@@ -196,6 +209,8 @@ def lineup_team_deltas(
                           "off_delta_ppp": effects[team][0],
                           "opp_def_delta_ppp": effects[opp][1],
                           "points_delta": pts, "pace": pace,
+                          "own_lost_minutes": minute_audit[team]["lost_minutes"],
+                          "own_replacement_minutes": minute_audit[team]["replacement_minutes"],
                           "model_cutoff": model.training_cutoff,
                           "asof_rule": "official pretip availability and prior-date box minutes only"})
     return shifts, audit
