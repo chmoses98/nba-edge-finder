@@ -22,6 +22,7 @@ def lineup_team_deltas(
     min_prior_games: int = 5,
     max_points: float = 12.0,
     pace_by_game: dict | None = None,
+    max_report_age_minutes: float = 1440.0,
 ) -> tuple[dict[tuple[int, str], float], list[dict]]:
     """Return additive team-points shifts keyed (game_id, team), plus diagnostics.
 
@@ -35,9 +36,21 @@ def lineup_team_deltas(
     if not model or not getattr(model, "n_players", 0):
         raise ValueError("fitted certified-lineup model required")
     x = slate.copy()
-    x["_official"] = [p.get("source") == SRC_OFFICIAL for p in participation]
+    # The official report may include implicit "not listed" rows. Those
+    # establish coverage, but ONLY explicit, timely REPORTED designations can
+    # create an injury shock. A stale PDF or PROJECTED status is not new news.
+    def current_official(p: dict) -> bool:
+        age = p.get("age_minutes")
+        try:
+            return (p.get("source") == SRC_OFFICIAL and age is not None
+                    and np.isfinite(float(age)) and 0 <= float(age) <= max_report_age_minutes)
+        except (TypeError, ValueError):
+            return False
+
+    x["_official"] = [current_official(p) for p in participation]
     x["_injury_new"] = [
-        p.get("source") == SRC_OFFICIAL
+        current_official(p) and not p.get("implicit", False)
+        and p.get("certainty") in ("REPORTED", "CONFIRMED")
         and (p.get("status") in ("CONFIRMED_OUT", "LIKELY_OUT")
              or str(p.get("designation") or "").upper() in ("OUT", "DOUBTFUL", "QUESTIONABLE"))
         for p in participation
@@ -66,7 +79,10 @@ def lineup_team_deltas(
                 continue
             prior = prior[prior["game_id"].isin(recent_games)]
             baseline = prior.groupby("pid")["minutes"].sum() / len(recent_games)
-            if baseline.sum() < 180:
+            # A 48-minute regulation game has 240 player-minutes. A mirror
+            # missing 20-60 minutes cannot support a replacement counterfactual;
+            # allow reasonable overtime variation but reject incomplete boxes.
+            if not 220.0 <= float(baseline.sum()) <= 280.0:
                 continue
             # Only a new, explicit official injury change may move the
             # lineup-injury research forecast. Comparing today's projected
@@ -80,13 +96,21 @@ def lineup_team_deltas(
             # injury effects. Construct a counterfactual from historical
             # minutes, moving ONLY the officially lost minutes.
             lost_by_pid: dict[int, float] = {}
-            for pid, p_play in zip(affected["pid"], affected["p_play"]):
+            for pid, p_play, status in zip(affected["pid"], affected["p_play"], affected["status"]):
                 pid = int(pid)
-                lost = float(baseline.get(pid, 0.0)) * (
-                    1.0 - float(np.clip(p_play, 0.0, 1.0))
-                )
+                if not np.isfinite(float(p_play)):
+                    # Missing participation probability is not an injury forecast.
+                    effects.clear()
+                    break
+                # A definitive OUT has zero participation even if a caller
+                # accidentally passed the raw logistic probability.
+                prob = 0.0 if status == "CONFIRMED_OUT" else float(np.clip(p_play, 0.0, 1.0))
+                lost = float(baseline.get(pid, 0.0)) * (1.0 - prob)
                 if lost > 0:
                     lost_by_pid[pid] = lost_by_pid.get(pid, 0.0) + lost
+            if len(affected) and not np.isfinite(affected["p_play"].to_numpy(dtype=float)).all():
+                effects.clear()
+                break
             injury_shock_minutes = sum(lost_by_pid.values())
             if injury_shock_minutes < 2.0:
                 # A healthy opponent still contributes its unchanged defensive
