@@ -38,8 +38,8 @@ EXPECTED_CAPABILITIES = {
     "opponents": "PARTIAL", "opponent_adjustment": "RESEARCH", "schedule_strength": "PARTIAL", "recent_form_windows": "PARTIAL",
     "usage": "PARTIAL", "lineups": "UNAVAILABLE", "injuries": "PARTIAL", "matchup_metrics": "RESEARCH",
     "projection_distributions": "RESEARCH", "raw_projections": "RESEARCH", "market_prices": "PARTIAL",
-    "market_price_history": "PARTIAL", "advanced_stats": "PARTIAL", "situational_splits": "PARTIAL", "player_props": "PARTIAL",
-    "team_props": "PARTIAL", "game_markets": "PARTIAL", "weather": "UNAVAILABLE",
+    "market_price_history": "PARTIAL", "advanced_stats": "PARTIAL", "situational_splits": "PARTIAL",
+    "game_markets": "PARTIAL", "weather": "UNAVAILABLE",
     "venue_effects": "UNAVAILABLE", "calibration": "RESEARCH", "historical_accuracy": "RESEARCH", "clv": "UNAVAILABLE",
     "wager_history": "UNAVAILABLE", "rankings": "PARTIAL", "time_series": "PARTIAL", "comparisons": "PARTIAL", "search": "PARTIAL",
 }
@@ -180,6 +180,15 @@ def test_capability_statuses_equal_the_audit(published):
     mismatches = {name: (expected, actual.get(name)) for name, expected in EXPECTED_CAPABILITIES.items()
                   if actual.get(name) != expected}
     assert not mismatches, mismatches  # new documented capabilities may be added
+    # Prop capabilities depend on settled historical market rows, not merely the
+    # existence of game-winner quotes. This fixture has no settled prop or team-total
+    # history, so neither capability may be advertised as PARTIAL.
+    assert not any(r.get("family") in {"team_total", "player_points", "player_rebounds", "player_assists"}
+                   for r in _read(out, "markets")["items"])
+    for name in ("player_props", "team_props"):
+        cap = by[name]
+        assert cap["status"] == "UNAVAILABLE", (name, cap)
+        assert cap["reasons"] and not cap["evidence"]
     # Shot-only play-by-play is conditional on the fixture's actual shot events.
     # Never claim PARTIAL when no shot events are stored, nor UNAVAILABLE when evidence exists.
     pbp = by["play_by_play"]
