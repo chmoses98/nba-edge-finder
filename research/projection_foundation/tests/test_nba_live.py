@@ -155,6 +155,30 @@ def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
     assert len(audit) == 2
     assert shifts[(99, "BOS")] < -3.0
     assert shifts[(99, "NYK")] > 2.5
+    # An unrelated change in a healthy player's P(play) must not be
+    # misattributed to the official absence. The counterfactual may only
+    # remove minutes from players with an official injury shock.
+    two_way = LineupImpactModel(
+        offense={-100: 0.05, -101: 0.06},
+        defense={-100: 0.04, -101: 0.04},
+        n_players=2, training_cutoff="2025-07-01",
+    )
+    clean, _ = lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                                  part, two_way)
+    uncertain = pd.DataFrame(slate)
+    uncertain.loc[(uncertain["team"] == "BOS") & (uncertain["pid"] == 101),
+                  "p_play"] = 0.15
+    assert lineup_team_deltas(uncertain, pd.DataFrame(hist),
+                              part, two_way)[0] == clean
+    # Conditional-minute forecasts affect who absorbs lost minutes but
+    # cannot change the total number of officially removed minutes.
+    changed_minutes = pd.DataFrame(slate)
+    changed_minutes.loc[(changed_minutes["team"] == "BOS")
+                        & (changed_minutes["pid"] == 101), "min_pub"] = 0.0
+    changed, _ = lineup_team_deltas(changed_minutes, pd.DataFrame(hist),
+                                    part, two_way)
+    assert changed[(99, "BOS")] < clean[(99, "BOS")]
+    assert changed[(99, "NYK")] > clean[(99, "NYK")]
     # Future box rows are ignored by construction.
     future = pd.DataFrame(hist + [{"game_id": 999, "date": date + pd.Timedelta(days=1),
                                    "team": "BOS", "pid": 100, "minutes": 48000.0}])
