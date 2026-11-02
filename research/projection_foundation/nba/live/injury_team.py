@@ -91,6 +91,15 @@ def lineup_team_deltas(
             # allow reasonable overtime variation but reject incomplete boxes.
             if not 220.0 <= float(baseline.sum()) <= 280.0:
                 continue
+            # A substantial departed player's historical minutes cannot
+            # remain in the current counterfactual as a ghost rotation slot.
+            # This is a trade/roster-change problem, not an injury-only
+            # adjustment; fail closed rather than assign the same minutes to
+            # both a departed player and an active newcomer.
+            current_roster = set(players["pid"].astype(int))
+            departed = baseline[~baseline.index.isin(current_roster)]
+            if float(departed.sum()) > 6.0:
+                continue
             # Only a new, explicit official injury change may move the
             # lineup-injury research forecast. Comparing today's projected
             # rotation against historical box minutes without this gate
