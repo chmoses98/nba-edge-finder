@@ -36,4 +36,4 @@ jobs:
       - name: Verify official PDF, calibrated OUT, minutes and DNP archival
         working-directory: research/projection_foundation
         run: |
-          python -m pytest tests/test_nba_live.py -q -p no:warnings -x -k "confirmed_out or official_report_to_observations_and_resolution or calibrated_p_play_orders_by_designation or participation_precedence_and_conflicts or reconciliation_normalises_incoherent_roster_and_leaves_coherent_ones"
+          python -m pytest tests/test_nba_live.py -q -p no:warnings -x -k "confirmed_out or official_report_to_observations_and_resolution or calibrated_p_play_orders_by_designation or participation_precedence_and_conflicts or reconciliation_normalises_incoherent_roster_and_leaves_coherent_ones or legacy_espn_out"
