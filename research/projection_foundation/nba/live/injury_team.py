@@ -71,7 +71,12 @@ def lineup_team_deltas(
         effects: dict[str, tuple[float, float]] = {}
         has_official_shock = False
         for team, players in g.groupby("team"):
-            if players["_official"].sum() < 5:
+            # Five official rows are not proof that a 15-player roster is
+            # covered. The capture emits explicit or implicit rows for every
+            # roster member of a submitted team; require the entire current
+            # slate roster to have a fresh official observation before using
+            # its injury designations as a complete counterfactual.
+            if not bool(players["_official"].all()):
                 continue
             prior = history[(history["team"] == team) & (history["date"] < date)]
             recent_games = (prior[["game_id", "date"]].drop_duplicates()
