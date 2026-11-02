@@ -55,6 +55,7 @@ def lineup_team_deltas(
         if model.training_cutoff >= str(date.date()):
             raise ValueError("lineup model fitted on or after projection date")
         effects: dict[str, tuple[float, float]] = {}
+        has_official_shock = False
         for team, players in g.groupby("team"):
             if players["_official"].sum() < 5:
                 continue
@@ -78,7 +79,13 @@ def lineup_team_deltas(
                 for pid, p_play in zip(affected["pid"], affected["p_play"])
             )
             if injury_shock_minutes < 2.0:
+                # A healthy opponent still contributes its unchanged defensive
+                # rating. Omitting it suppresses a genuine one-sided injury:
+                # both teams must have a covered, historical baseline, but
+                # only one team needs a new official availability shock.
+                effects[team] = (0.0, 0.0)
                 continue
+            has_official_shock = True
             current = (players.set_index("pid")["p_play"].astype(float)
                        * players.set_index("pid")["min_pub"].astype(float))
             if current.sum() <= 0:
@@ -93,7 +100,9 @@ def lineup_team_deltas(
             defense = sum(float(v) * model.defensive_absence_ppp(-int(pid))
                           for pid, v in delta.items()) / 48.0
             effects[team] = (float(offense), float(defense))
-        if len(effects) != 2:
+        if len(effects) != 2 or not has_official_shock:
+            # No report on one side, or no actual new injury on either side:
+            # fail closed rather than manufacture a role-change adjustment.
             continue
         for team, players in g.groupby("team"):
             opp = str(players["opp"].iloc[0])
