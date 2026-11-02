@@ -72,6 +72,14 @@ def run_context_refresh(out_root: Path, season: str | None = None, days_ahead: i
     status["schedule"] = {"rows": e1.rows, "path": e1.path, "days_ahead": days_ahead}
     log.info(kv(event="context_schedule", rows=e1.rows))
 
+    # pre-tip starters (ESPN summary), only for games still in the future; never a projection
+    try:
+        from nba_edge.data.starters import capture_starters
+
+        status["starters"] = capture_starters(ledger, [g | {"start_time_utc": g.get("start_time_utc")} for g in games], now=now)
+    except Exception as e:  # noqa: BLE001 - a starters failure must not stop the other context kinds
+        status["starters"] = {"error": f"{type(e).__name__}: {e}"[:200]}
+
     # injuries: official PDF first, ESPN second (both archived; the simulation prefers official when fresh)
     inj_rows: list[dict[str, Any]] = []
     try:
