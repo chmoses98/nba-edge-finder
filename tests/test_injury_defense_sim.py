@@ -15,4 +15,9 @@ def test_defensive_absence_raises_opponent_team_points():
     improved = simulate(candidate, 6000, seed=111)
     assert improved.home_pts.mean() > base.home_pts.mean() + 1.0
     assert improved.diagnostics["team_injury_response_modeled"] == 1.0
-    assert base.diagnostics["team_injury_response_modeled"] == 0.0
+    # The shared synthetic fixture already contains an offensive impact star
+    # on each team. The control is not a zero-impact simulation; verify that
+    # the defensive research channel adds exactly one modeled player.
+    assert base.diagnostics["team_injury_response_modeled"] == 1.0
+    assert (improved.diagnostics["players_with_impact_ppp"]
+            == base.diagnostics["players_with_impact_ppp"] + 1.0)
