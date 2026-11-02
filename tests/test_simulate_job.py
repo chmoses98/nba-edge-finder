@@ -111,6 +111,10 @@ def test_official_out_player_prop_is_blocked_not_an_automatic_under(tmp_path):
     assert prop["p_data_only"] is None and prop["p_hybrid"] is None
     assert prop["best_side"] is None and prop["bet_up_to_no"] is None
     assert "OFFICIAL_OUT_DNP_VOID_RISK" in prop["flags"]
+    packet = json.loads((tmp_path / "archive" / "slates" / "latest" / "packet.json").read_text())
+    out_player = next(p for p in packet["games"][0]["home"]["players"] if p["nba_id"] == -75900)
+    assert out_player["p_play"] == 0.0
+    assert "sim" not in out_player  # zero appearances: no conditional stat projection
     frozen = next(x for x in led.iter_rows("predictions") if x["ticker"] == prop["ticker"])
     assert frozen["p_data_only"] is None and frozen["gate"] == "CANNOT_TRUST_INPUTS"
 
