@@ -248,9 +248,9 @@ def test_injury_replacements_require_current_roster_and_include_active_newcomers
     from nba.live.injury_team import lineup_team_deltas
     from nba_edge.research.lineup_impact import LineupImpactModel
 
-    # Prior 240-minute rotation includes a teammate who has since departed.
-    # An active newcomer (no historical minutes) must be allowed to replace
-    # the injured starter; the departed player must not receive extra minutes.
+    # A current newcomer with no historical minutes may absorb a starter's
+    # official absence, but a 34-minute traded player must not remain as a
+    # ghost slot in the historical rotation.
     hist, slate, part = [], [], []
     day = pd.Timestamp("2026-01-11")
     for team, opp, base in (("BOS", "NYK", 100), ("NYK", "BOS", 200)):
@@ -260,7 +260,7 @@ def test_injury_replacements_require_current_roster_and_include_active_newcomers
                              "team": team, "pid": base + i,
                              "minutes": 36.0 if i == 0 else 34.0})
         for i in range(7):
-            pid = 107 if team == "BOS" and i == 1 else base + i
+            pid = base + i
             out = team == "BOS" and i == 0
             slate.append({"game_id": 99, "date": day, "team": team, "opp": opp,
                           "pid": pid, "p_play": 0.0 if out else 1.0,
@@ -270,6 +270,12 @@ def test_injury_replacements_require_current_roster_and_include_active_newcomers
                          "designation": "OUT" if out else "AVAILABLE",
                          "certainty": "REPORTED" if out else "PROJECTED",
                          "implicit": not out, "age_minutes": 30.0})
+        if team == "BOS":
+            slate.append({"game_id": 99, "date": day, "team": team, "opp": opp,
+                          "pid": 107, "p_play": 1.0, "min_pub": 80.0})
+            part.append({"source": AV.SRC_OFFICIAL, "status": "LIKELY_ACTIVE",
+                         "designation": "AVAILABLE", "certainty": "PROJECTED",
+                         "implicit": True, "age_minutes": 30.0})
     model = LineupImpactModel(offense={-100: 0.05, -101: 0.06, -107: -0.04},
                               defense={-100: 0.04}, n_players=3,
                               training_cutoff="2025-07-01")
@@ -278,8 +284,15 @@ def test_injury_replacements_require_current_roster_and_include_active_newcomers
     bos_audit = next(r for r in audit if r["team"] == "BOS")
     assert bos_audit["own_lost_minutes"] == 36.0
     assert abs(sum(bos_audit["own_replacement_minutes"].values()) - 36.0) < 0.01
-    assert 101 not in bos_audit["own_replacement_minutes"]  # traded teammate
     assert 107 in bos_audit["own_replacement_minutes"]      # current newcomer
+    # A substantial historical player who is not on today's roster cannot
+    # remain as phantom baseline minutes alongside the newcomer.
+    traded = [(r, p) for r, p in zip(slate, part)
+              if not (r["team"] == "BOS" and r["pid"] == 101)]
+    assert lineup_team_deltas(
+        pd.DataFrame([r for r, _ in traded]), pd.DataFrame(hist),
+        [p for _, p in traded], model
+    )[0] == {}
     # If the newcomer is unavailable, he cannot receive replacement minutes.
     unavailable = pd.DataFrame(slate)
     unavailable.loc[unavailable["pid"] == 107, "p_play"] = 0.0
