@@ -69,7 +69,9 @@ def _pit_minutes_delta(
         return 0.0, 0.0, 0.0
     x = prior[prior["game_id"].astype(str).isin(recent_games)]
     avg = x.groupby("nba_id")["minutes"].sum() / len(recent_games)
-    if avg.sum() < 180:
+    # A substantially incomplete box cannot define a credible 240-minute
+    # historical rotation. Keep this gate consistent with the live research path.
+    if not 220.0 <= float(avg.sum()) <= 280.0:
         return 0.0, 0.0, 0.0
     # A full-season retrospective name->ID lookup is not proof of a PIT roster.
     # Only a player with an observed prior game is eligible for this replay.
@@ -97,6 +99,10 @@ def _pit_minutes_delta(
         add = np.minimum(weight * remaining, 42.0 - eligible)
         expected.loc[eligible.index] += add
         remaining -= float(add.sum())
+    # If no valid rotation can absorb the vacated minutes, do not assign a
+    # physically impossible offensive/defensive lineup to the holdout.
+    if remaining > 1.0:
+        return 0.0, 0.0, 0.0
     delta = expected - avg
     do = sum(float(v) * model.offensive_absence_ppp(int(pid)) for pid, v in delta.items()) / 48.0
     dd = sum(float(v) * model.defensive_absence_ppp(int(pid)) for pid, v in delta.items()) / 48.0
