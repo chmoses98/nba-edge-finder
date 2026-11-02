@@ -275,6 +275,11 @@ def test_injury_replacements_require_current_roster_and_include_active_newcomers
                               training_cutoff="2025-07-01")
     full, audit = lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist), part, model)
     assert len(audit) == 2 and full[(99, "BOS")] < -5.0
+    bos_audit = next(r for r in audit if r["team"] == "BOS")
+    assert bos_audit["own_lost_minutes"] == 36.0
+    assert abs(sum(bos_audit["own_replacement_minutes"].values()) - 36.0) < 0.01
+    assert 101 not in bos_audit["own_replacement_minutes"]  # traded teammate
+    assert 107 in bos_audit["own_replacement_minutes"]      # current newcomer
     # If the newcomer is unavailable, he cannot receive replacement minutes.
     unavailable = pd.DataFrame(slate)
     unavailable.loc[unavailable["pid"] == 107, "p_play"] = 0.0
@@ -284,9 +289,12 @@ def test_injury_replacements_require_current_roster_and_include_active_newcomers
     # a 10% chance of playing cannot absorb more than 4.2 expected minutes.
     doubtful_newcomer = pd.DataFrame(slate)
     doubtful_newcomer.loc[doubtful_newcomer["pid"] == 107, "p_play"] = 0.10
-    uncertain_replacement, _ = lineup_team_deltas(
+    uncertain_replacement, uncertain_audit = lineup_team_deltas(
         doubtful_newcomer, pd.DataFrame(hist), part, model
     )
+    bos_uncertain = next(r for r in uncertain_audit if r["team"] == "BOS")
+    assert 0 < bos_uncertain["own_replacement_minutes"].get(107, 0) <= 4.2
+    assert abs(sum(bos_uncertain["own_replacement_minutes"].values()) - 36.0) < 0.01
     assert full[(99, "BOS")] < uncertain_replacement[(99, "BOS")] - 1.0
     assert uncertain_replacement[(99, "BOS")] < without[(99, "BOS")]
     # If the remaining pretip roster cannot absorb the lost minutes, reject.
