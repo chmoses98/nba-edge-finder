@@ -130,7 +130,8 @@ def test_publishes_after_the_v1_export_and_verifies(published):
     adj = [o for o in team["metrics"] if o["metric_id"] == "met_nba.team_adj_off_ppp"]
     assert len(adj) == 1 and adj[0]["quality_status"] == "RESEARCH" and adj[0]["context"]["universe_size"] == 30
     for rel, entry in index["files"].items():
-        cap = {"teams": 150_000, "events": 150_000, "market_history": 400_000}.get(rel.split("/")[0])
+        cap = {"teams": 180_000,  # +30 KB: current-season, blended and four-factor metrics (2026-11)
+                    "events": 150_000, "market_history": 400_000}.get(rel.split("/")[0])
         if cap:
             assert entry["bytes"] <= cap, rel
     assert (out / "explorer" / "index.json").stat().st_size <= 300_000

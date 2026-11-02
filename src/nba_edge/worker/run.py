@@ -398,6 +398,9 @@ class Worker:
         # it is cheap and its only job is to reflect whatever the cycle just wrote. It never fails
         # the cycle -- the exporter itself writes health-only and exits 1 on any problem, and a
         # non-zero rc here is logged like any other job.
+        # Current-season box scores (data/archive/history/espn): incremental, final games only, skipped when pulled within 90 minutes. The explorer's team
+        # research (blended ratings, raw current-season metrics, four factors) reads them; without this job the explorer ages with the last manual pull.
+        ("history_refresh", ["nba", "history-refresh", "--out", "ARCHIVE/history", "--min-interval-minutes", "90"], 900.0),
         ("app_export", ["nba", "app-export", "--data-root", "ARCHIVE", "--out", "ARCHIVE/app/latest"], 300.0),
         # The research explorer (contract 1.1.0): immediately after app_export and as its own job, so a
         # research failure can never block or corrupt the v1 export. It reads the run id and clock from
@@ -426,7 +429,7 @@ class Worker:
     )
 
     # Jobs that run every cycle regardless of the conductor's decision.
-    ALWAYS_DUE = frozenset({"app_export", "research_export"})
+    ALWAYS_DUE = frozenset({"history_refresh", "app_export", "research_export"})
 
     def _run_due_jobs(self, decision: dict | None = None) -> list[str]:
         return self._run_due_jobs_detailed(decision)[0]

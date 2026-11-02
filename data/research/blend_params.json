@@ -1,0 +1,75 @@
+{
+ "k_conjugate": 10.67,
+ "k_games": 4.0,
+ "params": {
+  "a": 0.5955112008214046,
+  "b": 1.6649492756399946,
+  "cbar": 0.6421492217435301,
+  "fitted_on": [
+   "2023-24->2024-25",
+   "2024-25->2025-26"
+  ],
+  "k_tuned": 4.0,
+  "n_team_seasons": 60,
+  "n_transitions": 2,
+  "sigma2": 201.00129766403873,
+  "tau2": 18.838299743428415
+ },
+ "seasons": [
+  "2023-24",
+  "2024-25",
+  "2025-26"
+ ],
+ "validation": {
+  "checkpoints": {
+   "5": {
+    "mean_weight_current": 0.59,
+    "n_team_seasons": 60,
+    "rmse_blend": 4.63,
+    "rmse_current_only": 5.115,
+    "rmse_prior_only": 4.997
+   },
+   "10": {
+    "mean_weight_current": 0.742,
+    "n_team_seasons": 60,
+    "rmse_blend": 3.84,
+    "rmse_current_only": 3.949,
+    "rmse_prior_only": 5.012
+   },
+   "20": {
+    "mean_weight_current": 0.851,
+    "n_team_seasons": 60,
+    "rmse_blend": 4.065,
+    "rmse_current_only": 4.18,
+    "rmse_prior_only": 5.228
+   },
+   "30": {
+    "mean_weight_current": 0.896,
+    "n_team_seasons": 60,
+    "rmse_blend": 4.54,
+    "rmse_current_only": 4.544,
+    "rmse_prior_only": 5.793
+   },
+   "45": {
+    "mean_weight_current": 0.928,
+    "n_team_seasons": 60,
+    "rmse_blend": 5.016,
+    "rmse_current_only": 4.96,
+    "rmse_prior_only": 6.73
+   },
+   "60": {
+    "mean_weight_current": 0.945,
+    "n_team_seasons": 60,
+    "rmse_blend": 5.599,
+    "rmse_current_only": 5.527,
+    "rmse_prior_only": 7.737
+   }
+  },
+  "held_out_k": {
+   "2023-24->2024-25": 3.0,
+   "2024-25->2025-26": 4.0
+  },
+  "method": "leave-one-transition-out (carry-over, tau2 and k fitted without the held-out season); target = mean raw net rating over the team's remaining games"
+ },
+ "version": "team-blend-1"
+}
