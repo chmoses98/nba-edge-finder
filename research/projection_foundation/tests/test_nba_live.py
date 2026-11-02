@@ -164,6 +164,20 @@ def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
     no_report = [{**p, "source": "unverified"} if i >= 7 else p for i, p in enumerate(part)]
     assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
                               no_report, model)[0] == {}
+    # Normal role/minutes changes are not official injury shocks.
+    available = [{**p, "status": "LIKELY_ACTIVE", "designation": "AVAILABLE"} for p in part]
+    healthy = pd.DataFrame(slate)
+    healthy["p_play"] = 1.0
+    assert lineup_team_deltas(healthy, pd.DataFrame(hist), available, model)[0] == {}
+    # Long-standing absence is already incorporated in the trailing rating.
+    longterm = pd.DataFrame(hist)
+    longterm = longterm[~((longterm["team"] == "BOS") & (longterm["pid"] == 100))]
+    assert lineup_team_deltas(pd.DataFrame(slate), longterm, part, model)[0] == {}
+    # Official observations align by row order even with sparse index labels.
+    sparse_index = pd.DataFrame(slate)
+    sparse_index.index = np.arange(100, 100 + len(sparse_index))
+    assert lineup_team_deltas(sparse_index, pd.DataFrame(hist), part, model,
+                              pace_by_game={(99, "BOS"): 98.0, (99, "NYK"): 98.0})[0] == shifts
 
 
 
