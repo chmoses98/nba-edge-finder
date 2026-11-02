@@ -524,3 +524,33 @@ def test_confirmed_out_length_mismatch_fails_closed():
 
     with pytest.raises(ValueError, match="length"):
         PART.enforce_confirmed_out(np.array([0.5]), [{"status": "CONFIRMED_OUT"}, {"status": "LIKELY_ACTIVE"}])
+
+
+
+def test_confirmed_out_has_participation_only_and_no_actionable_prop_forecast():
+    # A confirmed DNP must NOT be scored as a zero-point under on Kalshi.
+    # Conditional stat PMFs may exist in the research output but must never
+    # enter the archived/sellable player-stat forecast stream.
+    res = {
+        "generated_utc": "2026-11-02T18:00:00Z",
+        "model": {"version": "test"},
+        "games": [{"game_id": "espn:123", "start_utc": "2026-11-02T23:00:00Z"}],
+        "players": [{
+            "player_id": "espn:7", "name": "Out starter", "team": "BOS",
+            "game_id": "espn:123", "family": "points", "mean": 29.0,
+            "expected_mean": 0.0, "actionable": False,
+            "data_asof_utc": "2026-11-02T18:00:00Z",
+            "participation": {
+                "status": "CONFIRMED_OUT", "certainty": "REPORTED",
+                "source": AV.SRC_OFFICIAL, "p_play": 0.0, "designation": "OUT",
+                "captured_utc": "2026-11-02T17:59:00Z", "implicit": False,
+            },
+            "gate": {"status": "BLOCK"}, "readiness": "RESEARCH",
+            "_tags": {}, "_pmf": {"lo": 0, "probs": [0.0, 0.0, 1.0]},
+        }],
+    }
+    records = FC.challenger_records(res)
+    assert len(records) == 1
+    assert records[0]["family"] == "participation"
+    assert records[0]["mean"] == 0.0
+    assert records[0]["probs"] == [1.0, 0.0]
