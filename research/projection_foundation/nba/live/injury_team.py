@@ -131,7 +131,11 @@ def lineup_team_deltas(
             today = players.drop_duplicates("pid").set_index("pid")
             published = pd.to_numeric(today["min_pub"], errors="coerce").fillna(0.0).clip(lower=0.0)
             active_prob = pd.to_numeric(today["p_play"], errors="coerce").fillna(0.0).clip(lower=0.0, upper=1.0)
-            replacement_weights = published * active_prob
+            # Conditional-minute forecasts already encode the intended role.
+            # P(play) gates impossible replacements but must not scale their
+            # conditional minutes a second time (nor let an unrelated hurdle
+            # fluctuation masquerade as an injury-response change).
+            replacement_weights = published.where(active_prob > 0.0, 0.0)
             replacement_ids = replacement_weights.index[
                 (replacement_weights > 0) & (~replacement_weights.index.isin(lost_by_pid))
             ]
