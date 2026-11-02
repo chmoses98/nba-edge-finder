@@ -155,6 +155,10 @@ jobs:
         run: |
           set -euo pipefail
           bash $PF_DIR/scripts/nba_live_ci.sh mount "$RUNNER_TEMP/m" dry
+      - name: Fit frozen 2024-25 certified-lineup injury candidate (research only)
+        run: |
+          set -euo pipefail
+          python scripts/fit_injury_lineup_model.py --out "$RUNNER_TEMP/nba_injury_lineup_model.json"
       - name: Full chain, dry run (live fetches, real projections, archive into a temp copy, settle and score)
         working-directory: research/projection_foundation
         env:
@@ -168,7 +172,7 @@ jobs:
           if [ -z "$WIN" ]; then if [ "${{ github.event_name }}" = pull_request ]; then WIN=96; else WIN=30; fi; fi
           python -m nba.live.run --stage all --dry-run --archive "$RUNNER_TEMP/m/projection-data" --workdir "$PF_WORK" \
             --shadow "$RUNNER_TEMP/m/shadow" --pit "$RUNNER_TEMP/m/pit" --context "$RUNNER_TEMP/m/data-archive" \
-            --season-types "$SEASON" --window-hours "$WIN" ${NOW:+--now "$NOW"}
+            --season-types "$SEASON" --window-hours "$WIN" --injury-lineup-model "$RUNNER_TEMP/nba_injury_lineup_model.json" ${NOW:+--now "$NOW"}
       - name: PF unit tests (recorded real fixtures; includes the hoopR agreement checks now that the cache is warm)
         working-directory: research/projection_foundation
         run: |

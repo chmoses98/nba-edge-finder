@@ -81,3 +81,18 @@ def test_no_nan_in_params():
     for p in gp.home.players:
         vals = [p.min_mean, p.min_sd, p.fga_per_min, p.three_share, p.fg2_pct, p.fg3_pct, p.ft_pct, p.fta_per_fga, p.ast_weight, p.oreb_weight, p.dreb_weight]
         assert all(np.isfinite(vals)), p
+
+
+def test_injury_shadow_is_opt_in_and_never_changes_baseline():
+    tg, pg = _frames()
+    game = dict(game_id="X", home_team_id=1, away_team_id=2, home_tricode="AAA", away_tricode="BBB")
+    base, base_report = build_game_params(game, tg, pg, "2026-01-21", {1: {}, 2: {}})
+    shadow, shadow_report = build_game_params(
+        game, tg, pg, "2026-01-21", {1: {}, 2: {}},
+        cfg=BuildConfig(injury_response_mode="shadow"),
+    )
+    assert base_report.feature_version == "features-0.1.0"
+    assert shadow_report.feature_version == "features-injury-shadow-v1"
+    assert all(p.impact_ppp == 0.0 for p in base.home.players)
+    assert all(p.impact_ppp == 0.0 for p in shadow.home.players)  # no valid off-game contrast
+    assert any("injury SHADOW only" in w for w in shadow_report.warnings)

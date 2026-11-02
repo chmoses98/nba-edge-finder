@@ -52,6 +52,21 @@ def calibrated_p_play(p_hurdle, cls: list[str | None], calib: dict) -> np.ndarra
     return out
 
 
+
+def enforce_confirmed_out(p_play: np.ndarray, participation: list[dict]) -> np.ndarray:
+    """Definitive official OUT cannot consume expected minutes in team reconciliation.
+
+    Preserve nonzero probabilities for projected OUT, doubtful, questionable,
+    and unverified players: those are not confirmed exclusions.
+    """
+    p = np.asarray(p_play, dtype=float).copy()
+    if len(p) != len(participation):
+        raise ValueError("participation length differs from probability vector")
+    mask = np.array([x.get("status") == "CONFIRMED_OUT" for x in participation], dtype=bool)
+    p[mask] = 0.0
+    return p
+
+
 def _latest_by(rows: Iterable[dict], cutoff: str, event_id: str, pred) -> dict[tuple, dict]:
     return av.asof([r for r in rows if pred(r)], cutoff, event_id)
 

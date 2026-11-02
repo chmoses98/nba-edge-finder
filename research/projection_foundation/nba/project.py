@@ -190,7 +190,8 @@ def _game_forecast(gg: dict, g: pd.DataFrame, tdist, now_utc: str, asof: str) ->
 
 
 def project_slate(sl: dict | None, out: str | None, *, availability: dict | None = None, calib: dict | None = None,
-                  now_utc: str | None = None, reconcile_cfg=None, max_hist_seasons: int = 7) -> dict:
+                  now_utc: str | None = None, reconcile_cfg=None, max_hist_seasons: int = 7,
+                  lineup_model=None) -> dict:
     """Frozen-model forward projections for the games in `sl` (see load_slate; `sl["asof"]` = newest input captured).
 
     Live arguments: `availability` (resolved participation per (event, entity), nba.live.participation), `calib` (frozen
@@ -260,6 +261,10 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     else:
         F["p_play"] = F["p_hurdle"]
         basis = ["hurdle"] * len(F)
+    # A definitive OUT cannot consume even fractional minutes in reconciliation.
+    # Calibrated logistic probabilities are not exact zeros, but official OUT is.
+    # This also covers legacy ESPN-context OUT when a live observation is absent.
+    F["p_play"] = PART.enforce_confirmed_out(F["p_play"].to_numpy(), part)
     # minutes: report-aware E_inj where the official report covers the game, else the frozen best (E)
     from .live.availability import SRC_OFFICIAL
     report_cov = np.array([bool(p.get("source") == SRC_OFFICIAL) for p in part])
@@ -274,6 +279,17 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     tt, _ = T.fit_team(tctx)
     tt = tt[tt["game_id"].isin(set(F["game_id"]))]
     tbest = frozen["team"]["best"]
+    injury_team_audit = []
+    if lineup_model is not None and mode == "next_slate":
+        # Explicit research lane only. The production caller supplies no model
+        # until the frozen-season and pretip holdouts support promotion.
+        from .live.injury_team import lineup_team_deltas
+        pace = {(r.game_id, r.team): float(r.exp_pace) for r in tt.itertuples()}
+        delta, injury_team_audit = lineup_team_deltas(F, box, part, lineup_model, pace_by_game=pace)
+        tt["injury_lineup_points_delta"] = [
+            delta.get((r.game_id, r.team), 0.0) for r in tt.itertuples()
+        ]
+        tt[tbest] = tt[tbest] + tt["injury_lineup_points_delta"]
     tdist = models.make_dist(frozen["team"]["dist"], tt[tbest].to_numpy())
     tt = tt.assign(mean=tdist.mean, p10=tdist.quantile(0.1), p90=tdist.quantile(0.9), _tpos=np.arange(len(tt)))
     team_mean = {(g, t_): float(m) for g, t_, m in zip(tt["game_id"], tt["team"], tt["mean"])}
@@ -433,6 +449,8 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
            "inputs": files, "families": fam_out, "games": games, "players": player_rows,
            "reconciliation": recs, "runtime_s": round(time.time() - t0, 1), "game_forecasts": game_forecasts,
            "game_forecast_errors": game_forecast_errors}
+    if lineup_model is not None:
+        res["injury_lineup_research"] = injury_team_audit
     if out:
         os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
         pub = dict(res, players=[{k: v for k, v in p.items() if not k.startswith("_")} for p in player_rows])
