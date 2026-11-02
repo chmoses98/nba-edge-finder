@@ -1,17 +1,17 @@
-# NBA slate 2026-11-02 — generated 2026-11-02T19:58:45Z — nba-sim-0.1.0
+# NBA slate 2026-11-02 — generated 2026-11-02T20:58:49Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
-Market snapshot age: 3 min · injury snapshot age: 30 min (official)
+Market snapshot age: 4 min · injury snapshot age: 30 min (official)
 
 ## Coverage
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 4320 |
-| MODELABLE | 4114 |
+| BUILDABLE | 4361 |
+| MODELABLE | 4159 |
 | RESEARCH | 263 |
-| UNRESOLVED | 3113 |
+| UNRESOLVED | 3206 |
 
 ## Games
 
@@ -30,13 +30,13 @@ Market snapshot age: 3 min · injury snapshot age: 30 min (official)
 | UTA @ SAS | 2026-11-03T01:30:00Z | 0.965 | +29.0±15.9 | 231.3±20.1 | 0.024 | 60000 | ok |
 | POR @ DEN | 2026-11-03T02:00:00Z | 0.685 | +7.9±16.5 | 229.0±20.5 | 0.049 | 60000 | ok |
 | PHX @ GSW | 2026-11-03T03:00:00Z | 0.453 | -1.8±16.6 | 224.8±20.5 | 0.049 | 40000 | ok |
-| TOR @ LAC | 2026-11-03T03:00:00Z | 0.499 | -0.1±16.2 | 225.8±20.1 | 0.047 | 40000 | ok |
-| MIA @ LAL | 2026-11-03T03:00:00Z | 0.575 | +3.0±16.7 | 236.3±20.7 | 0.047 | 40000 | ok |
+| TOR @ LAC | 2026-11-03T03:00:00Z | 0.496 | -0.1±16.4 | 225.9±20.2 | 0.048 | 40000 | ok |
+| MIA @ LAL | 2026-11-03T03:00:00Z | 0.578 | +3.1±16.6 | 236.3±20.7 | 0.049 | 40000 | ok |
 
 ## Contracts (OK gate, sorted by best EV)
 
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 8434, 'UNSUPPORTED': 3376}
+Other gates: {'NO_EDGE': 8520, 'UNSUPPORTED': 3469}
 
