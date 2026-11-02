@@ -135,8 +135,10 @@ def lineup_team_deltas(
             # minutes (see nba.live.reconcile). Replacement opportunity must
             # account for P(play) exactly once. Merely gating on p > 0 would
             # assign a DOUBTFUL teammate a full active-player replacement role.
-            # A low-P(play) player also cannot absorb more than 42*p expected
-            # minutes in the counterfactual.
+            # A low-P(play) player can absorb only P(play) times the
+            # remaining conditional-minute headroom above their *historical*
+            # baseline; we do not reclassify their existing baseline minutes
+            # as a new injury shock.
             replacement_weights = published * active_prob
             replacement_ids = replacement_weights.index[
                 (replacement_weights > 0) & (~replacement_weights.index.isin(lost_by_pid))
@@ -145,11 +147,11 @@ def lineup_team_deltas(
             # invent their pregame availability or retroactively alter baseline.
             current = current.reindex(current.index.union(replacement_ids), fill_value=0.0)
             remaining = injury_shock_minutes
+            # Keep the incremental cap fixed as minutes are allocated: if
+            # recomputed each pass, a probabilistic cap can be exceeded.
+            capacity = ((42.0 - current).clip(lower=0.0)
+                        * active_prob.reindex(current.index).fillna(0.0))
             for _ in range(12):
-                # Cap the *unconditional* expected rotation contribution;
-                # historical baseline minutes are already in current.
-                cap = 42.0 * active_prob.reindex(current.index).fillna(0.0)
-                capacity = (cap - current).clip(lower=0.0)
                 eligible = capacity[(capacity > 1e-6) & capacity.index.isin(replacement_ids)]
                 if eligible.empty or remaining < 1e-6:
                     break
@@ -158,6 +160,7 @@ def lineup_team_deltas(
                     break
                 added = np.minimum(weights / float(weights.sum()) * remaining, eligible)
                 current.loc[eligible.index] += added
+                capacity.loc[eligible.index] -= added
                 remaining -= float(added.sum())
             if remaining > 1.0:
                 # An implausibly thin historical rotation cannot support a
