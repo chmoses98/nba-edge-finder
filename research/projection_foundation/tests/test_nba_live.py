@@ -94,6 +94,16 @@ def test_official_report_to_observations_and_resolution(official_jan15, tmp_path
     assert (st == "CONFIRMED_OUT").any() and (st == "LIKELY_ACTIVE").any()
     out = next(e for e, d in res.items() if d["status"] == "CONFIRMED_OUT")
     assert res[out]["certainty"] == "REPORTED" and res[out]["designation"] == "OUT" and not res[out]["implicit"]
+    # Actual archived official NBA PDF -> point-in-time observation -> calibrated
+    # participation -> hard exclusion before reconciliation. The calibrated
+    # logistic model itself intentionally does not round to exact zero.
+    classes = [res[e]["_class"] for e in ents]
+    calibrated = PART.calibrated_p_play(np.full(len(ents), 0.75), classes, PART.load_calibration())
+    forced = PART.enforce_confirmed_out(calibrated, [res[e] for e in ents])
+    assert 0 < calibrated[ents.index(out)] < 0.01
+    assert forced[ents.index(out)] == 0.0
+    assert all(forced[i] == 0 for i, e in enumerate(ents) if res[e]["status"] == "CONFIRMED_OUT")
+    assert any(forced[i] > 0 for i, e in enumerate(ents) if res[e]["status"] == "LIKELY_ACTIVE")
     imp = next(e for e, d in res.items() if d["implicit"])
     assert res[imp]["certainty"] == "PROJECTED" and res[imp]["status"] == "LIKELY_ACTIVE"
     # a player the roster does not contain is UNVERIFIED, never active
