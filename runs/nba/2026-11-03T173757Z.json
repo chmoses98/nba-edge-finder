@@ -1,0 +1,63 @@
+{
+ "authority": "research_only",
+ "capture": {
+  "by_source_kind_status_certainty": {},
+  "captured_utc": "2026-11-03T17:37:52Z",
+  "coverage": {
+   "events": {},
+   "max_newest_age_minutes": null,
+   "mean_coverage": null,
+   "n_events": 0,
+   "official_report_game_share": null
+  },
+  "errors": [],
+  "games": 0,
+  "n_observations": 0,
+  "roster_source": "espn_rosters_live",
+  "schedule_source": "espn_scoreboard_live",
+  "snapshot": {
+   "duplicate": false,
+   "path": null,
+   "rejected": 0,
+   "written": 0
+  },
+  "sources": {
+   "espn_injuries": {
+    "rows": 93,
+    "status": "ok",
+    "via": "espn_live"
+   },
+   "official": {
+    "games_covered": 0,
+    "last_modified_utc": "2026-11-03T17:30:04Z",
+    "pdf_sha256": "b506932718f937d079912e868ddecbb518d404bab32749a50086b08c59c1fa80",
+    "report_rows": 28,
+    "report_time_utc": "2026-11-03T17:30:00Z",
+    "rows_other_games": 28,
+    "status": "ok",
+    "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-03_12_30PM.pdf",
+    "via": "nba_official_live"
+   },
+   "starters": {
+    "status": "not_probed"
+   }
+  }
+ },
+ "project": {
+  "games": 0,
+  "incumbent": {
+   "duplicates": 0,
+   "games": 0,
+   "invalid": 0,
+   "late_rejected": 0,
+   "paths": [],
+   "records_built": 0,
+   "shadow_rows_read": 0,
+   "status": "ok",
+   "written": 0
+  },
+  "status": "no_games"
+ },
+ "published_utc": "2026-11-03T17:37:57Z",
+ "schema": "sift.nba_live_run.v1"
+}
