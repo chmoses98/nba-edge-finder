@@ -132,7 +132,7 @@ def build_context(
             "schema": MATCHUP_SCHEMA_VERSION,
             "exposures": "none: no defensive-assignment source is reachable; see MATCHUP_SOURCE_AUDIT.md",
             "starters": (
-                "context/starters: ESPN summary boxscore starter flags captured before tip (CONFIRMED only when 5 per team)"
+                "context/starters: ESPN core-roster starter flags captured before tip (CONFIRMED only when 5 per team)"
                 if both
                 else "none: no CONFIRMED pre-tip starter capture for this game (context/starters)"
             ),
