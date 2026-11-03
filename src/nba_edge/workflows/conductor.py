@@ -67,6 +67,10 @@ def _latest_schedule(ledger: Ledger) -> list[dict[str, Any]]:
     return rows
 
 
+STARTER_WINDOW_MIN = 40.0     # fast context refresh when a tip is this close (confirmed-starter capture)
+STARTER_REFRESH_MIN = 6.0
+
+
 def decide(now: datetime, schedule_rows: list[dict[str, Any]], capture_age_min: float | None, last_sim_age_min: float | None, last_settle_age_min: float | None, last_eval_age_min: float | None, last_context_age_min: float | None = None, last_discover_age_min: float | None = None) -> dict[str, Any]:
     in_season, season_label, calendar_known = season_window(now.date().isoformat())
     tips = []
@@ -95,6 +99,11 @@ def decide(now: datetime, schedule_rows: list[dict[str, Any]], capture_age_min: 
         or last_context_age_min is None
         or last_context_age_min > context_stale_min
     )
+    # Pre-tip starter window. ESPN's core roster flags starters ~19 min before tip and not at ~49 (SIFT Alpha probe, run
+    # 41543056159), so the generic 55-min context cadence would often take NO observation inside the window that
+    # matters. Inside STARTER_WINDOW_MIN of a tip, refresh context whenever it is older than STARTER_REFRESH_MIN.
+    if in_season and next_tip_h is not None and next_tip_h * 60 <= STARTER_WINDOW_MIN and (last_context_age_min is None or last_context_age_min > STARTER_REFRESH_MIN):
+        context = True
     if not schedule_rows:
         context = True  # bootstrap: we need a schedule snapshot before anything else can be decided
 
