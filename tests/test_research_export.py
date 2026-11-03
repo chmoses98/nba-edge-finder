@@ -38,8 +38,8 @@ EXPECTED_CAPABILITIES = {
     "opponents": "PARTIAL", "opponent_adjustment": "RESEARCH", "schedule_strength": "PARTIAL", "recent_form_windows": "PARTIAL",
     "usage": "PARTIAL", "lineups": "UNAVAILABLE", "injuries": "PARTIAL", "matchup_metrics": "RESEARCH",
     "projection_distributions": "RESEARCH", "raw_projections": "RESEARCH", "market_prices": "PARTIAL",
-    "market_price_history": "PARTIAL", "advanced_stats": "PARTIAL", "situational_splits": "PARTIAL", "player_props": "PARTIAL",
-    "team_props": "PARTIAL", "game_markets": "PARTIAL", "play_by_play": "PARTIAL", "weather": "UNAVAILABLE",
+    "market_price_history": "PARTIAL", "advanced_stats": "PARTIAL", "situational_splits": "PARTIAL",
+    "game_markets": "PARTIAL", "weather": "UNAVAILABLE",
     "venue_effects": "UNAVAILABLE", "calibration": "RESEARCH", "historical_accuracy": "RESEARCH", "clv": "UNAVAILABLE",
     "wager_history": "UNAVAILABLE", "rankings": "PARTIAL", "time_series": "PARTIAL", "comparisons": "PARTIAL", "search": "PARTIAL",
 }
@@ -126,11 +126,12 @@ def test_publishes_after_the_v1_export_and_verifies(published):
     # Real history: a team's game log covers three seasons and the opponent-adjusted ratings came from the repo's function.
     team = next(d for d in docs.values() if d["kind"] == "entity_profile" and d["entity"]["short_name"] == "IND")
     seasons = {row[2] for row in team["extensions"]["game_log"]["rows"]}
-    assert seasons == {"2023-24", "2024-25", "2025-26"}
+    assert seasons == {"2024-25", "2025-26", "2026-27"}  # rolling three-season research window
     adj = [o for o in team["metrics"] if o["metric_id"] == "met_nba.team_adj_off_ppp"]
     assert len(adj) == 1 and adj[0]["quality_status"] == "RESEARCH" and adj[0]["context"]["universe_size"] == 30
     for rel, entry in index["files"].items():
-        cap = {"teams": 150_000, "events": 150_000, "market_history": 400_000}.get(rel.split("/")[0])
+        cap = {"teams": 180_000,  # +30 KB: current-season, blended and four-factor metrics (2026-11)
+                    "events": 150_000, "market_history": 400_000}.get(rel.split("/")[0])
         if cap:
             assert entry["bytes"] <= cap, rel
     assert (out / "explorer" / "index.json").stat().st_size <= 300_000
@@ -174,8 +175,27 @@ def test_capability_statuses_equal_the_audit(published):
     _index, docs = _docs(out)
     caps = docs["capabilities.json"]
     assert caps["audit_date"] == "2026-10-03"
-    assert {c["capability"]: c["status"] for c in caps["items"]} == EXPECTED_CAPABILITIES
     by = {c["capability"]: c for c in caps["items"]}
+    actual = {name: item["status"] for name, item in by.items()}
+    mismatches = {name: (expected, actual.get(name)) for name, expected in EXPECTED_CAPABILITIES.items()
+                  if actual.get(name) != expected}
+    assert not mismatches, mismatches  # new documented capabilities may be added
+    # Prop capabilities depend on settled historical market rows, not merely the
+    # existence of game-winner quotes. This fixture has no settled prop or team-total
+    # history, so neither capability may be advertised as PARTIAL.
+    assert not any(r.get("family") in {"team_total", "player_points", "player_rebounds", "player_assists"}
+                   for r in _read(out, "markets")["items"])
+    for name in ("player_props", "team_props"):
+        cap = by[name]
+        assert cap["status"] == "UNAVAILABLE", (name, cap)
+        assert cap["reasons"] and not cap["evidence"]
+    # Shot-only play-by-play is conditional on the fixture's actual shot events.
+    # Never claim PARTIAL when no shot events are stored, nor UNAVAILABLE when evidence exists.
+    pbp = by["play_by_play"]
+    if pbp["status"] == "PARTIAL":
+        assert pbp["evidence"] and pbp["limitations"] and "shooting plays only" in pbp["summary"]
+    else:
+        assert pbp["status"] == "UNAVAILABLE" and pbp["reasons"] and not pbp["evidence"]
     assert any("5.14" in n for n in caps["notes"]) and any("market beats model in all 8 families" in n for n in caps["notes"])
     assert any("§5.14" in lim for lim in by["projection_distributions"]["limitations"])
     for c in caps["items"]:
@@ -217,7 +237,7 @@ def test_research_status_survives_into_profiles_and_packets(published):
     _index, docs = _docs(out)
     registry = {m["metric_id"]: m for m in docs["metrics.json"]["items"]}
     research_metrics = {mid for mid, m in registry.items() if m["quality"]["status"] == "RESEARCH"}
-    assert {"met_nba.team_adj_off_ppp", "met_nba.team_shot_share_rim", "met_nba.model_p_data_only"} <= research_metrics
+    assert {"met_nba.team_adj_off_ppp", "met_nba.model_p_data_only"} <= research_metrics  # optional shot-zone research requires shot-location source
     for d in docs.values():
         if d["kind"] == "entity_profile":
             for o in d["metrics"]:

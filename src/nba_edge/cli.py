@@ -282,6 +282,40 @@ def cmd_history(args: argparse.Namespace) -> int:
     return run_history_pull(out_root=Path(args.out), seasons=args.seasons.split(","), what=args.what.split(","))
 
 
+def cmd_history_refresh(args: argparse.Namespace) -> int:
+    from nba_edge.team_research.refresh import refresh
+
+    st = refresh(Path(args.out), seasons=[x for x in args.seasons.split(",") if x] or None, min_interval_s=args.min_interval_minutes * 60)
+    print(f"history-refresh: {st}")
+    return 0
+
+
+def cmd_blend_calibrate(args: argparse.Namespace) -> int:
+    import pandas as pd
+
+    from nba_edge.team_research import blend as TB
+
+    espn = Path(args.history_root) / "history" / "espn"
+    seasons = args.seasons.split(",")
+    tg = pd.concat([pd.read_parquet(espn / f"team_games_{s}.parquet") for s in seasons])
+    pg = pd.concat([pd.read_parquet(espn / f"player_games_{s}.parquet") for s in seasons])
+    cal = TB.calibrate(tg, pg)
+    TB.save(Path(args.out), cal)
+    print(f"blend-calibrate: k={cal['k_games']} (conjugate {cal['k_conjugate']}), params={cal['params']}")
+    for n, v in cal["validation"]["checkpoints"].items():
+        print(f"  n={n}: blend {v['rmse_blend']} | prior only {v['rmse_prior_only']} | current only {v['rmse_current_only']} | w(cur) {v['mean_weight_current']}")
+    return 0
+
+
+def cmd_research_validate(args: argparse.Namespace) -> int:
+    from nba_edge.data.history import current_season
+    from nba_edge.team_research.refresh import validate_explorer
+
+    ok, rep = validate_explorer(Path(args.explorer), season=args.season or current_season(), max_age_days=args.max_age_days)
+    print(f"research-validate: {'OK' if ok else 'FAILED'} {rep}")
+    return 0 if ok else 1
+
+
 def cmd_kalshi_history(args: argparse.Namespace) -> int:
     from nba_edge.kalshi.history import run_kalshi_history
 
@@ -430,6 +464,24 @@ def build_parser() -> argparse.ArgumentParser:
     h.add_argument("--seasons", default="2023-24,2024-25,2025-26")
     h.add_argument("--what", default="team_logs,player_logs")
     h.set_defaults(func=cmd_history)
+
+    hr = sub.add_parser("history-refresh", help="Incrementally pull the CURRENT season's final box scores (scheduled by the capture worker)")
+    hr.add_argument("--out", default="data/archive/history")
+    hr.add_argument("--seasons", default="", help="default: the season today's date falls in")
+    hr.add_argument("--min-interval-minutes", type=float, default=0, help="skip when the last pull is younger than this")
+    hr.set_defaults(func=cmd_history_refresh)
+
+    bc = sub.add_parser("blend-calibrate", help="Fit and validate the prior/current-season team blend on stored seasons")
+    bc.add_argument("--history-root", default="data")
+    bc.add_argument("--seasons", default="2023-24,2024-25,2025-26")
+    bc.add_argument("--out", default="data/research/blend_params.json")
+    bc.set_defaults(func=cmd_blend_calibrate)
+
+    rv = sub.add_parser("research-validate", help="Fail unless the published NBA team research is current (season, games, age)")
+    rv.add_argument("--explorer", default="data/archive/app/latest/explorer")
+    rv.add_argument("--season", default="")
+    rv.add_argument("--max-age-days", type=float, default=3.0)
+    rv.set_defaults(func=cmd_research_validate)
 
     kh = sub.add_parser("kalshi-history", help="Pull settled Kalshi NBA markets (+ candlesticks) from the historical API")
     kh.add_argument("--out", default="data/history")

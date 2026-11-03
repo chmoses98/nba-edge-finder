@@ -42,6 +42,7 @@ from typing import Any
 
 from nba_edge import __version__
 from nba_edge.config import REPO_ROOT
+from nba_edge.team_research.box import box_rates, enrich_team_games
 
 CONTRACT_DIR = REPO_ROOT / "contract"
 if str(CONTRACT_DIR) not in sys.path:
@@ -151,6 +152,8 @@ class ResearchInputs:
     predictions: list[dict]  # every predictions row for tickers on v1 events, all runs
     exhibit: dict | None  # docs/research/market_vs_model.json
     warnings: list[str] = field(default_factory=list)
+    blend: dict[int, dict] = field(default_factory=dict)  # team_id -> blended estimate + its inputs (team_research.blend)
+    blend_meta: dict[str, Any] = field(default_factory=dict)
 
 
 def _read_json(path: Path) -> Any:
@@ -191,6 +194,18 @@ def _f(v: Any) -> float | None:
 
 def _cents(v: Any) -> float | None:
     return None if v is None else round(float(v) / 100.0, 6)
+
+
+def _merge_rows(rows: list[dict], key: tuple[str, ...]) -> list[dict]:
+    """Rows de-duplicated on `key`; the LAST occurrence wins (callers list the newer source last)."""
+    out: dict[tuple, dict] = {}
+    for r in rows:
+        out[tuple(r.get(k) for k in key)] = r
+    return list(out.values())
+
+
+def _newer_manifest(a: dict, b: dict) -> dict:
+    return b if (b.get("pulled_at") or "") >= (a.get("pulled_at") or "") and b else a
 
 
 def _current_season(team_games: list[dict]) -> str | None:
@@ -254,6 +269,42 @@ def _adjusted_ratings(team_games: list[dict]) -> tuple[dict[int, tuple[float, fl
     return scaled, meta
 
 
+def _blend_inputs(team_games: list[dict], player_games: list[dict], season: str | None, history_root: Path,
+                  warnings: list[str]) -> tuple[dict[int, dict], dict[str, Any]]:
+    """Current-season opponent-adjusted ratings, last season's, roster continuity and the blended estimate per team (team_research.blend).
+    Empty (with a warning) when the fitted parameters are missing: the blend is never improvised."""
+    import pandas as pd
+
+    from nba_edge.team_research import blend as TB
+    from nba_edge.team_research import ratings as TR
+
+    params_path = history_root / "research" / "blend_params.json"
+    if season is None or not params_path.exists():
+        warnings.append(f"no blend parameters at {params_path}; blended team ratings not published")
+        return {}, {}
+    params = TB.load(params_path)
+    cal = json.loads(params_path.read_text())
+    tg, pg = pd.DataFrame(team_games), pd.DataFrame(player_games)
+    seasons = sorted(tg.loc[tg["season_type"] == "regular", "season"].unique())
+    prior_season = max((x for x in seasons if x < season), default=None)
+    cur_t, cur_p = TB.regular(tg[tg["season"] == season]), pg[pg["season"] == season]
+    cur = TR.adjusted(cur_t)
+    prior_t = TB.regular(tg[tg["season"] == prior_season]) if prior_season else tg.iloc[0:0]
+    prior_p = pg[pg["season"] == prior_season] if prior_season else pg.iloc[0:0]
+    prior = TR.adjusted(prior_t) if prior_season else {}
+    out: dict[int, dict] = {}
+    for t in sorted(cur):
+        c = TB.continuity(prior_p, cur_p, t) if prior_season else None
+        b = TB.estimate(params, prior.get(t), cur[t], c)
+        out[t] = {"off": b.off, "dfn": b.dfn, "net": b.net, "n": b.n, "w": b.w_current, "rho": b.rho, "continuity": c,
+                  "prior_net": b.prior_net, "cur_off": cur[t].off, "cur_dfn": cur[t].dfn, "cur_net": cur[t].net,
+                  "prior_off": prior[t].off if t in prior else None, "prior_dfn": prior[t].dfn if t in prior else None}
+    meta = {"season": season, "prior_season": prior_season, "version": cal.get("version"), "params": cal["params"], "k_games": cal.get("k_games"),
+            "k_conjugate": cal.get("k_conjugate"), "validation": cal.get("validation"), "fitted_seasons": cal.get("seasons"),
+            "league_ppp_current": round(TR.league_ppp(cur_t), 6) if len(cur_t) else None}
+    return out, meta
+
+
 def _price_paths(data_root: Path, tickers: set[str]) -> tuple[dict[str, list[dict]], int]:
     """Every captured tick of the given tickers (checkpoint + deltas, via the repo's own replay)."""
     from nba_edge.archive.ledger import Ledger
@@ -292,12 +343,18 @@ def load_inputs(app_root: Path, data_root: Path, history_root: Path | None = Non
     events, markets = _items(app_root, "events"), _items(app_root, "markets")
 
     espn = history_root / "history" / "espn"
-    team_games = _parquet_rows(list(espn.glob("team_games_*.parquet")))
-    player_games = _parquet_rows(list(espn.glob("player_games_*.parquet")))
+    # The current season is refreshed by `nba history-refresh` into the ARCHIVE (data_root/history/espn), which the unattended worker owns;
+    # the seasons committed under data/history are the stable base. A game in both is taken from the archive (the newer pull).
+    espn_live = data_root / "history" / "espn"
+    team_games = _merge_rows(_parquet_rows(list(espn.glob("team_games_*.parquet"))) + _parquet_rows(list(espn_live.glob("team_games_*.parquet"))),
+                             ("game_id", "team_id"))
+    player_games = _merge_rows(_parquet_rows(list(espn.glob("player_games_*.parquet"))) + _parquet_rows(list(espn_live.glob("player_games_*.parquet"))),
+                               ("game_id", "nba_id"))
     if not team_games:
         raise ResearchExportError(f"no team game history under {espn}")
+    team_games = enrich_team_games(team_games, player_games)
     season = _current_season(team_games)
-    hman = _read_json(espn / "MANIFEST.json") or {}
+    hman = _newer_manifest(_read_json(espn / "MANIFEST.json") or {}, _read_json(espn_live / "MANIFEST.json") or {})
     sman = _read_json(espn / "SHOT_EVENTS_MANIFEST.json") or {}
     kman = _read_json(history_root / "history" / "kalshi" / "MANIFEST.json") or {}
 
@@ -370,6 +427,7 @@ def load_inputs(app_root: Path, data_root: Path, history_root: Path | None = Non
         price_paths, n_ticks = _price_paths(data_root, event_tickers)
     else:
         warnings.append(f"{data_root} holds no archive manifest; no rosters, injuries, price paths or predictions")
+    blend, blend_meta = _blend_inputs(team_games, player_games, season, history_root, warnings)
     slate = _read_json(data_root / "slates" / "latest" / "slate.json")
     packet = _read_json(data_root / "slates" / "latest" / "packet.json")
     return ResearchInputs(
@@ -383,6 +441,7 @@ def load_inputs(app_root: Path, data_root: Path, history_root: Path | None = Non
         price_paths=price_paths, board_ticks=n_ticks, slate=slate if isinstance(slate, dict) else None,
         packet=packet if isinstance(packet, dict) else None, predictions=predictions,
         exhibit=_read_json(docs_root / "research" / "market_vs_model.json"), warnings=warnings,
+        blend=blend, blend_meta=blend_meta,
     )
 
 
@@ -393,6 +452,10 @@ def _mean(xs: list[float]) -> float | None:
 
 def _ratio(num: float, den: float, scale: float = 1.0) -> float | None:
     return round(scale * num / den, 4) if den else None
+
+
+_BOX_SLUGS = {"efg_pct": "efg", "opp_efg_pct": "opp_efg", "fg3_rate": "fg3_rate", "orb_pct": "orb_pct", "drb_pct": "drb_pct",
+              "opp_tov_pct": "opp_tov_pct", "ast_pct": "ast_pct"}
 
 
 def _team_agg(slug: str, rows: list[dict]) -> float | None:
@@ -423,6 +486,8 @@ def _team_agg(slug: str, rows: list[dict]) -> float | None:
         return _ratio(sum(r["tov"] for r in rows), poss, 100.0)
     if slug == "fta_rate":
         return _ratio(sum(r["fta"] for r in rows), sum(r["fga"] for r in rows))
+    if slug in _BOX_SLUGS:
+        return box_rates(rows)[_BOX_SLUGS[slug]]
     raise KeyError(slug)
 
 
@@ -530,6 +595,44 @@ TEAM_BOX = (
               "RATE", False, "ball security", ("SEASON", "L10", "L5", "L3")),
     MetricDef("fta_rate", "Free-throw rate", "FTr", "sum(fta)/sum(fga): free-throw attempts per field-goal attempt.", "ratio",
               "RATE", True, "shooting", ("SEASON", "L10", "L5", "L3")),
+)
+BOX_DEFS = (
+    MetricDef("efg_pct", "Effective field-goal %", "eFG%", "(FGM + 0.5*3PM)/FGA from the summed player box scores. Raw (not opponent-adjusted).", "fraction",
+              "PERCENT", True, "shooting", ("SEASON",), False),
+    MetricDef("opp_efg_pct", "Opponent effective field-goal %", "OPP eFG%", "The same ratio over the shots the team's opponents took. Raw.", "fraction",
+              "PERCENT", False, "defense", ("SEASON",), False),
+    MetricDef("fg3_rate", "Three-point attempt rate", "3PAr", "3PA/FGA. Neutral by design (style, not quality).", "fraction", "PERCENT", None, "shooting",
+              ("SEASON",), False),
+    MetricDef("orb_pct", "Offensive rebound %", "ORB%", "OREB/(OREB + opponent DREB). Raw.", "fraction", "PERCENT", True, "rebounding", ("SEASON",), False),
+    MetricDef("drb_pct", "Defensive rebound %", "DRB%", "DREB/(DREB + opponent OREB). Raw.", "fraction", "PERCENT", True, "rebounding", ("SEASON",), False),
+    MetricDef("opp_tov_pct", "Opponent turnovers per 100 possessions", "OPP TOV/100", "100*opponent TOV / possessions: turnovers the defense forces. Raw.",
+              "turnovers/100 poss", "RATE", True, "defense", ("SEASON",), False),
+    MetricDef("ast_pct", "Assist rate", "AST%", "AST/FGM: the share of made field goals that were assisted. Raw.", "fraction", "PERCENT", True, "ball movement",
+              ("SEASON",), False),
+)
+BLEND_DEFS = (
+    MetricDef("cur_adj_off", "Offense, current season only (opponent-adjusted)", "cur adj ORTG",
+              "Opponent-adjusted points scored per 100 possessions relative to the league, from THIS season's regular-season games only, shrunk to the "
+              "league with 4 games of prior mass. Raw current-season evidence: no previous-season information enters.", "points/100 poss vs league",
+              "RATING", True, "current season", ("SEASON",)),
+    MetricDef("cur_adj_def", "Defense, current season only (opponent-adjusted)", "cur adj DRTG",
+              "Opponent-adjusted points allowed per 100 possessions relative to the league (lower is better), this season only.",
+              "points/100 poss vs league", "RATING", False, "current season", ("SEASON",)),
+    MetricDef("cur_adj_net", "Net, current season only (opponent-adjusted)", "cur adj NET",
+              "cur_adj_off - cur_adj_def, this season only.", "points/100 poss vs league", "RATING", True, "current season", ("SEASON",)),
+    MetricDef("blend_off", "Offense, SIFT blended estimate", "blend ORTG",
+              "Predictive estimate of true offensive strength: w*current-season adjusted + (1-w)*carried-over previous season, w = n/(n+k), n = games "
+              "played, k fitted on stored seasons (extensions.parameters). The previous season is shrunk toward the league by a carry-over fitted on "
+              "roster continuity. An estimate, not an observation.", "points/100 poss vs league", "RATING", True, "blended estimate", ("BLEND",)),
+    MetricDef("blend_def", "Defense, SIFT blended estimate", "blend DRTG", "The same blend for points allowed per 100 possessions (lower is better).",
+              "points/100 poss vs league", "RATING", False, "blended estimate", ("BLEND",)),
+    MetricDef("blend_net", "Net, SIFT blended estimate", "blend NET", "blend_off - blend_def.", "points/100 poss vs league", "RATING", True,
+              "blended estimate", ("BLEND",)),
+    MetricDef("blend_w_current", "Weight on this season in the blend", "w(cur)", "w = n/(n+k): the share of the blended estimate that comes from this "
+              "season. Continuous in games played; there is no cutoff date.", "fraction", "PERCENT", None, "blended estimate", ("BLEND",)),
+    MetricDef("roster_continuity", "Roster continuity", "CONT", "Share of last season's minutes played by players who have appeared for the team this "
+              "season (minutes-weighted). A departure or a long absence lowers it and so lowers the weight given to last season.", "fraction", "PERCENT",
+              None, "blended estimate", ("BLEND",)),
 )
 TEAM_HEADLINE_SERIES = ("pts", "opp_pts", "margin", "total", "possessions")
 
@@ -640,6 +743,9 @@ class _Ctx:
         stamps += [m["captured_at"] for m in inp.markets if m.get("captured_at")]
         stamps += [x for x in (inp.rosters_at, inp.injuries_at) if x]
         self.as_of = max(c_time.to_iso(s) for s in stamps if s)
+        age_h = (c_time.parse_ts(generated_at) - c_time.parse_ts(self.hist_as_of)).total_seconds() / 3600 if generated_at else None
+        # FRESH: the newest stored game is under 2 days old (an off-day gap), AGING: under 7 days, STALE beyond. Never inferred from a flag.
+        self.freshness = "UNKNOWN" if age_h is None else "FRESH" if age_h <= 48 else "AGING" if age_h <= 168 else "STALE"
         self.metrics: dict[str, dict] = {}
         self.rankings: dict[tuple[str, str], dict] = {}
         self.docs: list[dict] = []
@@ -667,6 +773,25 @@ class _Ctx:
                                coverage=f"cutoff {inp.adjusted_meta.get('cutoff_date')}",
                                limitations=[A_ADJ, A_ADJ_TEST, "features-0.1.0, frozen baseline parameters "
                                             "(NBA_BASELINE_2026_PRESEASON_V1); computed on export, no stored history"])
+        mk = inp.blend_meta
+        val = (mk.get("validation") or {}).get("checkpoints", {})
+        v10 = val.get("10") or val.get(10) or {}
+        self.q_curadj = R.quality(status="RESEARCH", source="nba_edge.team_research.ratings over ESPN regular-season box scores", generated_at=generated_at,
+                                  production=False, data_as_of=self.hist_as_of, source_version=inp.history_pulled_at, methodology_version=METHODOLOGY_VERSION,
+                                  coverage=f"{self.season} regular season to date", sample_size=len(inp.team_games),
+                                  limitations=["Opponent-adjusted from this season's games only (strength of schedule and half the league home edge removed); with few "
+                                               "games the estimate is mostly noise: read it with the games count, and prefer the blended estimate for prediction.",
+                                               A_SCHEDULE.replace("Nothing that feeds the research tables runs on a schedule; ", "")])
+        self.q_blend = R.quality(status="RESEARCH", source="nba_edge.team_research.blend (fitted on stored seasons)", generated_at=generated_at, production=False,
+                                 data_as_of=self.hist_as_of, source_version=mk.get("version"), methodology_version=METHODOLOGY_VERSION,
+                                 coverage=f"{mk.get('prior_season')} + {mk.get('season')}", sample_size=len(inp.team_games),
+                                 limitations=["A predictive ESTIMATE, not an observation: weight on this season = n/(n+k) with k fitted on stored seasons; "
+                                              "last season is carried over with a roster-continuity-dependent shrinkage.",
+                                              f"Fitted on {(mk.get('params') or {}).get('n_transitions')} season transitions ({(mk.get('params') or {}).get('n_team_seasons')} "
+                                              f"team-seasons); held-out RMSE at 10 games: blend {v10.get('rmse_blend')}, prior only {v10.get('rmse_prior_only')}, "
+                                              f"current only {v10.get('rmse_current_only')} (points/100 possessions).",
+                                              "Coaching changes are not modelled (nothing stored identifies them reliably). In-season injuries to players who have appeared "
+                                              "are not adjusted for; a player who has not appeared lowers roster continuity."])
         self.q_market = R.quality(status="PARTIAL", source="data/research/market_table.parquet (Kalshi settled markets + hourly candles)",
                                   generated_at=generated_at, production=False, data_as_of=self.hist_as_of,
                                   source_version=inp.kalshi_pulled_at, methodology_version=METHODOLOGY_VERSION,
@@ -793,7 +918,7 @@ def _build_teams(ctx: _Ctx) -> dict[str, dict]:
     hist_start = min(r["game_date_et"] for r in inp.team_games)
     universe_season = f"NBA teams, {ctx.season} regular season"
     sup_box = {d.slug: R.supports(rank=True, percentile=True, time_series=d.series, windows=True, splits=d.split, home_away=d.split)
-               for d in TEAM_BOX}
+               for d in TEAM_BOX + BOX_DEFS}
     source_box = "espn team_games"
     obs: dict[int, list[dict]] = {t: [] for t in tids}
     splits: dict[int, list[dict]] = {t: [] for t in tids}
@@ -809,10 +934,10 @@ def _build_teams(ctx: _Ctx) -> dict[str, dict]:
                         "value": v, "sample_size": n})
         return out
 
-    for d in TEAM_BOX:
+    for d in TEAM_BOX + BOX_DEFS:
         mid = ctx.metric(d, entity="TEAM", quality=ctx.q_box, source=source_box, supports=sup_box[d.slug],
                          comparison=universe_season, windows=list(d.windows), splits=["home_away"] if d.split else [],
-                         hist_start=hist_start, freshness="STALE", update="manual history pull (history.yml)",
+                         hist_start=hist_start, freshness=ctx.freshness, update="manual history pull (history.yml)",
                          limitations=[A_TEAM_METRICS, A_SCHEDULE, "L-windows are each team's last N non-preseason games "
                                       "(regular + play-in + playoffs), so they end on different dates"])
         for wl in d.windows:
@@ -857,7 +982,7 @@ def _build_teams(ctx: _Ctx) -> dict[str, dict]:
         for d in ADJ_DEFS:
             mid = ctx.metric(d, entity="TEAM", quality=ctx.q_adj, source="nba_edge.features.build.opponent_adjusted_ratings",
                              supports=R.supports(rank=True, percentile=True, opponent_adjustment=True, schedule_adjustment=True),
-                             comparison="NBA teams", windows=[wl], splits=[], hist_start=hist_start, freshness="STALE",
+                             comparison="NBA teams", windows=[wl], splits=[], hist_start=hist_start, freshness=ctx.freshness,
                              update="per export (recomputed from the stored history)", limitations=[A_ADJ, A_ADJ_TEST],
                              related=[ids.metric_id(SPORT, "team_off_rtg"), ids.metric_id(SPORT, "team_def_rtg")],
                              extensions={"parameters": inp.adjusted_meta})
@@ -872,6 +997,37 @@ def _build_teams(ctx: _Ctx) -> dict[str, dict]:
                                    adjusted=round(vals[d.slug](t), 4), extensions={"effective_n": round(adj[t][2], 3)}))
                 refs[t].append(_ranking_ref(rk))
 
+    # Current-season evidence and the SIFT blend (team_research). Raw current-season (cur_*) and blended (blend_*) are separate metrics with separate
+    # quality objects and windows: nothing here is published under a name that hides which one it is.
+    bl, bm = inp.blend, inp.blend_meta
+    if bl:
+        w_cur = R.window("SEASON", label=f"{bm['season']} regular season to date")
+        w_blend = R.window("CUSTOM", label=f"{bm['prior_season']} + {bm['season']} blend", end=ctx.hist_as_of)
+        vals_b = {"cur_adj_off": "cur_off", "cur_adj_def": "cur_dfn", "cur_adj_net": "cur_net", "blend_off": "off", "blend_def": "dfn",
+                  "blend_net": "net", "blend_w_current": "w", "roster_continuity": "continuity"}
+        for d in BLEND_DEFS:
+            blended = not d.slug.startswith("cur_")
+            wnd, q = (w_blend, ctx.q_blend) if blended else (w_cur, ctx.q_curadj)
+            key = vals_b[d.slug]
+            mid = ctx.metric(d, entity="TEAM", quality=q, source="nba_edge.team_research", supports=R.supports(rank=True, percentile=True, opponent_adjustment=True,
+                             schedule_adjustment=True), comparison="NBA teams", windows=[wnd["label"]], splits=[], hist_start=hist_start,
+                             freshness=ctx.freshness, update="every explorer rebuild, from the stored history (nba history-refresh)",
+                             limitations=q["limitations"], extensions={"parameters": bm["params"], "k_games": bm["k_games"], "prior_season": bm["prior_season"]})
+            scale = 1.0
+            rk = _ranking(ctx, mid, universe="NBA teams", etype="TEAM", window=wnd,
+                          values=team_values(lambda t, key=key: ((round(bl[t][key], 4) if t in bl and bl[t][key] is not None else None), bl[t]["n"] if t in bl else None)),
+                          hib=d.hib, quality=q, season=ctx.season, ufilter="all teams with a game this season", path_for=R.team_path)
+            for t in tids:
+                if t not in bl or bl[t][key] is None:
+                    continue
+                v = round(bl[t][key] * scale, 4)
+                ext = {"games": bl[t]["n"], "weight_current": round(bl[t]["w"], 4), "prior_season": bm["prior_season"]}
+                if blended:
+                    ext.update({"carry_over": round(bl[t]["rho"], 4), "roster_continuity": None if bl[t]["continuity"] is None else round(bl[t]["continuity"], 4)})
+                obs[t].append(_obs(ctx, mid, _team_pid(t), "TEAM", v, wnd, source="nba_edge.team_research", status="RESEARCH", unit=d.unit, sample=bl[t]["n"],
+                                   season=ctx.season, ranking=rk, adjusted=v if d.slug.endswith(("off", "def", "net")) else None, extensions=ext))
+                refs[t].append(_ranking_ref(rk))
+
     # Strength of schedule (PARTIAL): mean opponent SEASON net rating.
     net = {t: _team_agg("net_rtg", season_rows[t]) for t in tids}
     sos = {}
@@ -880,7 +1036,7 @@ def _build_teams(ctx: _Ctx) -> dict[str, dict]:
         sos[t] = (_mean(vals_), len(vals_))
     mid = ctx.metric(SOS_DEF, entity="TEAM", quality=ctx.q_box, source=source_box, supports=R.supports(rank=True, percentile=True,
                      schedule_adjustment=False), comparison=universe_season, windows=["SEASON"], splits=[], hist_start=hist_start,
-                     freshness="STALE", update="manual history pull", limitations=[A_SOS + " in the repo; arithmetic here",
+                     freshness=ctx.freshness, update="manual history pull", limitations=[A_SOS + " in the repo; arithmetic here",
                                                                                      A_SCHEDULE],
                      related=[ids.metric_id(SPORT, "team_net_rtg")])
     rk = _ranking(ctx, mid, universe=universe_season, etype="TEAM", window=R.window("SEASON"), values=team_values(lambda t: sos[t]),
@@ -1165,7 +1321,7 @@ def _build_players(ctx: _Ctx) -> dict[str, dict]:
                          supports=R.supports(rank=ranked, percentile=ranked, time_series=d.series, windows=len(d.windows) > 1,
                                              splits=d.split, home_away=d.split),
                          comparison=universe if ranked else None, windows=list(d.windows), splits=["home_away"] if d.split else [],
-                         hist_start=hist_start, freshness="STALE", update="manual history pull (history.yml)",
+                         hist_start=hist_start, freshness=ctx.freshness, update="manual history pull (history.yml)",
                          limitations=[A_PLAYER_METRICS, A_REGISTRY, A_SCHEDULE] + ([A_USAGE] if d.category == "usage" else []))
         rk = None
         if ranked:
