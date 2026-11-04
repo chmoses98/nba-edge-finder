@@ -6,7 +6,9 @@ does with the result: the calibrated P(play) and which minutes model publishes (
 else E). The legacy rule keyed the minutes model on `participation.source`; the fixed rule keys it on `report_source` (the injury
 source), so a starter row cannot switch it.
 
-This proves WHERE starter information can act (P(play) only) and that it must not act on minutes; it does not measure predictive value
+This shows that a CONFIRMED starter row sets P(play) and (with the fix) does not switch the minutes model. It stops at P(play)/minutes-model choice: reconcile scaling,
+expected_mean, actionable and gate status are downstream of P(play)/participation and are NOT exercised, and the ON row is hypothetical (the archived summary source emitted PROJECTED rows).
+It does not measure predictive value
 (no pregame starter history exists; see RESULTS_NBA.md: the oracle upper bound is -0.17 min MAE beyond E_inj)."""
 from __future__ import annotations
 
