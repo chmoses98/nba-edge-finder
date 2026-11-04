@@ -58,3 +58,22 @@ def test_commit_lag_and_handover_statistics_and_threshold():
     assert rep["n_gaps"] == 0                                                                        # 50 min < the 60 min threshold
     assert rep["commit_lag_s"]["median"] == 200.0 and rep["worker_handover_gap_min"]["n"] == 1
     assert "| from tick |" in CA.markdown(CA.audit(lines, ticks, threshold_min=20))
+
+
+def test_commit_lag_is_reported_by_regime_and_never_pooled():
+    from datetime import datetime, timedelta, timezone
+    from nba.paper import capture_audit as C
+    t0 = datetime(2026, 11, 1, 12, 0, tzinfo=timezone.utc)
+    ticks = [(t0 + timedelta(minutes=5 * i), t0 + timedelta(minutes=5 * i, seconds=210)) for i in range(30)] + \
+            [(t0 + timedelta(minutes=150 + 5 * i), t0 + timedelta(minutes=150 + 5 * i, seconds=40)) for i in range(25)]
+    r = C.lag_by_regime(ticks, t0 + timedelta(minutes=150))
+    assert r["before"]["n"] == 30 and r["before"]["median"] == 210.0
+    assert r["after"]["n"] == 25 and r["after"]["median"] == 40.0
+    assert r["comparable"] is True and "never pooled" in r["rule"]
+    few = C.lag_by_regime(ticks[:30] + ticks[30:35], t0 + timedelta(minutes=150))
+    assert few["after"]["n"] == 5 and few["comparable"] is False        # too few post-cutover ticks to compare
+
+
+def test_the_sealed_calibration_audit_module_imports_without_running_anything():
+    from nba.paper import sealed_calibration_audit as A      # a research CLI: importing it must have no side effects
+    assert callable(A.main)
