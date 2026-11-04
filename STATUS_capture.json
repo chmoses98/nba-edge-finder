@@ -1,38 +1,38 @@
 {
- "last_capture_utc": "2026-11-04T15:22:01Z",
- "n_markets": 17670,
+ "last_capture_utc": "2026-11-04T15:37:01Z",
+ "n_markets": 17675,
  "n_series": 304,
- "requests": 931,
+ "requests": 929,
  "run_id": "41821319854",
  "markets_written": {
   "encoding": "delta",
-  "seq": 7,
-  "path": "kalshi/markets_delta/dt=2026-11-04/kalshi_markets_delta_20261104T152201Z_41821319854.json.gz",
-  "bytes": 117946,
-  "n_markets": 17670,
-  "n_changed": 7010,
-  "changed_pct": 39.672,
-  "board_sha256": "1b1cac9e0ed00579f052d034eb4535b7ebedf36c1a0cf0ca933a11871ea737a6"
+  "seq": 8,
+  "path": "kalshi/markets_delta/dt=2026-11-04/kalshi_markets_delta_20261104T153701Z_41821319854.json.gz",
+  "bytes": 112321,
+  "n_markets": 17675,
+  "n_changed": 6412,
+  "changed_pct": 36.277,
+  "board_sha256": "e6fa27d81d988ade42aec0d88d579fb3b86d41617fc06031df0bbd2490a173ab"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 7,
-  "path": "kalshi/orderbooks_delta/dt=2026-11-04/kalshi_orderbooks_delta_20261104T152201Z_41821319854.json.gz",
-  "bytes": 38911,
+  "seq": 8,
+  "path": "kalshi/orderbooks_delta/dt=2026-11-04/kalshi_orderbooks_delta_20261104T153701Z_41821319854.json.gz",
+  "bytes": 38739,
   "n_markets": 300,
-  "n_changed": 293,
-  "changed_pct": 97.667,
-  "board_sha256": "b975edb4f6c70305b22f404120f403f762903c30869f16cc5d05698f62f67e6f"
+  "n_changed": 294,
+  "changed_pct": 98.0,
+  "board_sha256": "25e3b361b291ef8ba4b49288b4e6771fdaac86892e2f3bb9030f569039c7f1dd"
  },
  "by_status": {
-  "active": 17670
+  "active": 17675
  },
  "by_support": {
   "BUILDABLE": 4242,
   "MODELABLE": 4071,
   "RESEARCH": 1959,
   "UNMODELABLE": 2350,
-  "UNRESOLVED": 5048
+  "UNRESOLVED": 5053
  },
  "by_family": {
   "all_nba_selections": 371,
@@ -78,14 +78,14 @@
   "season_wins": 312,
   "team_total": 532,
   "transactions": 1213,
-  "unknown": 1008
+  "unknown": 1013
  },
  "alarms": [
-  "5048 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAESCALATOR3PT', 'KXNBAESCALATORPTS', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+  "5053 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAESCALATOR3PT', 'KXNBAESCALATORPTS', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
   "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAESCALATOR3PT', 'KXNBAESCALATORPTS', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 17670 live markets, cap 300"
+  "order books sampled by priority: 17675 live markets, cap 300"
  ],
  "alarm": true
 }
