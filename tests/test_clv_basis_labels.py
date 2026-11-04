@@ -10,7 +10,13 @@ from datetime import timedelta
 import pytest
 
 from nba_edge.settlement.engine import SettlementOutcome, SettlementRecord
-from nba_edge.workflows.evaluate import build_evaluation_row, signed_clv, signed_selection_clv, view_metrics, View
+from nba_edge.workflows.evaluate import (
+    View,
+    build_evaluation_row,
+    signed_clv,
+    signed_selection_clv,
+    view_metrics,
+)
 from tests.test_settle_job import GAME, NOW, TIP, WINNER, prediction_row
 
 
