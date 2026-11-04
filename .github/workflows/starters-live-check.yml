@@ -1,0 +1,40 @@
+name: starters-live-check
+# RESEARCH, read-only. Runs the PR #87 starter capture against LIVE ESPN for a bounded period (default 280 min, spanning the evening
+# NBA tip-off window) and prints measured coverage by minutes-before-tip. Nothing is projected or pushed; rows go to a run artifact.
+# Trigger: workflow_dispatch, or push a change to `.trigger/starters-live` on a branch.
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "How long to poll"
+        default: "280"
+  push:
+    paths:
+      - ".trigger/starters-live"
+permissions:
+  contents: read
+concurrency:
+  group: starters-live-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Poll ESPN core rosters inside the pre-tip window
+        run: python scripts/starters_live_check.py --archive "$RUNNER_TEMP/archive" --minutes "${{ inputs.minutes || '280' }}" --interval-min 4
+      - name: CLI coverage report (shipped command)
+        if: always()
+        run: nba starters-coverage --archive "$RUNNER_TEMP/archive" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: starters-live-${{ github.run_id }}
+          path: ${{ runner.temp }}/archive
+          retention-days: 30
