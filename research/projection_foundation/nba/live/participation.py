@@ -130,6 +130,9 @@ def resolve_event(rows: list[dict], event_id: str, start_utc: str, entities: Ite
         d = {"status": part.status, "certainty": part.certainty, "source": part.source, "captured_utc": part.captured_utc,
              "age_minutes": None if part.age_minutes is None else round(part.age_minutes, 1), "reasons": reasons,
              "designation": chosen["status"] if chosen else None, "implicit": implicit, "_class": cls,
+             # which INJURY source the call rests on, independent of a starter/lineup observation (a confirmed starter must not change
+             # whether the official report covered the player: that decides the minutes model, see project.py)
+             "report_source": chosen["source"] if chosen else None,
              "gate_injury_status": part.gate_injury_status()}
         if R:
             d["restriction"] = {"minutes_cap": (R.get("detail") or {}).get("minutes_cap"), "source": R["source"],
