@@ -379,6 +379,10 @@ class Worker:
     # conductor.yml's production-proven invocation instead of against a copy of itself.
     CAPTURE_CMD = ("nba", "capture", "--out", "ARCHIVE", "--orderbook", "--max-orderbooks", "300")
     CAPTURE_BUDGET_S = 600.0
+    # The explorer rebuild measured 354 s of CPU on 2026-11-05 (30 teams, 174 players, 187 current-season games, 41 MB) and will only grow through the season.
+    # It had a 300 s budget, so the worker killed it (rc 124) on every rebuild and the published explorer stayed at its 2026-10-31 build, with last season's
+    # team and player research, for days. Budget it at 5x the measurement; the job is hourly-gated, so a slow run costs one cycle, not every cycle.
+    RESEARCH_EXPORT_BUDGET_S = 1800.0
 
     # The slow jobs, in dependency order, with the command each runs and how long it may take.
     # Ordered deliberately: context before simulate (a simulation wants the freshest roster), and
@@ -411,7 +415,7 @@ class Worker:
         # when the explorer is missing, the v1 events changed, or it is an hour old, and otherwise
         # logs the reason and exits 0 without touching explorer/ (publish.publish never prunes it).
         ("research_export", ["nba", "research-export", "--data-root", "ARCHIVE", "--out", "ARCHIVE/app/latest",
-                             "--history-root", "DATA", "--min-interval-minutes", "60"], 300.0),
+                             "--history-root", "DATA", "--min-interval-minutes", "60"], RESEARCH_EXPORT_BUDGET_S),
         (
             "discover",
             [
