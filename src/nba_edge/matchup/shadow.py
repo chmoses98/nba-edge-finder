@@ -47,6 +47,7 @@ def build_context(
     now: datetime,
     *,
     source: str = "shadow/v1",
+    starter_rows: list[dict[str, Any]] | None = None,
 ) -> GameMatchupContext | None:
     """A point-in-time matchup context for one game, from data already captured.
 
@@ -92,19 +93,37 @@ def build_context(
                 continue
         return tuple(sorted(set(ids)))
 
+    def confirmed_starters(side: str) -> tuple[int, ...]:
+        """Latest CONFIRMED capture for this game/side observed at or before ``now`` and strictly before tip."""
+        best = None
+        for r in starter_rows or []:
+            if r.get("game_id") != gid or r.get("side") != side or r.get("state") != "CONFIRMED":
+                continue
+            try:
+                obs = parse_iso(r["observed_at_utc"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if obs <= now and obs < tip and len(r.get("starter_espn_ids") or []) == 5 and (best is None or obs > best[0]):
+                best = (obs, r)
+        return tuple(sorted(-int(i) for i in best[1]["starter_espn_ids"])) if best else ()
+
+    hs, as_ = confirmed_starters("home"), confirmed_starters("away")
+    both = bool(hs) and bool(as_)
+    if not both:      # never publish a half-confirmed lineup: either both sides are CONFIRMED or neither is filled
+        hs = as_ = ()
+
     return GameMatchupContext(
         game_id=gid,
         observed_at_utc=now,
         home_team_id=int(home_id),
         away_team_id=int(away_id),
         tip_utc=tip,
-        # Deliberately empty: no source reports expected starters today, and a projection written
-        # here would be indistinguishable from a confirmation later.
-        expected_home_starters=(),
-        expected_away_starters=(),
+        # Filled ONLY from a CONFIRMED pre-tip ESPN capture (data/starters.py), never projected.
+        expected_home_starters=hs,
+        expected_away_starters=as_,
         expected_home_rotation=rotation_for(home_id),
         expected_away_rotation=rotation_for(away_id),
-        lineup_confidence=LineupConfidence.UNKNOWN,
+        lineup_confidence=LineupConfidence.CONFIRMED if both else LineupConfidence.UNKNOWN,
         exposures=(),
         home_scheme=None,
         away_scheme=None,
@@ -112,7 +131,11 @@ def build_context(
         provenance={
             "schema": MATCHUP_SCHEMA_VERSION,
             "exposures": "none: no defensive-assignment source is reachable; see MATCHUP_SOURCE_AUDIT.md",
-            "starters": "none: no confirmed-starter source ingested yet",
+            "starters": (
+                "context/starters: ESPN core-roster starter flags captured before tip (CONFIRMED only when 5 per team)"
+                if both
+                else "none: no CONFIRMED pre-tip starter capture for this game (context/starters)"
+            ),
             "scheme": "none: no scheme-proxy source ingested yet",
             "roster_basis": (
                 "latest captured context/rosters snapshot -- the full captured roster, NOT a "
@@ -129,6 +152,7 @@ def run_matchup_shadow(out_root: Path, horizon_hours: float = HORIZON_HOURS) -> 
     now = utcnow()
     schedule = _latest_rows(ledger, "context/schedule")
     rosters = _latest_rows(ledger, "context/rosters")
+    starter_rows = list(ledger.iter_rows("context/starters")) if ledger.latest("context/starters") else []
 
     contexts: list[GameMatchupContext] = []
     for g in schedule:
@@ -139,7 +163,7 @@ def run_matchup_shadow(out_root: Path, horizon_hours: float = HORIZON_HOURS) -> 
         hours = (tip - now).total_seconds() / 3600
         if not (0 < hours <= horizon_hours):
             continue
-        ctx = build_context(g, rosters, now)
+        ctx = build_context(g, rosters, now, starter_rows=starter_rows)
         if ctx is not None:
             contexts.append(ctx)
 

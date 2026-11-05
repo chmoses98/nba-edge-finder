@@ -273,7 +273,7 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     F["p_play"] = PART.enforce_confirmed_out(F["p_play"].to_numpy(), part)
     # minutes: report-aware E_inj where the official report covers the game, else the frozen best (E)
     from .live.availability import SRC_OFFICIAL
-    report_cov = np.array([bool(p.get("source") == SRC_OFFICIAL) for p in part])
+    report_cov = np.array([bool(p.get("report_source", p.get("source")) == SRC_OFFICIAL) for p in part])
     F["min_pub"] = np.where(report_cov, F["min_inj"], F["min_best"])
     caps = np.array([((p.get("restriction") or {}).get("minutes_cap") or np.nan) for p in part], float)
     F["min_cap"] = caps

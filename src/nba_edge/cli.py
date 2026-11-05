@@ -191,6 +191,18 @@ def cmd_context(args: argparse.Namespace) -> int:
     return run_context_refresh(out_root=Path(args.out), season=args.season)
 
 
+def cmd_starters_coverage(args: argparse.Namespace) -> int:
+    """Archived pre-tip starter coverage by minutes-before-tip bucket (measured, never assumed)."""
+    import json
+
+    from nba_edge.archive.ledger import Ledger
+    from nba_edge.data.starters import STARTERS_KIND, coverage_by_lead_time
+
+    rows = list(Ledger(Path(args.archive)).iter_rows(STARTERS_KIND))
+    print(json.dumps({"rows": len(rows), "coverage": coverage_by_lead_time(rows)}, indent=1))
+    return 0
+
+
 def cmd_shot_events(args: argparse.Namespace) -> int:
     """RESEARCH: ingest ESPN play-by-play shot events into a point-in-time dataset.
 
@@ -389,6 +401,10 @@ def build_parser() -> argparse.ArgumentParser:
     x.add_argument("--out", default="data/archive")
     x.add_argument("--season", default=None)
     x.set_defaults(func=cmd_context)
+
+    sc = sub.add_parser("starters-coverage", help="Pre-tip confirmed-starter coverage by minutes before tip (from the archive)")
+    sc.add_argument("--archive", default="data/archive")
+    sc.set_defaults(func=cmd_starters_coverage)
 
     se = sub.add_parser(
         "shot-events",

@@ -60,7 +60,9 @@ def run_context_refresh(out_root: Path, season: str | None = None, days_ahead: i
     # schedule window
     games: list[dict[str, Any]] = []
     sched_prov = []
-    for d in range(days_ahead + 1):
+    # ESPN's scoreboard is keyed by the US-Eastern calendar date, but `day` is formatted as a UTC date: after 00:00 UTC (8pm ET) the UTC date has moved on while
+    # the evening slate still belongs to yesterday's key, so those games (the 10pm-ET tips) vanished from this list. Start one day back.
+    for d in range(-1, days_ahead + 1):
         day = now + timedelta(days=d)
         try:
             gs, prov = fetch_espn_scoreboard(day, ttl_s=None)
@@ -71,6 +73,14 @@ def run_context_refresh(out_root: Path, season: str | None = None, days_ahead: i
     e1 = ledger.append_rows("context/schedule", games, observed_at=now, meta={"provenance": sched_prov})
     status["schedule"] = {"rows": e1.rows, "path": e1.path, "days_ahead": days_ahead}
     log.info(kv(event="context_schedule", rows=e1.rows))
+
+    # pre-tip starters (ESPN core roster), only for games still in the future; never a projection
+    try:
+        from nba_edge.data.starters import capture_starters
+
+        status["starters"] = capture_starters(ledger, [g | {"start_time_utc": g.get("start_time_utc")} for g in games], now=now)
+    except Exception as e:  # noqa: BLE001 - a starters failure must not stop the other context kinds
+        status["starters"] = {"error": f"{type(e).__name__}: {e}"[:200]}
 
     # injuries: official PDF first, ESPN second (both archived; the simulation prefers official when fresh)
     inj_rows: list[dict[str, Any]] = []
