@@ -137,7 +137,7 @@ def coverage_by_lead_time(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for lo, hi in BUCKETS:
         b = [r for r in rows if lo <= (r.get("minutes_to_tip") if r.get("minutes_to_tip") is not None else -1) < hi]
         games = {r["game_id"] for r in b}
-        both = {g for g in games if sum(r["state"] == "CONFIRMED" for r in b if r["game_id"] == g) == 2}
+        both = {g for g in games if {r["side"] for r in b if r["game_id"] == g and r["state"] == "CONFIRMED"} == {"home", "away"}}   # both SIDES confirmed at least once in the bucket
         out.append({
             "minutes_to_tip": f"{lo}-{hi}", "team_observations": len(b), "games": len(games),
             "confirmed_teams": sum(r["state"] == "CONFIRMED" for r in b), "games_both_confirmed": len(both),

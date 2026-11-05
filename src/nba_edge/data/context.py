@@ -60,7 +60,9 @@ def run_context_refresh(out_root: Path, season: str | None = None, days_ahead: i
     # schedule window
     games: list[dict[str, Any]] = []
     sched_prov = []
-    for d in range(days_ahead + 1):
+    # ESPN's scoreboard is keyed by the US-Eastern calendar date, but `day` is formatted as a UTC date: after 00:00 UTC (8pm ET) the UTC date has moved on while
+    # the evening slate still belongs to yesterday's key, so those games (the 10pm-ET tips) vanished from this list. Start one day back.
+    for d in range(-1, days_ahead + 1):
         day = now + timedelta(days=d)
         try:
             gs, prov = fetch_espn_scoreboard(day, ttl_s=None)

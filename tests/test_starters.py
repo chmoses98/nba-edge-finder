@@ -137,3 +137,21 @@ def test_shadow_context_uses_only_confirmed_pretip_captures_on_both_sides():
     assert ctx(future).lineup_confidence is LineupConfidence.UNKNOWN                  # not yet knowable at the context's own 'now'
     assert ctx(None).lineup_confidence is LineupConfidence.UNKNOWN and ctx(None).expected_home_starters == ()
     assert c.home_scheme is None and c.away_scheme is None                          # schemes / exposures are never invented
+
+
+def test_coverage_counts_both_sides_confirmed_even_with_repeated_observations():
+    from nba_edge.data.starters import coverage_by_lead_time
+    rows = []
+    for i in range(5):                                            # five polls per side inside 0-20 min
+        for side in ("home", "away"):
+            rows.append({"game_id": "espn:1", "side": side, "state": "CONFIRMED", "minutes_to_tip": 10.0 - i, "n_roster_entries": 15})
+    rows.append({"game_id": "espn:2", "side": "home", "state": "CONFIRMED", "minutes_to_tip": 5.0, "n_roster_entries": 15})
+    b = coverage_by_lead_time(rows)[0]
+    assert b["games"] == 2 and b["games_both_confirmed"] == 1 and b["confirmed_teams"] == 11
+
+
+def test_context_refresh_asks_for_yesterdays_utc_date_so_the_late_et_slate_is_not_lost(monkeypatch):
+    import inspect
+
+    from nba_edge.data import context
+    assert "range(-1, days_ahead + 1)" in inspect.getsource(context.run_context_refresh)

@@ -24,7 +24,7 @@ from nba_edge.timeutil import iso, utcnow  # noqa: E402
 
 def games_now(now):
     games, errs = [], []
-    for d in range(2):
+    for d in range(-1, 2):          # ET-keyed scoreboard: yesterday's UTC date still holds the evening slate after 00:00 UTC
         try:
             gs, _ = fetch_espn_scoreboard(now + timedelta(days=d), ttl_s=0)
             games.extend(g.model_dump(mode="json") for g in gs)
