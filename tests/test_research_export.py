@@ -324,3 +324,8 @@ def test_research_export_budget_covers_a_measured_rebuild():
 
     budget = {n: b for n, _t, b in Worker.SLOW_JOBS}["research_export"]
     assert budget >= 2 * 354.0
+
+
+def test_limitations_do_not_claim_nothing_is_scheduled():
+    """Box scores are pulled by the worker on a schedule; the published limitation text must not say otherwise (it read 'last pulled 2026-09-19')."""
+    assert "Nothing that feeds" not in RX.A_SCHEDULE and "history-refresh" in RX.A_SCHEDULE
