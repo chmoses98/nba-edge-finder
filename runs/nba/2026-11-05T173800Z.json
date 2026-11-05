@@ -1,0 +1,174 @@
+{
+ "authority": "research_only",
+ "capture": {
+  "by_source_kind_status_certainty": {
+   "espn_injuries|injury|OUT|PROJECTED": 10,
+   "espn_injuries|injury|QUESTIONABLE|PROJECTED": 2,
+   "nba_official_injury_report|injury|ACTIVE|PROJECTED": 26,
+   "nba_official_injury_report|injury|OUT|REPORTED": 9
+  },
+  "captured_utc": "2026-11-05T17:36:43Z",
+  "coverage": {
+   "events": {
+    "espn:401909936": {
+     "coverage": 0.5882,
+     "expected": 34,
+     "newest_age_minutes": 757.5,
+     "newest_capture_utc": "2026-11-05T04:59:11Z",
+     "observed": 20,
+     "official_explicit_listed": 5,
+     "official_report_covers_game": true,
+     "sources": [
+      "espn_injuries",
+      "nba_official_injury_report"
+     ]
+    },
+    "espn:401909937": {
+     "coverage": 0.5429,
+     "expected": 35,
+     "newest_age_minutes": 757.5,
+     "newest_capture_utc": "2026-11-05T04:59:11Z",
+     "observed": 19,
+     "official_explicit_listed": 4,
+     "official_report_covers_game": true,
+     "sources": [
+      "espn_injuries",
+      "nba_official_injury_report"
+     ]
+    }
+   },
+   "max_newest_age_minutes": 757.5,
+   "mean_coverage": 0.5655,
+   "n_events": 2,
+   "official_report_game_share": 1.0
+  },
+  "errors": [],
+  "games": 2,
+  "n_observations": 47,
+  "roster_source": "espn_rosters_live",
+  "schedule_source": "espn_scoreboard_live",
+  "snapshot": {
+   "duplicate": false,
+   "path": "/home/runner/work/_temp/m/projection-data/availability/nba/2026-11-05/173643Z_81e8ecb75603.jsonl.gz",
+   "rejected": 0,
+   "written": 47
+  },
+  "sources": {
+   "espn_injuries": {
+    "rows": 91,
+    "status": "ok",
+    "status_OUT": 10,
+    "status_QUESTIONABLE": 2,
+    "via": "espn_live"
+   },
+   "official": {
+    "games_covered": 2,
+    "last_modified_utc": "2026-11-05T17:30:04Z",
+    "not_yet_submitted_rows": 2,
+    "official_explicit": 9,
+    "official_implicit": 26,
+    "pdf_sha256": "49e03dce60fcb7053f6ada169a8bdf8288b9ceb2fb4cb43185a2bf0e43fa805c",
+    "report_rows": 29,
+    "report_time_utc": "2026-11-05T17:30:00Z",
+    "rows_other_games": 18,
+    "status": "ok",
+    "status_OUT": 9,
+    "teams_not_yet_submitted": 2,
+    "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-05_12_30PM.pdf",
+    "via": "nba_official_live"
+   },
+   "starters": {
+    "games_too_early": 2,
+    "status": "not_probed"
+   }
+  }
+ },
+ "project": {
+  "challenger_archive": {
+   "duplicates": 0,
+   "invalid": 0,
+   "late_rejected": 0,
+   "written": 489
+  },
+  "game_forecasts": {
+   "duplicates": 0,
+   "games": 2,
+   "written": 2
+  },
+  "games": 2,
+  "gate": {
+   "BLOCK": 70,
+   "PASS": 82,
+   "REVIEW": 331
+  },
+  "history_through": "2026-11-04",
+  "incumbent": {
+   "duplicates": 360,
+   "games": 2,
+   "invalid": 0,
+   "late_rejected": 0,
+   "paths": [],
+   "records_built": 360,
+   "shadow_rows_read": 300,
+   "status": "ok",
+   "written": 0
+  },
+  "mode": "next_slate",
+  "participation": {
+   "CONFIRMED_OUT": 9,
+   "LIKELY_ACTIVE": 24,
+   "LIKELY_OUT": 1,
+   "UNCERTAIN": 5,
+   "UNVERIFIED": 30
+  },
+  "players": 69,
+  "reconciliation": [
+   {
+    "action": "none",
+    "game_id": 401909936,
+    "minutes_sum_raw": 243.2,
+    "points_sum_final": 100.0,
+    "points_sum_raw": 100.0,
+    "status": "PASS",
+    "team": "ORL",
+    "team_points": 113.1
+   },
+   {
+    "action": "none",
+    "game_id": 401909936,
+    "minutes_sum_raw": 238.5,
+    "points_sum_final": 117.4,
+    "points_sum_raw": 117.4,
+    "status": "PASS",
+    "team": "PHX",
+    "team_points": 112.9
+   },
+   {
+    "action": "minutes",
+    "game_id": 401909937,
+    "minutes_sum_raw": 270.9,
+    "points_sum_final": 113.4,
+    "points_sum_raw": 127.3,
+    "status": "REVIEW",
+    "team": "GSW",
+    "team_points": 125.2
+   },
+   {
+    "action": "none",
+    "game_id": 401909937,
+    "minutes_sum_raw": 251.8,
+    "points_sum_final": 123.6,
+    "points_sum_raw": 123.6,
+    "status": "PASS",
+    "team": "MIA",
+    "team_points": 119.2
+   }
+  ],
+  "rows": 483,
+  "runtime_s": 68.0,
+  "slate_date": "2026-11-05",
+  "status": "ok"
+ },
+ "published_utc": "2026-11-05T17:38:00Z",
+ "schema": "sift.nba_live_run.v1"
+}
