@@ -1,4 +1,4 @@
-# NBA slate 2026-11-06 — generated 2026-11-06T14:07:44Z — nba-sim-0.1.0
+# NBA slate 2026-11-06 — generated 2026-11-06T15:07:56Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
@@ -8,17 +8,17 @@ Market snapshot age: 4 min · injury snapshot age: 0 min (official)
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 2542 |
-| MODELABLE | 2580 |
+| BUILDABLE | 2559 |
+| MODELABLE | 2597 |
 | RESEARCH | 162 |
-| UNRESOLVED | 2166 |
+| UNRESOLVED | 2214 |
 
 ## Games
 
 | game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |
 |---|---|---:|---|---|---:|---:|---|
 | WAS @ ATL | 2026-11-07T00:00:00Z | 0.886 | +19.6±16.2 | 233.6±20.5 | 0.047 | 40000 | ok |
-| BOS @ CHA | 2026-11-07T00:00:00Z | 0.332 | -7.2±16.7 | 217.2±20.4 | 0.048 | 40000 | CANNOT_TRUST: official OUT injury identity unresolved: Christopher Cenac Jr. |
+| BOS @ CHA | 2026-11-07T00:00:00Z | 0.330 | -7.3±16.6 | 217.0±20.4 | 0.049 | 40000 | CANNOT_TRUST: official OUT injury identity unresolved: Christopher Cenac Jr. |
 | PHI @ CLE | 2026-11-07T00:30:00Z | 0.642 | +5.9±16.4 | 228.2±20.3 | 0.049 | 60000 | ok |
 | UTA @ DAL | 2026-11-07T01:00:00Z | 0.710 | +8.8±16.2 | 238.4±20.3 | 0.049 | 40000 | ok |
 | OKC @ MEM | 2026-11-07T01:00:00Z | 0.105 | -19.9±15.8 | 227.0±20.2 | 0.048 | 40000 | ok |
@@ -32,5 +32,5 @@ Market snapshot age: 4 min · injury snapshot age: 0 min (official)
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 4595, 'UNSUPPORTED': 2328, 'CANNOT_TRUST_INPUTS': 527}
+Other gates: {'NO_EDGE': 4622, 'UNSUPPORTED': 2376, 'CANNOT_TRUST_INPUTS': 534}
 
