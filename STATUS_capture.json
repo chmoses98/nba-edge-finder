@@ -1,39 +1,38 @@
 {
- "last_capture_utc": "2026-11-06T08:02:26Z",
- "n_markets": 10344,
+ "last_capture_utc": "2026-11-06T08:17:26Z",
+ "n_markets": 10440,
  "n_series": 305,
- "requests": 930,
+ "requests": 923,
  "run_id": "42179413344",
  "markets_written": {
   "encoding": "delta",
-  "seq": 2,
-  "path": "kalshi/markets_delta/dt=2026-11-06/kalshi_markets_delta_20261106T080226Z_42179413344.json.gz",
-  "bytes": 47402,
-  "n_markets": 10344,
-  "n_changed": 2531,
-  "changed_pct": 24.468,
-  "board_sha256": "24b2d9ab162200802d78afd21bbc48f246832042be43a7e7f0a9ffc368202772"
+  "seq": 3,
+  "path": "kalshi/markets_delta/dt=2026-11-06/kalshi_markets_delta_20261106T081726Z_42179413344.json.gz",
+  "bytes": 72972,
+  "n_markets": 10440,
+  "n_changed": 4965,
+  "changed_pct": 47.557,
+  "board_sha256": "50aa618589578149f1e210beae3fbca0dc5eeb3a8c90b3026f8a9e02bd44ef70"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 2,
-  "path": "kalshi/orderbooks_delta/dt=2026-11-06/kalshi_orderbooks_delta_20261106T080226Z_42179413344.json.gz",
-  "bytes": 41880,
+  "seq": 3,
+  "path": "kalshi/orderbooks_delta/dt=2026-11-06/kalshi_orderbooks_delta_20261106T081726Z_42179413344.json.gz",
+  "bytes": 42502,
   "n_markets": 300,
-  "n_changed": 291,
-  "changed_pct": 97.0,
-  "board_sha256": "085845ab9f90a871e7f7a956e45cffdc7da676d29cfa4cddaae162be0a9b973d"
+  "n_changed": 290,
+  "changed_pct": 96.667,
+  "board_sha256": "5ed1da60f522a64cd6ffcd779608a0baecaa9463ec1d40256ece44fefb176d99"
  },
  "by_status": {
-  "active": 10248,
-  "initialized": 96
+  "active": 10440
  },
  "by_support": {
   "BUILDABLE": 2155,
   "MODELABLE": 1397,
   "RESEARCH": 1793,
   "UNMODELABLE": 2352,
-  "UNRESOLVED": 2647
+  "UNRESOLVED": 2743
  },
  "by_family": {
   "all_nba_selections": 373,
@@ -59,7 +58,7 @@
   "period_winner": 288,
   "player_points": 199,
   "player_threes": 230,
-  "player_unknown": 788,
+  "player_unknown": 884,
   "playoff_round_reach": 30,
   "playoff_seed": 900,
   "playoffs_qualify": 60,
@@ -73,11 +72,11 @@
   "unknown": 881
  },
  "alarms": [
-  "2647 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+  "2743 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
   "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPTSPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 10248 live markets, cap 300"
+  "order books sampled by priority: 10440 live markets, cap 300"
  ],
  "alarm": true
 }
