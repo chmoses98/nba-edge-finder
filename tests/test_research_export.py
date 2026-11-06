@@ -315,3 +315,17 @@ def test_cli_and_worker_and_workflow_wiring():
     wf = (REPO / ".github" / "workflows" / "conductor.yml").read_text()
     assert wf.index("id: app_export") < wf.index("id: research_export") < wf.index("id: push")
     assert "steps.research_export.outcome == 'failure'" in wf
+
+
+def test_research_export_budget_covers_a_measured_rebuild():
+    """The worker killed the explorer rebuild at 300 s (rc 124) on every attempt while a rebuild needs ~354 s (measured 2026-11-05), so the published
+    explorer stayed at last season's research for days. The budget must leave headroom over that measurement."""
+    from nba_edge.worker.run import Worker
+
+    budget = {n: b for n, _t, b in Worker.SLOW_JOBS}["research_export"]
+    assert budget >= 2 * 354.0
+
+
+def test_limitations_do_not_claim_nothing_is_scheduled():
+    """Box scores are pulled by the worker on a schedule; the published limitation text must not say otherwise (it read 'last pulled 2026-09-19')."""
+    assert "Nothing that feeds" not in RX.A_SCHEDULE and "history-refresh" in RX.A_SCHEDULE

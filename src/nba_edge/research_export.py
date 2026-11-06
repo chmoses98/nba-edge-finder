@@ -81,8 +81,8 @@ GAME_LOG_SEASONS = 3
 
 # ------------------------------------------------------------------------------------- audit text
 # Verbatim from scratchpad/phase2/audit_nba.md (2026-10-03); the capability manifest quotes these.
-A_SCHEDULE = ("Nothing that feeds the research tables runs on a schedule; the ESPN history was last pulled 2026-09-19 "
-              "(box scores) and 2026-09-29 (shot events), Kalshi history 2026-09-19.")
+A_SCHEDULE = ("Current-season ESPN box scores are pulled by the capture worker (`nba history-refresh`, final games only, at most every 90 minutes) and the "
+              "explorer is rebuilt hourly from them; shot events were last pulled 2026-09-29 and Kalshi history 2026-09-19 (not scheduled).")
 A_TEAM_METRICS = "Only persisted per run in `slates/*/packet.json` `home/away` blocks; never as a series"
 A_PLAYER_METRICS = "stored only in packet `players[]` per run"
 A_FORM = "L3/L5 not stored; trivially derivable from game logs"
@@ -781,7 +781,7 @@ class _Ctx:
                                   coverage=f"{self.season} regular season to date", sample_size=len(inp.team_games),
                                   limitations=["Opponent-adjusted from this season's games only (strength of schedule and half the league home edge removed); with few "
                                                "games the estimate is mostly noise: read it with the games count, and prefer the blended estimate for prediction.",
-                                               A_SCHEDULE.replace("Nothing that feeds the research tables runs on a schedule; ", "")])
+                                               A_SCHEDULE])
         self.q_blend = R.quality(status="RESEARCH", source="nba_edge.team_research.blend (fitted on stored seasons)", generated_at=generated_at, production=False,
                                  data_as_of=self.hist_as_of, source_version=mk.get("version"), methodology_version=METHODOLOGY_VERSION,
                                  coverage=f"{mk.get('prior_season')} + {mk.get('season')}", sample_size=len(inp.team_games),
