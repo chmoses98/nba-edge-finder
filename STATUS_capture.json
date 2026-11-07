@@ -1,39 +1,38 @@
 {
- "last_capture_utc": "2026-11-07T07:39:04Z",
- "n_markets": 9253,
+ "last_capture_utc": "2026-11-07T07:54:04Z",
+ "n_markets": 9403,
  "n_series": 305,
- "requests": 934,
+ "requests": 935,
  "run_id": "42339484001",
  "markets_written": {
   "encoding": "delta",
-  "seq": 11,
-  "path": "kalshi/markets_delta/dt=2026-11-07/kalshi_markets_delta_20261107T073904Z_42339484001.json.gz",
-  "bytes": 26782,
-  "n_markets": 9253,
-  "n_changed": 1660,
-  "changed_pct": 17.94,
-  "board_sha256": "ca9e4c36a50b2d1c8adcdbbfc4d06db1ab92307c9d1e81d56cf8ba592193e779"
+  "seq": 12,
+  "path": "kalshi/markets_delta/dt=2026-11-07/kalshi_markets_delta_20261107T075404Z_42339484001.json.gz",
+  "bytes": 35992,
+  "n_markets": 9403,
+  "n_changed": 1547,
+  "changed_pct": 16.452,
+  "board_sha256": "d3a255703a76315a3d6017f37e884017e0523df28bf0cc0cab5e161e121641b2"
  },
  "orderbooks_written": {
   "encoding": "delta",
-  "seq": 11,
-  "path": "kalshi/orderbooks_delta/dt=2026-11-07/kalshi_orderbooks_delta_20261107T073904Z_42339484001.json.gz",
-  "bytes": 39986,
+  "seq": 12,
+  "path": "kalshi/orderbooks_delta/dt=2026-11-07/kalshi_orderbooks_delta_20261107T075404Z_42339484001.json.gz",
+  "bytes": 37626,
   "n_markets": 300,
-  "n_changed": 292,
-  "changed_pct": 97.333,
-  "board_sha256": "4a376f38e18528ec170164fb110647129e90e74cc2972759bec2aabfa7224767"
+  "n_changed": 267,
+  "changed_pct": 89.0,
+  "board_sha256": "96fe9252310e84ec5090a310c087218af26564814ebd0fdd300ed88fce749d2b"
  },
  "by_status": {
-  "active": 9240,
-  "initialized": 13
+  "active": 9403
  },
  "by_support": {
   "BUILDABLE": 1536,
-  "MODELABLE": 1010,
+  "MODELABLE": 1085,
   "RESEARCH": 1779,
   "UNMODELABLE": 2352,
-  "UNRESOLVED": 2576
+  "UNRESOLVED": 2651
  },
  "by_family": {
   "all_nba_selections": 373,
@@ -58,11 +57,11 @@
   "period_total": 527,
   "period_winner": 252,
   "player_assists": 21,
-  "player_points": 93,
+  "player_points": 128,
   "player_pra": 15,
   "player_rebounds": 24,
-  "player_threes": 110,
-  "player_unknown": 718,
+  "player_threes": 150,
+  "player_unknown": 793,
   "playoff_round_reach": 30,
   "playoff_seed": 900,
   "playoffs_qualify": 60,
@@ -76,11 +75,11 @@
   "unknown": 880
  },
  "alarms": [
-  "2576 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPRAPROT', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
+  "2651 market(s) classified UNRESOLVED across series ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPRAPROT', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']: the ontology does not describe something on the board",
   "series on the board with no ontology entry: ['KXNBA3PTPROT', 'KXNBAASTPROT', 'KXNBAAWARDFIN', 'KXNBACITYEXPAND', 'KXNBACOTM', 'KXNBADPOTM', 'KXNBAEUROPEANNOUNCE', 'KXNBAEXEC', 'KXNBAFINALSOUTCOME', 'KXNBAFIRSTTIMECHAMP', 'KXNBAFRANCHISECOST', 'KXNBAFRANCHISEOWNER', 'KXNBAGAMEHIGHSCORE', 'KXNBAH2HWINS', 'KXNBAHUSTLE', 'KXNBAMVPCHAMP', 'KXNBAONE3PT', 'KXNBAPLAYERHIGHSCORE', 'KXNBAPLAYOFFHOST', 'KXNBAPOSTASREC', 'KXNBAPOTM', 'KXNBAPRAPROT', 'KXNBAPTSPROT', 'KXNBAREBPROT', 'KXNBAROTM', 'KXNBASEEDOU', 'KXNBASJC', 'KXNBASTATAVG', 'KXNBASTATLEADER', 'KXNBATEAMMATE', 'KXNBATEAMWINSTREAK', 'KXNBATOJOINCBA', 'KXNBAWINSTREAK']"
  ],
  "notes": [
-  "order books sampled by priority: 9240 live markets, cap 300"
+  "order books sampled by priority: 9403 live markets, cap 300"
  ],
  "alarm": true
 }
