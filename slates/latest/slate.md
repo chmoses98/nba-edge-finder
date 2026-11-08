@@ -1,17 +1,17 @@
-# NBA slate 2026-11-08 — generated 2026-11-08T09:47:39Z — nba-sim-0.1.0
+# NBA slate 2026-11-08 — generated 2026-11-08T10:47:40Z — nba-sim-0.1.0
 
 _All families are RESEARCH: no betting authority. Numbers are for prospective evaluation._
 
-Market snapshot age: 3 min · injury snapshot age: 341 min (official)
+Market snapshot age: 3 min · injury snapshot age: 30 min (official)
 
 ## Coverage
 
 | support | contracts |
 |---|---:|
-| BUILDABLE | 1870 |
-| MODELABLE | 1869 |
-| RESEARCH | 104 |
-| UNRESOLVED | 1461 |
+| BUILDABLE | 1977 |
+| MODELABLE | 1907 |
+| RESEARCH | 116 |
+| UNRESOLVED | 1563 |
 
 ## Games
 
@@ -20,7 +20,7 @@ Market snapshot age: 3 min · injury snapshot age: 341 min (official)
 | PHI @ CHI | 2026-11-08T20:30:00Z | 0.300 | -8.6±16.4 | 228.7±20.4 | 0.048 | 40000 | ok |
 | LAL @ DET | 2026-11-08T23:00:00Z | 0.648 | +6.1±16.1 | 220.9±20.0 | 0.049 | 60000 | ok |
 | UTA @ MIN | 2026-11-09T00:00:00Z | 0.901 | +20.7±15.9 | 230.9±20.3 | 0.048 | 40000 | ok |
-| BKN @ DAL | 2026-11-09T00:30:00Z | 0.798 | +13.1±15.8 | 217.1±19.8 | 0.048 | 40000 | ok |
+| BKN @ DAL | 2026-11-09T00:30:00Z | 0.798 | +13.1±15.8 | 217.1±19.8 | 0.049 | 40000 | ok |
 | BOS @ MIL | 2026-11-09T01:00:00Z | 0.081 | -22.5±16.2 | 228.2±20.5 | 0.047 | 40000 | CANNOT_TRUST: official OUT injury identity unresolved: Christopher Cenac Jr. |
 | NOP @ LAC | 2026-11-09T02:00:00Z | 0.671 | +7.3±16.4 | 232.2±20.3 | 0.048 | 40000 | ok |
 | MIA @ SAC | 2026-11-09T02:00:00Z | 0.179 | -14.8±16.1 | 245.7±20.6 | 0.048 | 40000 | ok |
@@ -30,5 +30,5 @@ Market snapshot age: 3 min · injury snapshot age: 341 min (official)
 | ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
 
-Other gates: {'NO_EDGE': 3167, 'UNSUPPORTED': 1565, 'CANNOT_TRUST_INPUTS': 572}
+Other gates: {'NO_EDGE': 3311, 'UNSUPPORTED': 1679, 'CANNOT_TRUST_INPUTS': 573}
 
