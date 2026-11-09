@@ -112,6 +112,7 @@ jobs:
         env:
           JRM_CODE_REPO: ${{ github.workspace }}/code
         run: |
+          mkdir -p "$RUNNER_TEMP/snap"
           flag="--push"; [ "$DRY" = "true" ] && flag=""
           python -I snapshot_runner.py "$GITHUB_WORKSPACE/arch" $flag --scratch "$RUNNER_TEMP/snap" 2>&1 | tee "$RUNNER_TEMP/snapshot.log" | tail -40
       - name: Independent integrity check
