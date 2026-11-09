@@ -80,6 +80,17 @@ class Data:
     kinds: dict[str, int] = field(default_factory=dict)
 
 
+def _pace_expected(ctx: Any) -> float | None:
+    """Expected possessions for the game from a game forecast's context. The pregame stage records ``home_exp_pace`` / ``away_exp_pace`` (and has never
+    recorded a key called ``pace_expected``), so the pace diagnostic read NO_DATA from the first day. The game has one pace; the two sides are averaged."""
+    if not isinstance(ctx, dict):
+        return None
+    if ctx.get("pace_expected") is not None:
+        return float(ctx["pace_expected"])
+    v = [float(ctx[k]) for k in ("home_exp_pace", "away_exp_pace") if ctx.get(k) is not None]
+    return float(np.mean(v)) if v else None
+
+
 def _days(root: str, kind: str, lo: str | None) -> list[str]:
     ds = store.days(root, kind)
     return [d for d in ds if lo is None or d >= lo]
@@ -167,12 +178,16 @@ def load(archive: str, now: datetime, window: int | None = None, day_et: str | N
                 rows.append({"game_id": r["game_id"], "start": r["start"], "gen": r["gen"], "home": r.get("home"), "away": r.get("away"),
                              "team": t["team"], "mean": t["mean"], "lo": t.get("lo", 0), "probs": t.get("probs"),
                              "rho": r.get("rho"), "model_version": r.get("model_version"),
-                             "pace_expected": ((r.get("context") or {}).get("pace_expected"))})
+                             "pace_expected": _pace_expected(r.get("context"))})
         D.game_fc = pd.DataFrame(rows)
     to = pd.DataFrame(store.read(archive, "team_outcomes", _days(archive, "team_outcomes", lo_utc)))
     D.kinds["team_outcomes"] = int(len(to))
     if len(to):
-        to = to.drop_duplicates(["game_id", "team"], keep="first")
+        # ESPN revises box scores after the fact (2026-10-22: UTA possessions 99.379 -> 98.419, one player's FGA). The archive keeps every observation; the
+        # NEWEST one is the authoritative statistic, so that is what is scored, and the number of revised team-games is reported.
+        to = to.sort_values("observed_utc", kind="stable") if "observed_utc" in to.columns else to
+        q["team_outcomes_revised"] = int(to.duplicated(["game_id", "team"], keep="last").sum())
+        to = to.drop_duplicates(["game_id", "team"], keep="last")
         to["start"] = _ts(to["game_start_utc"])
         to = to[in_window(to["start"])]
     D.team_out = to

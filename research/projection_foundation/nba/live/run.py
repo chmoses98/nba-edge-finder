@@ -351,6 +351,15 @@ def stage_daily(a, now: datetime) -> dict:
         _write_json(os.path.join(base, f"{name}_latest.json"), d)
     from ..paper import expression as EX
     _write_json(os.path.join(base, "expressions_latest.json"), EX.evaluate_expressions(a.archive))
+    # Postgame diagnostics (research only; rewritable view under paper/nba/postgame/). Never allowed to fail the daily stage.
+    try:
+        from ..paper import postgame as PG
+        pg = PG.build(a.archive, now, window=None)
+        PG.write(a.archive, pg)
+        out["postgame"] = {"n_games": pg["n_games"], "findings": [(f["id"], f["status"]) for f in pg["findings"]]}
+    except Exception as e:  # noqa: BLE001
+        print(f"daily: postgame diagnostics failed ({type(e).__name__}: {e})")
+        out["postgame"] = {"error": f"{type(e).__name__}: {e}"[:200]}
     summ = os.environ.get("GITHUB_STEP_SUMMARY")
     if summ:
         with open(summ, "a") as f:

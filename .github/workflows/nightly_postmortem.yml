@@ -1,0 +1,58 @@
+name: nightly-postmortem
+# RESEARCH_ONLY. Read-only all-market audit of the previous ET slate (+ the day before, to pick up late settlements) and paper-parlay
+# evaluation. Reads the data-archive branch, writes ONLY a workflow artifact: no push, no orders, no archive writes.
+on:
+  schedule:
+    # 11:40 UTC = 06:40 EST / 07:40 EDT. GitHub cron is UTC-only; the last NBA games finish ~04:30 UTC and settle by ~05:00 UTC, so this
+    # is after settlement in both halves of the year. The *dates* below are computed in America/New_York, so DST never shifts the slate.
+    - cron: "40 11 * * *"
+  workflow_dispatch:
+    inputs:
+      dates:
+        description: "Space-separated ET dates (default: yesterday and the day before)"
+        required: false
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Fetch the archive evidence (sparse; slates and app exports are not needed)
+        run: |
+          git fetch --depth 1 origin data-archive
+          mkdir -p "$RUNNER_TEMP/arch"
+          git archive origin/data-archive manifest.jsonl contracts predictions settlements boxscores context kalshi | tar -x -C "$RUNNER_TEMP/arch"
+      - name: Audit every projected market
+        env:
+          INPUT_DATES: ${{ github.event.inputs.dates }}   # via env, never interpolated into the script
+        run: |
+          set -o pipefail
+          DATES="$INPUT_DATES"
+          case "$DATES" in *[!0-9\ -]*) echo "bad dates input"; exit 2;; esac
+          if [ -z "$DATES" ]; then DATES="$(TZ=America/New_York date -d 'yesterday' +%F) $(TZ=America/New_York date -d '2 days ago' +%F)"; fi
+          ARGS=""; for d in $DATES; do ARGS="$ARGS --date $d"; done
+          # exit 3 == BLOCKED (eligible inputs but nothing graded): the job fails loudly instead of printing PASS
+          rc=0
+          nba audit-markets --archive "$RUNNER_TEMP/arch" $ARGS --out audit-out || rc=$?
+          for f in audit-out/*/report.md; do [ -f "$f" ] && cat "$f" >> "$GITHUB_STEP_SUMMARY"; done
+          exit $rc
+      - name: Paper parlay evaluation (no-op until tickets exist)
+        if: always()
+        run: |
+          nba parlay-paper eval --archive "$RUNNER_TEMP/arch" --out docs/parlay_paper || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightly-postmortem
+          path: |
+            audit-out/**/report.md
+            audit-out/**/report.json
+            audit-out/**/universe.csv
+            docs/parlay_paper/parlay_eval.json
