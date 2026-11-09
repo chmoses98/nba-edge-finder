@@ -69,3 +69,15 @@ or matched historical validation of this candidate yet.
 `pytest -q tests/test_injury_impact.py tests/test_features_pit.py`
 provides fixture-based leakage / identification tests but is NOT equivalent to
 the historical holdout above.
+
+## Held-out result (2026-11-09, run on the branch merged with main; production authority NONE)
+
+Frozen protocol from `scripts/injury_lineup_holdout.py`: fit on 2024-25 certified stints only (1,207 games, 35,352 stints), evaluate the untouched 2025-26 regular season at T-60 with the official report as known then (2,444 team-games). Raw output: `docs/research/injury_lineup_holdout_2025-26_result.json`.
+
+| | baseline RMSE (PPP) | candidate RMSE | gain (95% game-clustered CI) |
+|---|---:|---:|---|
+| all team-games | 0.11562 | 0.11613 | −0.00051 [−0.00136, +0.00036] |
+| affected (injury-touched) | 0.11609 | 0.11661 | −0.00053 [−0.00134, +0.00037] |
+| depleted (oracle minutes, upper bound) | 0.11898 | 0.11969 | −0.00071 |
+
+Offense-only and defense-only ablations also fail (gains −0.00048 and −0.00009). **Decision: REJECT_FOR_PRODUCTION** — the candidate does not beat the team-only baseline even with oracle minutes. Keep `injury_response_mode="off"`; do not merge to promote. The merge of main resolved two conflicts by keeping main's `enforce_confirmed_out` (already equivalent).

@@ -1,0 +1,115 @@
+{
+ "training": "2024-25 certified stints only",
+ "holdout": "2025-26 regular season",
+ "oracle_minutes_warning": "Actual game minutes are NOT available pregame. This is an upper-bound test.",
+ "n_fit_games": 1207,
+ "n_fit_stints": 35352,
+ "n_fit_players": 517,
+ "baseline": {
+  "n": 2462,
+  "mae": 0.09249452945399872,
+  "rmse": 0.11592607903987251
+ },
+ "lineup": {
+  "n": 2462,
+  "mae": 0.09377135421468619,
+  "rmse": 0.11735016409947442
+ },
+ "depleted_baseline": {
+  "n": 1346,
+  "mae": 0.09528573989035305,
+  "rmse": 0.11897940921141245
+ },
+ "depleted_lineup": {
+  "n": 1346,
+  "mae": 0.09627516072445966,
+  "rmse": 0.11968965538474115
+ },
+ "rmse_gain": -0.0014240850596019122,
+ "t60_pit": {
+  "baseline": {
+   "n": 2444,
+   "mae": 0.09230190526384371,
+   "rmse": 0.11562440934928081
+  },
+  "candidate": {
+   "n": 2444,
+   "mae": 0.0929009987330938,
+   "rmse": 0.11613437641388143
+  },
+  "affected_baseline": {
+   "n": 2330,
+   "mae": 0.09273314833724189,
+   "rmse": 0.11608511705718944
+  },
+  "affected_candidate": {
+   "n": 2330,
+   "mae": 0.09336152248717282,
+   "rmse": 0.11661389381108947
+  },
+  "overall_rmse_gain": -0.0005099670646006166,
+  "component_ablations": {
+   "offense_only": {
+    "all": {
+     "n": 2444,
+     "mae": 0.0928048574928588,
+     "rmse": 0.11610760282812391
+    },
+    "affected": {
+     "n": 2330,
+     "mae": 0.09325746265983123,
+     "rmse": 0.11658376971535517
+    },
+    "rmse_gain_vs_baseline": -0.00048319347884309694,
+    "affected_rmse_gain_vs_baseline": -0.0004986526581657325,
+    "gain_ci95_game_clustered": [
+     -0.001138179791212358,
+     0.00015725922876456643
+    ],
+    "affected_gain_ci95_game_clustered": [
+     -0.0011386521538919476,
+     0.00018395361757999638
+    ],
+    "selection_status": "DIAGNOSTIC_ONLY_NOT_PROMOTABLE"
+   },
+   "defense_only": {
+    "all": {
+     "n": 2444,
+     "mae": 0.09253879142012968,
+     "rmse": 0.11571505408191518
+    },
+    "affected": {
+     "n": 2330,
+     "mae": 0.09298596762809568,
+     "rmse": 0.11618197738789685
+    },
+    "rmse_gain_vs_baseline": -9.064473263437067e-05,
+    "affected_rmse_gain_vs_baseline": -9.686033070741007e-05,
+    "gain_ci95_game_clustered": [
+     -0.0006220480977343849,
+     0.0004494219784653547
+    ],
+    "affected_gain_ci95_game_clustered": [
+     -0.0006869350867430961,
+     0.0004959232410314044
+    ],
+    "selection_status": "DIAGNOSTIC_ONLY_NOT_PROMOTABLE"
+   }
+  },
+  "overall_gain_ci95_game_clustered": [
+   -0.0013592057475143584,
+   0.00035824720321369545
+  ],
+  "affected_rmse_gain": -0.0005287767539000343,
+  "affected_gain_ci95_game_clustered": [
+   -0.0013416517760585962,
+   0.00036751717876677
+  ],
+  "status": "REJECT_OR_INSUFFICIENT",
+  "asof": "latest certified official NBA injury report strictly before tip-minus-60",
+  "identity": "raw official names resolved exclusively against strictly earlier box scores; retrospective backfill IDs ignored",
+  "minutes": "trailing 10 team games, OUT/DOUBTFUL zeroed, minutes redistributed; no actual current minutes"
+ },
+ "depleted_rmse_gain": -0.0007102461733286963,
+ "decision": "REJECT_FOR_PRODUCTION"
+}
