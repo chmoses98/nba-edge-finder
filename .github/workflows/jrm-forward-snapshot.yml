@@ -1,0 +1,121 @@
+name: jrm-forward-snapshot
+# JRM / stat-refit pre-tip snapshots on ordinary compute (replaces the Claude-session trigger). RESEARCH ONLY: authority none, no secrets, no paid services, no LLM.
+#   * Runs research/projection_foundation/minutes_rebuild/snapshot_runner.py from branch claude/nba-minutes-jrm (the same code the Claude trigger ran: fast-forward head, clean tree).
+#   * Appends ONE snapshot (+ manifest line + eligibility register line) to the orphan branch `minutes-shadow-archive`; the push time on GitHub is the independent clock.
+#     Nothing archived is ever modified; .github/scripts/jrm_verify_snapshot.py re-checks that independently after the push and the job fails otherwise.
+#   * Schedule = the Claude trigger's five slots (UTC) + a backup 27 min later.  GitHub delivers schedule events late and sometimes not at all, so a late run is simply recorded
+#     at its real time (rows of games already started are never archived and the audit excludes anything within 5 min of tip); a duplicate firing within 40 min is skipped.
+#   * CUTOVER GATE: scheduled runs do nothing until `ci/GHA_SNAPSHOT_ENABLED` exists on minutes-shadow-archive (so Claude and this workflow never write concurrently).
+#     workflow_dispatch always runs (recovery / verification).  pull_request runs a dry run: full pipeline, local commits only, nothing pushed.
+on:
+  schedule:
+    - cron: "35 15 * * *"
+    - cron: "2 16 * * *"
+    - cron: "35 21 * * *"
+    - cron: "2 22 * * *"
+    - cron: "35 22 * * *"
+    - cron: "2 23 * * *"
+    - cron: "5 0 * * *"
+    - cron: "32 0 * * *"
+    - cron: "35 1 * * *"
+    - cron: "2 2 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "dry run (nothing pushed)"
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - ".github/workflows/jrm-forward-snapshot.yml"
+      - ".github/scripts/jrm_verify_snapshot.py"
+
+permissions:
+  contents: write   # only used to push new files to minutes-shadow-archive
+
+concurrency:
+  group: jrm-forward-snapshot
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash -eo pipefail {0}
+
+env:
+  PY: "3.13"
+  PIP_PINS: "numpy==2.5.3 pandas==3.0.5 scipy==1.18.1 scikit-learn==1.9.1 lightgbm==4.7.0 pyarrow==26.0.0 pytest==9.1.1 pyyaml==6.0.1 httpx==0.28.1 pypdf==6.17.0 pydantic==2.13.5 orjson==3.13.0"
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DRY: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+      GIT_AUTHOR_NAME: github-actions[bot]
+      GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+      GIT_COMMITTER_NAME: github-actions[bot]
+      GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+    steps:
+      - name: Model code (claude/nba-minutes-jrm, full history, the audit resolves every archived code_commit)
+        uses: actions/checkout@v4
+        with:
+          ref: claude/nba-minutes-jrm
+          fetch-depth: 0
+          path: code
+          persist-credentials: false
+      - name: Archive branch (full history, the branch commit time is the audit clock)
+        uses: actions/checkout@v4
+        with:
+          ref: minutes-shadow-archive
+          fetch-depth: 0
+          path: arch
+      - name: Gate and duplicate guard
+        id: gate
+        run: |
+          go=true; why=""
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if [ ! -f arch/ci/GHA_SNAPSHOT_ENABLED ]; then go=false; why="cutover gate closed (ci/GHA_SNAPSHOT_ENABLED absent)"; fi
+            last=$(git -C arch log -1 --format=%ct -- jrm_v2_uniform)
+            if [ "$go" = true ] && [ $(( $(date +%s) - ${last:-0} )) -lt 2400 ]; then go=false; why="a snapshot was archived <40 min ago"; fi
+          fi
+          echo "go=$go" >> "$GITHUB_OUTPUT"
+          echo "prev=$(git -C arch rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "### JRM snapshot: go=$go ${why}" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.go == 'true'
+        with: { python-version: "${{ env.PY }}" }
+      - name: Install (pinned)
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          pip install -q $PIP_PINS
+          pip install -q -e code --no-deps
+      - name: Cache the ESPN box-score mirror
+        if: steps.gate.outputs.go == 'true'
+        uses: actions/cache@v4
+        with:
+          path: code/research/projection_foundation/.cache/hoopr
+          key: pf-nba-hoopr-${{ github.run_id }}
+          restore-keys: pf-nba-hoopr-
+      - name: Snapshot (feed -> JRM minutes -> engine x2 -> archive -> commit/push -> audit -> commit/push)
+        if: steps.gate.outputs.go == 'true'
+        working-directory: code/research/projection_foundation/minutes_rebuild
+        env:
+          JRM_CODE_REPO: ${{ github.workspace }}/code
+        run: |
+          flag="--push"; [ "$DRY" = "true" ] && flag=""
+          python -I snapshot_runner.py "$GITHUB_WORKSPACE/arch" $flag --scratch "$RUNNER_TEMP/snap" 2>&1 | tee "$RUNNER_TEMP/snapshot.log" | tail -40
+      - name: Independent integrity check
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          flag=""; [ "$DRY" = "true" ] && flag="--local"
+          python code/.github/scripts/jrm_verify_snapshot.py arch "${{ steps.gate.outputs.prev }}" $flag | tee "$RUNNER_TEMP/verify.json"
+          { echo '```json'; cat "$RUNNER_TEMP/verify.json"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.gate.outputs.go == 'true'
+        with:
+          name: jrm-snapshot-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/snapshot.log
+            ${{ runner.temp }}/verify.json
+          retention-days: 30
+          if-no-files-found: ignore
