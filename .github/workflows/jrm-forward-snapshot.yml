@@ -56,6 +56,12 @@ jobs:
       GIT_COMMITTER_NAME: github-actions[bot]
       GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
     steps:
+      - name: Workflow's own scripts (independent verifier; NOT taken from the model-code branch)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+          path: ci
+          persist-credentials: false
       - name: Model code (claude/nba-minutes-jrm, full history, the audit resolves every archived code_commit)
         uses: actions/checkout@v4
         with:
@@ -119,7 +125,7 @@ jobs:
         if: steps.gate.outputs.go == 'true'
         run: |
           flag=""; [ "$DRY" = "true" ] && flag="--local"
-          python code/.github/scripts/jrm_verify_snapshot.py arch "${{ steps.gate.outputs.prev }}" $flag | tee "$RUNNER_TEMP/verify.json"
+          python ci/.github/scripts/jrm_verify_snapshot.py arch "${{ steps.gate.outputs.prev }}" $flag | tee "$RUNNER_TEMP/verify.json"
           { echo '```json'; cat "$RUNNER_TEMP/verify.json"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always() && steps.gate.outputs.go == 'true'
