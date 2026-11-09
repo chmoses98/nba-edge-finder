@@ -1,17 +1,17 @@
 # Kalshi NBA discovery summary
 
-- discovered_at: `2026-11-08T11:26:09Z`  ontology: `2026.09.18.3`  requests: 634
-- series enumerated: 15935; NBA series: 305; markets scanned: 12292
+- discovered_at: `2026-11-09T10:32:06Z`  ontology: `2026.09.18.3`  requests: 625
+- series enumerated: 15940; NBA series: 306; markets scanned: 12204
 
 ## Support states (coverage invariant)
 
 | support | markets |
 |---|---:|
-| MODELABLE | 2008 |
-| BUILDABLE | 2288 |
-| RESEARCH | 1864 |
+| MODELABLE | 2148 |
+| BUILDABLE | 2221 |
+| RESEARCH | 1826 |
 | UNMODELABLE | 2352 |
-| UNRESOLVED | 3780 |
+| UNRESOLVED | 3657 |
 
 ## NBA series
 
@@ -34,49 +34,49 @@
 | KXMVENBAMULTIGAMEEXTENDED | parlay_combo | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXMVENBASINGLEGAME | parlay_combo | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA | season_champion | RESEARCH | quadratic_with_maker_fees/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
-| KXNBA1H | period_winner | BUILDABLE | quadratic/1 | 0 | 45 | 0 | 0 | structured | {'high': 45} |
-| KXNBA1HSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 133 | 0 | 0 | greater | {'high': 133} |
-| KXNBA1HTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 154 | 0 | 0 | greater | {'high': 154} |
-| KXNBA1HTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 133 | 0 | 0 | greater | {'high': 133} |
+| KXNBA1H | period_winner | BUILDABLE | quadratic/1 | 0 | 42 | 0 | 0 | structured | {'high': 42} |
+| KXNBA1HSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 152 | 0 | 0 | greater | {'high': 152} |
+| KXNBA1HTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 176 | 0 | 0 | greater | {'high': 176} |
+| KXNBA1HTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 152 | 0 | 0 | greater | {'high': 152} |
 | KXNBA1HWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1Q | period_winner | BUILDABLE | quadratic/1 | 0 | 45 | 0 | 0 | structured | {'high': 45} |
-| KXNBA1QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 91 | 0 | 0 | greater | {'high': 91} |
+| KXNBA1Q | period_winner | BUILDABLE | quadratic/1 | 0 | 42 | 0 | 0 | structured | {'high': 42} |
+| KXNBA1QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 104 | 0 | 0 | greater | {'high': 104} |
 | KXNBA1QTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA1QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 91 | 0 | 0 | greater | {'high': 91} |
+| KXNBA1QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 104 | 0 | 0 | greater | {'high': 104} |
 | KXNBA1QWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA1STTEAM | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 39 | 0 | 0 | structured | {'low': 39} |
 | KXNBA1STTEAMDEF | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 41 | 0 | 0 | structured | {'low': 41} |
-| KXNBA2D | player_double_double | BUILDABLE | quadratic/1 | 0 | 71 | 0 | 0 | greater | {'high': 71} |
-| KXNBA2H | period_winner | BUILDABLE | quadratic/1 | 0 | 45 | 0 | 0 | structured | {'high': 45} |
-| KXNBA2HSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 133 | 0 | 0 | greater | {'high': 133} |
+| KXNBA2D | player_double_double | BUILDABLE | quadratic/1 | 0 | 61 | 0 | 0 | greater | {'high': 61} |
+| KXNBA2H | period_winner | BUILDABLE | quadratic/1 | 0 | 42 | 0 | 0 | structured | {'high': 42} |
+| KXNBA2HSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 152 | 0 | 0 | greater | {'high': 152} |
 | KXNBA2HTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA2HTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 133 | 0 | 0 | greater | {'high': 133} |
+| KXNBA2HTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 152 | 0 | 0 | greater | {'high': 152} |
 | KXNBA2HWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA2KCOVER | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA2NDTEAM | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 55 | 0 | 0 | structured | {'low': 55} |
 | KXNBA2NDTEAMDEF | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 51 | 0 | 0 | structured | {'low': 51} |
-| KXNBA2Q | period_winner | BUILDABLE | quadratic/1 | 0 | 45 | 0 | 0 | structured | {'high': 45} |
-| KXNBA2QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 91 | 0 | 0 | greater | {'high': 91} |
+| KXNBA2Q | period_winner | BUILDABLE | quadratic/1 | 0 | 42 | 0 | 0 | structured | {'high': 42} |
+| KXNBA2QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 104 | 0 | 0 | greater | {'high': 104} |
 | KXNBA2QTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA2QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 91 | 0 | 0 | greater | {'high': 91} |
 | KXNBA2QWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA30COMEBACK | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3D | player_triple_double | BUILDABLE | quadratic/1 | 0 | 29 | 0 | 0 | greater | {'high': 29} |
+| KXNBA3D | player_triple_double | BUILDABLE | quadratic/1 | 0 | 21 | 0 | 0 | greater | {'high': 21} |
 | KXNBA3PEAT | champion_special | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3PT | player_threes | MODELABLE | quadratic/1 | 15 | 333 | 0 | 0 | greater | {'high': 348} |
+| KXNBA3PT | player_threes | MODELABLE | quadratic/1 | 0 | 356 | 0 | 0 | greater | {'high': 356} |
 | KXNBA3PTALLGAMES | season_player_streak | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA3PTCONTEST | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA3PTPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 333 | 0 | 0 | greater | {'high': 333} |
-| KXNBA3Q | period_winner | BUILDABLE | quadratic/1 | 0 | 45 | 0 | 0 | structured | {'high': 45} |
-| KXNBA3QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 91 | 0 | 0 | greater | {'high': 91} |
+| KXNBA3PTPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 356 | 0 | 0 | greater | {'high': 356} |
+| KXNBA3Q | period_winner | BUILDABLE | quadratic/1 | 0 | 42 | 0 | 0 | structured | {'high': 42} |
+| KXNBA3QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 104 | 0 | 0 | greater | {'high': 104} |
 | KXNBA3QTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA3QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 91 | 0 | 0 | greater | {'high': 91} |
 | KXNBA3QWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBA3RDTEAM | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 55 | 0 | 0 | structured | {'low': 55} |
-| KXNBA4Q | period_winner | BUILDABLE | quadratic/1 | 0 | 45 | 0 | 0 | structured | {'high': 45} |
+| KXNBA4Q | period_winner | BUILDABLE | quadratic/1 | 0 | 42 | 0 | 0 | structured | {'high': 42} |
 | KXNBA4QSPREAD | period_spread | BUILDABLE | quadratic/1 | 0 | 91 | 0 | 0 | greater | {'high': 91} |
 | KXNBA4QTEAMTOTAL | period_team_total | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBA4QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 78 | 0 | 0 | greater | {'high': 78} |
+| KXNBA4QTOTAL | period_total | BUILDABLE | quadratic/1 | 0 | 65 | 0 | 0 | greater | {'high': 65} |
 | KXNBA4QWINNER | period_winner | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAALLSTAR | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAALLSTARGAME | all_star_events | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
@@ -84,13 +84,13 @@
 | KXNBAALLSTARS | all_nba_selections | UNMODELABLE | quadratic/1 | 0 | 62 | 0 | 0 | structured | {'low': 62} |
 | KXNBAAPOLOGY | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAASSTARTERS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAAST | player_assists | MODELABLE | quadratic/1 | 0 | 272 | 0 | 0 | greater | {'high': 272} |
-| KXNBAASTPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 272 | 0 | 0 | greater | {'high': 272} |
+| KXNBAAST | player_assists | MODELABLE | quadratic/1 | 0 | 191 | 0 | 0 | greater | {'high': 191} |
+| KXNBAASTPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 191 | 0 | 0 | greater | {'high': 191} |
 | KXNBAATLANTIC | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
 | KXNBAATTEND | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAAWARDFIN | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 303 | 0 | 0 | custom,structured | {'low': 303} |
 | KXNBABENCHPTS | team_bench_points | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBABLK | player_blocks | BUILDABLE | quadratic/1 | 0 | 59 | 0 | 0 | greater | {'high': 59} |
+| KXNBABLK | player_blocks | BUILDABLE | quadratic/1 | 0 | 28 | 0 | 0 | greater | {'high': 28} |
 | KXNBACELEBRITY3PT | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBACELEBRITYGAME | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBACENTRAL | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
@@ -139,8 +139,8 @@
 | KXNBAEAST1SEED | playoff_seed | RESEARCH | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
 | KXNBAECFQUAL | playoff_round_reach | RESEARCH | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
 | KXNBAEFINMVP | awards | UNMODELABLE | quadratic/1 | 0 | 50 | 0 | 0 | structured | {'low': 50} |
-| KXNBAESCALATOR3PT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 11 | 0 | 0 | custom | {'high': 11} |
-| KXNBAESCALATORPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 12 | 0 | 0 | custom | {'high': 12} |
+| KXNBAESCALATOR3PT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAESCALATORPTS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAEUROPEANNOUNCE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 5 | 0 | 0 | custom | {'low': 5} |
 | KXNBAEXEC | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 56 | 0 | 0 | custom | {'low': 56} |
 | KXNBAEXTENSION | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
@@ -160,7 +160,7 @@
 | KXNBAFRANCHISECOST | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 7 | 0 | 0 | greater | {'low': 7} |
 | KXNBAFRANCHISEOWNER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 3 | 0 | 0 | custom | {'low': 3} |
 | KXNBAFTM | player_free_throws | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAGAME | game_winner | MODELABLE | quadratic_with_maker_fees/1 | 0 | 70 | 0 | 0 | structured | {'high': 70} |
+| KXNBAGAME | game_winner | MODELABLE | quadratic_with_maker_fees/1 | 0 | 64 | 0 | 0 | structured | {'high': 64} |
 | KXNBAGAME7 | series_winner | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAGAMEHIGHSCORE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 9 | 0 | 0 | greater_or_equal | {'low': 9} |
 | KXNBAGAMES | series_winner | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
@@ -169,6 +169,7 @@
 | KXNBAH2HBENCHPTS | h2h_team_stat | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAH2HPRA | h2h_player_stat | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAH2HPTS | h2h_player_stat | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
+| KXNBAH2HPTSMARGIN | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAH2HTEAM3PT | h2h_team_stat | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAH2HWINS | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
 | KXNBAHALLOFFAME | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 28 | 0 | 0 | custom | {'low': 28} |
@@ -199,7 +200,7 @@
 | KXNBANHL | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBANORTHWEST | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
 | KXNBAONE3PT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 6 | 0 | 0 | greater | {'low': 6} |
-| KXNBAOT | game_overtime | BUILDABLE | quadratic/1 | 0 | 15 | 0 | 0 | greater | {'high': 15} |
+| KXNBAOT | game_overtime | BUILDABLE | quadratic/1 | 0 | 14 | 0 | 0 | greater | {'high': 14} |
 | KXNBAOVERTIME | game_overtime | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAPA | player_pa | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAPACIFIC | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
@@ -221,18 +222,18 @@
 | KXNBAPOSTASREC | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
 | KXNBAPOTM | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 120 | 0 | 0 | structured | {'low': 120} |
 | KXNBAPR | player_pr | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPRA | player_pra | BUILDABLE | quadratic/1 | 3 | 221 | 0 | 0 | greater | {'high': 224} |
-| KXNBAPRAPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 221 | 0 | 0 | greater | {'high': 221} |
+| KXNBAPRA | player_pra | BUILDABLE | quadratic/1 | 1 | 159 | 0 | 0 | greater | {'high': 160} |
+| KXNBAPRAPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 160 | 0 | 0 | greater | {'high': 160} |
 | KXNBAPREPACK2ML | parlay_combo | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAPREPACK3ML | parlay_combo | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPTS | player_points | MODELABLE | quadratic/1 | 19 | 276 | 0 | 0 | greater | {'high': 295} |
+| KXNBAPTS | player_points | MODELABLE | quadratic/1 | 0 | 314 | 0 | 0 | greater | {'high': 314} |
 | KXNBAPTSALLGAMES | season_player_streak | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBAPTSLEADER | game_points_leader | RESEARCH | quadratic/1 | 0 | 79 | 0 | 0 | structured | {'high': 79} |
-| KXNBAPTSPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 19 | 276 | 0 | 0 | greater | {'high': 295} |
+| KXNBAPTSLEADER | game_points_leader | RESEARCH | quadratic/1 | 0 | 47 | 0 | 0 | structured | {'high': 47} |
+| KXNBAPTSPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 314 | 0 | 0 | greater | {'high': 314} |
 | KXNBARA | player_ra | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBARACE | game_race_to | RESEARCH | quadratic/1 | 0 | 90 | 0 | 0 | custom | {'high': 90} |
-| KXNBAREB | player_rebounds | MODELABLE | quadratic/1 | 7 | 316 | 0 | 0 | greater | {'high': 323} |
-| KXNBAREBPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 7 | 316 | 0 | 0 | greater | {'high': 323} |
+| KXNBARACE | game_race_to | RESEARCH | quadratic/1 | 0 | 84 | 0 | 0 | custom | {'high': 84} |
+| KXNBAREB | player_rebounds | MODELABLE | quadratic/1 | 0 | 323 | 0 | 0 | greater | {'high': 323} |
+| KXNBAREBPROT | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 323 | 0 | 0 | greater | {'high': 323} |
 | KXNBARECORD | season_record | RESEARCH | quadratic/1 | 0 | 60 | 0 | 0 | structured | {'low': 60} |
 | KXNBARELOCATION | franchise_business | UNMODELABLE | quadratic/1 | 0 | 11 | 0 | 0 | custom | {'low': 11} |
 | KXNBARETIRE | transactions | UNMODELABLE | quadratic/1 | 0 | 20 | 0 | 0 | structured | {'low': 20} |
@@ -269,14 +270,14 @@
 | KXNBASOUTHEAST | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
 | KXNBASOUTHWEST | division_winner | RESEARCH | quadratic/1 | 0 | 5 | 0 | 0 | structured | {'low': 5} |
 | KXNBASPORTSMANSHIP | awards | UNMODELABLE | quadratic/1 | 0 | 100 | 0 | 0 | structured | {'low': 100} |
-| KXNBASPREAD | game_spread | MODELABLE | quadratic_with_maker_fees/1 | 0 | 231 | 0 | 0 | greater | {'high': 231} |
+| KXNBASPREAD | game_spread | MODELABLE | quadratic_with_maker_fees/1 | 0 | 297 | 0 | 0 | greater | {'high': 297} |
 | KXNBASTADIUM | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
 | KXNBASTAKESALE | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
 | KXNBASTARTERS | starting_lineup | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBASTATAVG | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 188 | 0 | 0 | greater_or_equal | {'low': 188} |
 | KXNBASTATLEADER | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 692 | 0 | 0 | structured | {'low': 692} |
-| KXNBASTL | player_steals | BUILDABLE | quadratic/1 | 0 | 125 | 0 | 0 | greater | {'high': 125} |
-| KXNBASTOCK | player_stocks | BUILDABLE | quadratic/1 | 0 | 38 | 0 | 0 | greater | {'high': 38} |
+| KXNBASTL | player_steals | BUILDABLE | quadratic/1 | 0 | 56 | 0 | 0 | greater | {'high': 56} |
+| KXNBASTOCK | player_stocks | BUILDABLE | quadratic/1 | 0 | 19 | 0 | 0 | greater | {'high': 19} |
 | KXNBASTOCKS | player_stocks | BUILDABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBASUMMER | summer_league_season | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBASUMMER1HSPREAD | summer_league_spread | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
@@ -292,13 +293,13 @@
 | KXNBATEAMANNOUNCE | transactions | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBATEAMMATE | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 74 | 0 | 0 | structured | {'low': 74} |
 | KXNBATEAMSALE | franchise_business | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | structured | {'low': 1} |
-| KXNBATEAMTOTAL | team_total | MODELABLE | quadratic/1 | 0 | 266 | 0 | 0 | greater | {'high': 266} |
+| KXNBATEAMTOTAL | team_total | MODELABLE | quadratic/1 | 0 | 342 | 0 | 0 | greater | {'high': 342} |
 | KXNBATEAMWINSTREAK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 30 | 0 | 0 | structured | {'low': 30} |
 | KXNBATOJOINCBA | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 25 | 0 | 0 | custom,structured | {'medium': 25} |
 | KXNBATOP3 | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBATOP5ROTY | awards | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBATOPPICK | draft | UNMODELABLE | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
-| KXNBATOTAL | game_total | MODELABLE | quadratic_with_maker_fees/1 | 0 | 203 | 0 | 0 | greater | {'high': 203} |
+| KXNBATOTAL | game_total | MODELABLE | quadratic_with_maker_fees/1 | 0 | 261 | 0 | 0 | greater | {'high': 261} |
 | KXNBATRADE | transactions | UNMODELABLE | quadratic/1 | 0 | 46 | 0 | 0 | structured | {'medium': 46} |
 | KXNBAUNBEATEN | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAUPSET | series_props | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
@@ -307,7 +308,7 @@
 | KXNBAWEST1SEED | playoff_seed | RESEARCH | quadratic/1 | 0 | 15 | 0 | 0 | structured | {'low': 15} |
 | KXNBAWFINMVP | awards | UNMODELABLE | quadratic/1 | 0 | 50 | 0 | 0 | structured | {'low': 50} |
 | KXNBAWHATTEND | non_basketball_or_offcourt | UNMODELABLE | quadratic/1 | 0 | 1 | 0 | 0 | None | {'low': 1} |
-| KXNBAWINMARGIN | game_win_margin | BUILDABLE | quadratic/1 | 0 | 56 | 0 | 0 | custom | {'high': 56} |
+| KXNBAWINMARGIN | game_win_margin | BUILDABLE | quadratic/1 | 0 | 72 | 0 | 0 | custom | {'high': 72} |
 | KXNBAWINRECORD | season_record | RESEARCH | quadratic/1 | 0 | 0 | 0 | 0 |  | {} |
 | KXNBAWINS | season_wins | RESEARCH | quadratic/1 | 0 | 312 | 0 | 0 | greater_or_equal | {'low': 312} |
 | KXNBAWINSTREAK | UNRESOLVED | UNRESOLVED | quadratic/1 | 0 | 6 | 0 | 0 | greater_or_equal | {'low': 6} |
@@ -373,78 +374,78 @@
 - sample fields: `{"ticker": "KXNBA-27-WAS", "event_ticker": "KXNBA-27", "market_type": "binary", "title": "Will Washington win the 2027 Pro Basketball Finals?", "yes_sub_title": "Washington", "no_sub_title": "Washington", "strike_type": "structured", "custom_strike": {"basketball_team": "0464e75c-8bc8-4f18-9ee2-577832b889d6"}, "status": "active", "open_time": "2026-06-14T08:00:00Z", "close_time": "2029-07-30T14:00:00Z", "expected_expiration_time": "2027-07-31T14:00:00Z", "result": "", "rules_primary": "If Washington wins the 2027 Pro Basketball Finals, then the market resolves to Yes."}`
 
 ### KXNBA1H — NBA 1st Half Winner
-- (15) Tie in the #st half
-- (4) NAME wins the #st half
-- (2) Dallas wins the #st half
-- (2) Detroit wins the #st half
-- (2) NAME L wins the #st half
-- (1) Phoenix wins the #st half
-- (1) Houston wins the #st half
-- (1) Denver wins the #st half
-- samples: KXNBA1H-26NOV09NOPGSW-TIE, KXNBA1H-26NOV09NOPGSW-NOP, KXNBA1H-26NOV09NOPGSW-GSW, KXNBA1H-26NOV09SASPHX-TIE, KXNBA1H-26NOV09SASPHX-SAS, KXNBA1H-26NOV09SASPHX-PHX
-- sample fields: `{"ticker": "KXNBA1H-26NOV09NOPGSW-TIE", "event_ticker": "KXNBA1H-26NOV09NOPGSW", "market_type": "binary", "title": "Tie in the 1st half", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-08T03:06:18.934043Z", "close_time": "2026-11-12T03:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If neither team wins the 1st half of the New Orleans vs Golden State Pro Basketball game originally scheduled for Nov 9, 2`
+- (14) Tie in the #st half
+- (5) NAME wins the #st half
+- (2) Phoenix wins the #st half
+- (1) Portland wins the #st half
+- (1) Sacramento wins the #st half
+- (1) Orlando wins the #st half
+- (1) NAME C wins the #st half
+- (1) Utah wins the #st half
+- samples: KXNBA1H-26NOV10OKCPOR-TIE, KXNBA1H-26NOV10OKCPOR-POR, KXNBA1H-26NOV10OKCPOR-OKC, KXNBA1H-26NOV10ORLSAC-TIE, KXNBA1H-26NOV10ORLSAC-SAC, KXNBA1H-26NOV10ORLSAC-ORL
+- sample fields: `{"ticker": "KXNBA1H-26NOV10OKCPOR-TIE", "event_ticker": "KXNBA1H-26NOV10OKCPOR", "market_type": "binary", "title": "Tie in the 1st half", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-09T04:06:02.552848Z", "close_time": "2026-11-13T04:00:00Z", "expected_expiration_time": "2026-11-11T07:00:00Z", "result": "", "rules_primary": "If neither team wins the 1st half of the Oklahoma City vs Portland Pro Basketball game originally scheduled for Nov 10, 20`
 
 ### KXNBA1HSPREAD — NBA 1st Half Spread
-- (13) Boston wins the #st half by over # points
-- (13) Minnesota wins the #st half by over # points
-- (12) Dallas wins the #st half by over # points
-- (12) Miami wins the #st half by over # points
-- (12) Philadelphia wins the #st half by over # points
-- (11) Detroit wins the #st half by over # points
-- (10) NAME wins the #st half by over # points
-- (9) NAME C wins the #st half by over # points
-- samples: KXNBA1HSPREAD-26NOV08BKNDAL-DAL8, KXNBA1HSPREAD-26NOV08BKNDAL-DAL6, KXNBA1HSPREAD-26NOV08BKNDAL-DAL4, KXNBA1HSPREAD-26NOV08BKNDAL-DAL24, KXNBA1HSPREAD-26NOV08BKNDAL-DAL22, KXNBA1HSPREAD-26NOV08BKNDAL-DAL20
-- sample fields: `{"ticker": "KXNBA1HSPREAD-26NOV08BKNDAL-DAL8", "event_ticker": "KXNBA1HSPREAD-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas wins the 1st half by over 7.5 points", "yes_sub_title": "Dallas wins by over 7.5 points", "no_sub_title": "Dallas wins by over 7.5 points", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas wins`
+- (31) NAME wins the #st half by over # points
+- (12) Houston wins the #st half by over # points
+- (12) Detroit wins the #st half by over # points
+- (12) Cleveland wins the #st half by over # points
+- (10) Dallas wins the #st half by over # points
+- (10) Toronto wins the #st half by over # points
+- (10) NAME L wins the #st half by over # points
+- (9) Indiana wins the #st half by over # points
+- samples: KXNBA1HSPREAD-26NOV09SASPHX-SAS9, KXNBA1HSPREAD-26NOV09SASPHX-SAS7, KXNBA1HSPREAD-26NOV09SASPHX-SAS5, KXNBA1HSPREAD-26NOV09SASPHX-SAS3, KXNBA1HSPREAD-26NOV09SASPHX-SAS23, KXNBA1HSPREAD-26NOV09SASPHX-SAS21
+- sample fields: `{"ticker": "KXNBA1HSPREAD-26NOV09SASPHX-SAS9", "event_ticker": "KXNBA1HSPREAD-26NOV09SASPHX", "market_type": "binary", "title": "San Antonio wins the 1st half by over 8.5 points", "yes_sub_title": "San Antonio wins by over 8.5 points", "no_sub_title": "San Antonio wins by over 8.5 points", "strike_type": "greater", "floor_strike": 8.5, "custom_strike": {"basketball_team": "ad36c3e8-4194-4e63-920f-7c50f46191a6"}, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary":`
 
 ### KXNBA1HTEAMTOTAL — NBA 1st Half Team Total
+- (33) NAME over # #st half points scored
+- (11) Phoenix over # #st half points scored
+- (11) Houston over # #st half points scored
+- (11) Denver over # #st half points scored
+- (11) Indiana over # #st half points scored
 - (11) Dallas over # #st half points scored
-- (11) Brooklyn over # #st half points scored
-- (11) NAME over # #st half points scored
-- (11) NAME C over # #st half points scored
-- (11) NAME L over # #st half points scored
-- (11) Detroit over # #st half points scored
-- (11) Sacramento over # #st half points scored
-- (11) Miami over # #st half points scored
-- samples: KXNBA1HTEAMTOTAL-26NOV08BKNDAL-DAL69, KXNBA1HTEAMTOTAL-26NOV08BKNDAL-DAL67, KXNBA1HTEAMTOTAL-26NOV08BKNDAL-DAL65, KXNBA1HTEAMTOTAL-26NOV08BKNDAL-DAL63, KXNBA1HTEAMTOTAL-26NOV08BKNDAL-DAL61, KXNBA1HTEAMTOTAL-26NOV08BKNDAL-DAL59
-- sample fields: `{"ticker": "KXNBA1HTEAMTOTAL-26NOV08BKNDAL-DAL69", "event_ticker": "KXNBA1HTEAMTOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas over 68.5 1st half points scored", "yes_sub_title": "Dallas over 68.5 points", "no_sub_title": "Dallas over 68.5 points", "strike_type": "greater", "floor_strike": 68.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas scores more th`
+- (11) Toronto over # #st half points scored
+- (11) Memphis over # #st half points scored
+- samples: KXNBA1HTEAMTOTAL-26NOV09SASPHX-SAS71, KXNBA1HTEAMTOTAL-26NOV09SASPHX-SAS69, KXNBA1HTEAMTOTAL-26NOV09SASPHX-SAS67, KXNBA1HTEAMTOTAL-26NOV09SASPHX-SAS65, KXNBA1HTEAMTOTAL-26NOV09SASPHX-SAS63, KXNBA1HTEAMTOTAL-26NOV09SASPHX-SAS61
+- sample fields: `{"ticker": "KXNBA1HTEAMTOTAL-26NOV09SASPHX-SAS71", "event_ticker": "KXNBA1HTEAMTOTAL-26NOV09SASPHX", "market_type": "binary", "title": "San Antonio over 70.5 1st half points scored", "yes_sub_title": "San Antonio over 70.5 points", "no_sub_title": "San Antonio over 70.5 points", "strike_type": "greater", "floor_strike": 70.5, "custom_strike": {"basketball_team": "ad36c3e8-4194-4e63-920f-7c50f46191a6"}, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary": "If San A`
 
 ### KXNBA1HTOTAL — NBA 1st Half Total
-- (133) #st Half: Over # points scored
-- samples: KXNBA1HTOTAL-26NOV08BKNDAL-99, KXNBA1HTOTAL-26NOV08BKNDAL-97, KXNBA1HTOTAL-26NOV08BKNDAL-95, KXNBA1HTOTAL-26NOV08BKNDAL-131, KXNBA1HTOTAL-26NOV08BKNDAL-129, KXNBA1HTOTAL-26NOV08BKNDAL-127
-- sample fields: `{"ticker": "KXNBA1HTOTAL-26NOV08BKNDAL-99", "event_ticker": "KXNBA1HTOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "1st Half: Over 98.5 points scored", "yes_sub_title": "Over 98.5 points", "no_sub_title": "Over 98.5 points", "strike_type": "greater", "floor_strike": 98.5, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If over 98.5 total points are scored in the 1st half of the Brooklyn vs Dallas Pro Basketball game originally scheduled for Nov 8, 20`
+- (152) #st Half: Over # points scored
+- samples: KXNBA1HTOTAL-26NOV09SASPHX-136, KXNBA1HTOTAL-26NOV09SASPHX-134, KXNBA1HTOTAL-26NOV09SASPHX-132, KXNBA1HTOTAL-26NOV09SASPHX-130, KXNBA1HTOTAL-26NOV09SASPHX-128, KXNBA1HTOTAL-26NOV09SASPHX-126
+- sample fields: `{"ticker": "KXNBA1HTOTAL-26NOV09SASPHX-136", "event_ticker": "KXNBA1HTOTAL-26NOV09SASPHX", "market_type": "binary", "title": "1st Half: Over 135.5 points scored", "yes_sub_title": "Over 135.5 points", "no_sub_title": "Over 135.5 points", "strike_type": "greater", "floor_strike": 135.5, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary": "If over 135.5 total points are scored in the 1st half of the San Antonio vs Phoenix Pro Basketball game originally scheduled fo`
 
 ### KXNBA1HWINNER — Pro Baskeball 1st Half Winner
 
 ### KXNBA1Q — NBA 1st Quarter Winner
-- (15) #st quarter tie
-- (4) NAME wins the #st quarter
-- (2) Dallas wins the #st quarter
-- (2) Detroit wins the #st quarter
-- (2) NAME L wins the #st quarter
-- (1) Phoenix wins the #st quarter
-- (1) Houston wins the #st quarter
-- (1) Denver wins the #st quarter
-- samples: KXNBA1Q-26NOV09NOPGSW-TIE, KXNBA1Q-26NOV09NOPGSW-NOP, KXNBA1Q-26NOV09NOPGSW-GSW, KXNBA1Q-26NOV09SASPHX-TIE, KXNBA1Q-26NOV09SASPHX-SAS, KXNBA1Q-26NOV09SASPHX-PHX
-- sample fields: `{"ticker": "KXNBA1Q-26NOV09NOPGSW-TIE", "event_ticker": "KXNBA1Q-26NOV09NOPGSW", "market_type": "binary", "title": "1st quarter tie", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-08T03:06:18.934043Z", "close_time": "2026-11-12T03:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If neither team wins the 1st quarter of the New Orleans vs Golden State Pro Basketball game originally scheduled for Nov 9, 20`
+- (14) #st quarter tie
+- (5) NAME wins the #st quarter
+- (2) Phoenix wins the #st quarter
+- (1) Portland wins the #st quarter
+- (1) Sacramento wins the #st quarter
+- (1) Orlando wins the #st quarter
+- (1) NAME C wins the #st quarter
+- (1) Utah wins the #st quarter
+- samples: KXNBA1Q-26NOV10OKCPOR-TIE, KXNBA1Q-26NOV10OKCPOR-POR, KXNBA1Q-26NOV10OKCPOR-OKC, KXNBA1Q-26NOV10ORLSAC-TIE, KXNBA1Q-26NOV10ORLSAC-SAC, KXNBA1Q-26NOV10ORLSAC-ORL
+- sample fields: `{"ticker": "KXNBA1Q-26NOV10OKCPOR-TIE", "event_ticker": "KXNBA1Q-26NOV10OKCPOR", "market_type": "binary", "title": "1st quarter tie", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-09T04:06:02.552848Z", "close_time": "2026-11-13T04:00:00Z", "expected_expiration_time": "2026-11-11T07:00:00Z", "result": "", "rules_primary": "If neither team wins the 1st quarter of the Oklahoma City vs Portland Pro Basketball game originally scheduled for Nov 10, 202`
 
 ### KXNBA1QSPREAD — NBA 1st Quarter Spread
-- (9) Boston wins #Q by over # points
-- (8) Dallas wins #Q by over # points
-- (8) Miami wins #Q by over # points
-- (8) Minnesota wins #Q by over # points
-- (8) Philadelphia wins #Q by over # points
-- (7) NAME C wins #Q by over # points
-- (7) Detroit wins #Q by over # points
-- (6) NAME wins #Q by over # points
-- samples: KXNBA1QSPREAD-26NOV08BKNDAL-DAL9, KXNBA1QSPREAD-26NOV08BKNDAL-DAL7, KXNBA1QSPREAD-26NOV08BKNDAL-DAL5, KXNBA1QSPREAD-26NOV08BKNDAL-DAL3, KXNBA1QSPREAD-26NOV08BKNDAL-DAL2, KXNBA1QSPREAD-26NOV08BKNDAL-DAL15
-- sample fields: `{"ticker": "KXNBA1QSPREAD-26NOV08BKNDAL-DAL9", "event_ticker": "KXNBA1QSPREAD-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas wins 1Q by over 8.5 points", "yes_sub_title": "Dallas wins by over 8.5 points", "no_sub_title": "Dallas wins by over 8.5 points", "strike_type": "greater", "floor_strike": 8.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas wins by more t`
+- (21) NAME wins #Q by over # points
+- (8) Houston wins #Q by over # points
+- (8) Detroit wins #Q by over # points
+- (8) Cleveland wins #Q by over # points
+- (7) Dallas wins #Q by over # points
+- (7) Toronto wins #Q by over # points
+- (7) NAME L wins #Q by over # points
+- (6) Indiana wins #Q by over # points
+- samples: KXNBA1QSPREAD-26NOV09SASPHX-SAS8, KXNBA1QSPREAD-26NOV09SASPHX-SAS6, KXNBA1QSPREAD-26NOV09SASPHX-SAS4, KXNBA1QSPREAD-26NOV09SASPHX-SAS2, KXNBA1QSPREAD-26NOV09SASPHX-SAS16, KXNBA1QSPREAD-26NOV09SASPHX-SAS14
+- sample fields: `{"ticker": "KXNBA1QSPREAD-26NOV09SASPHX-SAS8", "event_ticker": "KXNBA1QSPREAD-26NOV09SASPHX", "market_type": "binary", "title": "San Antonio wins 1Q by over 7.5 points", "yes_sub_title": "San Antonio wins by over 7.5 points", "no_sub_title": "San Antonio wins by over 7.5 points", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_team": "ad36c3e8-4194-4e63-920f-7c50f46191a6"}, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary": "If San A`
 
 ### KXNBA1QTEAMTOTAL — NBA 1st Quarter Team Total
 
 ### KXNBA1QTOTAL — NBA 1st Quarter Total
-- (91) #st Quarter: Over # points scored
-- samples: KXNBA1QTOTAL-26NOV08BKNDAL-70, KXNBA1QTOTAL-26NOV08BKNDAL-68, KXNBA1QTOTAL-26NOV08BKNDAL-66, KXNBA1QTOTAL-26NOV08BKNDAL-64, KXNBA1QTOTAL-26NOV08BKNDAL-62, KXNBA1QTOTAL-26NOV08BKNDAL-60
-- sample fields: `{"ticker": "KXNBA1QTOTAL-26NOV08BKNDAL-70", "event_ticker": "KXNBA1QTOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "1st Quarter: Over 69.5 points scored", "yes_sub_title": "Over 69.5 points", "no_sub_title": "Over 69.5 points", "strike_type": "greater", "floor_strike": 69.5, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If over 69.5 total points are scored in the 1st quarter of the Brooklyn vs Dallas Pro Basketball game originally scheduled for Nov`
+- (104) #st Quarter: Over # points scored
+- samples: KXNBA1QTOTAL-26NOV09SASPHX-72, KXNBA1QTOTAL-26NOV09SASPHX-70, KXNBA1QTOTAL-26NOV09SASPHX-68, KXNBA1QTOTAL-26NOV09SASPHX-66, KXNBA1QTOTAL-26NOV09SASPHX-64, KXNBA1QTOTAL-26NOV09SASPHX-62
+- sample fields: `{"ticker": "KXNBA1QTOTAL-26NOV09SASPHX-72", "event_ticker": "KXNBA1QTOTAL-26NOV09SASPHX", "market_type": "binary", "title": "1st Quarter: Over 71.5 points scored", "yes_sub_title": "Over 71.5 points", "no_sub_title": "Over 71.5 points", "strike_type": "greater", "floor_strike": 71.5, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary": "If over 71.5 total points are scored in the 1st quarter of the San Antonio vs Phoenix Pro Basketball game originally scheduled fo`
 
 ### KXNBA1QWINNER — NBA 1st Quarter Winner
 
@@ -467,47 +468,47 @@
 - sample fields: `{"ticker": "KXNBA1STTEAMDEF-27-ZEDEY14", "event_ticker": "KXNBA1STTEAMDEF-27", "market_type": "binary", "title": "All-Defensive First Team Selection: Zach Edey", "yes_sub_title": "Zach Edey", "no_sub_title": "Zach Edey", "strike_type": "structured", "custom_strike": {"basketball_player": "fe5a04a5-0dc7-4373-baf9-36c4bced83a5"}, "status": "active", "open_time": "2026-09-14T21:00:00Z", "close_time": "2027-07-08T14:00:00Z", "expected_expiration_time": "2027-07-01T14:00:00Z", "result": "", "rules_primary": "If Zach Edey is selected to the All-Defensive First Team in the 2026-27 Pro Basketball seas`
 
 ### KXNBA2D — NBA Player Double Double
-- (59) NAME: NAME
-- (4) NAME.: NAME
-- (1) LaMelo Ball: NAME
-- (1) Jaden McDaniels: NAME
-- (1) NAME III: NAME
-- (1) Karlo Matković: NAME
-- (1) VJ Edgecombe: NAME
-- (1) LeBron James: NAME
-- samples: KXNBA2D-26NOV08LALDET-DETDJENKINS24, KXNBA2D-26NOV08BOSMIL-MILRROLLINS13, KXNBA2D-26NOV08UTAMIN-UTALMARKKANEN23, KXNBA2D-26NOV08UTAMIN-UTAKGEORGE3, KXNBA2D-26NOV08UTAMIN-UTAJHAYES11, KXNBA2D-26NOV08UTAMIN-UTADPETERSON22
-- sample fields: `{"ticker": "KXNBA2D-26NOV08LALDET-DETDJENKINS24", "event_ticker": "KXNBA2D-26NOV08LALDET", "market_type": "binary", "title": "Daniss Jenkins: Double Double", "yes_sub_title": "Daniss Jenkins", "no_sub_title": "Daniss Jenkins", "strike_type": "greater", "floor_strike": 0.5, "custom_strike": {"basketball_player": "5ac2f6ed-c991-40a4-afa0-aff7c779b0d7", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T10:40:56Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "result": "", "rules_primary": "If Danis`
+- (54) NAME: NAME
+- (1) P.J. Washington: NAME
+- (1) Moussa Diabaté: NAME
+- (1) AJ Dybantsa: NAME
+- (1) NAME.: NAME
+- (1) Fred VanVleet: NAME
+- (1) Nikola Jokić: NAME
+- (1) RJ Barrett: NAME
+- samples: KXNBA2D-26NOV09INDDAL-INDPSIAKAM43, KXNBA2D-26NOV09INDDAL-INDIZUBAC40, KXNBA2D-26NOV09INDDAL-INDANESMITH23, KXNBA2D-26NOV09INDDAL-INDANEMBHARD2, KXNBA2D-26NOV09INDDAL-DALPWASHINGTON25, KXNBA2D-26NOV09INDDAL-DALKIRVING11
+- sample fields: `{"ticker": "KXNBA2D-26NOV09INDDAL-INDPSIAKAM43", "event_ticker": "KXNBA2D-26NOV09INDDAL", "market_type": "binary", "title": "Pascal Siakam: Double Double", "yes_sub_title": "Pascal Siakam", "no_sub_title": "Pascal Siakam", "strike_type": "greater", "floor_strike": 0.5, "custom_strike": {"basketball_player": "1c8ae3bd-88ae-4511-8622-9f9ac7d73de0", "basketball_team": "d059bab2-9fb5-42dd-8038-5a12474300ce"}, "status": "active", "open_time": "2026-11-09T09:06:46.726224Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T04:00:00Z", "result": "", "rules_primary": "If Pa`
 
 ### KXNBA2H — NBA 2nd Half Winner
-- (15) Tie in the #nd half
-- (4) NAME wins the #nd half
-- (2) Dallas wins the #nd half
-- (2) Detroit wins the #nd half
-- (2) NAME L wins the #nd half
-- (1) Phoenix wins the #nd half
-- (1) Houston wins the #nd half
-- (1) Denver wins the #nd half
-- samples: KXNBA2H-26NOV09NOPGSW-TIE, KXNBA2H-26NOV09NOPGSW-NOP, KXNBA2H-26NOV09NOPGSW-GSW, KXNBA2H-26NOV09SASPHX-TIE, KXNBA2H-26NOV09SASPHX-SAS, KXNBA2H-26NOV09SASPHX-PHX
-- sample fields: `{"ticker": "KXNBA2H-26NOV09NOPGSW-TIE", "event_ticker": "KXNBA2H-26NOV09NOPGSW", "market_type": "binary", "title": "Tie in the 2nd half", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-08T03:06:18.934043Z", "close_time": "2026-11-12T03:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If neither team wins the 2nd half (including overtime) of the New Orleans vs Golden State Pro Basketball game originally s`
+- (14) Tie in the #nd half
+- (5) NAME wins the #nd half
+- (2) Phoenix wins the #nd half
+- (1) Portland wins the #nd half
+- (1) Sacramento wins the #nd half
+- (1) Orlando wins the #nd half
+- (1) NAME C wins the #nd half
+- (1) Utah wins the #nd half
+- samples: KXNBA2H-26NOV10OKCPOR-TIE, KXNBA2H-26NOV10OKCPOR-POR, KXNBA2H-26NOV10OKCPOR-OKC, KXNBA2H-26NOV10ORLSAC-TIE, KXNBA2H-26NOV10ORLSAC-SAC, KXNBA2H-26NOV10ORLSAC-ORL
+- sample fields: `{"ticker": "KXNBA2H-26NOV10OKCPOR-TIE", "event_ticker": "KXNBA2H-26NOV10OKCPOR", "market_type": "binary", "title": "Tie in the 2nd half", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-09T04:06:02.552848Z", "close_time": "2026-11-13T04:00:00Z", "expected_expiration_time": "2026-11-11T07:00:00Z", "result": "", "rules_primary": "If neither team wins the 2nd half (including overtime) of the Oklahoma City vs Portland Pro Basketball game originally sch`
 
 ### KXNBA2HSPREAD — NBA 2nd Half Spread
-- (12) Dallas wins the #nd half by over # points
-- (12) Miami wins the #nd half by over # points
-- (12) Boston wins the #nd half by over # points
-- (12) Minnesota wins the #nd half by over # points
-- (11) Philadelphia wins the #nd half by over # points
-- (10) NAME wins the #nd half by over # points
-- (10) Detroit wins the #nd half by over # points
-- (9) NAME C wins the #nd half by over # points
-- samples: KXNBA2HSPREAD-26NOV08BKNDAL-DAL9, KXNBA2HSPREAD-26NOV08BKNDAL-DAL7, KXNBA2HSPREAD-26NOV08BKNDAL-DAL5, KXNBA2HSPREAD-26NOV08BKNDAL-DAL3, KXNBA2HSPREAD-26NOV08BKNDAL-DAL23, KXNBA2HSPREAD-26NOV08BKNDAL-DAL21
-- sample fields: `{"ticker": "KXNBA2HSPREAD-26NOV08BKNDAL-DAL9", "event_ticker": "KXNBA2HSPREAD-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas wins the 2nd half by over 8.5 points", "yes_sub_title": "Dallas wins by over 8.5 points", "no_sub_title": "Dallas wins by over 8.5 points", "strike_type": "greater", "floor_strike": 8.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas wins`
+- (30) NAME wins the #nd half by over # points
+- (12) Detroit wins the #nd half by over # points
+- (11) Houston wins the #nd half by over # points
+- (11) Cleveland wins the #nd half by over # points
+- (10) Dallas wins the #nd half by over # points
+- (10) Toronto wins the #nd half by over # points
+- (10) NAME L wins the #nd half by over # points
+- (9) Indiana wins the #nd half by over # points
+- samples: KXNBA2HSPREAD-26NOV09SASPHX-SAS8, KXNBA2HSPREAD-26NOV09SASPHX-SAS6, KXNBA2HSPREAD-26NOV09SASPHX-SAS4, KXNBA2HSPREAD-26NOV09SASPHX-SAS22, KXNBA2HSPREAD-26NOV09SASPHX-SAS20, KXNBA2HSPREAD-26NOV09SASPHX-SAS2
+- sample fields: `{"ticker": "KXNBA2HSPREAD-26NOV09SASPHX-SAS8", "event_ticker": "KXNBA2HSPREAD-26NOV09SASPHX", "market_type": "binary", "title": "San Antonio wins the 2nd half by over 7.5 points", "yes_sub_title": "San Antonio wins by over 7.5 points", "no_sub_title": "San Antonio wins by over 7.5 points", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_team": "ad36c3e8-4194-4e63-920f-7c50f46191a6"}, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary":`
 
 ### KXNBA2HTEAMTOTAL — NBA 2nd Half Team Total
 
 ### KXNBA2HTOTAL — NBA 2nd Half Total
-- (133) #nd Half: Over # points scored
-- samples: KXNBA2HTOTAL-26NOV08BKNDAL-99, KXNBA2HTOTAL-26NOV08BKNDAL-97, KXNBA2HTOTAL-26NOV08BKNDAL-95, KXNBA2HTOTAL-26NOV08BKNDAL-93, KXNBA2HTOTAL-26NOV08BKNDAL-91, KXNBA2HTOTAL-26NOV08BKNDAL-89
-- sample fields: `{"ticker": "KXNBA2HTOTAL-26NOV08BKNDAL-99", "event_ticker": "KXNBA2HTOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "2nd Half: Over 98.5 points scored", "yes_sub_title": "Over 98.5 points", "no_sub_title": "Over 98.5 points", "strike_type": "greater", "floor_strike": 98.5, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If over 98.5 total points are scored in the 2nd half (including overtime) of the Brooklyn vs Dallas Pro Basketball game originally sc`
+- (152) #nd Half: Over # points scored
+- samples: KXNBA2HTOTAL-26NOV09SASPHX-99, KXNBA2HTOTAL-26NOV09SASPHX-97, KXNBA2HTOTAL-26NOV09SASPHX-95, KXNBA2HTOTAL-26NOV09SASPHX-93, KXNBA2HTOTAL-26NOV09SASPHX-129, KXNBA2HTOTAL-26NOV09SASPHX-127
+- sample fields: `{"ticker": "KXNBA2HTOTAL-26NOV09SASPHX-99", "event_ticker": "KXNBA2HTOTAL-26NOV09SASPHX", "market_type": "binary", "title": "2nd Half: Over 98.5 points scored", "yes_sub_title": "Over 98.5 points", "no_sub_title": "Over 98.5 points", "strike_type": "greater", "floor_strike": 98.5, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary": "If over 98.5 total points are scored in the 2nd half (including overtime) of the San Antonio vs Phoenix Pro Basketball game original`
 
 ### KXNBA2HWINNER — Pro Basketball 2nd Half Winner
 
@@ -534,109 +535,108 @@
 - sample fields: `{"ticker": "KXNBA2NDTEAMDEF-27-ZEDEY14", "event_ticker": "KXNBA2NDTEAMDEF-27", "market_type": "binary", "title": "All-Defensive Second Team Selection: Zach Edey", "yes_sub_title": "Zach Edey", "no_sub_title": "Zach Edey", "strike_type": "structured", "custom_strike": {"basketball_player": "fe5a04a5-0dc7-4373-baf9-36c4bced83a5"}, "status": "active", "open_time": "2026-09-14T18:00:00Z", "close_time": "2027-07-08T14:00:00Z", "expected_expiration_time": "2027-07-01T14:00:00Z", "result": "", "rules_primary": "If Zach Edey is selected to the All-Defensive Second Team in the 2026-27 Pro Basketball se`
 
 ### KXNBA2Q — NBA 2nd Quarter Winner
-- (15) #nd quarter tie
-- (4) NAME wins the #nd quarter
-- (2) Dallas wins the #nd quarter
-- (2) Detroit wins the #nd quarter
-- (2) NAME L wins the #nd quarter
-- (1) Phoenix wins the #nd quarter
-- (1) Houston wins the #nd quarter
-- (1) Denver wins the #nd quarter
-- samples: KXNBA2Q-26NOV09NOPGSW-TIE, KXNBA2Q-26NOV09NOPGSW-NOP, KXNBA2Q-26NOV09NOPGSW-GSW, KXNBA2Q-26NOV09SASPHX-TIE, KXNBA2Q-26NOV09SASPHX-SAS, KXNBA2Q-26NOV09SASPHX-PHX
-- sample fields: `{"ticker": "KXNBA2Q-26NOV09NOPGSW-TIE", "event_ticker": "KXNBA2Q-26NOV09NOPGSW", "market_type": "binary", "title": "2nd quarter tie", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-08T03:06:18.934043Z", "close_time": "2026-11-12T03:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If neither team wins the 2nd quarter of the New Orleans vs Golden State Pro Basketball game originally scheduled for Nov 9, 20`
+- (14) #nd quarter tie
+- (5) NAME wins the #nd quarter
+- (2) Phoenix wins the #nd quarter
+- (1) Portland wins the #nd quarter
+- (1) Sacramento wins the #nd quarter
+- (1) Orlando wins the #nd quarter
+- (1) NAME C wins the #nd quarter
+- (1) Utah wins the #nd quarter
+- samples: KXNBA2Q-26NOV10OKCPOR-TIE, KXNBA2Q-26NOV10OKCPOR-POR, KXNBA2Q-26NOV10OKCPOR-OKC, KXNBA2Q-26NOV10ORLSAC-TIE, KXNBA2Q-26NOV10ORLSAC-SAC, KXNBA2Q-26NOV10ORLSAC-ORL
+- sample fields: `{"ticker": "KXNBA2Q-26NOV10OKCPOR-TIE", "event_ticker": "KXNBA2Q-26NOV10OKCPOR", "market_type": "binary", "title": "2nd quarter tie", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-09T04:06:02.552848Z", "close_time": "2026-11-13T04:00:00Z", "expected_expiration_time": "2026-11-11T07:00:00Z", "result": "", "rules_primary": "If neither team wins the 2nd quarter of the Oklahoma City vs Portland Pro Basketball game originally scheduled for Nov 10, 202`
 
 ### KXNBA2QSPREAD — NBA 2nd Quarter Spread
-- (8) Dallas wins #Q by over # points
-- (8) Minnesota wins #Q by over # points
-- (8) Boston wins #Q by over # points
-- (7) Miami wins #Q by over # points
-- (7) NAME wins #Q by over # points
-- (7) Detroit wins #Q by over # points
-- (7) Philadelphia wins #Q by over # points
-- (6) Sacramento wins #Q by over # points
-- samples: KXNBA2QSPREAD-26NOV08BKNDAL-DAL9, KXNBA2QSPREAD-26NOV08BKNDAL-DAL7, KXNBA2QSPREAD-26NOV08BKNDAL-DAL5, KXNBA2QSPREAD-26NOV08BKNDAL-DAL3, KXNBA2QSPREAD-26NOV08BKNDAL-DAL2, KXNBA2QSPREAD-26NOV08BKNDAL-DAL15
-- sample fields: `{"ticker": "KXNBA2QSPREAD-26NOV08BKNDAL-DAL9", "event_ticker": "KXNBA2QSPREAD-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas wins 2Q by over 8.5 points", "yes_sub_title": "Dallas wins by over 8.5 points", "no_sub_title": "Dallas wins by over 8.5 points", "strike_type": "greater", "floor_strike": 8.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas wins by more t`
+- (20) NAME wins #Q by over # points
+- (8) Houston wins #Q by over # points
+- (8) Detroit wins #Q by over # points
+- (7) Dallas wins #Q by over # points
+- (7) Toronto wins #Q by over # points
+- (7) Cleveland wins #Q by over # points
+- (7) NAME L wins #Q by over # points
+- (6) Phoenix wins #Q by over # points
+- samples: KXNBA2QSPREAD-26NOV09SASPHX-SAS8, KXNBA2QSPREAD-26NOV09SASPHX-SAS6, KXNBA2QSPREAD-26NOV09SASPHX-SAS4, KXNBA2QSPREAD-26NOV09SASPHX-SAS2, KXNBA2QSPREAD-26NOV09SASPHX-SAS14, KXNBA2QSPREAD-26NOV09SASPHX-SAS12
+- sample fields: `{"ticker": "KXNBA2QSPREAD-26NOV09SASPHX-SAS8", "event_ticker": "KXNBA2QSPREAD-26NOV09SASPHX", "market_type": "binary", "title": "San Antonio wins 2Q by over 7.5 points", "yes_sub_title": "San Antonio wins by over 7.5 points", "no_sub_title": "San Antonio wins by over 7.5 points", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_team": "ad36c3e8-4194-4e63-920f-7c50f46191a6"}, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary": "If San A`
 
 ### KXNBA2QTEAMTOTAL — NBA 2nd Quarter Team Total
 
 ### KXNBA2QTOTAL — NBA 2nd Quarter Total
 - (91) #nd Quarter: Over # points scored
-- samples: KXNBA2QTOTAL-26NOV08BKNDAL-68, KXNBA2QTOTAL-26NOV08BKNDAL-66, KXNBA2QTOTAL-26NOV08BKNDAL-64, KXNBA2QTOTAL-26NOV08BKNDAL-62, KXNBA2QTOTAL-26NOV08BKNDAL-60, KXNBA2QTOTAL-26NOV08BKNDAL-58
-- sample fields: `{"ticker": "KXNBA2QTOTAL-26NOV08BKNDAL-68", "event_ticker": "KXNBA2QTOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "2nd Quarter: Over 67.5 points scored", "yes_sub_title": "Over 67.5 points", "no_sub_title": "Over 67.5 points", "strike_type": "greater", "floor_strike": 67.5, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If over 67.5 total points are scored in the 2nd quarter of the Brooklyn vs Dallas Pro Basketball game originally scheduled for Nov`
+- samples: KXNBA2QTOTAL-26NOV09DENHOU-64, KXNBA2QTOTAL-26NOV09DENHOU-62, KXNBA2QTOTAL-26NOV09DENHOU-60, KXNBA2QTOTAL-26NOV09DENHOU-58, KXNBA2QTOTAL-26NOV09DENHOU-56, KXNBA2QTOTAL-26NOV09DENHOU-54
+- sample fields: `{"ticker": "KXNBA2QTOTAL-26NOV09DENHOU-64", "event_ticker": "KXNBA2QTOTAL-26NOV09DENHOU", "market_type": "binary", "title": "2nd Quarter: Over 63.5 points scored", "yes_sub_title": "Over 63.5 points", "no_sub_title": "Over 63.5 points", "strike_type": "greater", "floor_strike": 63.5, "status": "active", "open_time": "2026-11-09T06:07:25.296274Z", "close_time": "2026-11-12T01:30:00Z", "expected_expiration_time": "2026-11-10T04:30:00Z", "result": "", "rules_primary": "If over 63.5 total points are scored in the 2nd quarter of the Denver vs Houston Pro Basketball game originally scheduled for Nov`
 
 ### KXNBA2QWINNER — NBA 2nd Quarter Winner
 
 ### KXNBA30COMEBACK — NBA 3-0 Series Comeback
 
 ### KXNBA3D — NBA Player Triple Double
-- (25) NAME: NAME
-- (1) LaMelo Ball: NAME
-- (1) LeBron James: NAME
-- (1) NAME.: NAME
-- (1) Luka Dončić: NAME
-- samples: KXNBA3D-26NOV08PHICHI-PHIJEMBIID21, KXNBA3D-26NOV08PHICHI-PHIJBROWN7, KXNBA3D-26NOV08UTAMIN-UTAKGEORGE3, KXNBA3D-26NOV08UTAMIN-UTADPETERSON22, KXNBA3D-26NOV08UTAMIN-MINLBALL1, KXNBA3D-26NOV08UTAMIN-MINADOSUNMU13
-- sample fields: `{"ticker": "KXNBA3D-26NOV08PHICHI-PHIJEMBIID21", "event_ticker": "KXNBA3D-26NOV08PHICHI", "market_type": "binary", "title": "Joel Embiid: Triple Double", "yes_sub_title": "Joel Embiid", "no_sub_title": "Joel Embiid", "strike_type": "greater", "floor_strike": 0.5, "custom_strike": {"basketball_player": "8aa20fec-25b0-47c8-bd26-efd64ee0826c", "basketball_team": "0554528d-586b-461f-827b-801cf93e8a8e"}, "status": "active", "open_time": "2026-11-08T10:40:56Z", "close_time": "2026-11-10T20:30:00Z", "expected_expiration_time": "2026-11-09T02:30:00Z", "result": "", "rules_primary": "If Joel Embiid rec`
+- (18) NAME: NAME
+- (1) Fred VanVleet: NAME
+- (1) Nikola Jokić: NAME
+- (1) RJ Barrett: NAME
+- samples: KXNBA3D-26NOV09CLECHA-CLEJHARDEN1, KXNBA3D-26NOV09CLECHA-CLEEMOBLEY4, KXNBA3D-26NOV09INDDAL-INDPSIAKAM43, KXNBA3D-26NOV09INDDAL-DALCFLAGG32, KXNBA3D-26NOV09SASPHX-SASVWEMBANYAMA1, KXNBA3D-26NOV09SASPHX-SASSCASTLE5
+- sample fields: `{"ticker": "KXNBA3D-26NOV09CLECHA-CLEJHARDEN1", "event_ticker": "KXNBA3D-26NOV09CLECHA", "market_type": "binary", "title": "James Harden: Triple Double", "yes_sub_title": "James Harden", "no_sub_title": "James Harden", "strike_type": "greater", "floor_strike": 0.5, "custom_strike": {"basketball_player": "d5324b8e-901b-404d-bfef-a5f5d62bed85", "basketball_team": "90381a35-42a6-4975-851f-175418e4271a"}, "status": "active", "open_time": "2026-11-09T10:25:47.841075Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T03:00:00Z", "result": "", "rules_primary": "If James `
 
 ### KXNBA3PEAT — Pro Basketball Three-Peat Champion
 
 ### KXNBA3PT — NBA Player Threes
-- (278) NAME: #+ threes
-- (26) NAME.: #+ threes
-- (5) LaMelo Ball: #+ threes
-- (5) Jaden McDaniels: #+ threes
-- (5) LeBron James: #+ threes
-- (5) VJ Edgecombe: #+ threes
+- (311) NAME: #+ threes
+- (5) Royce O'Neale: #+ threes
 - (5) NAME III: #+ threes
-- (5) Zach LaVine: #+ threes
-- samples: KXNBA3PT-26NOV08LALDET-DETKHUERTERSF-5, KXNBA3PT-26NOV08LALDET-DETKHUERTERSF-4, KXNBA3PT-26NOV08LALDET-DETKHUERTERSF-3, KXNBA3PT-26NOV08LALDET-DETKHUERTERSF-2, KXNBA3PT-26NOV08LALDET-DETKHUERTERSF-1, KXNBA3PT-26NOV08LALDET-DETDJENKINS24-5
-- sample fields: `{"ticker": "KXNBA3PT-26NOV08LALDET-DETKHUERTERSF-5", "event_ticker": "KXNBA3PT-26NOV08LALDET", "market_type": "binary", "title": "Kevin Huerter: 5+ threes", "yes_sub_title": "Kevin Huerter: 5+", "no_sub_title": "Kevin Huerter: 5+", "strike_type": "greater", "floor_strike": 4.5, "custom_strike": {"basketball_player": "33c2e858-9265-47f1-b048-fbab4a62f9c8", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T10:40:56Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "result": "", "rules_primary": "If `
+- (5) P.J. Washington: #+ threes
+- (5) CJ McCollum: #+ threes
+- (5) AJ Dybantsa: #+ threes
+- (5) NAME.: #+ threes
+- (5) Fred VanVleet: #+ threes
+- samples: KXNBA3PT-26NOV09LALATL-ATLNALEXANDERWALKER7-1, KXNBA3PT-26NOV09LALATL-LALSMAMUKELASHVILI54-5, KXNBA3PT-26NOV09MEMTOR-TORSBARNES4-5, KXNBA3PT-26NOV09CLECHA-CLEPWATSON8-5, KXNBA3PT-26NOV09CLECHA-CLEPWATSON8-4, KXNBA3PT-26NOV09CLECHA-CLEPWATSON8-3
+- sample fields: `{"ticker": "KXNBA3PT-26NOV09LALATL-ATLNALEXANDERWALKER7-1", "event_ticker": "KXNBA3PT-26NOV09LALATL", "market_type": "binary", "title": "Nickeil Alexander-Walker: 1+ threes", "yes_sub_title": "Nickeil Alexander-Walker: 1+", "no_sub_title": "Nickeil Alexander-Walker: 1+", "strike_type": "greater", "floor_strike": 0.5, "custom_strike": {"basketball_player": "f46826e2-8666-4ffa-a319-627149adc113", "basketball_team": "e0729403-9c95-4ee2-b5d4-f704d8322570"}, "status": "active", "open_time": "2026-11-09T09:00:55Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T06:00:0`
 
 ### KXNBA3PTALLGAMES — Pro Basketball 3-Pointers in Every Game
 
 ### KXNBA3PTCONTEST — NBA 3-Point Contest Winner
 
 ### KXNBA3PTPROT — NBA Player Threes Protected
-- (268) NAME: #+ threes
-- (26) NAME.: #+ threes
-- (5) LaMelo Ball: #+ threes
-- (5) Jaden McDaniels: #+ threes
+- (311) NAME: #+ threes
+- (5) Royce O'Neale: #+ threes
 - (5) NAME III: #+ threes
-- (5) LeBron James: #+ threes
-- (5) VJ Edgecombe: #+ threes
-- (5) Zach LaVine: #+ threes
-- samples: KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-5, KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-4, KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-3, KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-2, KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-1, KXNBA3PTPROT-26NOV08LALDET-DETDJENKINS24-5
-- sample fields: `{"ticker": "KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-5", "event_ticker": "KXNBA3PTPROT-26NOV08LALDET", "market_type": "binary", "title": "Kevin Huerter: 5+ threes", "yes_sub_title": "Kevin Huerter: 5+", "no_sub_title": "Kevin Huerter: 5+", "strike_type": "greater", "floor_strike": 4.5, "custom_strike": {"basketball_player": "33c2e858-9265-47f1-b048-fbab4a62f9c8", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T10:27:30Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "result": "", "rules_primar`
+- (5) P.J. Washington: #+ threes
+- (5) CJ McCollum: #+ threes
+- (5) AJ Dybantsa: #+ threes
+- (5) NAME.: #+ threes
+- (5) Fred VanVleet: #+ threes
+- samples: KXNBA3PTPROT-26NOV09LALATL-ATLNALEXANDERWALKER7-1, KXNBA3PTPROT-26NOV09LALATL-LALSMAMUKELASHVILI54-5, KXNBA3PTPROT-26NOV09MEMTOR-TORSBARNES4-5, KXNBA3PTPROT-26NOV09CLECHA-CLEPWATSON8-5, KXNBA3PTPROT-26NOV09CLECHA-CLEPWATSON8-4, KXNBA3PTPROT-26NOV09CLECHA-CLEPWATSON8-3
+- sample fields: `{"ticker": "KXNBA3PTPROT-26NOV09LALATL-ATLNALEXANDERWALKER7-1", "event_ticker": "KXNBA3PTPROT-26NOV09LALATL", "market_type": "binary", "title": "Nickeil Alexander-Walker: 1+ threes", "yes_sub_title": "Nickeil Alexander-Walker: 1+", "no_sub_title": "Nickeil Alexander-Walker: 1+", "strike_type": "greater", "floor_strike": 0.5, "custom_strike": {"basketball_player": "f46826e2-8666-4ffa-a319-627149adc113", "basketball_team": "e0729403-9c95-4ee2-b5d4-f704d8322570"}, "status": "active", "open_time": "2026-11-09T08:50:27Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10`
 
 ### KXNBA3Q — NBA 3rd Quarter Winner
-- (15) #rd quarter tie
-- (4) NAME wins the #rd quarter
-- (2) Dallas wins the #rd quarter
-- (2) Detroit wins the #rd quarter
-- (2) NAME L wins the #rd quarter
-- (1) Phoenix wins the #rd quarter
-- (1) Houston wins the #rd quarter
-- (1) Denver wins the #rd quarter
-- samples: KXNBA3Q-26NOV09NOPGSW-TIE, KXNBA3Q-26NOV09NOPGSW-NOP, KXNBA3Q-26NOV09NOPGSW-GSW, KXNBA3Q-26NOV09SASPHX-TIE, KXNBA3Q-26NOV09SASPHX-SAS, KXNBA3Q-26NOV09SASPHX-PHX
-- sample fields: `{"ticker": "KXNBA3Q-26NOV09NOPGSW-TIE", "event_ticker": "KXNBA3Q-26NOV09NOPGSW", "market_type": "binary", "title": "3rd quarter tie", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-08T03:06:18.934043Z", "close_time": "2026-11-12T03:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If neither team wins the 3rd quarter of the New Orleans vs Golden State Pro Basketball game originally scheduled for Nov 9, 20`
+- (14) #rd quarter tie
+- (5) NAME wins the #rd quarter
+- (2) Phoenix wins the #rd quarter
+- (1) Portland wins the #rd quarter
+- (1) Sacramento wins the #rd quarter
+- (1) Orlando wins the #rd quarter
+- (1) NAME C wins the #rd quarter
+- (1) Utah wins the #rd quarter
+- samples: KXNBA3Q-26NOV10OKCPOR-TIE, KXNBA3Q-26NOV10OKCPOR-POR, KXNBA3Q-26NOV10OKCPOR-OKC, KXNBA3Q-26NOV10ORLSAC-TIE, KXNBA3Q-26NOV10ORLSAC-SAC, KXNBA3Q-26NOV10ORLSAC-ORL
+- sample fields: `{"ticker": "KXNBA3Q-26NOV10OKCPOR-TIE", "event_ticker": "KXNBA3Q-26NOV10OKCPOR", "market_type": "binary", "title": "3rd quarter tie", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-09T04:06:02.552848Z", "close_time": "2026-11-13T04:00:00Z", "expected_expiration_time": "2026-11-11T07:00:00Z", "result": "", "rules_primary": "If neither team wins the 3rd quarter of the Oklahoma City vs Portland Pro Basketball game originally scheduled for Nov 10, 202`
 
 ### KXNBA3QSPREAD — NBA 3rd Quarter Spread
-- (8) Dallas wins #Q by over # points
-- (8) Miami wins #Q by over # points
-- (8) Boston wins #Q by over # points
-- (8) Minnesota wins #Q by over # points
-- (8) Philadelphia wins #Q by over # points
-- (7) NAME wins #Q by over # points
-- (7) Detroit wins #Q by over # points
-- (6) NAME C wins #Q by over # points
-- samples: KXNBA3QSPREAD-26NOV08BKNDAL-DAL9, KXNBA3QSPREAD-26NOV08BKNDAL-DAL7, KXNBA3QSPREAD-26NOV08BKNDAL-DAL5, KXNBA3QSPREAD-26NOV08BKNDAL-DAL3, KXNBA3QSPREAD-26NOV08BKNDAL-DAL2, KXNBA3QSPREAD-26NOV08BKNDAL-DAL15
-- sample fields: `{"ticker": "KXNBA3QSPREAD-26NOV08BKNDAL-DAL9", "event_ticker": "KXNBA3QSPREAD-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas wins 3Q by over 8.5 points", "yes_sub_title": "Dallas wins by over 8.5 points", "no_sub_title": "Dallas wins by over 8.5 points", "strike_type": "greater", "floor_strike": 8.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas wins by more t`
+- (21) NAME wins #Q by over # points
+- (8) Houston wins #Q by over # points
+- (8) Detroit wins #Q by over # points
+- (8) Cleveland wins #Q by over # points
+- (7) Dallas wins #Q by over # points
+- (7) Toronto wins #Q by over # points
+- (7) NAME L wins #Q by over # points
+- (6) Indiana wins #Q by over # points
+- samples: KXNBA3QSPREAD-26NOV09INDDAL-IND9, KXNBA3QSPREAD-26NOV09INDDAL-IND7, KXNBA3QSPREAD-26NOV09INDDAL-IND5, KXNBA3QSPREAD-26NOV09INDDAL-IND3, KXNBA3QSPREAD-26NOV09INDDAL-IND2, KXNBA3QSPREAD-26NOV09INDDAL-IND11
+- sample fields: `{"ticker": "KXNBA3QSPREAD-26NOV09INDDAL-IND9", "event_ticker": "KXNBA3QSPREAD-26NOV09INDDAL", "market_type": "binary", "title": "Indiana wins 3Q by over 8.5 points", "yes_sub_title": "Indiana wins by over 8.5 points", "no_sub_title": "Indiana wins by over 8.5 points", "strike_type": "greater", "floor_strike": 8.5, "custom_strike": {"basketball_team": "d059bab2-9fb5-42dd-8038-5a12474300ce"}, "status": "active", "open_time": "2026-11-09T06:21:22.431128Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T04:00:00Z", "result": "", "rules_primary": "If Indiana wins by m`
 
 ### KXNBA3QTEAMTOTAL — NBA 3rd Quarter Team Total
 
 ### KXNBA3QTOTAL — NBA 3rd Quarter Total
 - (91) #rd Quarter: Over # points scored
-- samples: KXNBA3QTOTAL-26NOV08BKNDAL-66, KXNBA3QTOTAL-26NOV08BKNDAL-64, KXNBA3QTOTAL-26NOV08BKNDAL-62, KXNBA3QTOTAL-26NOV08BKNDAL-60, KXNBA3QTOTAL-26NOV08BKNDAL-58, KXNBA3QTOTAL-26NOV08BKNDAL-56
-- sample fields: `{"ticker": "KXNBA3QTOTAL-26NOV08BKNDAL-66", "event_ticker": "KXNBA3QTOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "3rd Quarter: Over 65.5 points scored", "yes_sub_title": "Over 65.5 points", "no_sub_title": "Over 65.5 points", "strike_type": "greater", "floor_strike": 65.5, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If over 65.5 total points are scored in the 3rd quarter of the Brooklyn vs Dallas Pro Basketball game originally scheduled for Nov`
+- samples: KXNBA3QTOTAL-26NOV09CLECHA-69, KXNBA3QTOTAL-26NOV09CLECHA-67, KXNBA3QTOTAL-26NOV09CLECHA-65, KXNBA3QTOTAL-26NOV09CLECHA-63, KXNBA3QTOTAL-26NOV09CLECHA-61, KXNBA3QTOTAL-26NOV09CLECHA-59
+- sample fields: `{"ticker": "KXNBA3QTOTAL-26NOV09CLECHA-69", "event_ticker": "KXNBA3QTOTAL-26NOV09CLECHA", "market_type": "binary", "title": "3rd Quarter: Over 68.5 points scored", "yes_sub_title": "Over 68.5 points", "no_sub_title": "Over 68.5 points", "strike_type": "greater", "floor_strike": 68.5, "status": "active", "open_time": "2026-11-09T06:43:22.352592Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T03:00:00Z", "result": "", "rules_primary": "If over 68.5 total points are scored in the 3rd quarter of the Cleveland vs Charlotte Pro Basketball game originally scheduled fo`
 
 ### KXNBA3QWINNER — NBA 3rd Quarter Winner
 
@@ -653,35 +653,35 @@
 - sample fields: `{"ticker": "KXNBA3RDTEAM-27-ZWILLIAMSON1", "event_ticker": "KXNBA3RDTEAM-27", "market_type": "binary", "title": "All-Pro Basketball Third Team Selection: Zion Williamson", "yes_sub_title": "Zion Williamson", "no_sub_title": "Zion Williamson", "strike_type": "structured", "custom_strike": {"basketball_player": "220527f6-f6e9-46b3-92b4-ccd8e37ad577"}, "status": "active", "open_time": "2026-09-14T21:00:00Z", "close_time": "2027-07-08T14:00:00Z", "expected_expiration_time": "2027-07-01T14:00:00Z", "result": "", "rules_primary": "If Zion Williamson is selected to the All-Pro Basketball Third Team i`
 
 ### KXNBA4Q — NBA 4th Quarter Winner
-- (15) #th quarter tie
-- (4) NAME wins the #th quarter
-- (2) Dallas wins the #th quarter
-- (2) Detroit wins the #th quarter
-- (2) NAME L wins the #th quarter
-- (1) Phoenix wins the #th quarter
-- (1) Houston wins the #th quarter
-- (1) Denver wins the #th quarter
-- samples: KXNBA4Q-26NOV09NOPGSW-TIE, KXNBA4Q-26NOV09NOPGSW-NOP, KXNBA4Q-26NOV09NOPGSW-GSW, KXNBA4Q-26NOV09SASPHX-TIE, KXNBA4Q-26NOV09SASPHX-SAS, KXNBA4Q-26NOV09SASPHX-PHX
-- sample fields: `{"ticker": "KXNBA4Q-26NOV09NOPGSW-TIE", "event_ticker": "KXNBA4Q-26NOV09NOPGSW", "market_type": "binary", "title": "4th quarter tie", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-08T03:06:18.934043Z", "close_time": "2026-11-12T03:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If neither team wins the 4th quarter (excluding overtime) of the New Orleans vs Golden State Pro Basketball game originally sc`
+- (14) #th quarter tie
+- (5) NAME wins the #th quarter
+- (2) Phoenix wins the #th quarter
+- (1) Portland wins the #th quarter
+- (1) Sacramento wins the #th quarter
+- (1) Orlando wins the #th quarter
+- (1) NAME C wins the #th quarter
+- (1) Utah wins the #th quarter
+- samples: KXNBA4Q-26NOV10OKCPOR-TIE, KXNBA4Q-26NOV10OKCPOR-POR, KXNBA4Q-26NOV10OKCPOR-OKC, KXNBA4Q-26NOV10ORLSAC-TIE, KXNBA4Q-26NOV10ORLSAC-SAC, KXNBA4Q-26NOV10ORLSAC-ORL
+- sample fields: `{"ticker": "KXNBA4Q-26NOV10OKCPOR-TIE", "event_ticker": "KXNBA4Q-26NOV10OKCPOR", "market_type": "binary", "title": "4th quarter tie", "yes_sub_title": "Tie", "no_sub_title": "Tie", "strike_type": "structured", "custom_strike": {"basketball_team": "1498b6a9-5f7f-4f60-9b4c-fa488a1e515c"}, "status": "active", "open_time": "2026-11-09T04:06:02.552848Z", "close_time": "2026-11-13T04:00:00Z", "expected_expiration_time": "2026-11-11T07:00:00Z", "result": "", "rules_primary": "If neither team wins the 4th quarter (excluding overtime) of the Oklahoma City vs Portland Pro Basketball game originally sche`
 
 ### KXNBA4QSPREAD — NBA 4th Quarter Spread
-- (8) Boston wins #Q by over # points
-- (8) Minnesota wins #Q by over # points
+- (7) NAME wins #Q by over # points
+- (7) Houston wins #Q by over # points
 - (7) Dallas wins #Q by over # points
-- (7) NAME C wins #Q by over # points
+- (7) Toronto wins #Q by over # points
 - (7) Detroit wins #Q by over # points
-- (7) Miami wins #Q by over # points
-- (7) Philadelphia wins #Q by over # points
-- (6) Brooklyn wins #Q by over # points
-- samples: KXNBA4QSPREAD-26NOV08BKNDAL-DAL8, KXNBA4QSPREAD-26NOV08BKNDAL-DAL6, KXNBA4QSPREAD-26NOV08BKNDAL-DAL4, KXNBA4QSPREAD-26NOV08BKNDAL-DAL2, KXNBA4QSPREAD-26NOV08BKNDAL-DAL14, KXNBA4QSPREAD-26NOV08BKNDAL-DAL12
-- sample fields: `{"ticker": "KXNBA4QSPREAD-26NOV08BKNDAL-DAL8", "event_ticker": "KXNBA4QSPREAD-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas wins 4Q by over 7.5 points", "yes_sub_title": "Dallas wins by over 7.5 points", "no_sub_title": "Dallas wins by over 7.5 points", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas wins by more t`
+- (7) Cleveland wins #Q by over # points
+- (7) NAME L wins #Q by over # points
+- (6) Phoenix wins #Q by over # points
+- samples: KXNBA4QSPREAD-26NOV09SASPHX-SAS8, KXNBA4QSPREAD-26NOV09SASPHX-SAS6, KXNBA4QSPREAD-26NOV09SASPHX-SAS4, KXNBA4QSPREAD-26NOV09SASPHX-SAS2, KXNBA4QSPREAD-26NOV09SASPHX-SAS14, KXNBA4QSPREAD-26NOV09SASPHX-SAS12
+- sample fields: `{"ticker": "KXNBA4QSPREAD-26NOV09SASPHX-SAS8", "event_ticker": "KXNBA4QSPREAD-26NOV09SASPHX", "market_type": "binary", "title": "San Antonio wins 4Q by over 7.5 points", "yes_sub_title": "San Antonio wins by over 7.5 points", "no_sub_title": "San Antonio wins by over 7.5 points", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_team": "ad36c3e8-4194-4e63-920f-7c50f46191a6"}, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary": "If San A`
 
 ### KXNBA4QTEAMTOTAL — NBA 4th Quarter Team Total
 
 ### KXNBA4QTOTAL — NBA 4th Quarter Total
-- (78) #th Quarter: Over # points scored
-- samples: KXNBA4QTOTAL-26NOV08BKNDAL-65, KXNBA4QTOTAL-26NOV08BKNDAL-63, KXNBA4QTOTAL-26NOV08BKNDAL-61, KXNBA4QTOTAL-26NOV08BKNDAL-59, KXNBA4QTOTAL-26NOV08BKNDAL-57, KXNBA4QTOTAL-26NOV08BKNDAL-55
-- sample fields: `{"ticker": "KXNBA4QTOTAL-26NOV08BKNDAL-65", "event_ticker": "KXNBA4QTOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "4th Quarter: Over 64.5 points scored", "yes_sub_title": "Over 64.5 points", "no_sub_title": "Over 64.5 points", "strike_type": "greater", "floor_strike": 64.5, "status": "active", "open_time": "2026-11-08T09:15:44.38832Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If over 64.5 total points are scored in the 4th quarter (excluding overtime) of the Brooklyn vs Dallas Pro Basketball game origina`
+- (65) #th Quarter: Over # points scored
+- samples: KXNBA4QTOTAL-26NOV09INDDAL-68, KXNBA4QTOTAL-26NOV09INDDAL-66, KXNBA4QTOTAL-26NOV09INDDAL-64, KXNBA4QTOTAL-26NOV09INDDAL-62, KXNBA4QTOTAL-26NOV09INDDAL-60, KXNBA4QTOTAL-26NOV09INDDAL-58
+- sample fields: `{"ticker": "KXNBA4QTOTAL-26NOV09INDDAL-68", "event_ticker": "KXNBA4QTOTAL-26NOV09INDDAL", "market_type": "binary", "title": "4th Quarter: Over 67.5 points scored", "yes_sub_title": "Over 67.5 points", "no_sub_title": "Over 67.5 points", "strike_type": "greater", "floor_strike": 67.5, "status": "active", "open_time": "2026-11-09T06:21:22.431128Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T04:00:00Z", "result": "", "rules_primary": "If over 67.5 total points are scored in the 4th quarter (excluding overtime) of the Indiana vs Dallas Pro Basketball game origina`
 
 ### KXNBA4QWINNER — NBA 4th Quarter Winner
 
@@ -708,28 +708,24 @@
 ### KXNBAASSTARTERS — NBA All-Star Starters
 
 ### KXNBAAST — NBA Player Assists
-- (225) NAME: #+ assists
-- (18) NAME.: #+ assists
-- (5) LaMelo Ball: #+ assists
-- (4) VJ Edgecombe: #+ assists
-- (4) LeBron James: #+ assists
-- (4) Luka Dončić: #+ assists
-- (3) NAME III: #+ assists
-- (3) Jaden McDaniels: #+ assists
-- samples: KXNBAAST-26NOV08BKNDAL-BKNNTRAORE10-8, KXNBAAST-26NOV08BKNDAL-BKNNTRAORE10-6, KXNBAAST-26NOV08BKNDAL-BKNNTRAORE10-4, KXNBAAST-26NOV08BKNDAL-BKNNTRAORE10-2, KXNBAAST-26NOV08MIASAC-MIAGANTETOKOUNMPO7-2, KXNBAAST-26NOV08UTAMIN-MINLBALL1-12
-- sample fields: `{"ticker": "KXNBAAST-26NOV08BKNDAL-BKNNTRAORE10-8", "event_ticker": "KXNBAAST-26NOV08BKNDAL", "market_type": "binary", "title": "Nolan Traore: 8+ assists", "yes_sub_title": "Nolan Traore: 8+", "no_sub_title": "Nolan Traore: 8+", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_player": "45e0dc65-2f26-4444-94ce-66f918de8cf9", "basketball_team": "7cc1eb26-46ee-44b7-94ad-248ee3b0fbd3"}, "status": "active", "open_time": "2026-11-08T11:21:07Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T06:30:00Z", "result": "", "rules_primary": "If Nol`
+- (172) NAME: #+ assists
+- (5) Nikola Jokić: #+ assists
+- (4) Fred VanVleet: #+ assists
+- (4) RJ Barrett: #+ assists
+- (3) AJ Dybantsa: #+ assists
+- (3) NAME.: #+ assists
+- samples: KXNBAAST-26NOV09WASDET-DETCCUNNINGHAM2-14, KXNBAAST-26NOV09INDDAL-INDPSIAKAM43-8, KXNBAAST-26NOV09INDDAL-INDPSIAKAM43-6, KXNBAAST-26NOV09INDDAL-INDPSIAKAM43-4, KXNBAAST-26NOV09INDDAL-INDPSIAKAM43-2, KXNBAAST-26NOV09INDDAL-INDANEMBHARD2-8
+- sample fields: `{"ticker": "KXNBAAST-26NOV09WASDET-DETCCUNNINGHAM2-14", "event_ticker": "KXNBAAST-26NOV09WASDET", "market_type": "binary", "title": "Cade Cunningham: 14+ assists", "yes_sub_title": "Cade Cunningham: 14+", "no_sub_title": "Cade Cunningham: 14+", "strike_type": "greater", "floor_strike": 13.5, "custom_strike": {"basketball_player": "0a8c3059-aa64-4871-8291-fff857a201af", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-09T10:00:53Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_`
 
 ### KXNBAASTPROT — NBA Player Assists Protected
-- (225) NAME: #+ assists
-- (18) NAME.: #+ assists
-- (5) LaMelo Ball: #+ assists
-- (4) VJ Edgecombe: #+ assists
-- (4) LeBron James: #+ assists
-- (4) Luka Dončić: #+ assists
-- (3) NAME III: #+ assists
-- (3) Jaden McDaniels: #+ assists
-- samples: KXNBAASTPROT-26NOV08BKNDAL-BKNNTRAORE10-8, KXNBAASTPROT-26NOV08BKNDAL-BKNNTRAORE10-6, KXNBAASTPROT-26NOV08BKNDAL-BKNNTRAORE10-4, KXNBAASTPROT-26NOV08BKNDAL-BKNNTRAORE10-2, KXNBAASTPROT-26NOV08MIASAC-MIAGANTETOKOUNMPO7-2, KXNBAASTPROT-26NOV08UTAMIN-MINLBALL1-12
-- sample fields: `{"ticker": "KXNBAASTPROT-26NOV08BKNDAL-BKNNTRAORE10-8", "event_ticker": "KXNBAASTPROT-26NOV08BKNDAL", "market_type": "binary", "title": "Nolan Traore: 8+ assists", "yes_sub_title": "Nolan Traore: 8+", "no_sub_title": "Nolan Traore: 8+", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_player": "45e0dc65-2f26-4444-94ce-66f918de8cf9", "basketball_team": "7cc1eb26-46ee-44b7-94ad-248ee3b0fbd3"}, "status": "active", "open_time": "2026-11-08T11:10:29Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T06:30:00Z", "result": "", "rules_primary":`
+- (172) NAME: #+ assists
+- (5) Nikola Jokić: #+ assists
+- (4) Fred VanVleet: #+ assists
+- (4) RJ Barrett: #+ assists
+- (3) AJ Dybantsa: #+ assists
+- (3) NAME.: #+ assists
+- samples: KXNBAASTPROT-26NOV09WASDET-DETCCUNNINGHAM2-14, KXNBAASTPROT-26NOV09INDDAL-INDPSIAKAM43-8, KXNBAASTPROT-26NOV09INDDAL-INDPSIAKAM43-6, KXNBAASTPROT-26NOV09INDDAL-INDPSIAKAM43-4, KXNBAASTPROT-26NOV09INDDAL-INDPSIAKAM43-2, KXNBAASTPROT-26NOV09INDDAL-INDANEMBHARD2-8
+- sample fields: `{"ticker": "KXNBAASTPROT-26NOV09WASDET-DETCCUNNINGHAM2-14", "event_ticker": "KXNBAASTPROT-26NOV09WASDET", "market_type": "binary", "title": "Cade Cunningham: 14+ assists", "yes_sub_title": "Cade Cunningham: 14+", "no_sub_title": "Cade Cunningham: 14+", "strike_type": "greater", "floor_strike": 13.5, "custom_strike": {"basketball_player": "0a8c3059-aa64-4871-8291-fff857a201af", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-09T09:50:31Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "",`
 
 ### KXNBAATLANTIC — Pro Basketball Atlantic Division Winner
 - (5) NAME be the NAME winner in the #-# season?
@@ -753,11 +749,10 @@
 ### KXNBABENCHPTS — NBA Bench Points
 
 ### KXNBABLK — NBA Player Blocks
-- (55) NAME: #+ blocks
-- (2) Jaden McDaniels: #+ blocks
-- (2) NAME.: #+ blocks
-- samples: KXNBABLK-26NOV08LALDET-DETCCUNNINGHAM2-2, KXNBABLK-26NOV08BKNDAL-DALCFLAGG32-2, KXNBABLK-26NOV08BKNDAL-DALCFLAGG32-1, KXNBABLK-26NOV08BKNDAL-BKNDSHARPE20-2, KXNBABLK-26NOV08BKNDAL-BKNDSHARPE20-1, KXNBABLK-26NOV08LALDET-DETCCUNNINGHAM2-1
-- sample fields: `{"ticker": "KXNBABLK-26NOV08LALDET-DETCCUNNINGHAM2-2", "event_ticker": "KXNBABLK-26NOV08LALDET", "market_type": "binary", "title": "Cade Cunningham: 2+ blocks", "yes_sub_title": "Cade Cunningham: 2+", "no_sub_title": "Cade Cunningham: 2+", "strike_type": "greater", "floor_strike": 1.5, "custom_strike": {"basketball_player": "0a8c3059-aa64-4871-8291-fff857a201af", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T11:01:05Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "result": "", "rules_primar`
+- (26) NAME: #+ blocks
+- (2) Moussa Diabaté: #+ blocks
+- samples: KXNBABLK-26NOV09CLECHA-CLEEMOBLEY4-3, KXNBABLK-26NOV09CLECHA-CLEEMOBLEY4-2, KXNBABLK-26NOV09CLECHA-CLEEMOBLEY4-1, KXNBABLK-26NOV09CLECHA-CLEPWATSON8-3, KXNBABLK-26NOV09CLECHA-CLEPWATSON8-2, KXNBABLK-26NOV09CLECHA-CLEPWATSON8-1
+- sample fields: `{"ticker": "KXNBABLK-26NOV09CLECHA-CLEEMOBLEY4-3", "event_ticker": "KXNBABLK-26NOV09CLECHA", "market_type": "binary", "title": "Evan Mobley: 3+ blocks", "yes_sub_title": "Evan Mobley: 3+", "no_sub_title": "Evan Mobley: 3+", "strike_type": "greater", "floor_strike": 2.5, "custom_strike": {"basketball_player": "e6212176-2793-4f9a-8e1b-7d294eca2787", "basketball_team": "90381a35-42a6-4975-851f-175418e4271a"}, "status": "active", "open_time": "2026-11-09T09:21:47Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If Evan Mob`
 
 ### KXNBACELEBRITY3PT — NBA Celebrity 3PT Contest
 
@@ -987,20 +982,8 @@
 - sample fields: `{"ticker": "KXNBAEFINMVP-27-VEDGECOMBE77", "event_ticker": "KXNBAEFINMVP-27", "market_type": "binary", "title": "Pro Basketball Eastern Conference Finals MVP: VJ Edgecombe", "yes_sub_title": "VJ Edgecombe", "no_sub_title": "VJ Edgecombe", "strike_type": "structured", "custom_strike": {"basketball_player": "21e37a74-41d2-4c09-9f05-9b20a14ba88b"}, "status": "active", "open_time": "2026-09-09T19:00:00Z", "close_time": "2027-08-07T14:00:00Z", "expected_expiration_time": "2027-08-30T14:00:00Z", "result": "", "rules_primary": "If VJ Edgecombe wins the Pro Basketball Eastern Conference Finals MVP in `
 
 ### KXNBAESCALATOR3PT — NBA Player Threes Escalator
-- (8) NAME player threes escalator
-- (1) Luka Dončić player threes escalator
-- (1) VJ Edgecombe player threes escalator
-- (1) LeBron James player threes escalator
-- samples: KXNBAESCALATOR3PT-26NOV08LALDET-LALLDONCIC77, KXNBAESCALATOR3PT-26NOV08LALDET-LALAREAVES15, KXNBAESCALATOR3PT-26NOV08LALDET-DETDROBINSON55, KXNBAESCALATOR3PT-26NOV08LALDET-DETCCUNNINGHAM2, KXNBAESCALATOR3PT-26NOV08PHICHI-PHIVEDGECOMBE77, KXNBAESCALATOR3PT-26NOV08PHICHI-PHITMAXEY0
-- sample fields: `{"ticker": "KXNBAESCALATOR3PT-26NOV08LALDET-LALLDONCIC77", "event_ticker": "KXNBAESCALATOR3PT-26NOV08LALDET", "market_type": "binary", "title": "Luka Don\u010di\u0107 player threes escalator", "yes_sub_title": "Luka Don\u010di\u0107", "no_sub_title": "Luka Don\u010di\u0107", "strike_type": "custom", "custom_strike": {"Payout Per Unit": "0 threes, $0.0000; 1, $0.0010; 2, $0.0080; 3, $0.0270; 4, $0.0640; 5, $0.1250; 6, $0.2160; 7, $0.3430; 8, $0.5120; 9, $0.7290; and 10 or more, $1.0000.", "Payout formula": "floor(10000 x (y / 10)^3) / 10000", "basketball_player": "008856e0-b1ab-47f1-8df7-06e243`
 
 ### KXNBAESCALATORPTS — NBA Player Points Escalator
-- (9) NAME player points escalator
-- (1) Luka Dončić player points escalator
-- (1) VJ Edgecombe player points escalator
-- (1) LeBron James player points escalator
-- samples: KXNBAESCALATORPTS-26NOV08LALDET-LALWKESSLER14, KXNBAESCALATORPTS-26NOV08LALDET-LALLDONCIC77, KXNBAESCALATORPTS-26NOV08LALDET-LALAREAVES15, KXNBAESCALATORPTS-26NOV08LALDET-DETCCUNNINGHAM2, KXNBAESCALATORPTS-26NOV08PHICHI-PHIVEDGECOMBE77, KXNBAESCALATORPTS-26NOV08PHICHI-PHITMAXEY0
-- sample fields: `{"ticker": "KXNBAESCALATORPTS-26NOV08LALDET-LALWKESSLER14", "event_ticker": "KXNBAESCALATORPTS-26NOV08LALDET", "market_type": "binary", "title": "Walker Kessler player points escalator", "yes_sub_title": "Walker Kessler", "no_sub_title": "Walker Kessler", "strike_type": "custom", "custom_strike": {"Payout Per Unit": "0\u20131 points, $0.0000; 2\u20133, $0.0000; 4\u20135, $0.0005; 6\u20137, $0.0017; 8\u20139, $0.0040; 10\u201311, $0.0080; 12\u201313, $0.0138; 14\u201315, $0.0219; 16\u201317, $0.0327; 18\u201319, $0.0466; 20\u201321, $0.0640; 22\u201323, $0.0851; 24\u201325, $0.1105; 26\u201327,`
 
 ### KXNBAEUROPEANNOUNCE — NBA Europe Inaugural Season Being Announced
 - (2) NBA Europe's inaugural season announced before Jan #, #
@@ -1083,15 +1066,15 @@
 
 ### KXNBAGAME — NBA Game
 - (11) NAME wins
-- (3) Utah wins
-- (3) Chicago wins
+- (3) Portland wins
+- (3) Cleveland wins
+- (3) Toronto wins
 - (3) Phoenix wins
 - (3) Washington wins
-- (3) Detroit wins
-- (3) Milwaukee wins
-- (3) NAME L wins
-- samples: KXNBAGAME-26NOV11OKCPOR-POR, KXNBAGAME-26NOV11OKCPOR-OKC, KXNBAGAME-26NOV11ORLUTA-UTA, KXNBAGAME-26NOV11ORLUTA-ORL, KXNBAGAME-26NOV11GSWHOU-HOU, KXNBAGAME-26NOV11GSWHOU-GSW
-- sample fields: `{"ticker": "KXNBAGAME-26NOV11OKCPOR-POR", "event_ticker": "KXNBAGAME-26NOV11OKCPOR", "market_type": "binary", "title": "Portland wins", "yes_sub_title": "Portland", "no_sub_title": "Portland", "strike_type": "structured", "custom_strike": {"basketball_team": "2229b01e-68eb-46ad-adf4-71a9533c84fc"}, "status": "active", "open_time": "2026-11-08T03:06:34.769286Z", "close_time": "2026-11-14T03:00:00Z", "expected_expiration_time": "2026-11-12T06:00:00Z", "result": "", "rules_primary": "If Portland wins the Oklahoma City vs Portland Pro Basketball game originally scheduled for Nov 11, 2026, then the`
+- (2) Sacramento wins
+- (2) NAME C wins
+- samples: KXNBAGAME-26NOV13PORSAC-SAC, KXNBAGAME-26NOV13PORSAC-POR, KXNBAGAME-26NOV13OKCLAC-OKC, KXNBAGAME-26NOV13OKCLAC-LAC, KXNBAGAME-26NOV13CLEMIA-MIA, KXNBAGAME-26NOV13CLEMIA-CLE
+- sample fields: `{"ticker": "KXNBAGAME-26NOV13PORSAC-SAC", "event_ticker": "KXNBAGAME-26NOV13PORSAC", "market_type": "binary", "title": "Sacramento wins", "yes_sub_title": "Sacramento", "no_sub_title": "Sacramento", "strike_type": "structured", "custom_strike": {"basketball_team": "ab9e2e9a-3243-41b6-a291-95f4d9c6edf7"}, "status": "active", "open_time": "2026-11-09T03:06:32.976729Z", "close_time": "2026-11-16T03:00:00Z", "expected_expiration_time": "2026-11-14T06:00:00Z", "result": "", "rules_primary": "If Sacramento wins the Portland vs Sacramento Pro Basketball game originally scheduled for Nov 13, 2026, the`
 
 ### KXNBAGAME7 — NBA Series that Go to a Game 7
 
@@ -1121,6 +1104,8 @@
 ### KXNBAH2HPRA — NBA Head-to-Head Points, Rebounds and Assists
 
 ### KXNBAH2HPTS — NBA Head-to-Head Points
+
+### KXNBAH2HPTSMARGIN — NBA H2H Player Points Bracketed
 
 ### KXNBAH2HTEAM3PT — NBA H2H Team Three Pointers
 
@@ -1271,9 +1256,9 @@
 - sample fields: `{"ticker": "KXNBAONE3PT-27-WKESSLER14", "event_ticker": "KXNBAONE3PT-27", "market_type": "binary", "title": "Walker Kessler to make at least 1 three-pointer", "yes_sub_title": "Walker Kessler", "no_sub_title": "Walker Kessler", "strike_type": "greater", "floor_strike": 0.5, "custom_strike": {"basketball_player": "fa781441-5e6a-4a3d-9a3f-0af9ee263945"}, "status": "active", "open_time": "2026-10-16T17:00:00Z", "close_time": "2027-07-07T14:00:00Z", "expected_expiration_time": "2027-06-30T14:00:00Z", "result": "", "rules_primary": "If Walker Kessler makes at least 1 three-pointer in the 2026-27 Pr`
 
 ### KXNBAOT — NBA Overtime
-- (15) Game goes to overtime
-- samples: KXNBAOT-26NOV09NOPGSW-1, KXNBAOT-26NOV09SASPHX-1, KXNBAOT-26NOV09DENHOU-1, KXNBAOT-26NOV09INDDAL-1, KXNBAOT-26NOV09MEMTOR-1, KXNBAOT-26NOV09WASDET-1
-- sample fields: `{"ticker": "KXNBAOT-26NOV09NOPGSW-1", "event_ticker": "KXNBAOT-26NOV09NOPGSW", "market_type": "binary", "title": "Game goes to overtime", "yes_sub_title": "Game goes to overtime", "no_sub_title": "Game goes to overtime", "strike_type": "greater", "floor_strike": 0.5, "status": "active", "open_time": "2026-11-08T03:06:18.934043Z", "close_time": "2026-11-12T03:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If at least 1 overtime period is played in the New Orleans vs Golden State Pro Basketball game originally scheduled for Nov 9, 2026, then the mark`
+- (14) Game goes to overtime
+- samples: KXNBAOT-26NOV10OKCPOR-1, KXNBAOT-26NOV10ORLSAC-1, KXNBAOT-26NOV10LACPHX-1, KXNBAOT-26NOV10MIAUTA-1, KXNBAOT-26NOV10BOSPHI-1, KXNBAOT-26NOV10MILNYK-1
+- sample fields: `{"ticker": "KXNBAOT-26NOV10OKCPOR-1", "event_ticker": "KXNBAOT-26NOV10OKCPOR", "market_type": "binary", "title": "Game goes to overtime", "yes_sub_title": "Game goes to overtime", "no_sub_title": "Game goes to overtime", "strike_type": "greater", "floor_strike": 0.5, "status": "active", "open_time": "2026-11-09T04:06:02.552848Z", "close_time": "2026-11-13T04:00:00Z", "expected_expiration_time": "2026-11-11T07:00:00Z", "result": "", "rules_primary": "If at least 1 overtime period is played in the Oklahoma City vs Portland Pro Basketball game originally scheduled for Nov 10, 2026, then the marke`
 
 ### KXNBAOVERTIME — NBA Overtime
 
@@ -1366,108 +1351,101 @@
 ### KXNBAPR — Pro Basketball Player Points + Rebounds
 
 ### KXNBAPRA — NBA Player Points + Rebounds + Assists
-- (185) NAME: #+ combined points, rebounds, and assists
-- (15) NAME.: #+ combined points, rebounds, and assists
-- (4) VJ Edgecombe: #+ combined points, rebounds, and assists
-- (3) NAME III: #+ combined points, rebounds, and assists
-- (3) LaMelo Ball: #+ combined points, rebounds, and assists
-- (3) Jaden McDaniels: #+ combined points, rebounds, and assists
-- (3) Zach LaVine: #+ combined points, rebounds, and assists
-- (3) LeBron James: #+ combined points, rebounds, and assists
-- samples: KXNBAPRA-26NOV08LALDET-DETDJENKINS24-25, KXNBAPRA-26NOV08LALDET-DETDJENKINS24-10, KXNBAPRA-26NOV08UTAMIN-UTAJHAYES11-10, KXNBAPRA-26NOV08BKNDAL-BKNJRANDLE30-40, KXNBAPRA-26NOV08LALDET-DETDJENKINS24-20, KXNBAPRA-26NOV08LALDET-DETDJENKINS24-15
-- sample fields: `{"ticker": "KXNBAPRA-26NOV08LALDET-DETDJENKINS24-25", "event_ticker": "KXNBAPRA-26NOV08LALDET", "market_type": "binary", "title": "Daniss Jenkins: 25+ combined points, rebounds, and assists", "yes_sub_title": "Daniss Jenkins: 25+", "no_sub_title": "Daniss Jenkins: 25+", "strike_type": "greater", "floor_strike": 24.5, "custom_strike": {"basketball_player": "5ac2f6ed-c991-40a4-afa0-aff7c779b0d7", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T11:01:05Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:0`
+- (144) NAME: #+ combined points, rebounds, and assists
+- (4) Nikola Jokić: #+ combined points, rebounds, and assists
+- (3) AJ Dybantsa: #+ combined points, rebounds, and assists
+- (3) NAME.: #+ combined points, rebounds, and assists
+- (3) Fred VanVleet: #+ combined points, rebounds, and assists
+- (3) RJ Barrett: #+ combined points, rebounds, and assists
+- samples: KXNBAPRA-26NOV09CLECHA-CHACWHITE3-15, KXNBAPRA-26NOV09MEMTOR-TORCMURRAYBOYLES30-30, KXNBAPRA-26NOV09INDDAL-INDPSIAKAM43-35, KXNBAPRA-26NOV09INDDAL-INDPSIAKAM43-30, KXNBAPRA-26NOV09INDDAL-INDPSIAKAM43-25, KXNBAPRA-26NOV09INDDAL-INDANEMBHARD2-30
+- sample fields: `{"ticker": "KXNBAPRA-26NOV09CLECHA-CHACWHITE3-15", "event_ticker": "KXNBAPRA-26NOV09CLECHA", "market_type": "binary", "title": "Coby White: 15+ combined points, rebounds, and assists", "yes_sub_title": "Coby White: 15+", "no_sub_title": "Coby White: 15+", "strike_type": "greater", "floor_strike": 14.5, "custom_strike": {"basketball_player": "0bcb0358-92a6-405a-8ba0-b41d69bd4da7", "basketball_team": "7c980c51-fa76-4571-b165-242b2a00f3a1"}, "status": "active", "open_time": "2026-11-09T10:00:53Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": `
 
 ### KXNBAPRAPROT — Pts + Reb + Ast Protected
-- (182) NAME: #+ combined points, rebounds, and assists
-- (15) NAME.: #+ combined points, rebounds, and assists
-- (4) VJ Edgecombe: #+ combined points, rebounds, and assists
-- (3) NAME III: #+ combined points, rebounds, and assists
-- (3) LaMelo Ball: #+ combined points, rebounds, and assists
-- (3) Jaden McDaniels: #+ combined points, rebounds, and assists
-- (3) Zach LaVine: #+ combined points, rebounds, and assists
-- (3) LeBron James: #+ combined points, rebounds, and assists
-- samples: KXNBAPRAPROT-26NOV08LALDET-DETDJENKINS24-25, KXNBAPRAPROT-26NOV08UTAMIN-UTAJHAYES11-10, KXNBAPRAPROT-26NOV08LALDET-DETDJENKINS24-10, KXNBAPRAPROT-26NOV08BKNDAL-BKNJRANDLE30-40, KXNBAPRAPROT-26NOV08NOPLAC-LACDGARLAND10-25, KXNBAPRAPROT-26NOV08UTAMIN-UTAKGEORGE3-40
-- sample fields: `{"ticker": "KXNBAPRAPROT-26NOV08LALDET-DETDJENKINS24-25", "event_ticker": "KXNBAPRAPROT-26NOV08LALDET", "market_type": "binary", "title": "Daniss Jenkins: 25+ combined points, rebounds, and assists", "yes_sub_title": "Daniss Jenkins: 25+", "no_sub_title": "Daniss Jenkins: 25+", "strike_type": "greater", "floor_strike": 24.5, "custom_strike": {"basketball_player": "5ac2f6ed-c991-40a4-afa0-aff7c779b0d7", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T10:50:32Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09`
+- (144) NAME: #+ combined points, rebounds, and assists
+- (4) Nikola Jokić: #+ combined points, rebounds, and assists
+- (3) AJ Dybantsa: #+ combined points, rebounds, and assists
+- (3) NAME.: #+ combined points, rebounds, and assists
+- (3) Fred VanVleet: #+ combined points, rebounds, and assists
+- (3) RJ Barrett: #+ combined points, rebounds, and assists
+- samples: KXNBAPRAPROT-26NOV09DENHOU-DENNJOKIC15-55, KXNBAPRAPROT-26NOV09MEMTOR-TORCMURRAYBOYLES30-30, KXNBAPRAPROT-26NOV09CLECHA-CHACWHITE3-15, KXNBAPRAPROT-26NOV09INDDAL-INDPSIAKAM43-35, KXNBAPRAPROT-26NOV09INDDAL-INDPSIAKAM43-30, KXNBAPRAPROT-26NOV09INDDAL-INDPSIAKAM43-25
+- sample fields: `{"ticker": "KXNBAPRAPROT-26NOV09DENHOU-DENNJOKIC15-55", "event_ticker": "KXNBAPRAPROT-26NOV09DENHOU", "market_type": "binary", "title": "Nikola Joki\u0107: 55+ combined points, rebounds, and assists", "yes_sub_title": "Nikola Joki\u0107: 55+", "no_sub_title": "Nikola Joki\u0107: 55+", "strike_type": "greater", "floor_strike": 54.5, "custom_strike": {"basketball_player": "7471d123-d5ac-4ab7-a1ed-01d3a0d00ee6", "basketball_team": "ba2cb6be-9827-46a8-8e6f-d8661307ba77"}, "status": "active", "open_time": "2026-11-09T10:30:28Z", "close_time": "2026-11-12T01:30:00Z", "expected_expiration_time": "202`
 
 ### KXNBAPREPACK2ML — 2 ML Basketball Combo
 
 ### KXNBAPREPACK3ML — 3ML Basketball Combo
 
 ### KXNBAPTS — NBA Player Points
-- (242) NAME: #+ points
-- (18) NAME.: #+ points
-- (5) Luka Dončić: #+ points
+- (273) NAME: #+ points
+- (6) NAME.: #+ points
+- (5) RJ Barrett: #+ points
 - (4) NAME III: #+ points
-- (4) LaMelo Ball: #+ points
-- (4) Jaden McDaniels: #+ points
-- (4) LeBron James: #+ points
-- (4) Zach LaVine: #+ points
-- samples: KXNBAPTS-26NOV08LALDET-DETKHUERTERSF-15, KXNBAPTS-26NOV08LALDET-DETKHUERTERSF-10, KXNBAPTS-26NOV08LALDET-DETCCUNNINGHAM2-15, KXNBAPTS-26NOV08LALDET-DETDJENKINS24-20, KXNBAPTS-26NOV08LALDET-DETDJENKINS24-15, KXNBAPTS-26NOV08LALDET-DETDJENKINS24-10
-- sample fields: `{"ticker": "KXNBAPTS-26NOV08LALDET-DETKHUERTERSF-15", "event_ticker": "KXNBAPTS-26NOV08LALDET", "market_type": "binary", "title": "Kevin Huerter: 15+ points", "yes_sub_title": "Kevin Huerter: 15+", "no_sub_title": "Kevin Huerter: 15+", "strike_type": "greater", "floor_strike": 14.5, "custom_strike": {"basketball_player": "33c2e858-9265-47f1-b048-fbab4a62f9c8", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T10:40:56Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "result": "", "rules_primary":`
+- (4) P.J. Washington: #+ points
+- (4) AJ Dybantsa: #+ points
+- (4) Nikola Jokić: #+ points
+- (3) CJ McCollum: #+ points
+- samples: KXNBAPTS-26NOV09INDDAL-INDKOUBRE10-15, KXNBAPTS-26NOV09INDDAL-INDKOUBRE10-10, KXNBAPTS-26NOV09MEMTOR-TORCMURRAYBOYLES30-25, KXNBAPTS-26NOV09MEMTOR-TORJPOELTL19-20, KXNBAPTS-26NOV09MEMTOR-TORJPOELTL19-15, KXNBAPTS-26NOV09MEMTOR-TORJPOELTL19-10
+- sample fields: `{"ticker": "KXNBAPTS-26NOV09INDDAL-INDKOUBRE10-15", "event_ticker": "KXNBAPTS-26NOV09INDDAL", "market_type": "binary", "title": "Kelly Oubre Jr.: 15+ points", "yes_sub_title": "Kelly Oubre Jr.: 15+", "no_sub_title": "Kelly Oubre Jr.: 15+", "strike_type": "greater", "floor_strike": 14.5, "custom_strike": {"basketball_player": "605cfa20-dc8e-4c44-90bd-1ee476ec4138", "basketball_team": "d059bab2-9fb5-42dd-8038-5a12474300ce"}, "status": "active", "open_time": "2026-11-09T09:21:46Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T07:00:00Z", "result": "", "rules_prima`
 
 ### KXNBAPTSALLGAMES — Pro Basketball Points in Every Game
 
 ### KXNBAPTSLEADER — NBA Game Points Leader
-- (65) NAME: Points leader
-- (5) NAME.: Points leader
-- (1) LaMelo Ball: Points leader
-- (1) Jaden McDaniels: Points leader
-- (1) NAME III: Points leader
-- (1) Karlo Matković: Points leader
-- (1) Zach LaVine: Points leader
-- (1) Jake LaRavia: Points leader
-- samples: KXNBAPTSLEADER-26NOV08BKNDAL-BKNNTRAORE10, KXNBAPTSLEADER-26NOV08BKNDAL-BKNMPORTER17, KXNBAPTSLEADER-26NOV08BKNDAL-BKNJRANDLE30, KXNBAPTSLEADER-26NOV08BKNDAL-BKNDWOLF2, KXNBAPTSLEADER-26NOV08BKNDAL-BKNDSHARPE20, KXNBAPTSLEADER-26NOV08UTAMIN-UTALMARKKANEN23
-- sample fields: `{"ticker": "KXNBAPTSLEADER-26NOV08BKNDAL-BKNNTRAORE10", "event_ticker": "KXNBAPTSLEADER-26NOV08BKNDAL", "market_type": "binary", "title": "Nolan Traore: Points leader", "yes_sub_title": "Nolan Traore", "no_sub_title": "Nolan Traore", "strike_type": "structured", "custom_strike": {"basketball_player": "45e0dc65-2f26-4444-94ce-66f918de8cf9", "basketball_team": "7cc1eb26-46ee-44b7-94ad-248ee3b0fbd3"}, "status": "active", "open_time": "2026-11-08T11:25:52.5214Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Nolan Traor`
+- (43) NAME: Points leader
+- (1) Royce O'Neale: Points leader
+- (1) Moussa Diabaté: Points leader
+- (1) RJ Barrett: Points leader
+- (1) AJ Dybantsa: Points leader
+- samples: KXNBAPTSLEADER-26NOV09MEMTOR-MEMZEDEY14, KXNBAPTSLEADER-26NOV09MEMTOR-MEMCCOWARD23, KXNBAPTSLEADER-26NOV09MEMTOR-MEMCBOOZER27, KXNBAPTSLEADER-26NOV09MEMTOR-MEMJWELLS0, KXNBAPTSLEADER-26NOV09MEMTOR-MEMTJEROME2, KXNBAPTSLEADER-26NOV09CLECHA-CLEPWATSON8
+- sample fields: `{"ticker": "KXNBAPTSLEADER-26NOV09MEMTOR-MEMZEDEY14", "event_ticker": "KXNBAPTSLEADER-26NOV09MEMTOR", "market_type": "binary", "title": "Zach Edey: Points leader", "yes_sub_title": "Zach Edey", "no_sub_title": "Zach Edey", "strike_type": "structured", "custom_strike": {"basketball_player": "fe5a04a5-0dc7-4373-baf9-36c4bced83a5", "basketball_team": "1cfe70b8-4dfc-47dc-acca-b68d4a725972"}, "status": "active", "open_time": "2026-11-09T09:00:55Z", "close_time": "2026-11-12T00:30:00Z", "expected_expiration_time": "2026-11-10T06:30:00Z", "result": "", "rules_primary": "If Zach Edey records the most `
 
 ### KXNBAPTSPROT — NBA Player Points Protected
-- (242) NAME: #+ points
-- (18) NAME.: #+ points
-- (5) Luka Dončić: #+ points
+- (273) NAME: #+ points
+- (6) NAME.: #+ points
+- (5) RJ Barrett: #+ points
 - (4) NAME III: #+ points
-- (4) LaMelo Ball: #+ points
-- (4) Jaden McDaniels: #+ points
-- (4) LeBron James: #+ points
-- (4) Zach LaVine: #+ points
-- samples: KXNBAPTSPROT-26NOV08LALDET-DETKHUERTERSF-15, KXNBAPTSPROT-26NOV08LALDET-DETKHUERTERSF-10, KXNBAPTSPROT-26NOV08LALDET-DETCCUNNINGHAM2-15, KXNBAPTSPROT-26NOV08LALDET-DETDJENKINS24-20, KXNBAPTSPROT-26NOV08LALDET-DETDJENKINS24-15, KXNBAPTSPROT-26NOV08LALDET-DETDJENKINS24-10
-- sample fields: `{"ticker": "KXNBAPTSPROT-26NOV08LALDET-DETKHUERTERSF-15", "event_ticker": "KXNBAPTSPROT-26NOV08LALDET", "market_type": "binary", "title": "Kevin Huerter: 15+ points", "yes_sub_title": "Kevin Huerter: 15+", "no_sub_title": "Kevin Huerter: 15+", "strike_type": "greater", "floor_strike": 14.5, "custom_strike": {"basketball_player": "33c2e858-9265-47f1-b048-fbab4a62f9c8", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T10:27:30Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "result": "", "rules_p`
+- (4) P.J. Washington: #+ points
+- (4) AJ Dybantsa: #+ points
+- (4) Nikola Jokić: #+ points
+- (3) CJ McCollum: #+ points
+- samples: KXNBAPTSPROT-26NOV09INDDAL-INDKOUBRE10-15, KXNBAPTSPROT-26NOV09INDDAL-INDKOUBRE10-10, KXNBAPTSPROT-26NOV09MEMTOR-TORCMURRAYBOYLES30-25, KXNBAPTSPROT-26NOV09MEMTOR-TORJPOELTL19-20, KXNBAPTSPROT-26NOV09MEMTOR-TORJPOELTL19-15, KXNBAPTSPROT-26NOV09MEMTOR-TORJPOELTL19-10
+- sample fields: `{"ticker": "KXNBAPTSPROT-26NOV09INDDAL-INDKOUBRE10-15", "event_ticker": "KXNBAPTSPROT-26NOV09INDDAL", "market_type": "binary", "title": "Kelly Oubre Jr.: 15+ points", "yes_sub_title": "Kelly Oubre Jr.: 15+", "no_sub_title": "Kelly Oubre Jr.: 15+", "strike_type": "greater", "floor_strike": 14.5, "custom_strike": {"basketball_player": "605cfa20-dc8e-4c44-90bd-1ee476ec4138", "basketball_team": "d059bab2-9fb5-42dd-8038-5a12474300ce"}, "status": "active", "open_time": "2026-11-09T09:10:32Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T07:00:00Z", "result": "", "rul`
 
 ### KXNBARA — Pro Basketball Player Rebounds + Assists
 
 ### KXNBARACE — NBA Race to Points
-- (12) NAME reaches # points first
-- (6) Dallas reaches # points first
-- (6) Detroit reaches # points first
-- (6) NAME L reaches # points first
-- (3) Phoenix reaches # points first
-- (3) Houston reaches # points first
-- (3) Denver reaches # points first
-- (3) Indiana reaches # points first
-- samples: KXNBARACE-26NOV09NOPGSW-30-NOP, KXNBARACE-26NOV09NOPGSW-30-GSW, KXNBARACE-26NOV09NOPGSW-20-NOP, KXNBARACE-26NOV09NOPGSW-20-GSW, KXNBARACE-26NOV09NOPGSW-10-NOP, KXNBARACE-26NOV09NOPGSW-10-GSW
-- sample fields: `{"ticker": "KXNBARACE-26NOV09NOPGSW-30-NOP", "event_ticker": "KXNBARACE-26NOV09NOPGSW-30", "market_type": "binary", "title": "New Orleans reaches 30 points first", "yes_sub_title": "New Orleans", "no_sub_title": "New Orleans", "strike_type": "custom", "custom_strike": {"Points": "30", "basketball_team": "d3c8c2ac-c4a0-4d67-8b16-53cb91118dfc"}, "status": "active", "open_time": "2026-11-08T03:06:18.934043Z", "close_time": "2026-11-12T03:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If New Orleans is the first to score 30 points in the New Orleans vs`
+- (15) NAME reaches # points first
+- (6) Phoenix reaches # points first
+- (3) Portland reaches # points first
+- (3) Sacramento reaches # points first
+- (3) Orlando reaches # points first
+- (3) NAME C reaches # points first
+- (3) Utah reaches # points first
+- (3) Miami reaches # points first
+- samples: KXNBARACE-26NOV10OKCPOR-30-POR, KXNBARACE-26NOV10OKCPOR-30-OKC, KXNBARACE-26NOV10OKCPOR-20-POR, KXNBARACE-26NOV10OKCPOR-20-OKC, KXNBARACE-26NOV10OKCPOR-10-POR, KXNBARACE-26NOV10OKCPOR-10-OKC
+- sample fields: `{"ticker": "KXNBARACE-26NOV10OKCPOR-30-POR", "event_ticker": "KXNBARACE-26NOV10OKCPOR-30", "market_type": "binary", "title": "Portland reaches 30 points first", "yes_sub_title": "Portland", "no_sub_title": "Portland", "strike_type": "custom", "custom_strike": {"Points": "30", "basketball_team": "2229b01e-68eb-46ad-adf4-71a9533c84fc"}, "status": "active", "open_time": "2026-11-09T04:06:02.552848Z", "close_time": "2026-11-13T04:00:00Z", "expected_expiration_time": "2026-11-11T07:00:00Z", "result": "", "rules_primary": "If Portland is the first to score 30 points in the Oklahoma City vs Portland `
 
 ### KXNBAREB — NBA Player Rebounds
-- (267) NAME: #+ rebounds
-- (18) NAME.: #+ rebounds
-- (5) VJ Edgecombe: #+ rebounds
-- (5) LeBron James: #+ rebounds
-- (5) Luka Dončić: #+ rebounds
-- (4) Karlo Matković: #+ rebounds
-- (4) NAME III: #+ rebounds
-- (4) LaMelo Ball: #+ rebounds
-- samples: KXNBAREB-26NOV08LALDET-DETDJENKINS24-6, KXNBAREB-26NOV08LALDET-DETDJENKINS24-4, KXNBAREB-26NOV08LALDET-DETDJENKINS24-2, KXNBAREB-26NOV08PHICHI-PHIVEDGECOMBE77-2, KXNBAREB-26NOV08UTAMIN-UTAKGEORGE3-8, KXNBAREB-26NOV08UTAMIN-UTAKGEORGE3-6
-- sample fields: `{"ticker": "KXNBAREB-26NOV08LALDET-DETDJENKINS24-6", "event_ticker": "KXNBAREB-26NOV08LALDET", "market_type": "binary", "title": "Daniss Jenkins: 6+ rebounds", "yes_sub_title": "Daniss Jenkins: 6+", "no_sub_title": "Daniss Jenkins: 6+", "strike_type": "greater", "floor_strike": 5.5, "custom_strike": {"basketball_player": "5ac2f6ed-c991-40a4-afa0-aff7c779b0d7", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T10:21:27Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "result": "", "rules_primary":`
+- (279) NAME: #+ rebounds
+- (7) NAME.: #+ rebounds
+- (5) Moussa Diabaté: #+ rebounds
+- (5) Nikola Jokić: #+ rebounds
+- (4) P.J. Washington: #+ rebounds
+- (4) Jake LaRavia: #+ rebounds
+- (4) Royce O'Neale: #+ rebounds
+- (4) AJ Dybantsa: #+ rebounds
+- samples: KXNBAREB-26NOV09INDDAL-DALCFLAGG32-12, KXNBAREB-26NOV09INDDAL-INDPSIAKAM43-8, KXNBAREB-26NOV09INDDAL-INDPSIAKAM43-6, KXNBAREB-26NOV09INDDAL-INDPSIAKAM43-4, KXNBAREB-26NOV09INDDAL-INDPSIAKAM43-10, KXNBAREB-26NOV09INDDAL-INDOTOPPIN1-8
+- sample fields: `{"ticker": "KXNBAREB-26NOV09INDDAL-DALCFLAGG32-12", "event_ticker": "KXNBAREB-26NOV09INDDAL", "market_type": "binary", "title": "Cooper Flagg: 12+ rebounds", "yes_sub_title": "Cooper Flagg: 12+", "no_sub_title": "Cooper Flagg: 12+", "strike_type": "greater", "floor_strike": 11.5, "custom_strike": {"basketball_player": "3b4ac2be-e186-4c72-a906-b7276d76422d", "basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-09T10:00:53Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T07:00:00Z", "result": "", "rules_primary": "I`
 
 ### KXNBAREBPROT — NBA Player Rebounds Protected
-- (267) NAME: #+ rebounds
-- (18) NAME.: #+ rebounds
-- (5) VJ Edgecombe: #+ rebounds
-- (5) LeBron James: #+ rebounds
-- (5) Luka Dončić: #+ rebounds
-- (4) Karlo Matković: #+ rebounds
-- (4) NAME III: #+ rebounds
-- (4) LaMelo Ball: #+ rebounds
-- samples: KXNBAREBPROT-26NOV08LALDET-DETDJENKINS24-6, KXNBAREBPROT-26NOV08LALDET-DETDJENKINS24-4, KXNBAREBPROT-26NOV08LALDET-DETDJENKINS24-2, KXNBAREBPROT-26NOV08PHICHI-PHIVEDGECOMBE77-2, KXNBAREBPROT-26NOV08UTAMIN-UTAKGEORGE3-8, KXNBAREBPROT-26NOV08UTAMIN-UTAKGEORGE3-6
-- sample fields: `{"ticker": "KXNBAREBPROT-26NOV08LALDET-DETDJENKINS24-6", "event_ticker": "KXNBAREBPROT-26NOV08LALDET", "market_type": "binary", "title": "Daniss Jenkins: 6+ rebounds", "yes_sub_title": "Daniss Jenkins: 6+", "no_sub_title": "Daniss Jenkins: 6+", "strike_type": "greater", "floor_strike": 5.5, "custom_strike": {"basketball_player": "5ac2f6ed-c991-40a4-afa0-aff7c779b0d7", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T10:10:25Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "result": "", "rules_p`
+- (279) NAME: #+ rebounds
+- (7) NAME.: #+ rebounds
+- (5) Moussa Diabaté: #+ rebounds
+- (5) Nikola Jokić: #+ rebounds
+- (4) P.J. Washington: #+ rebounds
+- (4) Jake LaRavia: #+ rebounds
+- (4) Royce O'Neale: #+ rebounds
+- (4) AJ Dybantsa: #+ rebounds
+- samples: KXNBAREBPROT-26NOV09INDDAL-DALCFLAGG32-12, KXNBAREBPROT-26NOV09INDDAL-INDPSIAKAM43-8, KXNBAREBPROT-26NOV09INDDAL-INDPSIAKAM43-6, KXNBAREBPROT-26NOV09INDDAL-INDPSIAKAM43-4, KXNBAREBPROT-26NOV09INDDAL-INDPSIAKAM43-10, KXNBAREBPROT-26NOV09INDDAL-INDOTOPPIN1-8
+- sample fields: `{"ticker": "KXNBAREBPROT-26NOV09INDDAL-DALCFLAGG32-12", "event_ticker": "KXNBAREBPROT-26NOV09INDDAL", "market_type": "binary", "title": "Cooper Flagg: 12+ rebounds", "yes_sub_title": "Cooper Flagg: 12+", "no_sub_title": "Cooper Flagg: 12+", "strike_type": "greater", "floor_strike": 11.5, "custom_strike": {"basketball_player": "3b4ac2be-e186-4c72-a906-b7276d76422d", "basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-09T09:50:31Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T07:00:00Z", "result": "", "rules_prim`
 
 ### KXNBARECORD — Pro Basketball Best/Worst Regular Season Record
 - (28) NAME have the worst regular season record in the #-# season?
@@ -1646,16 +1624,16 @@
 - sample fields: `{"ticker": "KXNBASPORTSMANSHIP-27-WCARTER34", "event_ticker": "KXNBASPORTSMANSHIP-27", "market_type": "binary", "title": "Pro Basketball Sportsmanship Award: Wendell Carter Jr.", "yes_sub_title": "Wendell Carter Jr.", "no_sub_title": "Wendell Carter Jr.", "strike_type": "structured", "custom_strike": {"basketball_player": "708d8ae3-92df-416c-9629-917d1d20edd6"}, "status": "active", "open_time": "2026-10-06T01:00:00Z", "close_time": "2027-07-07T14:00:00Z", "expected_expiration_time": "2027-07-30T14:00:00Z", "result": "", "rules_primary": "If Wendell Carter Jr. wins the Pro Basketball Sportsmans`
 
 ### KXNBASPREAD — NBA Spread
-- (26) Boston wins by over # points
-- (25) Minnesota wins by over # points
-- (24) Dallas wins by over # points
-- (24) Miami wins by over # points
-- (24) Philadelphia wins by over # points
-- (17) NAME wins by over # points
-- (17) Detroit wins by over # points
-- (16) NAME C wins by over # points
-- samples: KXNBASPREAD-26NOV08BKNDAL-DAL9, KXNBASPREAD-26NOV08BKNDAL-DAL8, KXNBASPREAD-26NOV08BKNDAL-DAL7, KXNBASPREAD-26NOV08BKNDAL-DAL6, KXNBASPREAD-26NOV08BKNDAL-DAL5, KXNBASPREAD-26NOV08BKNDAL-DAL4
-- sample fields: `{"ticker": "KXNBASPREAD-26NOV08BKNDAL-DAL9", "event_ticker": "KXNBASPREAD-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas wins by over 8.5 points", "yes_sub_title": "Dallas wins by over 8.5 points", "no_sub_title": "Dallas wins by over 8.5 points", "strike_type": "greater", "floor_strike": 8.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T03:57:27.651776Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas wins by more than 8.`
+- (56) NAME wins by over # points
+- (25) Detroit wins by over # points
+- (24) Cleveland wins by over # points
+- (20) Houston wins by over # points
+- (18) Dallas wins by over # points
+- (18) NAME L wins by over # points
+- (18) Toronto wins by over # points
+- (17) Philadelphia wins by over # points
+- samples: KXNBASPREAD-26NOV09INDDAL-IND8, KXNBASPREAD-26NOV09INDDAL-IND6, KXNBASPREAD-26NOV09INDDAL-IND5, KXNBASPREAD-26NOV09INDDAL-IND4, KXNBASPREAD-26NOV09INDDAL-IND3, KXNBASPREAD-26NOV09INDDAL-IND26
+- sample fields: `{"ticker": "KXNBASPREAD-26NOV09INDDAL-IND8", "event_ticker": "KXNBASPREAD-26NOV09INDDAL", "market_type": "binary", "title": "Indiana wins by over 7.5 points", "yes_sub_title": "Indiana wins by over 7.5 points", "no_sub_title": "Indiana wins by over 7.5 points", "strike_type": "greater", "floor_strike": 7.5, "custom_strike": {"basketball_team": "d059bab2-9fb5-42dd-8038-5a12474300ce"}, "status": "active", "open_time": "2026-11-09T04:11:26.642801Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T04:00:00Z", "result": "", "rules_primary": "If Indiana wins by more tha`
 
 ### KXNBASTADIUM — NBA Stadium Completion
 - (1) NAME & Entertainment and NAME complete the new Flyers/NAME arena in the NAME before May #, #?
@@ -1694,22 +1672,16 @@
 - sample fields: `{"ticker": "KXNBASTATLEADER-27PM-WKESSLER14", "event_ticker": "KXNBASTATLEADER-27PM", "market_type": "binary", "title": "Total plus/minus leader in the 2026-27 regular season: Walker Kessler", "yes_sub_title": "Walker Kessler", "no_sub_title": "Walker Kessler", "strike_type": "structured", "custom_strike": {"basketball_player": "fa781441-5e6a-4a3d-9a3f-0af9ee263945"}, "status": "active", "open_time": "2026-10-20T21:00:00Z", "close_time": "2027-07-07T14:00:00Z", "expected_expiration_time": "2027-06-30T14:00:00Z", "result": "", "rules_primary": "If Walker Kessler leads the NBA in total plus/minu`
 
 ### KXNBASTL — NBA Player Steals
-- (95) NAME: #+ steals
-- (8) NAME.: #+ steals
-- (3) Jaden McDaniels: #+ steals
-- (3) LaMelo Ball: #+ steals
-- (3) NAME III: #+ steals
-- (3) VJ Edgecombe: #+ steals
-- (3) Jake LaRavia: #+ steals
-- (3) Luka Dončić: #+ steals
-- samples: KXNBASTL-26NOV08BKNDAL-DALKIRVING11-3, KXNBASTL-26NOV08BKNDAL-DALKIRVING11-2, KXNBASTL-26NOV08BKNDAL-DALKIRVING11-1, KXNBASTL-26NOV08BKNDAL-DALCFLAGG32-3, KXNBASTL-26NOV08BKNDAL-DALCFLAGG32-2, KXNBASTL-26NOV08BKNDAL-DALCFLAGG32-1
-- sample fields: `{"ticker": "KXNBASTL-26NOV08BKNDAL-DALKIRVING11-3", "event_ticker": "KXNBASTL-26NOV08BKNDAL", "market_type": "binary", "title": "Kyrie Irving: 3+ steals", "yes_sub_title": "Kyrie Irving: 3+", "no_sub_title": "Kyrie Irving: 3+", "strike_type": "greater", "floor_strike": 2.5, "custom_strike": {"basketball_player": "c397aaf3-768c-48f2-9a6a-83d15e153123", "basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T10:46:05.777985Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "`
+- (54) NAME: #+ steals
+- (2) Moussa Diabaté: #+ steals
+- samples: KXNBASTL-26NOV09CLECHA-CHAGALLEN8-3, KXNBASTL-26NOV09MEMTOR-TORSBARNES4-3, KXNBASTL-26NOV09MEMTOR-TORSBARNES4-2, KXNBASTL-26NOV09MEMTOR-TORSBARNES4-1, KXNBASTL-26NOV09MEMTOR-TORJWALTER14-3, KXNBASTL-26NOV09MEMTOR-TORJWALTER14-2
+- sample fields: `{"ticker": "KXNBASTL-26NOV09CLECHA-CHAGALLEN8-3", "event_ticker": "KXNBASTL-26NOV09CLECHA", "market_type": "binary", "title": "Grayson Allen: 3+ steals", "yes_sub_title": "Grayson Allen: 3+", "no_sub_title": "Grayson Allen: 3+", "strike_type": "greater", "floor_strike": 2.5, "custom_strike": {"basketball_player": "07a246cd-1c40-42f1-849e-58fbd7696c30", "basketball_team": "7c980c51-fa76-4571-b165-242b2a00f3a1"}, "status": "active", "open_time": "2026-11-09T10:00:53Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "", "rules_primary": "If Gra`
 
 ### KXNBASTOCK — NBA Player Steals + Blocks
-- (35) NAME: #+ combined steals and blocks
-- (3) NAME.: #+ combined steals and blocks
-- samples: KXNBASTOCK-26NOV08LALDET-DETCCUNNINGHAM2-4, KXNBASTOCK-26NOV08LALDET-DETCCUNNINGHAM2-3, KXNBASTOCK-26NOV08LALDET-DETCCUNNINGHAM2-2, KXNBASTOCK-26NOV08LALDET-LALWKESSLER14-5, KXNBASTOCK-26NOV08LALDET-LALWKESSLER14-4, KXNBASTOCK-26NOV08LALDET-LALWKESSLER14-3
-- sample fields: `{"ticker": "KXNBASTOCK-26NOV08LALDET-DETCCUNNINGHAM2-4", "event_ticker": "KXNBASTOCK-26NOV08LALDET", "market_type": "binary", "title": "Cade Cunningham: 4+ combined steals and blocks", "yes_sub_title": "Cade Cunningham: 4+", "no_sub_title": "Cade Cunningham: 4+", "strike_type": "greater", "floor_strike": 3.5, "custom_strike": {"basketball_player": "0a8c3059-aa64-4871-8291-fff857a201af", "basketball_team": "65569528-1888-40aa-9d62-2b0e8142a9b4"}, "status": "active", "open_time": "2026-11-08T11:21:07Z", "close_time": "2026-11-10T23:00:00Z", "expected_expiration_time": "2026-11-09T05:00:00Z", "re`
+- (17) NAME: #+ combined steals and blocks
+- (2) Moussa Diabaté: #+ combined steals and blocks
+- samples: KXNBASTOCK-26NOV09CLECHA-CLEPWATSON8-4, KXNBASTOCK-26NOV09CLECHA-CLEPWATSON8-3, KXNBASTOCK-26NOV09CLECHA-CLEPWATSON8-2, KXNBASTOCK-26NOV09CLECHA-CLEJALLEN31-4, KXNBASTOCK-26NOV09CLECHA-CLEJALLEN31-3, KXNBASTOCK-26NOV09CLECHA-CLEJALLEN31-2
+- sample fields: `{"ticker": "KXNBASTOCK-26NOV09CLECHA-CLEPWATSON8-4", "event_ticker": "KXNBASTOCK-26NOV09CLECHA", "market_type": "binary", "title": "Peyton Watson: 4+ combined steals and blocks", "yes_sub_title": "Peyton Watson: 4+", "no_sub_title": "Peyton Watson: 4+", "strike_type": "greater", "floor_strike": 3.5, "custom_strike": {"basketball_player": "8e984869-9ba4-4b5c-98b6-f815ed76f9c8", "basketball_team": "90381a35-42a6-4975-851f-175418e4271a"}, "status": "active", "open_time": "2026-11-09T09:21:47Z", "close_time": "2026-11-12T00:00:00Z", "expected_expiration_time": "2026-11-10T06:00:00Z", "result": "",`
 
 ### KXNBASTOCKS — NBA Player Steals and Blocks
 
@@ -1758,16 +1730,16 @@
 - sample fields: `{"ticker": "KXNBATEAMSALE-27JANPHX-Y", "event_ticker": "KXNBATEAMSALE-27JANPHX", "market_type": "binary", "title": "Will the Phoenix Pro Basketball team be sold after Issuance and before Jan 1, 2027?", "yes_sub_title": "Before Jan 1, 2027", "no_sub_title": "Before Jan 1, 2027", "strike_type": "structured", "custom_strike": {"basketball_team": "ace11dff-c5d1-4ab9-9452-5312253659fd"}, "status": "active", "open_time": "2026-08-21T19:00:00Z", "close_time": "2027-01-01T04:59:00Z", "expected_expiration_time": "2027-01-01T15:00:00Z", "result": "", "rules_primary": "If the Phoenix Pro Basketball team `
 
 ### KXNBATEAMTOTAL — NBA Team Total
+- (57) NAME over # points scored
+- (19) Phoenix over # points scored
+- (19) Houston over # points scored
+- (19) Denver over # points scored
+- (19) Indiana over # points scored
 - (19) Dallas over # points scored
-- (19) Brooklyn over # points scored
-- (19) NAME over # points scored
-- (19) NAME C over # points scored
-- (19) Sacramento over # points scored
-- (19) Miami over # points scored
-- (19) Milwaukee over # points scored
-- (19) Boston over # points scored
-- samples: KXNBATEAMTOTAL-26NOV08BKNDAL-DAL98, KXNBATEAMTOTAL-26NOV08BKNDAL-DAL96, KXNBATEAMTOTAL-26NOV08BKNDAL-DAL132, KXNBATEAMTOTAL-26NOV08BKNDAL-DAL130, KXNBATEAMTOTAL-26NOV08BKNDAL-DAL128, KXNBATEAMTOTAL-26NOV08BKNDAL-DAL126
-- sample fields: `{"ticker": "KXNBATEAMTOTAL-26NOV08BKNDAL-DAL98", "event_ticker": "KXNBATEAMTOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas over 97.5 points scored", "yes_sub_title": "Dallas over 97.5 points", "no_sub_title": "Dallas over 97.5 points", "strike_type": "greater", "floor_strike": 97.5, "custom_strike": {"basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T04:05:30.05734Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas scores more than 97.5 point`
+- (19) NAME L over # points scored
+- (19) Atlanta over # points scored
+- samples: KXNBATEAMTOTAL-26NOV09SASPHX-SAS137, KXNBATEAMTOTAL-26NOV09SASPHX-SAS135, KXNBATEAMTOTAL-26NOV09SASPHX-SAS133, KXNBATEAMTOTAL-26NOV09SASPHX-SAS131, KXNBATEAMTOTAL-26NOV09SASPHX-SAS129, KXNBATEAMTOTAL-26NOV09SASPHX-SAS127
+- sample fields: `{"ticker": "KXNBATEAMTOTAL-26NOV09SASPHX-SAS137", "event_ticker": "KXNBATEAMTOTAL-26NOV09SASPHX", "market_type": "binary", "title": "San Antonio over 136.5 points scored", "yes_sub_title": "San Antonio over 136.5 points", "no_sub_title": "San Antonio over 136.5 points", "strike_type": "greater", "floor_strike": 136.5, "custom_strike": {"basketball_team": "ad36c3e8-4194-4e63-920f-7c50f46191a6"}, "status": "active", "open_time": "2026-11-09T06:11:26.954783Z", "close_time": "2026-11-12T02:00:00Z", "expected_expiration_time": "2026-11-10T05:00:00Z", "result": "", "rules_primary": "If San Antonio s`
 
 ### KXNBATEAMWINSTREAK — NBA Team with the Longest Winning Streak
 - (5) Longest win streak: NAME
@@ -1796,9 +1768,9 @@
 ### KXNBATOPPICK — Pro Basketball Draft Lottery Winner
 
 ### KXNBATOTAL — NBA Total
-- (203) NAME: Over # points scored
-- samples: KXNBATOTAL-26NOV08BKNDAL-247, KXNBATOTAL-26NOV08BKNDAL-245, KXNBATOTAL-26NOV08BKNDAL-243, KXNBATOTAL-26NOV08BKNDAL-241, KXNBATOTAL-26NOV08BKNDAL-239, KXNBATOTAL-26NOV08BKNDAL-237
-- sample fields: `{"ticker": "KXNBATOTAL-26NOV08BKNDAL-247", "event_ticker": "KXNBATOTAL-26NOV08BKNDAL", "market_type": "binary", "title": "Full Game: Over 246.5 points scored", "yes_sub_title": "Over 246.5 points", "no_sub_title": "Over 246.5 points", "strike_type": "greater", "floor_strike": 246.5, "status": "active", "open_time": "2026-11-08T03:57:27.651776Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If over 246.5 total points are scored in the Brooklyn vs Dallas Pro Basketball game originally scheduled for Nov 8, 2026, then the`
+- (261) NAME: Over # points scored
+- samples: KXNBATOTAL-26NOV09INDDAL-250, KXNBATOTAL-26NOV09INDDAL-248, KXNBATOTAL-26NOV09INDDAL-246, KXNBATOTAL-26NOV09INDDAL-244, KXNBATOTAL-26NOV09INDDAL-242, KXNBATOTAL-26NOV09INDDAL-240
+- sample fields: `{"ticker": "KXNBATOTAL-26NOV09INDDAL-250", "event_ticker": "KXNBATOTAL-26NOV09INDDAL", "market_type": "binary", "title": "Full Game: Over 249.5 points scored", "yes_sub_title": "Over 249.5 points", "no_sub_title": "Over 249.5 points", "strike_type": "greater", "floor_strike": 249.5, "status": "active", "open_time": "2026-11-09T04:11:26.642801Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T04:00:00Z", "result": "", "rules_primary": "If over 249.5 total points are scored in the Indiana vs Dallas Pro Basketball game originally scheduled for Nov 9, 2026, then the `
 
 ### KXNBATRADE — Pro Basketball Trade
 - (39) NAME be traded after Issuance and before Feb #, #?
@@ -1860,16 +1832,16 @@
 - sample fields: `{"ticker": "KXNBAWHATTEND-26NYK-Y", "event_ticker": "KXNBAWHATTEND-26NYK", "market_type": "binary", "title": "Will the New York Pro Basketball team visit the White House before Dec 31, 2026?", "yes_sub_title": "New York Pro Basketball team to visit the White House", "no_sub_title": "New York Pro Basketball team to visit the White House", "status": "active", "open_time": "2026-06-18T16:30:00Z", "close_time": "2026-12-31T04:59:00Z", "expected_expiration_time": "2026-12-31T15:00:00Z", "result": "", "rules_primary": "If the New York Pro Basketball team visits the White House in Washington D.C. and`
 
 ### KXNBAWINMARGIN — NBA Win Margin
-- (4) Boston wins by # to # points
-- (4) Minnesota wins by # to # points
+- (9) NAME wins by # to # points
+- (4) Detroit wins by # to # points
+- (3) Indiana wins by # to # points
 - (3) Dallas wins by # to # points
-- (3) Brooklyn wins by # to # points
-- (3) NAME wins by # to # points
-- (3) NAME C wins by # to # points
-- (3) Sacramento wins by # to # points
-- (3) Miami wins by # to # points
-- samples: KXNBAWINMARGIN-26NOV08BKNDAL-DAL6TO10, KXNBAWINMARGIN-26NOV08BKNDAL-DAL21PLUS, KXNBAWINMARGIN-26NOV08BKNDAL-DAL1TO5, KXNBAWINMARGIN-26NOV08BKNDAL-DAL11TO20, KXNBAWINMARGIN-26NOV08BKNDAL-BKN6TO10, KXNBAWINMARGIN-26NOV08BKNDAL-BKN21PLUS
-- sample fields: `{"ticker": "KXNBAWINMARGIN-26NOV08BKNDAL-DAL6TO10", "event_ticker": "KXNBAWINMARGIN-26NOV08BKNDAL", "market_type": "binary", "title": "Dallas wins by 6 to 10 points", "yes_sub_title": "Dallas wins by 6-10 points", "no_sub_title": "Dallas wins by 6-10 points", "strike_type": "custom", "custom_strike": {"Winning Margin": "6 to 10", "basketball_team": "36547ae6-f0fa-4d06-a6e5-5bfa64a217ed"}, "status": "active", "open_time": "2026-11-08T03:58:03.381898Z", "close_time": "2026-11-11T00:30:00Z", "expected_expiration_time": "2026-11-09T03:30:00Z", "result": "", "rules_primary": "If Dallas wins the gam`
+- (3) NAME wins by # or more points
+- (3) NAME L wins by # to # points
+- (3) Atlanta wins by # to # points
+- (3) Toronto wins by # to # points
+- samples: KXNBAWINMARGIN-26NOV09INDDAL-IND6TO10, KXNBAWINMARGIN-26NOV09INDDAL-IND21PLUS, KXNBAWINMARGIN-26NOV09INDDAL-IND1TO5, KXNBAWINMARGIN-26NOV09INDDAL-IND11TO20, KXNBAWINMARGIN-26NOV09INDDAL-DAL6TO10, KXNBAWINMARGIN-26NOV09INDDAL-DAL21PLUS
+- sample fields: `{"ticker": "KXNBAWINMARGIN-26NOV09INDDAL-IND6TO10", "event_ticker": "KXNBAWINMARGIN-26NOV09INDDAL", "market_type": "binary", "title": "Indiana wins by 6 to 10 points", "yes_sub_title": "Indiana wins by 6-10 points", "no_sub_title": "Indiana wins by 6-10 points", "strike_type": "custom", "custom_strike": {"Winning Margin": "6 to 10", "basketball_team": "d059bab2-9fb5-42dd-8038-5a12474300ce"}, "status": "active", "open_time": "2026-11-09T04:11:52.111243Z", "close_time": "2026-11-12T01:00:00Z", "expected_expiration_time": "2026-11-10T04:00:00Z", "result": "", "rules_primary": "If Indiana wins the`
 
 ### KXNBAWINRECORD — OKC NBA Win Record
 
@@ -1910,867 +1882,868 @@
 
 ## UNRESOLVED samples
 
-- `KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-5` — Kevin Huerter: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-4` — Kevin Huerter: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-3` — Kevin Huerter: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-2` — Kevin Huerter: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETKHUERTERSF-1` — Kevin Huerter: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETDJENKINS24-5` — Daniss Jenkins: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETDJENKINS24-4` — Daniss Jenkins: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETDJENKINS24-3` — Daniss Jenkins: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETDJENKINS24-2` — Daniss Jenkins: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08LALDET-DETDJENKINS24-1` — Daniss Jenkins: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08MIASAC-MIAKTHOMPSON11-6` — Klay Thompson: 6+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08MIASAC-MIABPORTIS95-4` — Bobby Portis: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08MIASAC-MIABPORTIS95-3` — Bobby Portis: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08MIASAC-MIABPORTIS95-2` — Bobby Portis: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08MIASAC-MIABPORTIS95-1` — Bobby Portis: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINTSHANNON4-5` — Terrence Shannon Jr.: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINTSHANNON4-4` — Terrence Shannon Jr.: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINTSHANNON4-3` — Terrence Shannon Jr.: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINTSHANNON4-2` — Terrence Shannon Jr.: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINTSHANNON4-1` — Terrence Shannon Jr.: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BKNDAL-BKNMPORTER17-6` — Michael Porter Jr.: 6+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-MILRROLLINS13-5` — Ryan Rollins: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-MILRROLLINS13-4` — Ryan Rollins: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-MILRROLLINS13-3` — Ryan Rollins: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-MILRROLLINS13-2` — Ryan Rollins: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-MILRROLLINS13-1` — Ryan Rollins: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-BOSPPRITCHARD11-5` — Payton Pritchard: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-BOSPPRITCHARD11-4` — Payton Pritchard: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-BOSPPRITCHARD11-3` — Payton Pritchard: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-BOSPPRITCHARD11-2` — Payton Pritchard: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08BOSMIL-BOSPPRITCHARD11-1` — Payton Pritchard: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTALMARKKANEN23-5` — Lauri Markkanen: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTALMARKKANEN23-4` — Lauri Markkanen: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTALMARKKANEN23-3` — Lauri Markkanen: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTALMARKKANEN23-2` — Lauri Markkanen: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTALMARKKANEN23-1` — Lauri Markkanen: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAKGEORGE3-5` — Keyonte George: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAKGEORGE3-4` — Keyonte George: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAKGEORGE3-3` — Keyonte George: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAKGEORGE3-2` — Keyonte George: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAKGEORGE3-1` — Keyonte George: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTADPETERSON22-5` — Darryn Peterson: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTADPETERSON22-4` — Darryn Peterson: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTADPETERSON22-3` — Darryn Peterson: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTADPETERSON22-2` — Darryn Peterson: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTADPETERSON22-1` — Darryn Peterson: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAABAILEY19-5` — Ace Bailey: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAABAILEY19-4` — Ace Bailey: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAABAILEY19-3` — Ace Bailey: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAABAILEY19-2` — Ace Bailey: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-UTAABAILEY19-1` — Ace Bailey: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINLBALL1-6` — LaMelo Ball: 6+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINLBALL1-5` — LaMelo Ball: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINLBALL1-4` — LaMelo Ball: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINLBALL1-3` — LaMelo Ball: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINLBALL1-2` — LaMelo Ball: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINJMCDANIELS3-5` — Jaden McDaniels: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINJMCDANIELS3-4` — Jaden McDaniels: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINJMCDANIELS3-3` — Jaden McDaniels: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
-- `KXNBA3PTPROT-26NOV08UTAMIN-MINJMCDANIELS3-2` — Jaden McDaniels: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09LALATL-ATLNALEXANDERWALKER7-1` — Nickeil Alexander-Walker: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09LALATL-LALSMAMUKELASHVILI54-5` — Sandro Mamukelashvili: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09MEMTOR-TORSBARNES4-5` — Scottie Barnes: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEPWATSON8-5` — Peyton Watson: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEPWATSON8-4` — Peyton Watson: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEPWATSON8-3` — Peyton Watson: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEPWATSON8-2` — Peyton Watson: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEPWATSON8-1` — Peyton Watson: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEJHARDEN1-5` — James Harden: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEJHARDEN1-4` — James Harden: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEJHARDEN1-3` — James Harden: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEJHARDEN1-2` — James Harden: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEJHARDEN1-1` — James Harden: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEEMOBLEY4-5` — Evan Mobley: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEEMOBLEY4-4` — Evan Mobley: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEEMOBLEY4-3` — Evan Mobley: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEEMOBLEY4-2` — Evan Mobley: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEEMOBLEY4-1` — Evan Mobley: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEDMITCHELL45-5` — Donovan Mitchell: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEDMITCHELL45-4` — Donovan Mitchell: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEDMITCHELL45-3` — Donovan Mitchell: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEDMITCHELL45-2` — Donovan Mitchell: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CLEDMITCHELL45-1` — Donovan Mitchell: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHASJAMES4-5` — Sion James: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHASJAMES4-4` — Sion James: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHASJAMES4-3` — Sion James: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHASJAMES4-2` — Sion James: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHASJAMES4-1` — Sion James: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHARONEALE00-5` — Royce O'Neale: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHARONEALE00-4` — Royce O'Neale: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHARONEALE00-3` — Royce O'Neale: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHARONEALE00-2` — Royce O'Neale: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHARONEALE00-1` — Royce O'Neale: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHANREID0-5` — Naz Reid: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHANREID0-4` — Naz Reid: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHANREID0-3` — Naz Reid: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHANREID0-2` — Naz Reid: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHANREID0-1` — Naz Reid: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHAGALLEN8-6` — Grayson Allen: 6+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHAGALLEN8-5` — Grayson Allen: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHAGALLEN8-4` — Grayson Allen: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHAGALLEN8-3` — Grayson Allen: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHAGALLEN8-2` — Grayson Allen: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHACWHITE3-5` — Coby White: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHACWHITE3-4` — Coby White: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHACWHITE3-3` — Coby White: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHACWHITE3-2` — Coby White: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09CLECHA-CHACWHITE3-1` — Coby White: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPJFEARS0-5` — Jeremiah Fears: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPJFEARS0-4` — Jeremiah Fears: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPJFEARS0-3` — Jeremiah Fears: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPJFEARS0-2` — Jeremiah Fears: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPJFEARS0-1` — Jeremiah Fears: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPSBEY41-5` — Saddiq Bey: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPSBEY41-4` — Saddiq Bey: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPSBEY41-3` — Saddiq Bey: 3+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPSBEY41-2` — Saddiq Bey: 2+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPSBEY41-1` — Saddiq Bey: 1+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPTMURPHY25-5` — Trey Murphy III: 5+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
+- `KXNBA3PTPROT-26NOV09NOPGSW-NOPTMURPHY25-4` — Trey Murphy III: 4+ threes — series KXNBA3PTPROT not in ontology; player-stat words in title
 
 ## Series decisions (basketball-related)
 
-- NBA  `KXNBANHL` NBA + NHL Champion Combo — ticker prefix KXNBA
-- NBA  `KXNBAH2HBENCHPTS` NBA Head-to-Head Bench Points — ticker prefix KXNBA
-- NBA  `KXNBAPLAYOFF` Pro Basketball Playoff Qualifier — ticker prefix KXNBA
-- NBA  `KXNBATEAM` NBA team — ticker prefix KXNBA
-- skip `KXSTEPHSHOEDEAL` Steph Curry Shoe Deal — no NBA marker
-- skip `KXSKLGAME` Slovenia 1. SKL Game — no NBA marker
-- skip `KXNCAAMBIG12` Big 12 MEN'S BASKETBALL TOURNAMENT — no NBA marker
-- NBA  `KXNBADRAFT6` NBA Draft Sixth Pick — ticker prefix KXNBA
-- NBA  `KXNBA3PT` NBA Player Threes — ticker prefix KXNBA
-- skip `KXWMARMAD1SEED` Women's March Madness 1 Seeds — no NBA marker
-- skip `KXWNBANEXTCOMMISH` Women's Pro Basketball Next Commissioner — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBA1QTOTAL` NBA 1st Quarter Total — ticker prefix KXNBA
-- NBA  `KXNBAPOTM` NBA Player of the Month — ticker prefix KXNBA
-- skip `KXNCAAMPAC12` PAC-12 MEN'S BASKETBALL TOURNAMENT — no NBA marker
-- NBA  `KXNBAMATCHUP` NBA Matchup — ticker prefix KXNBA
-- skip `KXWNBA2H` Women's Pro Basketball 2nd Half Winner — non-NBA basketball marker 'WNBA'
-- skip `KXACCREG` ACC Regular Season Champions — no NBA marker
-- NBA  `KXNBA2HWINNER` Pro Basketball 2nd Half Winner — ticker prefix KXNBA
-- skip `KXEUROCUPSPREAD` EuroCup Basketball Spread — no NBA marker
-- skip `KXNCAAMBSLC` Southland Conference Tournament — no NBA marker
-- NBA  `KXNBAAPOLOGY` Pro Basketball Apology — ticker prefix KXNBA
-- skip `KXACBGAME` Spain Liga ACB Game — no NBA marker
-- skip `KXNCAAWBWBIT` WBIT Winner — no NBA marker
-- skip `KXNCAAMBPAC12` Pac-12 Conference Tournament — no NBA marker
-- NBA  `KXNBADRAFTCAT` Pro Basketball Draft Category — ticker prefix KXNBA
-- skip `KXWNBA1HSPREAD` Women's Pro Basketball 1st Half Spread — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMB2HTEAMTOTAL` Men's College Basketball 2nd Half Team Total — no NBA marker
-- skip `KXNCAABBIG12` Big 12 Men's Basketball Tournament — no NBA marker
-- NBA  `KXLEADERNBAAST` NBA APG Leader — title mentions NBA
-- skip `KXAUTBSLGAME` Austria BSL Game — no NBA marker
-- NBA  `KXNBASTOCKS` NBA Player Steals and Blocks — ticker prefix KXNBA
-- skip `KXBILGAME` Ball is Life Basketball Game — no NBA marker
-- skip `KXNCAAMIVYLEAGUE` Ivy League MEN'S BASKETBALL TOURNAMENT — no NBA marker
-- skip `KXKBLTOTAL` Korea KBL Total — no NBA marker
-- skip `KXNCAAMBHL` Horizon League conference tournament winner — no NBA marker
-- skip `KXGOLDENBACHELOR` who will win the gold bachelor — no NBA marker
-- skip `KXNCAAMBSBELT` Sun Belt Conference Tournament — no NBA marker
-- NBA  `KXCITYNBAEXPAND` Cities NBA expand — title mentions NBA
-- NBA  `KXNBA1STTEAM` All-NBA 1st Team — ticker prefix KXNBA
-- skip `KXISLSPREAD` Israel Super League Spread — no NBA marker
-- skip `KXNCAABGAME` College Basketball Game — no NBA marker
-- NBA  `KXNBA30COMEBACK` NBA 3-0 Series Comeback — ticker prefix KXNBA
-- skip `KXBIG10REG` Big Ten Regular Season Champions — no NBA marker
-- NBA  `KXNBACUP1STTEAM` NBA Cup All-Tournament Team — ticker prefix KXNBA
-- NBA  `KXNBAPTS` NBA Player Points — ticker prefix KXNBA
-- skip `KXBALGAME` Basketball Africa League Game — no NBA marker
-- skip `KXWFIBAGAME` Women's FIBA Game — no NBA marker
-- skip `KXNCAAMBBIGEASTREGTOP` Men's College Basketball Big East Regular Season Top Finishers — no NBA marker
-- NBA  `KXNBA2HTOTAL` NBA 2nd Half Total — ticker prefix KXNBA
-- skip `KXEBASKETBALLGAME` eBasketball Game — no NBA marker
-- skip `KXNCAAWBUNDEFEATED` Undefeated in Women's College Basketball Regular Season — no NBA marker
-- skip `KXFIBACHAMPGAME` FIBA Champions League Game — no NBA marker
-- NBA  `KXNBASTOCK` NBA Player Steals + Blocks — ticker prefix KXNBA
-- skip `KXSNAPELECTIONBAHA` Bhamanian election — no NBA marker
-- skip `KXNCAAMBCONFAWARD` Men's College Basketball Conference Awards — no NBA marker
-- skip `KXBANXNUBCAT` WILL NUCAT BE UNBANNED — no NBA marker
-- skip `KXLKLTOTAL` LKL Lithuania Total — no NBA marker
-- skip `KXEARNINGSMENTIONCOINBASE` coinbase earnings mention — no NBA marker
-- NBA  `KXNBA1QSPREAD` NBA 1st Quarter Spread — ticker prefix KXNBA
-- NBA  `KXNBASERIESGCOMEBACK` Pro Basketball Series Game Comeback — ticker prefix KXNBA
-- skip `KXCOVEREA` Cover EA college sports — no NBA marker
-- NBA  `KXNBADPOTM` NBA Defensive Player of the Month — ticker prefix KXNBA
-- skip `KXWNBA2QWINNER` Women's Pro Basketball 2nd Quarter Winner — non-NBA basketball marker 'WNBA'
-- skip `KXWNBAMVP` WNBA Most Valuable Player — non-NBA basketball marker 'WNBA'
-- skip `KXFIBAGAME` FIBA Game — no NBA marker
-- skip `KXWNBAROTY` Pro Women's Basketball Rookie of the Year — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBACELEBRITY3PT` NBA Celebrity 3PT Contest — ticker prefix KXNBA
-- skip `KXNCAAMBSEC` SEC Conference Tournament — no NBA marker
-- skip `KXKORISLIIGAGAME` Finland Korisliiga Game — no NBA marker
-- NBA  `KXNBAPLAYOFFHOST` NBA Team Home Playoff Games — ticker prefix KXNBA
-- skip `KXNCAAMBAWARD` Men's College Basketball Awards — no NBA marker
-- skip `KXNCAAWBAPRANK` Women's College Basketball AP Poll — no NBA marker
-- skip `KXWNBA7FIGS` 7 Figure WNBA salary — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBA4QTEAMTOTAL` NBA 4th Quarter Team Total — ticker prefix KXNBA
-- skip `KXEUROLEAGUE` EuroLeague Champion — no NBA marker
-- skip `KXLEBRONPLAY` LeBron Next Play — no NBA marker
-- skip `KXBBALLUSACOACH` Summer Olympics USA Men's Basketball Head Coach — no NBA marker
-- skip `KXNCAAMBHTEAMTOTAL` Mens College Basketball 1st Half Team Total — no NBA marker
-- skip `KXBBLSPREAD` Germany BBL Spread — no NBA marker
-- skip `KXLBLGAME` Latvia LBL Game — no NBA marker
-- skip `KXNCAAMBFIRST25` Men's College Basketball Race to 25 Points — no NBA marker
-- skip `KXNCAAWB4QTOTAL` Women's College Basketball 4th Quarter Total — no NBA marker
-- NBA  `KXNBAH2HWINS` NBA Head to Head Win Total — ticker prefix KXNBA
-- NBA  `KXNBATEAMWINSTREAK` NBA Team with the Longest Winning Streak — ticker prefix KXNBA
-- NBA  `KXNBASERIES` NBA Series Winner — ticker prefix KXNBA
-- NBA  `KXNBASLAMDUNK` NBA Slam Dunk Contest Winner — ticker prefix KXNBA
-- skip `KXNCAAWB2QSPREAD` Women's College Basketball 2nd Quarter Spread — no NBA marker
-- skip `KXNCAAWBTOPAPRANK` Women's College Basketball AP Poll Top Rank — no NBA marker
-- NBA  `KXNBA1STTEAMDEF` NBA All-Defensive 1st Team — ticker prefix KXNBA
-- skip `KXWMARMAD` March Tournament (W) — no NBA marker
-- skip `KXBBSERIEASPREAD` Italy Serie A Spread — no NBA marker
-- NBA  `KXNBASUMMERTOTAL` Pro Basketball Summer League Total — ticker prefix KXNBA
-- skip `KXNCAAMBACCREGTOP` Men's College Basketball ACC Regular Season Top Finishers — no NBA marker
-- skip `KXMARMADSEEDROUND` March Madness Seed Round — no NBA marker
-- skip `KXNCAAMBASUN` Atlantic Sun Conference Tournament — no NBA marker
-- skip `KXNCAAMBMAA` Metro Atlantic Conference Tournament — no NBA marker
-- skip `KXNCAAMBBIG10REGTOP` Men's College Basketball Big Ten Regular Season Top Finishers — no NBA marker
-- skip `KXWNBADRAFT5` WNBA Draft 5th Pick — non-NBA basketball marker 'WNBA'
-- skip `KXWNBAREB` Women's Pro Basketball Player Rebounds — non-NBA basketball marker 'WNBA'
-- skip `KXLEADERWNBA3PT` WNBA Total 3-Pointers Made Leader — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAPIADVANCE` NBA Play-In Team to Advance — ticker prefix KXNBA
-- skip `KXLEADERWNBAPTS` WNBA PPG Leader — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBTOTAL` Men's College Basketball Total Points — no NBA marker
-- NBA  `KXNBABLK` NBA Player Blocks — ticker prefix KXNBA
-- NBA  `KXNBAALLSTARS` NBA All-Stars — ticker prefix KXNBA
-- skip `KXWNBA` WNBA Champion — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBSOCON` Southern Conference Tournament — no NBA marker
-- skip `KXNCAAWB2HTEAMTOTAL` Women's College Basketball 2nd Half Team Total — no NBA marker
-- NBA  `KXNBAESCALATORPTS` NBA Player Points Escalator — ticker prefix KXNBA
-- NBA  `KXNBADRAFTTOP10` NBA Draft Top 10 Pick — ticker prefix KXNBA
-- NBA  `KXNBANORTHWEST` Pro Basketball Northwest Division Winner — ticker prefix KXNBA
-- skip `KXMARMADSEED` Men's College Basketball Tournament Seeds — no NBA marker
-- NBA  `KXNBADPOY` NBA Defensive Player of the Year — ticker prefix KXNBA
-- NBA  `KXNBAPR` Pro Basketball Player Points + Rebounds — ticker prefix KXNBA
-- NBA  `KXNBAFINALSOUTCOME` NBA Finals Outcome — ticker prefix KXNBA
-- NBA  `KXNBAPICKTRADE` Pro Basketball Pick Trade — ticker prefix KXNBA
-- NBA  `KXNBARETURN` Pro Basketball Player to Return — ticker prefix KXNBA
-- skip `KXWNBA3QTOTAL` Women's Pro Basketball 3rd Quarter Total — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBACOTM` NBA Coach of the Month — ticker prefix KXNBA
-- skip `KXNCAAMBRACE` Men's College Basketball Race to Points — no NBA marker
-- NBA  `KXMVENBAMULTIGAMEEXTENDED` MVE NBA Multi Game — title mentions NBA
-- NBA  `KXNBAPA` Pro Basketball Player Points + Assists — ticker prefix KXNBA
-- skip `KXNCAAMBKENPOMTOP` Men's College Basketball KenPom Top Ratings — no NBA marker
-- skip `KXNCAAMB1H` Men's College Basketball 1st Half Winner — no NBA marker
-- skip `KXAMAFRNBA` Favorite R&B Album — no NBA marker
-- NBA  `KXNBAH2HTEAM3PT` NBA H2H Team Three Pointers — ticker prefix KXNBA
-- NBA  `KXNBAASTPROT` NBA Player Assists Protected — ticker prefix KXNBA
-- NBA  `KXNBA4Q` NBA 4th Quarter Winner — ticker prefix KXNBA
-- NBA  `KXMEDIACOVERNBA2K` WHO WILL BE ON THE COVER OF NBA 2K — title mentions NBA
-- skip `KXSBLGAME` Slovakia SBL Game — no NBA marker
-- skip `KXABAGAME` Adriatic ABA Game — no NBA marker
-- NBA  `KXNEXTCOACHOUTNBA` Next coach out NBA — title mentions NBA
-- skip `KXWNBA2HTOTAL` Women's Pro Basketball 2nd Half Total — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBASEATTLE` Seattle NBA team — ticker prefix KXNBA
-- NBA  `KXLEADERNBAREB` NBA RPG Leader — title mentions NBA
-- skip `KXWNBAALLDEFENSE` Women's Pro Basketball All-Defensive Teams — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBADRAFTCOMP` Pro Basketball Draft Comparison — ticker prefix KXNBA
-- skip `KXNCAAMBMOP` Men's College Basketball Most Outstanding Player — no NBA marker
-- NBA  `KXNBAPTSLEADER` NBA Game Points Leader — ticker prefix KXNBA
-- NBA  `KXNBADRAFTTOP30` NBA Draft Top 30 Pick — ticker prefix KXNBA
-- skip `KXUNRIVALEDGAME` Unrivaled Basketball Game — no NBA marker
-- skip `KXNCAAMBUNDEFEATEDHOME` Men's College Basketball Teams to go Undefeated at Home — no NBA marker
-- skip `KXNCAAMBSPREAD` Men's College Basketball Spread — no NBA marker
-- skip `KXWMARMADROUND` Reach March Madness Round — no NBA marker
-- skip `KXWNBAEAST1` Women's Pro Basketball Eastern Conference #1 Seed — non-NBA basketball marker 'WNBA'
-- skip `KXCBAGAME` Chinese Basketball Association Game  — no NBA marker
-- NBA  `KXNBAH2HPTS` NBA Head-to-Head Points — ticker prefix KXNBA
-- skip `KXSTEPHDEAL` Steph Curry Endorsement Deal — no NBA marker
-- NBA  `KXNBADRAFTTEAM` Pro Basketball Team to Draft — ticker prefix KXNBA
-- NBA  `KXESPYNBA` BEST NBA PLAYER‬ — title mentions NBA
-- skip `KXDBBFGAME` Denmark Basketligaen Game — no NBA marker
-- skip `ZYNBAN` Zyn ban in the United States — no NBA marker
-- skip `KXWNBAMATCHUP` WNBA Finals Matchup — non-NBA basketball marker 'WNBA'
-- skip `KXISL` Israeli Super League Champion — no NBA marker
-- skip `KXBBSERIEATOTAL` Italy Serie A Total — no NBA marker
-- skip `KXNCAAMB1HWINNER` College Basketball 1H Winner — no NBA marker
-- skip `KXVTBSPREAD` Russia VTB United Spread — no NBA marker
-- skip `KXNCAAMBAPCHURN` Men's College Basketball Teams to be Ranked #1 — no NBA marker
-- skip `KXKBLSPREAD` Korea KBL Spread — no NBA marker
-- skip `KXMAKEMARMAD` Make March Madness Tournament — no NBA marker
-- skip `KXSESBLGAME` Sweden SBL Game — no NBA marker
-- skip `KXBDS3PT` Bob Does Sports 3pt Shootout — no NBA marker
-- skip `KXNCAAWBOT` Women's College Basketball Overtime — no NBA marker
-- NBA  `KXNBA1QWINNER` NBA 1st Quarter Winner — ticker prefix KXNBA
-- NBA  `KXNBAAWARDFIN` NBA Award Finalists — ticker prefix KXNBA
-- skip `KXWNBAFINALSMVP` WNBA Finals MVP — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBASOUTHEAST` Pro Basketball Southeast Division Winner — ticker prefix KXNBA
-- NBA  `KXNBASERIESSPREAD` NBA Series Game Spread — ticker prefix KXNBA
-- skip `KXWNBASPREAD` Women's Pro Basketball Spread — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBASTL` NBA Player Steals — ticker prefix KXNBA
-- NBA  `KXNBA2D` NBA Player Double Double — ticker prefix KXNBA
-- skip `KXNCAAMBBIGTENREGTOP` Men's College Basketball Big Ten Regular Season Top Finishers — no NBA marker
-- skip `KXKLSGAME` Serbia KLS Game — no NBA marker
-- skip `KXNCAAMBSTATLEADER` Men's College Basketball Stat Leader — no NBA marker
-- skip `KXARGLNBGAME` Liga Nacional de Basquetbol Game — no NBA marker
-- skip `KXJCOLECBA` J Cole CBA — no NBA marker
-- skip `KXWNBADELAY` WNBA Season Delay — non-NBA basketball marker 'WNBA'
-- skip `KXLNBELITE2GAME` LNB Elite 2 Game — no NBA marker
-- NBA  `KXNBANEXTCONTRACT` Pro Basketball Next Contract Size — ticker prefix KXNBA
-- skip `KXWNBAMIMP` WNBA Most Improved Player of the Year — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAWHATTEND` Pro Basketball White House Attend — ticker prefix KXNBA
-- NBA  `KXNBATEAMANNOUNCE` Pro Basketball New Team Announce — ticker prefix KXNBA
-- skip `KXWIBPLGAME` Women's Iceland Premier League Game — no NBA marker
-- skip `KXWNBAPORTNOY` WNBA Portnoy ban — non-NBA basketball marker 'WNBA'
-- skip `KXNEXTTEAMLEBRON` Lebron's Next Team — no NBA marker
-- skip `KXWNBAWINS` WNBA Win Totals — non-NBA basketball marker 'WNBA'
-- skip `KXALBUMRELEASENBAYB` WILL YOUNGBOY RELEASE ANOTHER ALBUM THIS YEAR? — no NBA marker
-- NBA  `KXNBADRAFTINT` Pro Basketball International Players Drafted — ticker prefix KXNBA
-- NBA  `KXNBAWINRECORD` OKC NBA Win Record — ticker prefix KXNBA
-- skip `KXISLGAME` Israel Super League Game — no NBA marker
-- skip `KXWNBASERIESSPREAD` WNBA Series Game Spread — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAEUROPEANNOUNCE` NBA Europe Inaugural Season Being Announced — ticker prefix KXNBA
-- NBA  `KXNBAPTSPROT` NBA Player Points Protected — ticker prefix KXNBA
-- skip `KXWNBATEAMTOTAL` WNBA Team Totals — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBA1Q` NBA 1st Quarter Winner — ticker prefix KXNBA
-- skip `KXWNBADRAFTTOP5` WNBA Draft Top 5 — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAHUSTLE` NBA Hustle Award — ticker prefix KXNBA
-- skip `KXCBA` China CBA Champion — no NBA marker
-- skip `KXWNBA3PTCONTESTOU` Women's Pro Basketball 3-Point Contest Threes Made — non-NBA basketball marker 'WNBA'
-- skip `KXLNBPGAME` LNBP Basketball Game — no NBA marker
-- NBA  `KXNBADRAFTTOP20` NBA Draft Top 20 Pick — ticker prefix KXNBA
-- NBA  `KXNBANEXTTEAM` Pro Basketball Next Team — ticker prefix KXNBA
-- skip `KXNCAAWB4Q` Women's College Basketball 4th Quarter Winner — no NBA marker
-- skip `KXNCAAMBTEAMSQUAL` Men's College Basketball Teams to Qualify — no NBA marker
-- NBA  `KXNBASIXTH` NBA Sixth Man of the Year — ticker prefix KXNBA
-- NBA  `KXNBAROY` NBA Rookie of the Year — ticker prefix KXNBA
-- NBA  `KXNBAPLAYIN` Which Team Will Make the Play-In Tournament — ticker prefix KXNBA
-- NBA  `KXNBA1HWINNER` Pro Baskeball 1st Half Winner — ticker prefix KXNBA
-- NBA  `KXNBARA` Pro Basketball Player Rebounds + Assists — ticker prefix KXNBA
-- NBA  `KXFIRSTPICKNBA` NBA first pick — title mentions NBA
-- NBA  `KXNBAH2H3PT` NBA Head-to-Head Three Pointers — ticker prefix KXNBA
-- skip `KXNCAAWBSPREAD` Women's College Basketball Spread — no NBA marker
-- NBA  `KXNBAFINALSVIEWERGAME7` NBA finals viewership — ticker prefix KXNBA
-- NBA  `KXNBA2NDTEAM` All-NBA 2nd Team — ticker prefix KXNBA
-- skip `KXSBLSPREAD` Slovakia SBL Spread — no NBA marker
-- skip `KXNCAAWBUNDEFEATEDHOME` Women's College Basketball Teams to go Undefeated at Home — no NBA marker
-- skip `KXABNBA` Airbnb Annual KPI — no NBA marker
-- skip `KXNCAAWBGAME` Women's College Basketball Game — no NBA marker
-- skip `KXFIBAECUPSPREAD` FIBA Europe Cup Spread — no NBA marker
-- skip `KXNCAAMACC` ACC MEN'S BASKETBALL TOURNAMENT — no NBA marker
-- skip `KXNCAAMBNEC` Northeast Conference Tournament — no NBA marker
-- skip `KXWNBA1H` Women's Pro Basketball 1st Half Winner — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAWB1HSPREAD` Women's College Basketball 1st Half Spread — no NBA marker
-- NBA  `KXNBADRAFT1` NBA Draft First Pick — ticker prefix KXNBA
-- skip `KXWNBASERIESGAMES` WNBA Series Total Games — non-NBA basketball marker 'WNBA'
-- skip `KXTRADEOFFNBA` Pro basketball trades offseason — no NBA marker
-- skip `KXNCAAMBSECREGTOP` Men's College Basketball SEC Regular Season Top Finishers — no NBA marker
-- skip `KXNCAAMBMEAC` Mid-Eastern Conference Tournament — no NBA marker
-- NBA  `KXNBAWEST` Pro Basketball Western Conference Champion — ticker prefix KXNBA
-- NBA  `KXPLAYEROPTIONNBA` player option nba — title mentions NBA
-- NBA  `KXNBASTAKESALE` NBA Team Ownership Stake Sale Agreement — ticker prefix KXNBA
-- NBA  `KXNBARACE` NBA Race to Points — ticker prefix KXNBA
-- NBA  `KXNBADRAFTTOP5` NBA Draft Top 5 Pick — ticker prefix KXNBA
-- skip `KXABASPREAD` Adriatic ABA Spread — no NBA marker
-- skip `KXWNBAH2HPTS` Women's Pro Basketball Head to Head Points — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBADRAFTCONF` Pro Basketball Players Drafted by Conference — ticker prefix KXNBA
-- skip `KXNCAAMBFIRST50` Men's College Basketball Race to 50 Points — no NBA marker
-- NBA  `KXNBAMIMP` NBA Most Improved Player — ticker prefix KXNBA
-- NBA  `KXNBAWINSTREAK` NBA Longest Win Streak — ticker prefix KXNBA
-- skip `KXWNBA2QSPREAD` Women's Pro Basketball 2nd Quarter Spread — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAWBWINS` Women's College Basketball Win Totals — no NBA marker
-- NBA  `KXNBAPRAPROT` Pts + Reb + Ast Protected — ticker prefix KXNBA
-- skip `KXWFIBASPREAD` Women's FIBA Spread — no NBA marker
-- skip `KXSOWBBALLSPREAD` Summer Olympics Women's Basketball Spread — no NBA marker
-- NBA  `KXNBAPLAYOFFHOMEGAMES` NBA Team Home Playoff Games — ticker prefix KXNBA
-- skip `KXWNBADUNK` Women's Pro Basketball Player to Dunk — non-NBA basketball marker 'WNBA'
-- skip `KXWNBA1SEED` Women's Pro Basketball #1 Seed — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAWINS` Pro Basketball Win Totals — ticker prefix KXNBA
-- skip `KXWMARMADSEED` Women's College Basketball Tournament Seeds — no NBA marker
-- skip `KXNCAAMBBIG10REG` Men's College Basketball Big Ten Regular Season Champion — no NBA marker
-- NBA  `KXNBARISINGSTARS` Pro Basketball Rising Stars Tournament — ticker prefix KXNBA
-- skip `KXNCAAWB3QSPREAD` Women's College Basketball 3rd Quarter Spread — no NBA marker
-- skip `KXWNBASERIESSCORE` WNBA Series Exact Score — non-NBA basketball marker 'WNBA'
-- skip `KXWNBASERIES` WNBA Playoff Series Winner — non-NBA basketball marker 'WNBA'
-- skip `KXWNBAPTS` WNBA Player Points — non-NBA basketball marker 'WNBA'
-- skip `KXMVECBCHAMPIONSHIP` MVE College Basketball Championship — no NBA marker
-- NBA  `KXNBACOY` NBA Coach of the Year — ticker prefix KXNBA
-- NBA  `KXNBASUMMER` Pro Basketball Summer League Champion — ticker prefix KXNBA
-- skip `KXWNBAH2HPRA` Women's Pro Basketball Head to Head Pts + Reb + Ast — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAGAMESPECIALS` Pro Basketball Game Specials — ticker prefix KXNBA
-- NBA  `KXNBA4QTOTAL` NBA 4th Quarter Total — ticker prefix KXNBA
-- NBA  `KXNBAEFINMVP` NBA Eastern Conference Finals MVP — ticker prefix KXNBA
-- skip `KXCBATOTAL` Chinese Basketball Association Total  — no NBA marker
-- skip `KXNCAAMBBIGEASTREG` Men's College Basketball Big East Regular Season Champion — no NBA marker
-- skip `KXWNBAMENTION` WNBA Mentions — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBA3QTEAMTOTAL` NBA 3rd Quarter Team Total — ticker prefix KXNBA
-- skip `KXNCAAMBTOURNEY` Men's College Basketball Early Season Tournament — no NBA marker
-- skip `KXWEUROLEAGUEGAME` EuroLeague (W) Game — no NBA marker
-- NBA  `KXNBASPREAD` NBA Spread — ticker prefix KXNBA
-- skip `KXNCAAMBBSKY` Big Sky Conference Tournament — no NBA marker
-- skip `KXEUROBASKETGAME` EuroBasket Game — no NBA marker
-- NBA  `KXNBASTATLEADER` NBA Regular Season League Leader — ticker prefix KXNBA
-- skip `KXBSLGAME` Turkey BSL Game — no NBA marker
-- skip `KXNCAABMENTION` College Basketball — no NBA marker
-- skip `KXKRAKENBANKPUBLIC` Kraken IPO — no NBA marker
-- skip `KXNCAAMBSUN` Atlantic Sun Conference Tournament — no NBA marker
-- skip `KXVTBTOTAL` Russia VTB United Total — no NBA marker
-- skip `KXNCAAMBGAME` Men's College Basketball Game — no NBA marker
-- skip `KXNCAAMB2ML` College Basketball 2-Moneyline Combo — no NBA marker
-- NBA  `KXNBARECORD` Pro Basketball Best/Worst Regular Season Record — ticker prefix KXNBA
-- skip `KXBDSFTCHALLENGE` Bob Does Sports Free Throw Challenge — no NBA marker
-- skip `KXNCAAMBIVY` Ivy League Conference Tournament — no NBA marker
-- skip `KXMARMAD` Men's College Basketball Tournament Champion — no NBA marker
-- NBA  `KXNBADRAFT5` NBA Draft Fifth Pick — ticker prefix KXNBA
-- NBA  `KXNBAEXEC` NBA Executive of the Year — ticker prefix KXNBA
-- skip `KXNCAAWBBIG12` Women's College Basketball Big 12 Conference Tournament Champion — no NBA marker
-- skip `KXNCAAMBACCREG` Men's College Basketball ACC Regular Season Champion — no NBA marker
-- skip `KXWNBACCUP` WNBA Commissioner's Cup Winner — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBA1QTEAMTOTAL` NBA 1st Quarter Team Total — ticker prefix KXNBA
-- NBA  `KXNBASTADIUM` NBA Stadium Completion — ticker prefix KXNBA
-- NBA  `KXNBAFIRSTOPPONENT` Pro Basketball First Opponent of the Season — ticker prefix KXNBA
-- NBA  `KXCOACHOUTNBADATE` NBA Coach Out Date — title mentions NBA
-- skip `KXSONICS` Blazers become Sonics — no NBA marker
-- skip `KXNCAAWBNIT` Women's NIT Tournament Champion — no NBA marker
-- skip `KXSPORTSIGNAHOR` Al Horford — no NBA marker
-- skip `KXWNBACCUPMVP` WNBA Commissioner's Cup MVP — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBCAA` Coastal Athletic Association Conference Tournament — no NBA marker
-- skip `KXNCAAMBBIG12QUAL` Men's College Basketball Big 12 Championship Qualifiers — no NBA marker
-- NBA  `KXNBACOMPETE` Pro Basketball Player to Compete — ticker prefix KXNBA
-- skip `KXNCAABACC` ACC Men's Basketball Tournament — no NBA marker
-- skip `KXNCAAMBWINS` Men's College Basketball Win Totals — no NBA marker
-- NBA  `KXNBAPLAYOFFPTS` NBA Playoffs Player Points — ticker prefix KXNBA
-- skip `KXLKLSPREAD` LKL Lithuania Spread — no NBA marker
-- NBA  `KXNBAWFINMVP` NBA Western Conference Finals MVP — ticker prefix KXNBA
-- NBA  `KXNBAASSTARTERS` NBA All-Star Starters — ticker prefix KXNBA
-- NBA  `KXNBAMVPCHAMP` MVP to Win the NBA Finals — ticker prefix KXNBA
-- NBA  `KXNBADRAFTTOP` Pro Basketball Top Draft — ticker prefix KXNBA
-- NBA  `KXNBASERIESPTSLEADER` Pro Basketball Series Points Leader — ticker prefix KXNBA
 - skip `KXACBTOTAL` Spain Liga ACB Total — no NBA marker
-- NBA  `KXNBA` Pro Basketball Champion — ticker prefix KXNBA
-- skip `KXWNBAALLTEAM` Women's Pro Basketball Teams — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBASERIESREBLEADER` Pro Basketball Series Rebounds Leader — ticker prefix KXNBA
-- skip `KXDBBGAME` Deutscher Basketball Bund (DBB) Game — no NBA marker
-- skip `KXMARMAD1SEED` March Madness 1 Seeds — no NBA marker
-- skip `KXNCAAWBTEAMTOTAL` Women's College Basketball Team Total — no NBA marker
-- skip `KXBDS3PTOU` Bob Does Sports Made 3-Pointers — no NBA marker
-- NBA  `KXNBA2QSPREAD` NBA 2nd Quarter Spread — ticker prefix KXNBA
-- NBA  `KXNBAFINALSMENTION` NBA Finals — ticker prefix KXNBA
-- skip `KXNCAAMBOV` Ohio Valley Conference Tournament — no NBA marker
-- skip `KXSHEINBAUMOUT` Claudia Sheinbaum out as President of Mexico? — no NBA marker
-- NBA  `KXNBAALLSTAR` NBA All-Star game — ticker prefix KXNBA
-- skip `KXNCAABIVY` Ivy League Men's Basketball Tournament — no NBA marker
-- skip `KXWNBA1HWINNER` Women's Pro Basketball 1st Half Winner — non-NBA basketball marker 'WNBA'
-- skip `KXWNBAFINALLOC` WNBA Finals Location — non-NBA basketball marker 'WNBA'
-- skip `KXMARMAD3D` Men's March Madness Triple Double — no NBA marker
-- NBA  `KXLEADERNBASTL` NBA SPG Leader — title mentions NBA
-- skip `KXSPORTSIGNLBJ` LeBron James sign — no NBA marker
-- NBA  `KXNBACUPGROUPWIN` NBA Cup Group to Win — ticker prefix KXNBA
-- skip `KXEUROBASKETTOTAL` EuroBasket Total — no NBA marker
-- NBA  `KXNBALOTTERYODDS` NBA Lottery Winner Odds — ticker prefix KXNBA
-- skip `KXOTDBASKETBALL` Off The Dribble Basketball — no NBA marker
-- NBA  `KXNBALADDER3PT` NBA Player Threes Ladder — ticker prefix KXNBA
-- NBA  `KXNBADRAFT10` NBA Draft Tenth Pick — ticker prefix KXNBA
-- skip `KXAACREG` AAC Regular Season Champions — no NBA marker
-- skip `KXMARMADROUND` Reach March Madness Round — no NBA marker
-- skip `KXWNBANEXTTEAM` WNBA Next Team — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBPAT` Patriot League Conference Tournament — no NBA marker
-- skip `KXNCAAMBOT` Men's College Basketball Overtime — no NBA marker
-- skip `KXNCAAMBEARLYTOURNEY` NCAAMB Early Season Tournaments — no NBA marker
-- NBA  `KXNBAALLSTARGAME` NBA All-Star Game Winner — ticker prefix KXNBA
-- skip `KXNCAAWB3QTOTAL` Women's College Basketball 3rd Quarter Total — no NBA marker
-- skip `KXRECORDNBABEST` Best Pro Basketball Record — no NBA marker
-- NBA  `KXNBASUMMER1HWINNER` Pro Basketball Summer League 1st Half Winner — ticker prefix KXNBA
-- skip `KXNBLTOTAL` Australia NBL Total — no NBA marker
-- NBA  `KXNBACONF` NBA Conference to Win the Championship — ticker prefix KXNBA
-- NBA  `KXNBASWEEP` NBA Teams to Have a Series Sweep — ticker prefix KXNBA
-- NBA  `KXNBASERIESPTSSPREAD` Pro Basketball Series Points Spread — ticker prefix KXNBA
-- skip `KXWNBASECONDTEAM` Women's Pro Basketball Second Team — non-NBA basketball marker 'WNBA'
-- skip `KXWNBA3QSPREAD` Women's Pro Basketball 3rd Quarter Spread — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBASERIESROADWIN` NBA Series 1st Road Win — ticker prefix KXNBA
-- skip `KXBSOUTOURNAMENT` Big South Tournament — no NBA marker
-- skip `KXNCAAMBWINMARGIN` Men's College Basketball Winning Margin — no NBA marker
-- skip `KXLKLGAME` LKL Lithuania Game — no NBA marker
-- skip `KXMARMADSEEDSUM` March Madness Sum of Seeds — no NBA marker
-- NBA  `KXNBAFINALSEXACT` Pro Basketball Championship Series Score — ticker prefix KXNBA
-- skip `KXBIG3` BIG3 Champion — no NBA marker
-- skip `KXBSLTOTAL` Turkey BSL Total — no NBA marker
-- skip `KXQUADRUPLEDOUBLE` Quadruple Double — no NBA marker
-- NBA  `KXNBANEXTTEAMCONF` Pro Basketball Next Team Conference — ticker prefix KXNBA
-- NBA  `KXNBA1HTEAMTOTAL` NBA 1st Half Team Total — ticker prefix KXNBA
-- skip `KXNBLSPREAD` Australia NBL Spread — no NBA marker
-- NBA  `KXNBATEAMSALE` Pro Basketball Team to be Sold — ticker prefix KXNBA
-- skip `KXWNBADRAFT3` WNBA Draft 3rd Pick — non-NBA basketball marker 'WNBA'
-- skip `KXDBBSUPERGAME` DBB Supercup Game — no NBA marker
-- skip `KXLNBPTOTAL` LNBP Total — no NBA marker
-- NBA  `KXNBACUPQUAL` Pro Basketball Cup Qualifiers — ticker prefix KXNBA
+- NBA  `KXNBADRAFT6` NBA Draft Sixth Pick — ticker prefix KXNBA
+- NBA  `KXNBA4Q` NBA 4th Quarter Winner — ticker prefix KXNBA
+- skip `KXNCAAMBMVAL` Missouri Valley Conference Tournament — no NBA marker
+- skip `KXNCAAWBWINMARGIN` Women's College Basketball Winning Margin — no NBA marker
+- skip `KXJUDGEMENTDAYGAME` Ballislife x OTD | Judgement Day 1v1 Game — no NBA marker
+- NBA  `KXNBASOUTHWEST` Pro Basketball Southwest Division Winner — ticker prefix KXNBA
+- skip `KXBBINTLGAME` International Friendly Game — no NBA marker
+- NBA  `KXNBAWHATTEND` Pro Basketball White House Attend — ticker prefix KXNBA
+- skip `KXNCAAMBMOP` Men's College Basketball Most Outstanding Player — no NBA marker
+- skip `KXSONICS` Blazers become Sonics — no NBA marker
+- skip `KXNCAAMB1HSPREAD` Men's College Basketball 1st Half Spread — no NBA marker
+- skip `KXNCAAMBCBC` Men's College Basketball Crown Winner — no NBA marker
+- skip `KXNCAAMBBIG12` Big 12 Conference Tournament — no NBA marker
+- NBA  `KXNBAPOLOSE` Pro Basketball Playoff Losses — ticker prefix KXNBA
+- skip `KXWNBAPTSRECORD` Women's Pro Basketball Single-Game Scoring Record — non-NBA basketball marker 'WNBA'
 - skip `KXWNBA2HWINNER` Women's Pro Basketball 2nd Half Winner — non-NBA basketball marker 'WNBA'
-- skip `KXWNBAASGMVP` WNBA All-Star Game MVP — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBARETIRE` NBA Retirement — ticker prefix KXNBA
-- NBA  `KXNBASERIESPTS` Pro Basketball Series Player Points — ticker prefix KXNBA
-- NBA  `KXNBAPRA` NBA Player Points + Rebounds + Assists — ticker prefix KXNBA
-- NBA  `KXNBAWINMARGIN` NBA Win Margin — ticker prefix KXNBA
-- NBA  `KXNBAGAMEHIGHSCORE` NBA Highest Scoring Game of the Season — ticker prefix KXNBA
-- skip `KXNCAABBIGTEN` Big Ten Men's Basketball Tournament — no NBA marker
-- NBA  `KXNBANEXTGOVERNOR` Pro Basketball Next Governor — ticker prefix KXNBA
-- NBA  `KXNBATOP5ROTY` Top 5 NBA draft ROTY — ticker prefix KXNBA
-- skip `KXNCAAMBBIG12REGTOP` Men's College Basketball Big 12 Regular Season Top Finishers — no NBA marker
-- NBA  `KXNBACLUTCH` NBA Clutch Player of the Year — ticker prefix KXNBA
-- NBA  `KXNBADRAFTOU` Pro Basketball Players Draft Position — ticker prefix KXNBA
-- skip `KXLPBGAME` Portugal LPB Game — no NBA marker
-- NBA  `KXNBAWCFQUAL` NBA Western Conference Finals Qualifiers — ticker prefix KXNBA
-- skip `KXNCAAWB1QTOTAL` Women's College Basketball 1st Quarter Total — no NBA marker
+- skip `KXNCAAMBIG12` Big 12 MEN'S BASKETBALL TOURNAMENT — no NBA marker
+- skip `KXNCAABIVY` Ivy League Men's Basketball Tournament — no NBA marker
+- skip `KXPLAYTOGETHERJBJT` Tatum and Brown Celtics — no NBA marker
+- skip `KXNCAAWBH` NCAA Women's Basketball Half Winners — no NBA marker
+- NBA  `KXNBABENCHPTS` NBA Bench Points — ticker prefix KXNBA
+- skip `KXSPORTSOWNERLBJ` LBJ owning team — no NBA marker
+- skip `KXNBIGAME` Hungary NB I. A Game — no NBA marker
+- NBA  `KXNEXTCOACHOUTNBA` Next coach out NBA — title mentions NBA
+- skip `KXWNBAALLROOKIE` Women's Pro Basketball All-Rookie Team — non-NBA basketball marker 'WNBA'
+- NBA  `KXCOACHOUTNBA` NBA Coach Out — title mentions NBA
+- skip `KXNCAAMBSLC` Southland Conference Tournament — no NBA marker
+- skip `KXWNBADRAFT4` WNBA Draft 4th Pick — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAH2HPTS` NBA Head-to-Head Points — ticker prefix KXNBA
+- NBA  `KXNBADRAFTTRADE` Pro Basketball Draft Trade — ticker prefix KXNBA
+- skip `KXSLBSPREAD` England Super League Basketball Spread — no NBA marker
+- skip `KXWNBAPORTNOY` WNBA Portnoy ban — non-NBA basketball marker 'WNBA'
+- skip `KXWNBA3QWINNER` Women's Pro Basketball 3rd Quarter Winner — non-NBA basketball marker 'WNBA'
+- skip `KXAUTBSLGAME` Austria BSL Game — no NBA marker
+- skip `KXNCAAMBPAT` Patriot League Conference Tournament — no NBA marker
+- skip `KXNCAAMBTEAMTOTAL` Men's College Basketball Team Total — no NBA marker
+- skip `KXSPORTSIGNAHOR` Al Horford — no NBA marker
+- NBA  `KXNBAXMASOPPONENT` Pro Basketball Christmas Day Opponent — ticker prefix KXNBA
+- skip `KXAACREG` AAC Regular Season Champions — no NBA marker
+- skip `KXNCAAMBCAA` Coastal Athletic Association Conference Tournament — no NBA marker
+- NBA  `KXCITYNBAEXPAND` Cities NBA expand — title mentions NBA
+- NBA  `KXNBASTATAVG` NBA Player Stat Average — ticker prefix KXNBA
+- NBA  `KXLEADERNBA3PT` NBA 3PG Leader — title mentions NBA
+- NBA  `KXNBAPTS` NBA Player Points — ticker prefix KXNBA
+- skip `KXWNBAROTY` Pro Women's Basketball Rookie of the Year — non-NBA basketball marker 'WNBA'
+- skip `KXNBLSPREAD` Australia NBL Spread — no NBA marker
+- skip `KXWNBLGAME` NBL Australia (W) Game — no NBA marker
+- skip `KXCHINAUNBANBTC` Will China unban Bitcoin? — no NBA marker
+- NBA  `KXNBA2D` NBA Player Double Double — ticker prefix KXNBA
+- NBA  `KXNBA3PTPROT` NBA Player Threes Protected — ticker prefix KXNBA
+- NBA  `KXNBACONF` NBA Conference to Win the Championship — ticker prefix KXNBA
+- skip `KXSHAI20PTREC` Shai 20+ Point Streak — no NBA marker
+- skip `KXQUADRUPLEDOUBLE` Quadruple Double — no NBA marker
 - skip `KXNCAAWBFIRST3PT` Women's College Basketball First Team to Make a Three — no NBA marker
-- NBA  `KXNBACUP` Pro Basketball Cup Champion — ticker prefix KXNBA
-- skip `KXNBLGAME` Australia NBL Game — no NBA marker
+- NBA  `KXNBAAPOLOGY` Pro Basketball Apology — ticker prefix KXNBA
+- NBA  `KXNBAPLAYERDEAL` Next Pro Basketball Brand Deal — ticker prefix KXNBA
+- skip `KXWNBAWORSTREC` Women's Pro Basketball Worst Record — non-NBA basketball marker 'WNBA'
+- skip `KXKNUEPPEL3PTREC` Kon Knueppel Rookie 3pt Record — no NBA marker
+- skip `KXNCAAWBBIG12` Women's College Basketball Big 12 Conference Tournament Champion — no NBA marker
+- NBA  `KXNBARETURN` Pro Basketball Player to Return — ticker prefix KXNBA
+- skip `KXNCAAMB1HWINNER` College Basketball 1H Winner — no NBA marker
+- NBA  `KXNBADRAFT10` NBA Draft Tenth Pick — ticker prefix KXNBA
+- skip `KXLBLGAME` Latvia LBL Game — no NBA marker
+- NBA  `KXNBALASVEGAS` Las Vegas NBA team — ticker prefix KXNBA
+- skip `KXISLGAME` Israel Super League Game — no NBA marker
+- NBA  `KXNBAPOSTASREC` NBA Best Record Post-All-Star Break — ticker prefix KXNBA
+- NBA  `KXNBA2HSPREAD` NBA 2nd Half Spread — ticker prefix KXNBA
 - NBA  `KXNBAROOKIE1STTEAM` NBA All-Rookie 1st Team — ticker prefix KXNBA
-- skip `KXLNBELITETOTAL` LNB Elite Total — no NBA marker
+- skip `KXWNBASERIESSPREAD` WNBA Series Game Spread — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAMBNAISMITH` Men's College Basketball Naismith — no NBA marker
+- NBA  `KXNBANEXTCONTRACT` Pro Basketball Next Contract Size — ticker prefix KXNBA
+- skip `KXNCAAMBCONF` NCAAMB Conference to Win Championship  — no NBA marker
+- skip `KXNCAAMBACCQUAL` Men's College Basketball ACC Championship Qualifiers — no NBA marker
+- NBA  `KXNBAASSTARTERS` NBA All-Star Starters — ticker prefix KXNBA
+- skip `KXNCAAMBTEAMSQUAL` Men's College Basketball Teams to Qualify — no NBA marker
+- NBA  `KXNBA1QWINNER` NBA 1st Quarter Winner — ticker prefix KXNBA
+- skip `KXNCAAWB4Q` Women's College Basketball 4th Quarter Winner — no NBA marker
+- NBA  `KXNBATRADE` Pro Basketball Trade — ticker prefix KXNBA
+- NBA  `KXNBASUMMERSPREAD` Pro Basketball Summer League Spread — ticker prefix KXNBA
+- skip `KXMARMADROUND` Reach March Madness Round — no NBA marker
+- skip `KXNCAAMBSOCON` Southern Conference Tournament — no NBA marker
+- skip `KXNCAAMBHOR` Horizon League Conference Tournament — no NBA marker
+- skip `KXWINSTREAKOKC` OKC Win Streak — no NBA marker
+- NBA  `KXNBA3RDTEAM` All-NBA 3rd Team — ticker prefix KXNBA
+- skip `KXWDBBLGAME` Women's Bundesliga Basketball Game — no NBA marker
+- NBA  `KXLEADERNBAAST` NBA APG Leader — title mentions NBA
+- skip `KXWCBAGAME` China CBA (W) Game — no NBA marker
+- NBA  `KXNBAHIGHESTSCORING` NBA Player with the Highest Scoring Game — ticker prefix KXNBA
+- skip `KXNCAAMBSUM` Summit League Conference Tournament — no NBA marker
+- NBA  `KXNBADRAFTTOP5` NBA Draft Top 5 Pick — ticker prefix KXNBA
+- NBA  `KXNBAPTSLEADER` NBA Game Points Leader — ticker prefix KXNBA
+- skip `KXBSOUTOURNAMENT` Big South Tournament — no NBA marker
+- NBA  `KXNBA1HSPREAD` NBA 1st Half Spread — ticker prefix KXNBA
+- skip `KXWFIBATOTAL` Women's FIBA Total — no NBA marker
+- skip `KXPBAGAME` Philippines PBA Game — no NBA marker
+- NBA  `KXNBADRAFTOU` Pro Basketball Players Draft Position — ticker prefix KXNBA
+- skip `KXNCAAMBMW` Mountain West Conference Tournament — no NBA marker
+- NBA  `KXNBAPLAYOFFHOST` NBA Team Home Playoff Games — ticker prefix KXNBA
+- skip `KXBNXTDGAME` BNXT Dutch League Game — no NBA marker
+- skip `KXNCAAMBBIG12QUAL` Men's College Basketball Big 12 Championship Qualifiers — no NBA marker
 - NBA  `KXNBANEXTTEAMOUTLET` Pro Basketball Outlet to Announce Next Team — ticker prefix KXNBA
-- NBA  `KXNBAMENTION` NBA Mention — ticker prefix KXNBA
-- skip `KXEUROLEAGUETOTAL` EuroLeague Total — no NBA marker
-- skip `KXNCAANIT` NIT Champion — no NBA marker
-- skip `KXBILBASKETBALL` Ball is Life Basketball Game — no NBA marker
-- skip `KXNCAAWB2HTOTAL` Women's College Basketball 2nd Half Total — no NBA marker
-- skip `KXSECREG` SEC Regular Season Champions — no NBA marker
-- NBA  `KXNBA3D` NBA Player Triple Double — ticker prefix KXNBA
-- skip `KXNCAAMB1HTEAMTOTAL` Men's College Basketball 1st Half Team Total — no NBA marker
-- skip `KXFBUGAME` Ukraine SuperLeague Game — no NBA marker
+- NBA  `KXNBASTAKESALE` NBA Team Ownership Stake Sale Agreement — ticker prefix KXNBA
+- skip `KXKLSGAME` Serbia KLS Game — no NBA marker
+- skip `KXBANXNUBCAT` WILL NUCAT BE UNBANNED — no NBA marker
+- skip `KXNCAAMBMAA` Metro Atlantic Conference Tournament — no NBA marker
+- skip `KXMARMADREGION` March Madness Region Winner — no NBA marker
+- skip `KXWNBAMIMP` WNBA Most Improved Player of the Year — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBASTOCKS` NBA Player Steals and Blocks — ticker prefix KXNBA
+- NBA  `KXNBASUMMER1HSPREAD` Pro Basketball Summer League 1st Half Spread — ticker prefix KXNBA
+- NBA  `KXNBADRAFTMATCHUP` Pro Basketball Draft Matchup — ticker prefix KXNBA
+- skip `KXABA` Adriatic ABA Champion — no NBA marker
+- skip `KXEUROBASKETSPREAD` EuroBasket Spread — no NBA marker
+- skip `KXSPORTSIGNLBJ` LeBron James sign — no NBA marker
+- skip `KXWENBACONATOR` Average price of a Wendy's Baconator in [month] — no NBA marker
+- skip `KXBILGAME` Ball is Life Basketball Game — no NBA marker
+- skip `KXNCAAWB1QSPREAD` Women's College Basketball 1st Quarter Spread — no NBA marker
+- skip `KXNCAAWBOT` Women's College Basketball Overtime — no NBA marker
+- skip `KXNCAAMBTEAMMOSTPTS` College Basketball Team with the Most Points Scored — no NBA marker
+- NBA  `KXNBAMATCHUP` NBA Matchup — ticker prefix KXNBA
+- skip `KXSESBLGAME` Sweden SBL Game — no NBA marker
 - NBA  `KXNBAUPSET` NBA Number of Upsets per Round — ticker prefix KXNBA
 - NBA  `KXNBAHOMECLINCH` Pro Basketball Series Winner to Clinch at Home — ticker prefix KXNBA
-- NBA  `KXNBA2NDTEAMDEF` NBA All-Defensive 2nd Team — ticker prefix KXNBA
-- NBA  `KXNBA1HTOTAL` NBA 1st Half Total — ticker prefix KXNBA
-- skip `KXWNBASSTARS` Women's Pro Basketball Shooting Stars Contest — non-NBA basketball marker 'WNBA'
-- skip `KXWNBAEAST` Women's Pro Basketball Eastern Conference Champion — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBHOR` Horizon League Conference Tournament — no NBA marker
-- NBA  `KXNBA2QTEAMTOTAL` NBA 2nd Quarter Team Total — ticker prefix KXNBA
-- NBA  `KXNBALASTTOLOSE` NBA Last Undefeated Team — ticker prefix KXNBA
-- skip `KXBBSERIEBGAME` Italy Serie B Basketball Game — no NBA marker
-- NBA  `KXNEXTNBACOACH` Who is the Next NBA Coach of Team — title mentions NBA
-- skip `KXWFIBAWC` Women's FIBA World Cup Winner — no NBA marker
-- NBA  `KXNBAPOLOSE` Pro Basketball Playoff Losses — ticker prefix KXNBA
-- skip `KXBBSERIEA2GAME` Italy Serie A2 Game — no NBA marker
-- skip `KXNCAAMBBIG10` Big Ten Conference Tournament — no NBA marker
-- NBA  `KXNBANEWCHAMP` NBA First-Time Champion — ticker prefix KXNBA
-- skip `KXWKBLGAME` Korea KBL (W) Game — no NBA marker
-- NBA  `KXNBATEAMTOTAL` NBA Team Total — ticker prefix KXNBA
-- skip `KXWBBALLTEAMUSA` Summer Olympics USA Women's Basketball Team — no NBA marker
-- skip `KXWNBA3QWINNER` Women's Pro Basketball 3rd Quarter Winner — non-NBA basketball marker 'WNBA'
-- skip `KXSLBSPREAD` England Super League Basketball Spread — no NBA marker
-- NBA  `KXNBAGAME` NBA Game — ticker prefix KXNBA
-- skip `KXNCAAWBCONF` NCAAWB Conference to win Championship — no NBA marker
-- skip `KXKNUEPPEL3PTREC` Kon Knueppel Rookie 3pt Record — no NBA marker
-- skip `KXDUNKMAN` Dunkman World Championships Winner — no NBA marker
-- skip `KXWNBATRADE` WNBA Players Traded — non-NBA basketball marker 'WNBA'
-- skip `KXZYNBAN` Zyn ban in the United States — no NBA marker
-- skip `KXWNBA3PT` Women's Pro Basketball Player Threes — non-NBA basketball marker 'WNBA'
-- skip `KXBNXTGAME` BNXT League Game — no NBA marker
-- skip `KXLNBELITEGAME` LNB Elite Game — no NBA marker
-- skip `KXSPBGAME` Venezuela Superliga Game — no NBA marker
-- NBA  `KXNEXTTEAMNBA` Next NBA Team — title mentions NBA
-- NBA  `KXNBA2HTEAMTOTAL` NBA 2nd Half Team Total — ticker prefix KXNBA
-- NBA  `KXNBARULE` Pro Basketball Rule — ticker prefix KXNBA
-- NBA  `KXNBAFTM` NBA Player Free Throws Made — ticker prefix KXNBA
-- NBA  `KXNBADRAFT8` NBA Draft Eighth Pick — ticker prefix KXNBA
-- skip `KXNCAAMBSWAC` Southwestern Atlantic Conference Tournament — no NBA marker
-- skip `KXNEXTTEAMGIANNIS` Giannis next team — no NBA marker
-- skip `KXMWIAINTCOMINBACK` I Ain’t Comin’ Back total streams — no NBA marker
-- NBA  `KXNBAEAST` Pro Basketball Eastern Conference Champion — ticker prefix KXNBA
-- skip `KXFIBACHAMPLEAGUEGAME` FIBA Champions League Game — no NBA marker
-- NBA  `KXNBAPLAYTOGETHER` Pro Basketball Players to Play Together — ticker prefix KXNBA
-- skip `KXBAN2XRAKAI` 2xRaKai BE UNBANNED — no NBA marker
-- skip `KXWINSTREAKOKC` OKC Win Streak — no NBA marker
-- skip `KXNCAAMBACC` ACC Conference Tournament — no NBA marker
-- skip `KXWNBADRAFTTOP3` WNBA Draft Top 3 — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAEXTENSION` NBA Player Contract Extension — ticker prefix KXNBA
-- NBA  `KXNBASERIESASTLEADER` Pro Basketball Series Assists Leader — ticker prefix KXNBA
-- skip `KXNCAAWBMOP` Women's College Basketball Most Outstanding Player — no NBA marker
-- skip `KXJUDGEMENTDAYGAME` Ballislife x OTD | Judgement Day 1v1 Game — no NBA marker
-- NBA  `KXNBASUMMERPTS` Pro Basketball Summer Player Points — ticker prefix KXNBA
-- NBA  `KXTEAMSINNBAEF` Teams in NBA Eastern Conference Finals — title mentions NBA
-- skip `KXKYBOURBONBARRELS` Kentucky aging Bourbon-barrel inventory — no NBA marker
-- skip `KXNCAAMBSGP` College Basketball Same Game Parlay — no NBA marker
-- skip `KXNCAAMBSECQUAL` Men's College Basketball SEC Championship Qualifiers — no NBA marker
-- skip `KXMARMADHIGHSEED` March Madness Highest Seed to Reach Round — no NBA marker
-- skip `KXNCAAMBAE` American East Conference Tournament — no NBA marker
-- skip `KXSLBTOTAL` England Super League Basketball Total — no NBA marker
-- skip `KXNCAABBIG10` Big Ten Men's Basketball Tournament — no NBA marker
-- skip `KXNCAAMBMAMER` Mid-American Conference Tournament — no NBA marker
-- skip `KXWNBA3PTCONTEST` Women's Pro Basketball 3-Point Contest — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBAPANY` Men's College Basketball AP Rank Anytime in Season — no NBA marker
-- NBA  `KXNBADRAFTMATCHUP` Pro Basketball Draft Matchup — ticker prefix KXNBA
-- skip `KXNCAAWB` Women's March Madness Champion — no NBA marker
-- skip `KXCZENBLGAME` Czech NBL Game — no NBA marker
-- NBA  `KXNBA3RDTEAM` All-NBA 3rd Team — ticker prefix KXNBA
-- NBA  `KXNBA3QSPREAD` NBA 3rd Quarter Spread — ticker prefix KXNBA
-- skip `KXNCAAMBMVAL` Missouri Valley Conference Tournament — no NBA marker
-- skip `KXWNBADPOY` WNBA Defensive Player of the Year — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBADRAFTTOP25` NBA Draft Top 25 Pick — ticker prefix KXNBA
-- skip `KXBBWSERIEAGAME` Italy Serie A (W) Game — no NBA marker
-- NBA  `KXNBA3PTALLGAMES` Pro Basketball 3-Pointers in Every Game — ticker prefix KXNBA
-- NBA  `KXNBARELOCATION` Pro Basketball Team Relocation — ticker prefix KXNBA
-- skip `KXBBLTOTAL` Germany BBL Total — no NBA marker
-- skip `KXNEWCOACHLAL` New Lakers coach — no NBA marker
-- skip `KXNBL` Australia NBL Champion — no NBA marker
-- NBA  `KXNBAPOSTASREC` NBA Best Record Post-All-Star Break — ticker prefix KXNBA
-- skip `KXCBVOLUME` Coinbase volume — no NBA marker
-- skip `KXNCAAMBCOTY` Men's College Basketball Naismith Coach of the Year — no NBA marker
-- skip `KXNCAAWBBIGEAST` Women's College Basketball Big East Conference Tournament Champion — no NBA marker
-- skip `KXBIGEASTREG` Big East Regular Season Champions — no NBA marker
-- skip `KXEUROCUPTOTAL` EuroCup Basketball Total — no NBA marker
-- NBA  `KXNBAXMASOPPONENT` Pro Basketball Christmas Day Opponent — ticker prefix KXNBA
-- NBA  `KXNBAMVPDPOY` Pro Basketball Player to Win MVP and DPOY — ticker prefix KXNBA
-- NBA  `KXNBADRAFT9` NBA Draft Ninth Pick — ticker prefix KXNBA
-- skip `KXWNBA4QTOTAL` Women's Pro Basketball 4th Quarter Total — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAWB1HTEAMTOTAL` Women's College Basketball 1st Half Team Total — no NBA marker
-- skip `KXNCAAMB2H` Men's College Basketball 2nd Half Winner — no NBA marker
-- skip `KXBNXTDGAME` BNXT Dutch League Game — no NBA marker
-- skip `KXNCAAMBCONF` NCAAMB Conference to Win Championship  — no NBA marker
-- NBA  `KXNBATOTAL` NBA Total — ticker prefix KXNBA
-- skip `KXNCAAWB3Q` Women's College Basketball 3rd Quarter Winner — no NBA marker
-- NBA  `KXNBASEED` NBA Playoff Seed — ticker prefix KXNBA
+- skip `KXEUROLEAGUE` EuroLeague Champion — no NBA marker
 - NBA  `KXNBA2QTOTAL` NBA 2nd Quarter Total — ticker prefix KXNBA
-- NBA  `KXNBA3Q` NBA 3rd Quarter Winner — ticker prefix KXNBA
-- NBA  `KXNBAPARTNERSHIP` NBA Player Partnership Deal — ticker prefix KXNBA
-- skip `KXWNBASEMIFINAL` WNBA Semifinals Qualifiers — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBA2QWINNER` NBA 2nd Quarter Winner — ticker prefix KXNBA
-- NBA  `KXNBASHOOTINGSTARS` Pro Basketball Shooting Stars Contest — ticker prefix KXNBA
-- NBA  `KXNBAPREPACK2ML` 2 ML Basketball Combo — ticker prefix KXNBA
-- NBA  `KXNBAFIRST50PTS` First NBA Player to Score 50 Points — ticker prefix KXNBA
-- skip `KXFIBACHAMPTOTAL` FIBA Champions League Total — no NBA marker
-- skip `KXCAATOURNAMENT` CAA Tournament — no NBA marker
-- skip `KXWNBAGAME` Women's Pro Basketball Game — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBA2HSPREAD` NBA 2nd Half Spread — ticker prefix KXNBA
-- skip `KXCBASPREAD` Chinese Basketball Association Spread  — no NBA marker
-- NBA  `KXNBACITYEXPAND` NBA City Franchise Expansion — ticker prefix KXNBA
-- NBA  `KXNBA2H` NBA 2nd Half Winner — ticker prefix KXNBA
-- NBA  `KXNBAPTSALLGAMES` Pro Basketball Points in Every Game — ticker prefix KXNBA
-- skip `KXNCAAMBTEAMMOSTPTS` College Basketball Team with the Most Points Scored — no NBA marker
-- skip `KXWNBACOMPETE` Women's Pro Basketball Player to Compete — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAMOSTWINS` Pro Basketball Highest Win Total — ticker prefix KXNBA
-- NBA  `KXNBAPLAYOFFWINS` NBA Playoff Wins by Team — ticker prefix KXNBA
-- NBA  `KXNBATOPPICK` Pro Basketball Draft Lottery Winner — ticker prefix KXNBA
-- NBA  `KXNBAOT` NBA Overtime — ticker prefix KXNBA
-- NBA  `KXNBAPACIFIC` Pro Basketball Pacific Division Winner — ticker prefix KXNBA
-- skip `KXCOINA` Coinbase Annual KPI — no NBA marker
-- NBA  `KXNBASERIESROADWINS` Pro Basketball Series Total Road Wins — ticker prefix KXNBA
-- skip `KXNCAAMBD3GAME` Men's College Basketball D3 Game — no NBA marker
-- skip `KXWNBA40PTS` Women's Pro Basketball Player to Score 40 Points — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBATEAMMATE` NBA Teammate of the Year — ticker prefix KXNBA
-- NBA  `KXNBA2KCOVER` Who will be on the cover of NBA 2k? — ticker prefix KXNBA
-- skip `KXWNBADRAFT1` WNBA Draft 1st Pick — non-NBA basketball marker 'WNBA'
-- skip `KXVTB` Russia VTB United Champion — no NBA marker
-- skip `KXTBTGAME` TBT Hoops Game — no NBA marker
-- skip `KXEUROBASKETSPREAD` EuroBasket Spread — no NBA marker
-- skip `KXLBJRETIRE` LBJ Retire — no NBA marker
-- skip `KXWDBBLGAME` Women's Bundesliga Basketball Game — no NBA marker
-- skip `KXWNBA1HTOTAL` WNBA 1st Half Total — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAESCALATOR3PT` NBA Player Threes Escalator — ticker prefix KXNBA
-- skip `KXBIG12REG` Big 12 Regular Season Champions — no NBA marker
-- skip `KXBIG3GAME` Big 3 Basketball Game — no NBA marker
-- NBA  `KXNBAREBPROT` NBA Player Rebounds Protected — ticker prefix KXNBA
-- skip `KXNCAAMBUAC` United Athletic Conference Conference Tournament — no NBA marker
-- skip `KXIBPLGAME` Men's Iceland Basketball Premier League Game — no NBA marker
-- skip `KXWNBA1QSPREAD` Women's Pro Basketball 1st Quarter Spread — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAEAST1SEED` NBA Eastern Conference 1 Seed — ticker prefix KXNBA
-- NBA  `KXNBAPLAYOFF3D` NBA Playoff Triple-Double — ticker prefix KXNBA
-- skip `KXSHAI20PTREC` Shai 20+ Point Streak — no NBA marker
-- skip `KXNCAAMBSECREG` Men's College Basketball SEC Regular Season Champion — no NBA marker
-- skip `KXNCAAWB2QTOTAL` Women's College Basketball 2nd Quarter Total — no NBA marker
-- skip `KXNCAAMBIGTEN` big ten MEN'S BASKETBALL TOURNAMENT — no NBA marker
-- skip `KXNCAAWB2HSPREAD` Women's College Basketball 2nd Half Spread — no NBA marker
-- skip `KXWNBA4QSPREAD` Women's Pro Basketball 4th Quarter Spread — non-NBA basketball marker 'WNBA'
-- skip `KXMARMADSEEDDIF` March Madness Biggest Upset — no NBA marker
-- skip `KXWNBAFINAL` WNBA Finals Qualifiers — non-NBA basketball marker 'WNBA'
-- skip `KXABA` Adriatic ABA Champion — no NBA marker
-- skip `KXNCAAWBCONFSTREAK` Women's College Basketball Conference Championship Streak — no NBA marker
-- skip `KXVTBGAME` Russia VTB United Game — no NBA marker
-- skip `KXSPORTSOWNERLBJ` LBJ owning team — no NBA marker
-- skip `KXNCAAMBKENPOMRANK` Men's College Basketball KenPom Ratings — no NBA marker
-- NBA  `KXNBAUNBEATEN` NBA Playoffs Team to go Undefeated — ticker prefix KXNBA
-- skip `KXVBAGAME` Vietnam VBA Game — no NBA marker
-- skip `KXNCAAMBBIG12` Big 12 Conference Tournament — no NBA marker
-- skip `KXNEXTTEAMCHRISPAUL` Next Team Chris Paul — no NBA marker
-- NBA  `KXNBAGAME7` NBA Series that Go to a Game 7 — ticker prefix KXNBA
-- skip `KXSOWBBALLGAME` Summer Olympics Women's Basketball Game — no NBA marker
-- skip `KXWNBA1QWINNER` Women's Pro Basketball 1st Quarter Winner — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBUSA` Conference USA Conference Tournament — no NBA marker
-- skip `KXISLTOTAL` Israel Super League Total — no NBA marker
-- NBA  `KXNBANEWCHAMPION` Pro Basketball New Champion — ticker prefix KXNBA
-- skip `KXEUROLEAGUESPREAD` EuroLeague Spread — no NBA marker
-- NBA  `KXNBAECFQUAL` NBA Eastern Conference Finals Qualifiers — ticker prefix KXNBA
-- skip `KXBSLSPREAD` Turkey BSL Spread — no NBA marker
-- skip `KXNCAAMBCBC` Men's College Basketball Crown Winner — no NBA marker
-- skip `KXWSBLGAME` Sweden SBL Game — no NBA marker
-- skip `KXPLEAGUEGAME` Taiwan P. League+ — no NBA marker
-- skip `KXNCAAMBNAISMITH` Men's College Basketball Naismith — no NBA marker
-- NBA  `KXLEADERNBA3PT` NBA 3PG Leader — title mentions NBA
-- skip `KXFIBAECUPGAME` FIBA Europe Cup Game — no NBA marker
-- NBA  `KXNBAATTEND` Who will attend the NBA game? — ticker prefix KXNBA
-- NBA  `KXNBASUMMER1HSPREAD` Pro Basketball Summer League 1st Half Spread — ticker prefix KXNBA
-- skip `KXKBLGAME` Korea KBL Game — no NBA marker
-- skip `KXNCAAWB1H` Women's College Basketball 1st Half Winner — no NBA marker
-- NBA  `KXTEAMSINNBAF` Teams in NBA Finals — title mentions NBA
-- skip `KXWNBAROOKAS` Women's Pro Basketball Rookie to be an All-Star — non-NBA basketball marker 'WNBA'
-- skip `KXSOWBBALLTOTAL` Summer Olympics Women's Basketball Total — no NBA marker
-- NBA  `KXNBA2Q` NBA 2nd Quarter Winner — ticker prefix KXNBA
-- skip `KXWNBALAWSUIT` Women's Pro Basketball Lawsuit — non-NBA basketball marker 'WNBA'
-- skip `KXMARMADSEEDWIN` March Madness Seed Win — no NBA marker
-- skip `KXMWREG` Mountain West Regular Season Champions — no NBA marker
-- skip `KXNCAAMSEC` SEC MEN'S BASKETBALL TOURNAMENT — no NBA marker
-- skip `KXNCAAWB1QSPREAD` Women's College Basketball 1st Quarter Spread — no NBA marker
-- skip `KXACQUIRECOINBASE` Will Coinbase announce another acquisition in 2025? — no NBA marker
-- skip `KXNCAAMBBOTHQUAL` Men's College Basketball Both Teams to Qualify — no NBA marker
-- NBA  `KXNBA3PTPROT` NBA Player Threes Protected — ticker prefix KXNBA
-- skip `KXNCAAWBACC` Women's College Basketball ACC Conference Tournament Champion — no NBA marker
-- skip `KXMARMADPTS` Men's March Madness Points — no NBA marker
-- NBA  `KXNBAPREPACK3ML` 3ML Basketball Combo — ticker prefix KXNBA
-- skip `KXNCAAMBIGEAST` Big East Men's basketball tournament — no NBA marker
-- skip `KXBSNGAME` Puerto Rico BSN Basketball Game — no NBA marker
-- skip `KXNCAAWB4QSPREAD` Women's College Basketball 4th Quarter Spread — no NBA marker
-- skip `KXFIBACHAMPSPREAD` FIBA Champions League Spread — no NBA marker
-- skip `KXNCAAMB1HSPREAD` Men's College Basketball 1st Half Spread — no NBA marker
-- skip `KXNCAAMBNIT` Men's NIT Tournament Champion — no NBA marker
-- skip `KXNCAAMBUNDEFEATED` Undefeated in College Basketball Regular Season — no NBA marker
-- skip `KXNCAAWBWINMARGIN` Women's College Basketball Winning Margin — no NBA marker
-- skip `KXNCAAMBMW` Mountain West Conference Tournament — no NBA marker
-- NBA  `KXLEADERNBAPTS` NBA PPG Leader — title mentions NBA
-- NBA  `KXNBAREB` NBA Player Rebounds — ticker prefix KXNBA
-- NBA  `KXNBAOVERTIME` NBA Overtime — ticker prefix KXNBA
-- skip `KXJOINBARSTOOL` Will Shannon sharpe join meta — no NBA marker
-- skip `KXNCAAWBSTATLEADER` Women's College Basketball Stat Leader — no NBA marker
-- NBA  `KXKXSPOTIFYALBUMRELEASEDATESC` WILL NBA YOUNBOY RELEASE SLIME CRY  — title mentions NBA
-- NBA  `KXALBUMRELEASEDATENBAYOUNGBOY` Will NBA Youngboy release a new album? — title mentions NBA
-- skip `KXNCAAWB2H` Women's College Basketball 2nd Half Winner — no NBA marker
-- NBA  `KXNBAPLAYERSPECIALS` Pro Basketball Player Specials — ticker prefix KXNBA
-- skip `KXMARMADUPSET` March Madness Upsets — no NBA marker
 - skip `KXWNBARAISE` WNBA raise — non-NBA basketball marker 'WNBA'
-- skip `KXWNBAGAMESPLAYED` WNBA Games Played in a Season — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBADRAFT4` NBA Draft Fourth Pick — ticker prefix KXNBA
-- NBA  `KXLEADERNBABLK` NBA BPG Leader — title mentions NBA
-- NBA  `KXTEAMSINNBAWF` Teams in NBA Western Conference Finals — title mentions NBA
-- NBA  `KXNBASUMMER1HTOTAL` Pro Basketball Summer League 1st Half Total — ticker prefix KXNBA
-- skip `KXRONENBAR` Ronen bar dismissed — no NBA marker
-- NBA  `KXNBAROTM` NBA Rookie of the Month — ticker prefix KXNBA
-- NBA  `KXNBADRAFTTOP15` NBA Draft Top 15 Pick — ticker prefix KXNBA
-- skip `KXACBSPREAD` Spain Liga ACB Spread — no NBA marker
-- NBA  `KXNBAWEST1SEED` NBA Western Conference 1 Seed — ticker prefix KXNBA
-- NBA  `KXNBAPLAYERHIGHSCORE` NBA Highest Scoring Performance in Regular Season — ticker prefix KXNBA
-- skip `KXNCAAMBCONFLEADER` Men's College Basketball Conference Stat Leader — no NBA marker
-- NBA  `KXNBA3QTOTAL` NBA 3rd Quarter Total — ticker prefix KXNBA
-- skip `KXCHINAUNBANBTC` Will China unban Bitcoin? — no NBA marker
-- skip `KXFIBASPREAD` FIBA Spread — no NBA marker
-- skip `KXNCAAMBWAC` Western Athletic Conference Tournament — no NBA marker
-- skip `KXPLKGAME` Poland PLK Game — no NBA marker
-- NBA  `KXNBAFIRSTBASKET` Pro Basketball First Basket — ticker prefix KXNBA
-- skip `KXWNBAROY` WNBA Rookie of the Year — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBALOTTERY` NBA Draft Lottery Picks — ticker prefix KXNBA
-- NBA  `KXNFLNBA` NFL and NBA Champion Combo — title mentions NBA
-- skip `KXWNBAWORSTREC` Women's Pro Basketball Worst Record — non-NBA basketball marker 'WNBA'
-- skip `KXSLBGAME` England Super League Basketball Game — no NBA marker
-- NBA  `KXNBA3PTCONTEST` NBA 3-Point Contest Winner — ticker prefix KXNBA
-- NBA  `KXNBASUMMERGAME` Pro Basketball Summer League Game — ticker prefix KXNBA
-- skip `KXNCAAWBAWARD` Women's College Basketball Awards — no NBA marker
-- skip `KXWNBACOY` WNBA Coach of the Year — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBBIGTENQUAL` Men's College Basketball Big Ten Championship Qualifiers — no NBA marker
-- skip `KXBBINTLGAME` International Friendly Game — no NBA marker
-- skip `KXSOBBALLGAME` Summer Olympics Men's Basketball Game — no NBA marker
-- skip `KXEUROLEAGUEGAME` Euroleague Game — no NBA marker
-- NBA  `KXNBATRADE` Pro Basketball Trade — ticker prefix KXNBA
-- NBA  `KXNBAALLSTARMVP` NBA All-Star Game MVP — ticker prefix KXNBA
-- skip `KXWNBADRAFT4` WNBA Draft 4th Pick — non-NBA basketball marker 'WNBA'
-- skip `KXNBBGAME` Brazil NBB Basketball Game — no NBA marker
-- skip `KXWNBAALLROOKIE` Women's Pro Basketball All-Rookie Team — non-NBA basketball marker 'WNBA'
-- skip `KXWNBAOT` Women's Pro Basketball Overtime — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAWBTOTAL` Women's College Basketball Total Points — no NBA marker
-- skip `KXWNBA2QTOTAL` Women's Pro Basketball 2nd Quarter Total — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAWBRACE` Women's College Basketball Race to Points — no NBA marker
-- skip `KXWNBADRAFT2` WNBA Draft 2nd Pick — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBASERIESOT` Pro Basketball Series Overtime — ticker prefix KXNBA
-- skip `KXBIHD1GAME` Bosnia Division I Game — no NBA marker
-- skip `KXNCAAMB2HSPREAD` Men's College Basketball 2nd Half Spread — no NBA marker
-- skip `KXNCAAWB1HTOTAL` Women's College Basketball 1st Half Total — no NBA marker
-- skip `KXWNBA3PTROUND` Women's Pro Basketball 3-Point Contest Round Qualifiers — non-NBA basketball marker 'WNBA'
-- skip `KXEARNINGSMENTIONBA` Boeing Earnings Call — no NBA marker
-- NBA  `KXNBAFINALSMVP` Finals MVP — ticker prefix KXNBA
-- skip `KXWNBAAST` Women's Pro Basketball Player Assists — non-NBA basketball marker 'WNBA'
-- skip `KXNCAAMBAMER` American Conference Tournament — no NBA marker
-- skip `KXGBLGAME` GBL Basketball Game — no NBA marker
-- NBA  `KXNBAAST` NBA Player Assists — ticker prefix KXNBA
-- skip `KXNCAAMBBWEST` Big West Conference Tournament — no NBA marker
-- NBA  `KXNBA4QWINNER` NBA 4th Quarter Winner — ticker prefix KXNBA
-- skip `KXWNBAPLAYOFFHOST` Women's Pro Basketball Playoff Home Games — non-NBA basketball marker 'WNBA'
-- skip `KXBBSERIEAGAME` Italy Serie A Game — no NBA marker
-- skip `KXSBLTOTAL` Slovakia SBL Total — no NBA marker
-- skip `KXNCAAMBFIRST3PT` Men's College Basketball First Team to Make a Three — no NBA marker
-- skip `KXNCAABBIGEAST` Big East Men's Basketball Tournament — no NBA marker
-- NBA  `KXNBALADDERPTS` NBA Player Points Ladder — ticker prefix KXNBA
-- NBA  `KXNBAATLANTIC` Pro Basketball Atlantic Division Winner — ticker prefix KXNBA
-- NBA  `KXNBASJC` NBA Social Justice Champion — ticker prefix KXNBA
-- NBA  `KXNBAFINALSPRICE` NBA Finals Ticket Price — ticker prefix KXNBA
-- skip `KXNCAAMBFIRST10` Men's College Basketball Race to 10 Points — no NBA marker
-- NBA  `KXNBASOUTHWEST` Pro Basketball Southwest Division Winner — ticker prefix KXNBA
-- skip `KXGRAMBPRNBA` Best Progressive R&B Album — no NBA marker
-- skip `KXWNBA4QWINNER` Women's Pro Basketball 4th Quarter Winner — non-NBA basketball marker 'WNBA'
-- skip `CBVOLUME` Coinbase volume — no NBA marker
-- skip `KXNCAAMBBIGEASTQUAL` Men's College Basketball Big East Championship Qualifiers — no NBA marker
-- NBA  `KXNBAHALLOFFAME` Pro Basketball Hall of Fame — ticker prefix KXNBA
-- NBA  `KXNBAGAMES` NBA games — ticker prefix KXNBA
-- skip `KXNCAAWBBBBB` NCAAWB Conference Champions — no NBA marker
-- skip `KXCOINBASE` Coinbase KPI — no NBA marker
-- NBA  `KXNBACUPGROUP` NBA Cup Group Winner — ticker prefix KXNBA
-- NBA  `KXNBACUPMVP` NBA Cup Tournament MVP — ticker prefix KXNBA
-- skip `KXWNBAASGAME` WNBA All Star Game — non-NBA basketball marker 'WNBA'
-- skip `KXBBL` Germany BBL Champion — no NBA marker
-- NBA  `KXNBAJOINCONF` Pro Basketball Join Conference — ticker prefix KXNBA
-- NBA  `KXNBAROOKIE2NDTEAM` NBA All-Rookie 2nd Team — ticker prefix KXNBA
-- skip `KXWNBAPTSRECORD` Women's Pro Basketball Single-Game Scoring Record — non-NBA basketball marker 'WNBA'
-- skip `KXBRIANBAUMGARTNER` How many receipts will Brian Baumgartner process in 8 hours? — no NBA marker
-- NBA  `KXNBAH2HPRA` NBA Head-to-Head Points, Rebounds and Assists — ticker prefix KXNBA
-- skip `KXABATOTAL` Adriatic ABA Total — no NBA marker
-- skip `KXLNBELITESPREAD` LNB Elite Spread — no NBA marker
-- NBA  `KXNBASTARTERS` Pro Basketball Starting Lineup — ticker prefix KXNBA
-- skip `KXNCAAMBBSOU` Big South Conference Tournament — no NBA marker
-- skip `KXNCAAWBBIGTEN` Women's College Basketball Big Ten Conference Tournament Champion — no NBA marker
-- skip `KXPLAYTOGETHERJBJT` Tatum and Brown Celtics — no NBA marker
-- NBA  `KXCOACHOUTNBA` NBA Coach Out — title mentions NBA
-- skip `KXNCAAMBNEXTCOACH` Men's College Basketball Next Coach — no NBA marker
-- NBA  `KXNBAMVP` NBA MVP — ticker prefix KXNBA
-- skip `KXNCAAMB2HTOTAL` Men's College Basketball 2nd Half Total — no NBA marker
-- skip `KXWENBACONATOR` Average price of a Wendy's Baconator in [month] — no NBA marker
-- skip `KXNCAAMBTEAMTOTAL` Men's College Basketball Team Total — no NBA marker
-- NBA  `KXNBASTATAVG` NBA Player Stat Average — ticker prefix KXNBA
-- NBA  `KXNBADRAFT3` NBA Draft Third Pick — ticker prefix KXNBA
-- NBA  `KXNBA3QWINNER` NBA 3rd Quarter Winner — ticker prefix KXNBA
-- skip `KXWFIBATOTAL` Women's FIBA Total — no NBA marker
-- skip `KXTRUMPCANBAN` Trump Canada ban — no NBA marker
-- skip `KXLBPGAME` Colombia LBP Basketball Game — no NBA marker
-- skip `KXGRAMBRNBA` Best R&B Album — no NBA marker
-- skip `KXA10REG` A10 Regular Season Champions — no NBA marker
-- NBA  `KXNBASERIESGAMES` NBA Series Total Games — ticker prefix KXNBA
-- NBA  `KXNBASERIESSCORE` NBA Series Exact Score — ticker prefix KXNBA
-- NBA  `KXNBAFINBLOWOUT` Pro Basketball Finals Blowout — ticker prefix KXNBA
-- skip `KXESPYWNBA` BEST WNBA PLAYER‬‭ — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAFINALSVIEWER` NBA finals viewership — ticker prefix KXNBA
-- NBA  `KXNBALASVEGAS` Las Vegas NBA team — ticker prefix KXNBA
-- skip `KXAMAFFRNBA` Favorite Female R&B Artist — no NBA marker
-- skip `KXMARMADREGION` March Madness Region Winner — no NBA marker
-- NBA  `KXNBA1H` NBA 1st Half Winner — ticker prefix KXNBA
-- skip `KXWNBAWEST` Women's Pro Basketball Western Conference Champion — non-NBA basketball marker 'WNBA'
-- skip `KXTNCBASKETBALL` TNC Basketball — no NBA marker
-- skip `KXLEADERWNBAREB` WNBA RPG Leader — non-NBA basketball marker 'WNBA'
-- skip `KXWCCREG` West Coast Conference Regular Season Champions — no NBA marker
-- skip `KXNCAAWB2Q` Women's College Basketball 2nd Quarter Winner — no NBA marker
-- skip `KXEBBALLGAME` eBasketball Game — no NBA marker
-- NBA  `KXNBA4QSPREAD` NBA 4th Quarter Spread — ticker prefix KXNBA
-- skip `KXJBLEAGUEGAME` Japan B League Game — no NBA marker
-- skip `KXWNBA1QTOTAL` Women's Pro Basketball 1st Quarter Total — non-NBA basketball marker 'WNBA'
-- skip `KXMARMADCONFWIN` March Madness Conference Winner — no NBA marker
-- NBA  `KXNBACENTRAL` Pro Basketball Central Division Winner — ticker prefix KXNBA
-- NBA  `KXNBASERIES3PMLEADER` Pro Basketball Series 3-Pointers Made Leader — ticker prefix KXNBA
-- NBA  `KXTOP3NBADRAFT` NBA Draft Top 3 — title mentions NBA
+- skip `KXMWREG` Mountain West Regular Season Champions — no NBA marker
+- NBA  `KXNBASOUTHEAST` Pro Basketball Southeast Division Winner — ticker prefix KXNBA
 - skip `KXWNBA6POY` WNBA Sixth Player of the Year — non-NBA basketball marker 'WNBA'
-- skip `KXKMLGAME` Estonia KML Game — no NBA marker
-- skip `KXNCAAWBSEC` Women's College Basketball SEC Conference Tournament Champion — no NBA marker
-- skip `KXNZNBLGAME` New Zealand NBL Game — no NBA marker
-- skip `KXNCAAMBACCQUAL` Men's College Basketball ACC Championship Qualifiers — no NBA marker
-- skip `KXNCAAMBTOPAPRANK` Men's College Basketball AP Poll Top Rank — no NBA marker
-- skip `KXNCAAWBH` NCAA Women's Basketball Half Winners — no NBA marker
-- skip `KXWNBATOTAL` Women's Pro Basketball Total — non-NBA basketball marker 'WNBA'
-- skip `KXSTEPHPARTERNSHIP` Stephen Curry Partnership — no NBA marker
-- skip `KXPHKLGAME` Croatia Premijer Liga Game — no NBA marker
-- NBA  `KXNBACELEBRITYGAME` Pro Basketball All-Star Celebrity Game — ticker prefix KXNBA
-- skip `KXNCAAMBAPRANK` Men's College Basketball AP Poll — no NBA marker
-- NBA  `KXMVENBASINGLEGAME` MVE NBA Single Game — title mentions NBA
-- skip `KXWNBLGAME` NBL Australia (W) Game — no NBA marker
-- NBA  `KXNBASERIESTOTALPTS` Pro Basketball Series Total Points — ticker prefix KXNBA
+- skip `KXWNBAWINS` WNBA Win Totals — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAGAME` NBA Game — ticker prefix KXNBA
+- skip `KXWNBANEXTCOMMISH` Women's Pro Basketball Next Commissioner — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAMB2H` Men's College Basketball 2nd Half Winner — no NBA marker
+- skip `KXEARNINGSMENTIONCOINBASE` coinbase earnings mention — no NBA marker
+- NBA  `KXNBADRAFTTOP20` NBA Draft Top 20 Pick — ticker prefix KXNBA
+- NBA  `KXNBARISINGSTARS` Pro Basketball Rising Stars Tournament — ticker prefix KXNBA
 - NBA  `KXNBAFRANCHISEOWNER` NBA Franchise Owner — ticker prefix KXNBA
-- skip `KXNCAAMBBIG12REG` Men's College Basketball Big 12 Regular Season Champion — no NBA marker
-- skip `KXWNBAALLSTARS` Women's Pro Basketball All-Star Selections — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBASERIESCOMEBACK` Pro Basketball Series Comeback — ticker prefix KXNBA
-- skip `KXMARMADCONF` March Madness Conference — no NBA marker
-- skip `KXWEUROBASKETGAME` EuroBasket (W) Game — no NBA marker
-- skip `KXWNBAFIRSTTEAM` Women's Pro Basketball First Team — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAPLAYERDEAL` Next Pro Basketball Brand Deal — ticker prefix KXNBA
-- skip `KXLNBPSPREAD` LNBP Spread — no NBA marker
-- NBA  `KXNBA1HSPREAD` NBA 1st Half Spread — ticker prefix KXNBA
-- NBA  `KXNBASUMMERSPREAD` Pro Basketball Summer League Spread — ticker prefix KXNBA
-- skip `KXNCAAWB1Q` Women's College Basketball 1st Quarter Winner — no NBA marker
-- NBA  `KXNBASPORTSMANSHIP` NBA Sportsmanship Award — ticker prefix KXNBA
-- NBA  `KXNBACOACHOUT` Pro Basketball Coaches Out — ticker prefix KXNBA
-- skip `KXFIBAECUPTOTAL` FIBA Europe Cup Total — no NBA marker
-- NBA  `KXNBASUMMERMVP` Pro Basketball Summer League MVP — ticker prefix KXNBA
-- skip `KXBBALLTEAMUSA` Summer Olympics USA Men's Basketball Team — no NBA marker
-- NBA  `KXNBAONE3PT` NBA Players to Make One Three — ticker prefix KXNBA
+- NBA  `KXNBANEXTTEAM` Pro Basketball Next Team — ticker prefix KXNBA
+- NBA  `KXNBA2Q` NBA 2nd Quarter Winner — ticker prefix KXNBA
+- NBA  `KXNBAWEST` Pro Basketball Western Conference Champion — ticker prefix KXNBA
+- NBA  `KXNBA1STTEAM` All-NBA 1st Team — ticker prefix KXNBA
+- skip `KXNCAAMBBSOU` Big South Conference Tournament — no NBA marker
+- skip `KXSOWBBALLTOTAL` Summer Olympics Women's Basketball Total — no NBA marker
+- NBA  `KXNBAALLSTARS` NBA All-Stars — ticker prefix KXNBA
+- skip `KXVTBGAME` Russia VTB United Game — no NBA marker
+- NBA  `KXNBADRAFT4` NBA Draft Fourth Pick — ticker prefix KXNBA
+- skip `KXNCAAWB2HSPREAD` Women's College Basketball 2nd Half Spread — no NBA marker
+- NBA  `KXNBASERIESGAMES` NBA Series Total Games — ticker prefix KXNBA
+- skip `KXNCAAMBFIRST3PT` Men's College Basketball First Team to Make a Three — no NBA marker
+- skip `KXNCAAWB1HTEAMTOTAL` Women's College Basketball 1st Half Team Total — no NBA marker
 - NBA  `KXNBADRAFT2` NBA Draft Second Pick — ticker prefix KXNBA
-- skip `KXWCBAGAME` China CBA (W) Game — no NBA marker
-- skip `KXAMAFMRNBA` Favorite Male R&B Artist — no NBA marker
-- NBA  `KXNBASEEDOU` NBA Playoff Seed Over/Unders — ticker prefix KXNBA
-- skip `KXLUBGAME` Uruguay LUB Basketball Game — no NBA marker
-- NBA  `KXTRUMPNBAFINALS` Trump NBA finals — title mentions NBA
-- skip `KXWSESBLGAME` Women's Sweden SBL Game — no NBA marker
-- skip `KXWNBA2HSPREAD` Women's Pro Basketball 2nd Half Spread — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAFIRSTTIMECHAMP` NBA First Time Champion — ticker prefix KXNBA
-- skip `KXNCAAMBA10` Atlantic-10 Conference Tournament — no NBA marker
-- skip `KXFIBATOTAL` FIBA Total — no NBA marker
-- NBA  `KXNBADRAFT7` NBA Draft Seventh Pick — ticker prefix KXNBA
-- skip `KXCEBLGAME` Canadian Elite Basketball League Game — no NBA marker
-- skip `KXEUROCUPGAME` EuroCup Basketball Game — no NBA marker
-- NBA  `KXNBAHIGHESTSCORING` NBA Player with the Highest Scoring Game — ticker prefix KXNBA
-- NBA  `KXNBABENCHPTS` NBA Bench Points — ticker prefix KXNBA
-- NBA  `KXNBADRAFTPICK` Pro Basketball Draft Pick — ticker prefix KXNBA
-- skip `KXLNBP` Mexico LNBP Champion — no NBA marker
-- skip `KXWNBAWEST1` Women's Pro Basketball Western Conference #1 Seed — non-NBA basketball marker 'WNBA'
-- NBA  `KXNBAFINMVP` NBA Finals MVP — ticker prefix KXNBA
-- skip `KXNCAAMBWCC` West Coast Conference Tournament — no NBA marker
-- skip `KXPBAGAME` Philippines PBA Game — no NBA marker
-- skip `KXBBLGAME` Bundesliga Basketball Game — no NBA marker
-- skip `KXNCAAMBBIGEAST` Big East Conference Tournament — no NBA marker
-- skip `KXEARNINGSMENTIONBAC` Bank of America Earnings Mention — no NBA marker
-- skip `KXNBIGAME` Hungary NB I. A Game — no NBA marker
-- NBA  `KXNBAFRANCHISECOST` NBA Franchise Cost — ticker prefix KXNBA
+- skip `KXWNBACOMPETE` Women's Pro Basketball Player to Compete — non-NBA basketball marker 'WNBA'
+- skip `KXWNBA3QTOTAL` Women's Pro Basketball 3rd Quarter Total — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAPARTNERSHIP` NBA Player Partnership Deal — ticker prefix KXNBA
+- NBA  `KXCOACHOUTNBADATE` NBA Coach Out Date — title mentions NBA
+- skip `KXLNBELITEGAME` LNB Elite Game — no NBA marker
+- NBA  `KXNBAGAMEHIGHSCORE` NBA Highest Scoring Game of the Season — ticker prefix KXNBA
 - skip `KXNCAAMBBIGTENREG` Men's College Basketball Big Ten Regular Season Champion — no NBA marker
-- skip `KXNCAAMBSUM` Summit League Conference Tournament — no NBA marker
-- skip `KXNCAAMB1HTOTAL` Men's College Basketball 1st Half Total — no NBA marker
-- NBA  `KXNBATOP3` Pro Basketball Draft Lottery Top 3 — ticker prefix KXNBA
-- skip `KXTATUMRETURN` When Will Jayson Tatum Play His Next Game — no NBA marker
-- skip `KXNCAABSEC` SEC Men's Basketball Tournament — no NBA marker
-- NBA  `KXNBADRAFTTRADE` Pro Basketball Draft Trade — ticker prefix KXNBA
-- NBA  `KXNBA3PEAT` Pro Basketball Three-Peat Champion — ticker prefix KXNBA
-- skip `KXWNBAPLAYOFF` WNBA Playoff Qualifiers — non-NBA basketball marker 'WNBA'
+- skip `KXBIHD1GAME` Bosnia Division I Game — no NBA marker
+- skip `KXNCAAMIVYLEAGUE` Ivy League MEN'S BASKETBALL TOURNAMENT — no NBA marker
+- skip `KXNCAAMBFIRST50` Men's College Basketball Race to 50 Points — no NBA marker
+- NBA  `KXESPYNBA` BEST NBA PLAYER‬ — title mentions NBA
+- NBA  `KXNBASEED` NBA Playoff Seed — ticker prefix KXNBA
+- skip `KXNCAAMBFIRST25` Men's College Basketball Race to 25 Points — no NBA marker
+- skip `KXFIBACHAMPSPREAD` FIBA Champions League Spread — no NBA marker
+- skip `KXNCAAMBUSA` Conference USA Conference Tournament — no NBA marker
+- skip `KXNCAAWB3QTOTAL` Women's College Basketball 3rd Quarter Total — no NBA marker
+- skip `KXBBALLTEAMUSA` Summer Olympics USA Men's Basketball Team — no NBA marker
+- skip `KXWNBATOTAL` Women's Pro Basketball Total — non-NBA basketball marker 'WNBA'
+- skip `ZYNBAN` Zyn ban in the United States — no NBA marker
+- NBA  `KXNBASLAMDUNK` NBA Slam Dunk Contest Winner — ticker prefix KXNBA
+- skip `KXLKLTOTAL` LKL Lithuania Total — no NBA marker
+- skip `KXNCAAMBSBELT` Sun Belt Conference Tournament — no NBA marker
+- skip `KXWNBA1HWINNER` Women's Pro Basketball 1st Half Winner — non-NBA basketball marker 'WNBA'
+- skip `KXNBBGAME` Brazil NBB Basketball Game — no NBA marker
+- skip `KXNCAAWBTOTAL` Women's College Basketball Total Points — no NBA marker
+- skip `KXFIBAECUPGAME` FIBA Europe Cup Game — no NBA marker
+- NBA  `KXNBACELEBRITY3PT` NBA Celebrity 3PT Contest — ticker prefix KXNBA
+- skip `KXMARMADSEEDSUM` March Madness Sum of Seeds — no NBA marker
+- NBA  `KXNBADRAFTCONF` Pro Basketball Players Drafted by Conference — ticker prefix KXNBA
+- skip `KXWFIBASPREAD` Women's FIBA Spread — no NBA marker
+- skip `KXLEADERWNBAPTS` WNBA PPG Leader — non-NBA basketball marker 'WNBA'
+- skip `KXWNBAROOKAS` Women's Pro Basketball Rookie to be an All-Star — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAMBA10` Atlantic-10 Conference Tournament — no NBA marker
+- skip `KXMARMADHIGHSEED` March Madness Highest Seed to Reach Round — no NBA marker
+- skip `KXSBLTOTAL` Slovakia SBL Total — no NBA marker
+- NBA  `KXMVENBASINGLEGAME` MVE NBA Single Game — title mentions NBA
+- skip `KXNCAAMBTOPAPRANK` Men's College Basketball AP Poll Top Rank — no NBA marker
+- skip `KXNCAABACC` ACC Men's Basketball Tournament — no NBA marker
+- skip `KXWNBA3PTCONTEST` Women's Pro Basketball 3-Point Contest — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBACUPGROUP` NBA Cup Group Winner — ticker prefix KXNBA
+- NBA  `KXNBAPRAPROT` Pts + Reb + Ast Protected — ticker prefix KXNBA
+- skip `KXNCAAMBTOTAL` Men's College Basketball Total Points — no NBA marker
+- NBA  `KXNBA3QSPREAD` NBA 3rd Quarter Spread — ticker prefix KXNBA
+- skip `KXTNCBASKETBALL` TNC Basketball — no NBA marker
+- skip `KXNCAAMBSGP` College Basketball Same Game Parlay — no NBA marker
+- skip `KXBIG3GAME` Big 3 Basketball Game — no NBA marker
+- skip `KXMARMADUPSET` March Madness Upsets — no NBA marker
+- skip `KXWNBALAWSUIT` Women's Pro Basketball Lawsuit — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAOVERTIME` NBA Overtime — ticker prefix KXNBA
+- skip `KXGOLDENBACHELOR` who will win the gold bachelor — no NBA marker
+- skip `KXNCAAMPAC12` PAC-12 MEN'S BASKETBALL TOURNAMENT — no NBA marker
+- skip `KXWEUROBASKETGAME` EuroBasket (W) Game — no NBA marker
+- NBA  `KXNBAWFINMVP` NBA Western Conference Finals MVP — ticker prefix KXNBA
+- NBA  `KXNBA3PTALLGAMES` Pro Basketball 3-Pointers in Every Game — ticker prefix KXNBA
+- NBA  `KXNBASWEEP` NBA Teams to Have a Series Sweep — ticker prefix KXNBA
+- NBA  `KXTEAMSINNBAF` Teams in NBA Finals — title mentions NBA
+- skip `KXNCAAMB1HTEAMTOTAL` Men's College Basketball 1st Half Team Total — no NBA marker
+- skip `KXNCAAMBFIRST10` Men's College Basketball Race to 10 Points — no NBA marker
+- skip `KXBBSERIEBGAME` Italy Serie B Basketball Game — no NBA marker
+- skip `KXNCAAMBD3GAME` Men's College Basketball D3 Game — no NBA marker
+- skip `KXCOINA` Coinbase Annual KPI — no NBA marker
+- skip `KXBSLTOTAL` Turkey BSL Total — no NBA marker
+- skip `KXBBLTOTAL` Germany BBL Total — no NBA marker
+- NBA  `KXNBASHOOTINGSTARS` Pro Basketball Shooting Stars Contest — ticker prefix KXNBA
+- skip `KXWIBPLGAME` Women's Iceland Premier League Game — no NBA marker
+- skip `KXNCAAMBBIG12REG` Men's College Basketball Big 12 Regular Season Champion — no NBA marker
+- NBA  `KXNBADRAFTTOP30` NBA Draft Top 30 Pick — ticker prefix KXNBA
+- NBA  `KXNBA2NDTEAM` All-NBA 2nd Team — ticker prefix KXNBA
+- NBA  `KXNBANHL` NBA + NHL Champion Combo — ticker prefix KXNBA
+- NBA  `KXNBASTADIUM` NBA Stadium Completion — ticker prefix KXNBA
+- skip `KXCBASPREAD` Chinese Basketball Association Spread  — no NBA marker
+- NBA  `KXNBA2QSPREAD` NBA 2nd Quarter Spread — ticker prefix KXNBA
+- skip `KXNCAAWBNIT` Women's NIT Tournament Champion — no NBA marker
+- NBA  `KXNBAREBPROT` NBA Player Rebounds Protected — ticker prefix KXNBA
+- skip `KXCBAGAME` Chinese Basketball Association Game  — no NBA marker
+- skip `KXNCAAMBGAME` Men's College Basketball Game — no NBA marker
+- NBA  `KXNBASERIESGCOMEBACK` Pro Basketball Series Game Comeback — ticker prefix KXNBA
+- skip `KXRONENBAR` Ronen bar dismissed — no NBA marker
+- skip `KXMARMAD1SEED` March Madness 1 Seeds — no NBA marker
+- NBA  `KXNBAROY` NBA Rookie of the Year — ticker prefix KXNBA
+- skip `KXNCAAMBSWAC` Southwestern Atlantic Conference Tournament — no NBA marker
+- skip `KXNCAAMBACCREGTOP` Men's College Basketball ACC Regular Season Top Finishers — no NBA marker
+- NBA  `KXNBATEAM` NBA team — ticker prefix KXNBA
+- NBA  `KXNBADRAFTTOP` Pro Basketball Top Draft — ticker prefix KXNBA
+- skip `KXLNBPSPREAD` LNBP Spread — no NBA marker
+- NBA  `KXTOP3NBADRAFT` NBA Draft Top 3 — title mentions NBA
+- NBA  `KXNBAFTM` NBA Player Free Throws Made — ticker prefix KXNBA
+- skip `KXFIBACHAMPTOTAL` FIBA Champions League Total — no NBA marker
+- NBA  `KXNBASTATLEADER` NBA Regular Season League Leader — ticker prefix KXNBA
+- NBA  `KXNBALOTTERY` NBA Draft Lottery Picks — ticker prefix KXNBA
+- skip `KXNCAAMBEARLYTOURNEY` NCAAMB Early Season Tournaments — no NBA marker
+- NBA  `KXNBADPOY` NBA Defensive Player of the Year — ticker prefix KXNBA
+- skip `KXWNBA40PTS` Women's Pro Basketball Player to Score 40 Points — non-NBA basketball marker 'WNBA'
+- skip `KXCBATOTAL` Chinese Basketball Association Total  — no NBA marker
+- skip `KXNCAANIT` NIT Champion — no NBA marker
+- skip `KXEUROLEAGUESPREAD` EuroLeague Spread — no NBA marker
+- NBA  `KXNBATEAMMATE` NBA Teammate of the Year — ticker prefix KXNBA
+- skip `KXLNBELITE2GAME` LNB Elite 2 Game — no NBA marker
+- NBA  `KXNBAFRANCHISECOST` NBA Franchise Cost — ticker prefix KXNBA
+- skip `KXWNBAFINALSMVP` WNBA Finals MVP — non-NBA basketball marker 'WNBA'
+- skip `KXWNBA2QSPREAD` Women's Pro Basketball 2nd Quarter Spread — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBASPREAD` NBA Spread — ticker prefix KXNBA
+- skip `KXNCAAWBSTATLEADER` Women's College Basketball Stat Leader — no NBA marker
+- NBA  `KXNBA3PTCONTEST` NBA 3-Point Contest Winner — ticker prefix KXNBA
+- skip `KXMAKEMARMAD` Make March Madness Tournament — no NBA marker
+- skip `KXZYNBAN` Zyn ban in the United States — no NBA marker
+- NBA  `KXNBAH2HWINS` NBA Head to Head Win Total — ticker prefix KXNBA
+- skip `KXNCAAMBSECQUAL` Men's College Basketball SEC Championship Qualifiers — no NBA marker
+- skip `KXWNBAFINAL` WNBA Finals Qualifiers — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBATEAMTOTAL` NBA Team Total — ticker prefix KXNBA
+- skip `KXWNBADELAY` WNBA Season Delay — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAWBAPRANK` Women's College Basketball AP Poll — no NBA marker
+- NBA  `KXNBAJOINCONF` Pro Basketball Join Conference — ticker prefix KXNBA
+- NBA  `KXPLAYEROPTIONNBA` player option nba — title mentions NBA
+- skip `KXNEXTTEAMLEBRON` Lebron's Next Team — no NBA marker
+- NBA  `KXNBAWINSTREAK` NBA Longest Win Streak — ticker prefix KXNBA
+- NBA  `KXTEAMSINNBAEF` Teams in NBA Eastern Conference Finals — title mentions NBA
+- skip `KXNCAAWB2QSPREAD` Women's College Basketball 2nd Quarter Spread — no NBA marker
+- skip `KXNCAAMBBIGEASTREGTOP` Men's College Basketball Big East Regular Season Top Finishers — no NBA marker
+- skip `KXLNBELITESPREAD` LNB Elite Spread — no NBA marker
+- skip `KXNCAAMBASUN` Atlantic Sun Conference Tournament — no NBA marker
+- NBA  `KXNBAH2HPTSMARGIN` NBA H2H Player Points Bracketed — ticker prefix KXNBA
+- skip `KXFIBACHAMPLEAGUEGAME` FIBA Champions League Game — no NBA marker
 - NBA  `KXNBATOJOINCBA` NBA Players to Join the CBA — ticker prefix KXNBA
+- skip `KXNCAAMBOT` Men's College Basketball Overtime — no NBA marker
+- NBA  `KXNBALASTTOLOSE` NBA Last Undefeated Team — ticker prefix KXNBA
+- skip `KXWNBASERIES` WNBA Playoff Series Winner — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAPLAYOFFHOMEGAMES` NBA Team Home Playoff Games — ticker prefix KXNBA
+- NBA  `KXNBATOPPICK` Pro Basketball Draft Lottery Winner — ticker prefix KXNBA
+- skip `KXNCAAWBUNDEFEATEDHOME` Women's College Basketball Teams to go Undefeated at Home — no NBA marker
+- skip `KXBDSFTCHALLENGE` Bob Does Sports Free Throw Challenge — no NBA marker
+- NBA  `KXNBAMIMP` NBA Most Improved Player — ticker prefix KXNBA
+- NBA  `KXNBABLK` NBA Player Blocks — ticker prefix KXNBA
+- skip `KXWNBASECONDTEAM` Women's Pro Basketball Second Team — non-NBA basketball marker 'WNBA'
+- skip `KXWNBAALLDEFENSE` Women's Pro Basketball All-Defensive Teams — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBA1H` NBA 1st Half Winner — ticker prefix KXNBA
+- skip `KXWNBA2QTOTAL` Women's Pro Basketball 2nd Quarter Total — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBASERIESROADWIN` NBA Series 1st Road Win — ticker prefix KXNBA
+- NBA  `KXNBACUP` Pro Basketball Cup Champion — ticker prefix KXNBA
+- NBA  `KXNBAWINS` Pro Basketball Win Totals — ticker prefix KXNBA
+- skip `KXWFIBAWC` Women's FIBA World Cup Winner — no NBA marker
+- NBA  `KXNBAUNBEATEN` NBA Playoffs Team to go Undefeated — ticker prefix KXNBA
+- NBA  `KXNBAFINALSMENTION` NBA Finals — ticker prefix KXNBA
+- skip `KXNCAAMBBIGEASTREG` Men's College Basketball Big East Regular Season Champion — no NBA marker
+- skip `KXBNXTGAME` BNXT League Game — no NBA marker
+- NBA  `KXNBATOTAL` NBA Total — ticker prefix KXNBA
+- skip `KXNCAAMB2HTEAMTOTAL` Men's College Basketball 2nd Half Team Total — no NBA marker
+- NBA  `KXNBA1QTOTAL` NBA 1st Quarter Total — ticker prefix KXNBA
+- skip `KXNCAABBIG12` Big 12 Men's Basketball Tournament — no NBA marker
+- NBA  `KXNBARACE` NBA Race to Points — ticker prefix KXNBA
+- NBA  `KXNBALOTTERYODDS` NBA Lottery Winner Odds — ticker prefix KXNBA
+- skip `KXNCAAMBUAC` United Athletic Conference Conference Tournament — no NBA marker
+- skip `KXBBALLUSACOACH` Summer Olympics USA Men's Basketball Head Coach — no NBA marker
+- skip `KXNCAABSEC` SEC Men's Basketball Tournament — no NBA marker
+- NBA  `KXNBA3Q` NBA 3rd Quarter Winner — ticker prefix KXNBA
+- skip `CBVOLUME` Coinbase volume — no NBA marker
+- skip `KXNCAAMBSTATLEADER` Men's College Basketball Stat Leader — no NBA marker
+- NBA  `KXNBA1STTEAMDEF` NBA All-Defensive 1st Team — ticker prefix KXNBA
+- skip `KXWNBA` WNBA Champion — non-NBA basketball marker 'WNBA'
+- skip `KXSECREG` SEC Regular Season Champions — no NBA marker
+- skip `KXEUROBASKETGAME` EuroBasket Game — no NBA marker
+- NBA  `KXNBAPOTM` NBA Player of the Month — ticker prefix KXNBA
+- skip `KXTRADEOFFNBA` Pro basketball trades offseason — no NBA marker
+- NBA  `KXNBADRAFT7` NBA Draft Seventh Pick — ticker prefix KXNBA
+- NBA  `KXNBACITYEXPAND` NBA City Franchise Expansion — ticker prefix KXNBA
+- NBA  `KXNBAWEST1SEED` NBA Western Conference 1 Seed — ticker prefix KXNBA
+- skip `KXNCAAMACC` ACC MEN'S BASKETBALL TOURNAMENT — no NBA marker
+- NBA  `KXLEADERNBAREB` NBA RPG Leader — title mentions NBA
+- NBA  `KXNBAFIRSTOPPONENT` Pro Basketball First Opponent of the Season — ticker prefix KXNBA
+- skip `KXNCAAMBACC` ACC Conference Tournament — no NBA marker
+- skip `KXISLTOTAL` Israel Super League Total — no NBA marker
+- NBA  `KXNBA4QTOTAL` NBA 4th Quarter Total — ticker prefix KXNBA
+- skip `KXBIG3` BIG3 Champion — no NBA marker
+- skip `KXWNBA4QTOTAL` Women's Pro Basketball 4th Quarter Total — non-NBA basketball marker 'WNBA'
+- NBA  `KXFIRSTPICKNBA` NBA first pick — title mentions NBA
+- skip `KXABAGAME` Adriatic ABA Game — no NBA marker
+- skip `KXVTBSPREAD` Russia VTB United Spread — no NBA marker
+- NBA  `KXNBA1Q` NBA 1st Quarter Winner — ticker prefix KXNBA
+- skip `KXNCAAMBHL` Horizon League conference tournament winner — no NBA marker
+- NBA  `KXNBAFINALSVIEWER` NBA finals viewership — ticker prefix KXNBA
+- NBA  `KXNBADRAFTPICK` Pro Basketball Draft Pick — ticker prefix KXNBA
+- skip `KXJCOLECBA` J Cole CBA — no NBA marker
+- skip `KXNCAAMBBIG10` Big Ten Conference Tournament — no NBA marker
+- NBA  `KXNBASEATTLE` Seattle NBA team — ticker prefix KXNBA
+- NBA  `KXNBA` Pro Basketball Champion — ticker prefix KXNBA
+- skip `KXWNBA2QWINNER` Women's Pro Basketball 2nd Quarter Winner — non-NBA basketball marker 'WNBA'
+- skip `KXVTBTOTAL` Russia VTB United Total — no NBA marker
+- NBA  `KXNBAROOKIE2NDTEAM` NBA All-Rookie 2nd Team — ticker prefix KXNBA
+- NBA  `KXNBA30COMEBACK` NBA 3-0 Series Comeback — ticker prefix KXNBA
+- skip `KXSKLGAME` Slovenia 1. SKL Game — no NBA marker
+- skip `KXWNBADRAFT5` WNBA Draft 5th Pick — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAPREPACK2ML` 2 ML Basketball Combo — ticker prefix KXNBA
+- skip `KXFIBAECUPTOTAL` FIBA Europe Cup Total — no NBA marker
+- skip `KXWNBA1H` Women's Pro Basketball 1st Half Winner — non-NBA basketball marker 'WNBA'
+- NBA  `KXTRUMPNBAFINALS` Trump NBA finals — title mentions NBA
+- NBA  `KXNBASUMMERTOTAL` Pro Basketball Summer League Total — ticker prefix KXNBA
+- skip `KXWNBA2HTOTAL` Women's Pro Basketball 2nd Half Total — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBACOMPETE` Pro Basketball Player to Compete — ticker prefix KXNBA
+- skip `KXNCAAWB2Q` Women's College Basketball 2nd Quarter Winner — no NBA marker
+- NBA  `KXNBAPLAYTOGETHER` Pro Basketball Players to Play Together — ticker prefix KXNBA
+- skip `KXKBLGAME` Korea KBL Game — no NBA marker
+- skip `KXNCAAMBNEC` Northeast Conference Tournament — no NBA marker
+- NBA  `KXNBASERIESROADWINS` Pro Basketball Series Total Road Wins — ticker prefix KXNBA
+- NBA  `KXNBAONE3PT` NBA Players to Make One Three — ticker prefix KXNBA
+- skip `KXKRAKENBANKPUBLIC` Kraken IPO — no NBA marker
+- skip `KXNCAAWBBIGEAST` Women's College Basketball Big East Conference Tournament Champion — no NBA marker
+- NBA  `KXNBA4QWINNER` NBA 4th Quarter Winner — ticker prefix KXNBA
+- skip `KXKYBOURBONBARRELS` Kentucky aging Bourbon-barrel inventory — no NBA marker
+- NBA  `KXNBAPLAYERHIGHSCORE` NBA Highest Scoring Performance in Regular Season — ticker prefix KXNBA
+- skip `KXNCAAMBPAC12` Pac-12 Conference Tournament — no NBA marker
+- NBA  `KXNBALADDER3PT` NBA Player Threes Ladder — ticker prefix KXNBA
+- skip `KXNCAAMBIVY` Ivy League Conference Tournament — no NBA marker
+- skip `KXBALGAME` Basketball Africa League Game — no NBA marker
+- NBA  `KXNBANEWCHAMP` NBA First-Time Champion — ticker prefix KXNBA
+- NBA  `KXNBAPR` Pro Basketball Player Points + Rebounds — ticker prefix KXNBA
+- skip `KXBILBASKETBALL` Ball is Life Basketball Game — no NBA marker
+- skip `KXWNBA2HSPREAD` Women's Pro Basketball 2nd Half Spread — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBASERIESTOTALPTS` Pro Basketball Series Total Points — ticker prefix KXNBA
+- NBA  `KXNBASJC` NBA Social Justice Champion — ticker prefix KXNBA
+- skip `KXPHKLGAME` Croatia Premijer Liga Game — no NBA marker
+- NBA  `KXNBASERIESPTS` Pro Basketball Series Player Points — ticker prefix KXNBA
+- skip `KXNCAABBIGEAST` Big East Men's Basketball Tournament — no NBA marker
+- skip `KXNCAAWBGAME` Women's College Basketball Game — no NBA marker
+- NBA  `KXNBA4QSPREAD` NBA 4th Quarter Spread — ticker prefix KXNBA
+- skip `KXWNBADPOY` WNBA Defensive Player of the Year — non-NBA basketball marker 'WNBA'
+- skip `KXWNBACCUPMVP` WNBA Commissioner's Cup MVP — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBA2HTOTAL` NBA 2nd Half Total — ticker prefix KXNBA
+- skip `KXNCAAMBAPRANK` Men's College Basketball AP Poll — no NBA marker
+- NBA  `KXNBA4QTEAMTOTAL` NBA 4th Quarter Team Total — ticker prefix KXNBA
+- skip `KXAMAFFRNBA` Favorite Female R&B Artist — no NBA marker
+- NBA  `KXNBADRAFTTOP15` NBA Draft Top 15 Pick — ticker prefix KXNBA
+- NBA  `KXNEXTTEAMNBA` Next NBA Team — title mentions NBA
+- NBA  `KXLEADERNBASTL` NBA SPG Leader — title mentions NBA
+- NBA  `KXNBASERIESASTLEADER` Pro Basketball Series Assists Leader — ticker prefix KXNBA
+- skip `KXBBSERIEASPREAD` Italy Serie A Spread — no NBA marker
+- skip `KXWNBAMVP` WNBA Most Valuable Player — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAROTM` NBA Rookie of the Month — ticker prefix KXNBA
+- skip `KXWMARMAD1SEED` Women's March Madness 1 Seeds — no NBA marker
+- skip `KXNCAAMBBIG12REGTOP` Men's College Basketball Big 12 Regular Season Top Finishers — no NBA marker
+- skip `KXWNBA2H` Women's Pro Basketball 2nd Half Winner — non-NBA basketball marker 'WNBA'
+- skip `KXDBBSUPERGAME` DBB Supercup Game — no NBA marker
+- skip `KXWNBAPTS` WNBA Player Points — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBA3QTEAMTOTAL` NBA 3rd Quarter Team Total — ticker prefix KXNBA
+- skip `KXNCAAWB1Q` Women's College Basketball 1st Quarter Winner — no NBA marker
+- NBA  `KXNBA1HTOTAL` NBA 1st Half Total — ticker prefix KXNBA
+- NBA  `KXNBASERIESCOMEBACK` Pro Basketball Series Comeback — ticker prefix KXNBA
+- NBA  `KXNEXTNBACOACH` Who is the Next NBA Coach of Team — title mentions NBA
+- NBA  `KXNBAPICKTRADE` Pro Basketball Pick Trade — ticker prefix KXNBA
+- skip `KXNCAAMBACCREG` Men's College Basketball ACC Regular Season Champion — no NBA marker
+- skip `KXNCAAWBWBIT` WBIT Winner — no NBA marker
+- NBA  `KXMVENBAMULTIGAMEEXTENDED` MVE NBA Multi Game — title mentions NBA
+- skip `KXNCAAMBBSKY` Big Sky Conference Tournament — no NBA marker
+- skip `KXNCAAMBNEXTCOACH` Men's College Basketball Next Coach — no NBA marker
+- NBA  `KXNBASUMMERPTS` Pro Basketball Summer Player Points — ticker prefix KXNBA
+- skip `KXNCAAWB2HTEAMTOTAL` Women's College Basketball 2nd Half Team Total — no NBA marker
+- skip `KXCOVEREA` Cover EA college sports — no NBA marker
+- skip `KXWNBAFIRSTTEAM` Women's Pro Basketball First Team — non-NBA basketball marker 'WNBA'
+- skip `KXBBSERIEATOTAL` Italy Serie A Total — no NBA marker
+- skip `KXWNBASSTARS` Women's Pro Basketball Shooting Stars Contest — non-NBA basketball marker 'WNBA'
+- skip `KXWNBADRAFT1` WNBA Draft 1st Pick — non-NBA basketball marker 'WNBA'
+- skip `KXWNBADRAFTTOP5` WNBA Draft Top 5 — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBA3QTOTAL` NBA 3rd Quarter Total — ticker prefix KXNBA
+- skip `KXWNBA7FIGS` 7 Figure WNBA salary — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAPLAYOFF` Pro Basketball Playoff Qualifier — ticker prefix KXNBA
+- skip `KXLEADERWNBA3PT` WNBA Total 3-Pointers Made Leader — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAEFINMVP` NBA Eastern Conference Finals MVP — ticker prefix KXNBA
+- skip `KXBBLSPREAD` Germany BBL Spread — no NBA marker
+- NBA  `KXNBAFIRST50PTS` First NBA Player to Score 50 Points — ticker prefix KXNBA
+- NBA  `KXTEAMSINNBAWF` Teams in NBA Western Conference Finals — title mentions NBA
+- NBA  `KXNBAFINALSPRICE` NBA Finals Ticket Price — ticker prefix KXNBA
+- skip `KXWNBATRADE` WNBA Players Traded — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAMVP` NBA MVP — ticker prefix KXNBA
+- skip `KXSNAPELECTIONBAHA` Bhamanian election — no NBA marker
+- skip `KXEARNINGSMENTIONBAC` Bank of America Earnings Mention — no NBA marker
+- skip `KXCBVOLUME` Coinbase volume — no NBA marker
+- skip `KXWNBA1QSPREAD` Women's Pro Basketball 1st Quarter Spread — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBASERIES3PMLEADER` Pro Basketball Series 3-Pointers Made Leader — ticker prefix KXNBA
+- NBA  `KXNBAESCALATORPTS` NBA Player Points Escalator — ticker prefix KXNBA
+- NBA  `KXNBAECFQUAL` NBA Eastern Conference Finals Qualifiers — ticker prefix KXNBA
+- skip `KXWNBATEAMTOTAL` WNBA Team Totals — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBACELEBRITYGAME` Pro Basketball All-Star Celebrity Game — ticker prefix KXNBA
+- skip `KXSTEPHPARTERNSHIP` Stephen Curry Partnership — no NBA marker
+- skip `KXNCAAWB4QSPREAD` Women's College Basketball 4th Quarter Spread — no NBA marker
+- skip `KXNCAAWB1HTOTAL` Women's College Basketball 1st Half Total — no NBA marker
+- skip `KXGBLGAME` GBL Basketball Game — no NBA marker
+- NBA  `KXNBASERIESSPREAD` NBA Series Game Spread — ticker prefix KXNBA
+- skip `KXNCAAMBBIG10REGTOP` Men's College Basketball Big Ten Regular Season Top Finishers — no NBA marker
+- NBA  `KXNBA2QTEAMTOTAL` NBA 2nd Quarter Team Total — ticker prefix KXNBA
+- NBA  `KXNBADRAFT8` NBA Draft Eighth Pick — ticker prefix KXNBA
+- skip `KXNCAAMBAE` American East Conference Tournament — no NBA marker
+- skip `KXABASPREAD` Adriatic ABA Spread — no NBA marker
+- NBA  `KXNBAWINRECORD` OKC NBA Win Record — ticker prefix KXNBA
+- skip `KXWNBA4QWINNER` Women's Pro Basketball 4th Quarter Winner — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBATEAMWINSTREAK` NBA Team with the Longest Winning Streak — ticker prefix KXNBA
+- NBA  `KXNBAGAMESPECIALS` Pro Basketball Game Specials — ticker prefix KXNBA
+- NBA  `KXNBASERIES` NBA Series Winner — ticker prefix KXNBA
+- skip `KXWBBALLTEAMUSA` Summer Olympics USA Women's Basketball Team — no NBA marker
+- skip `KXNCAAMBAPANY` Men's College Basketball AP Rank Anytime in Season — no NBA marker
+- skip `KXSBLSPREAD` Slovakia SBL Spread — no NBA marker
+- skip `KXMARMADCONF` March Madness Conference — no NBA marker
+- skip `KXNCAAMBIGTEN` big ten MEN'S BASKETBALL TOURNAMENT — no NBA marker
+- skip `KXWFIBAGAME` Women's FIBA Game — no NBA marker
+- skip `KXNCAAWB2HTOTAL` Women's College Basketball 2nd Half Total — no NBA marker
+- NBA  `KXNBAMENTION` NBA Mention — ticker prefix KXNBA
+- skip `KXWNBASERIESSCORE` WNBA Series Exact Score — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAWBBIGTEN` Women's College Basketball Big Ten Conference Tournament Champion — no NBA marker
+- skip `KXSOBBALLGAME` Summer Olympics Men's Basketball Game — no NBA marker
+- NBA  `KXNBASUMMER` Pro Basketball Summer League Champion — ticker prefix KXNBA
+- NBA  `KXNBAH2HBENCHPTS` NBA Head-to-Head Bench Points — ticker prefix KXNBA
+- NBA  `KXNBADRAFTTOP25` NBA Draft Top 25 Pick — ticker prefix KXNBA
+- NBA  `KXNBASTL` NBA Player Steals — ticker prefix KXNBA
+- skip `KXMARMADSEEDDIF` March Madness Biggest Upset — no NBA marker
+- skip `KXWNBA1SEED` Women's Pro Basketball #1 Seed — non-NBA basketball marker 'WNBA'
+- skip `KXNEXTTEAMGIANNIS` Giannis next team — no NBA marker
+- skip `KXNZNBLGAME` New Zealand NBL Game — no NBA marker
+- skip `KXWEUROLEAGUEGAME` EuroLeague (W) Game — no NBA marker
+- NBA  `KXNBADRAFTINT` Pro Basketball International Players Drafted — ticker prefix KXNBA
+- skip `KXNCAAMBSECREG` Men's College Basketball SEC Regular Season Champion — no NBA marker
+- NBA  `KXNBAALLSTAR` NBA All-Star game — ticker prefix KXNBA
+- skip `KXNCAAMB2HSPREAD` Men's College Basketball 2nd Half Spread — no NBA marker
+- skip `KXWNBA1QWINNER` Women's Pro Basketball 1st Quarter Winner — non-NBA basketball marker 'WNBA'
+- skip `KXACQUIRECOINBASE` Will Coinbase announce another acquisition in 2025? — no NBA marker
+- NBA  `KXNBARELOCATION` Pro Basketball Team Relocation — ticker prefix KXNBA
+- NBA  `KXNBAATTEND` Who will attend the NBA game? — ticker prefix KXNBA
+- skip `KXJOINBARSTOOL` Will Shannon sharpe join meta — no NBA marker
+- NBA  `KXNBAFINALSEXACT` Pro Basketball Championship Series Score — ticker prefix KXNBA
+- skip `KXBSNGAME` Puerto Rico BSN Basketball Game — no NBA marker
+- skip `KXNCAAWB1H` Women's College Basketball 1st Half Winner — no NBA marker
+- skip `KXWMARMADROUND` Reach March Madness Round — no NBA marker
+- skip `KXSBLGAME` Slovakia SBL Game — no NBA marker
+- skip `KXKBLTOTAL` Korea KBL Total — no NBA marker
+- skip `KXTBTGAME` TBT Hoops Game — no NBA marker
+- skip `KXWNBADRAFTTOP3` WNBA Draft Top 3 — non-NBA basketball marker 'WNBA'
+- skip `KXLKLGAME` LKL Lithuania Game — no NBA marker
+- NBA  `KXNBAEXEC` NBA Executive of the Year — ticker prefix KXNBA
+- skip `KXBBL` Germany BBL Champion — no NBA marker
+- NBA  `KXNBAPTSALLGAMES` Pro Basketball Points in Every Game — ticker prefix KXNBA
+- NBA  `KXNBA1QTEAMTOTAL` NBA 1st Quarter Team Total — ticker prefix KXNBA
+- skip `KXABATOTAL` Adriatic ABA Total — no NBA marker
+- skip `KXESPYWNBA` BEST WNBA PLAYER‬‭ — non-NBA basketball marker 'WNBA'
+- skip `KXSLBGAME` England Super League Basketball Game — no NBA marker
+- NBA  `KXNBA2HWINNER` Pro Basketball 2nd Half Winner — ticker prefix KXNBA
+- skip `KXBDS3PT` Bob Does Sports 3pt Shootout — no NBA marker
+- skip `KXNCAABGAME` College Basketball Game — no NBA marker
+- skip `KXLEBRONPLAY` LeBron Next Play — no NBA marker
+- skip `KXISLSPREAD` Israel Super League Spread — no NBA marker
+- skip `KXNCAAMBNIT` Men's NIT Tournament Champion — no NBA marker
+- NBA  `KXNBADRAFTTOP10` NBA Draft Top 10 Pick — ticker prefix KXNBA
+- skip `KXBIG10REG` Big Ten Regular Season Champions — no NBA marker
+- skip `KXNCAAMBSECREGTOP` Men's College Basketball SEC Regular Season Top Finishers — no NBA marker
+- NBA  `KXNBACOY` NBA Coach of the Year — ticker prefix KXNBA
+- NBA  `KXNBASEEDOU` NBA Playoff Seed Over/Unders — ticker prefix KXNBA
+- skip `KXEUROCUPTOTAL` EuroCup Basketball Total — no NBA marker
+- skip `KXWNBAALLTEAM` Women's Pro Basketball Teams — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAWB1QTOTAL` Women's College Basketball 1st Quarter Total — no NBA marker
+- skip `KXACBSPREAD` Spain Liga ACB Spread — no NBA marker
+- skip `KXLBJRETIRE` LBJ Retire — no NBA marker
+- skip `KXPLEAGUEGAME` Taiwan P. League+ — no NBA marker
+- skip `KXWNBAASGMVP` WNBA All-Star Game MVP — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBACUPQUAL` Pro Basketball Cup Qualifiers — ticker prefix KXNBA
+- NBA  `KXNBA3PEAT` Pro Basketball Three-Peat Champion — ticker prefix KXNBA
+- NBA  `KXNBA1HTEAMTOTAL` NBA 1st Half Team Total — ticker prefix KXNBA
+- NBA  `KXNBA3QWINNER` NBA 3rd Quarter Winner — ticker prefix KXNBA
+- NBA  `KXNFLNBA` NFL and NBA Champion Combo — title mentions NBA
+- skip `KXWNBASPREAD` Women's Pro Basketball Spread — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAPRA` NBA Player Points + Rebounds + Assists — ticker prefix KXNBA
+- skip `KXNCAAMBCOTY` Men's College Basketball Naismith Coach of the Year — no NBA marker
+- NBA  `KXNBATOP3` Pro Basketball Draft Lottery Top 3 — ticker prefix KXNBA
+- skip `KXWNBAEAST` Women's Pro Basketball Eastern Conference Champion — non-NBA basketball marker 'WNBA'
+- skip `KXKORISLIIGAGAME` Finland Korisliiga Game — no NBA marker
+- skip `KXNCAABMENTION` College Basketball — no NBA marker
+- skip `KXWNBANEXTTEAM` WNBA Next Team — non-NBA basketball marker 'WNBA'
+- skip `KXWNBA1QTOTAL` Women's Pro Basketball 1st Quarter Total — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAWB1HSPREAD` Women's College Basketball 1st Half Spread — no NBA marker
+- skip `KXMARMADPTS` Men's March Madness Points — no NBA marker
+- skip `KXALBUMRELEASENBAYB` WILL YOUNGBOY RELEASE ANOTHER ALBUM THIS YEAR? — no NBA marker
+- skip `KXLUBGAME` Uruguay LUB Basketball Game — no NBA marker
+- skip `KXWNBAFINALLOC` WNBA Finals Location — non-NBA basketball marker 'WNBA'
+- skip `KXOTDBASKETBALL` Off The Dribble Basketball — no NBA marker
+- skip `KXNCAAMBSEC` SEC Conference Tournament — no NBA marker
+- skip `KXWNBAMATCHUP` WNBA Finals Matchup — non-NBA basketball marker 'WNBA'
+- skip `KXEUROBASKETTOTAL` EuroBasket Total — no NBA marker
+- skip `KXNCAAMBBWEST` Big West Conference Tournament — no NBA marker
+- NBA  `KXNBADRAFTCAT` Pro Basketball Draft Category — ticker prefix KXNBA
+- skip `KXLNBPGAME` LNBP Basketball Game — no NBA marker
+- skip `KXSOWBBALLGAME` Summer Olympics Women's Basketball Game — no NBA marker
+- skip `KXEBASKETBALLGAME` eBasketball Game — no NBA marker
+- NBA  `KXNBASERIESREBLEADER` Pro Basketball Series Rebounds Leader — ticker prefix KXNBA
+- skip `KXKMLGAME` Estonia KML Game — no NBA marker
+- skip `KXJBLEAGUEGAME` Japan B League Game — no NBA marker
+- NBA  `KXNBAPLAYOFF3D` NBA Playoff Triple-Double — ticker prefix KXNBA
+- NBA  `KXNBAPLAYOFFPTS` NBA Playoffs Player Points — ticker prefix KXNBA
+- NBA  `KXNBAFIRSTTIMECHAMP` NBA First Time Champion — ticker prefix KXNBA
+- NBA  `KXNBASIXTH` NBA Sixth Man of the Year — ticker prefix KXNBA
+- NBA  `KXNBANEXTGOVERNOR` Pro Basketball Next Governor — ticker prefix KXNBA
+- NBA  `KXNBACOACHOUT` Pro Basketball Coaches Out — ticker prefix KXNBA
+- NBA  `KXNBAMOSTWINS` Pro Basketball Highest Win Total — ticker prefix KXNBA
+- NBA  `KXNBAESCALATOR3PT` NBA Player Threes Escalator — ticker prefix KXNBA
+- skip `KXEUROCUPGAME` EuroCup Basketball Game — no NBA marker
+- skip `KXWKBLGAME` Korea KBL (W) Game — no NBA marker
+- skip `KXEUROLEAGUEGAME` Euroleague Game — no NBA marker
+- skip `KXNCAAWBTOPAPRANK` Women's College Basketball AP Poll Top Rank — no NBA marker
+- skip `KXWNBAAST` Women's Pro Basketball Player Assists — non-NBA basketball marker 'WNBA'
+- skip `KXWNBAWEST` Women's Pro Basketball Western Conference Champion — non-NBA basketball marker 'WNBA'
+- skip `KXWNBAH2HPTS` Women's Pro Basketball Head to Head Points — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAMBTOURNEY` Men's College Basketball Early Season Tournament — no NBA marker
+- skip `KXSTEPHSHOEDEAL` Steph Curry Shoe Deal — no NBA marker
+- NBA  `KXNBACLUTCH` NBA Clutch Player of the Year — ticker prefix KXNBA
+- skip `KXBDS3PTOU` Bob Does Sports Made 3-Pointers — no NBA marker
+- skip `KXMARMADSEEDWIN` March Madness Seed Win — no NBA marker
+- skip `KXABNBA` Airbnb Annual KPI — no NBA marker
+- skip `KXLPBGAME` Portugal LPB Game — no NBA marker
+- NBA  `KXNBAOT` NBA Overtime — ticker prefix KXNBA
+- NBA  `KXNBADRAFT3` NBA Draft Third Pick — ticker prefix KXNBA
+- NBA  `KXNBATEAMANNOUNCE` Pro Basketball New Team Announce — ticker prefix KXNBA
+- skip `KXARGLNBGAME` Liga Nacional de Basquetbol Game — no NBA marker
+- skip `KXFBUGAME` Ukraine SuperLeague Game — no NBA marker
+- skip `KXNCAAWBSPREAD` Women's College Basketball Spread — no NBA marker
+- skip `KXNEXTTEAMCHRISPAUL` Next Team Chris Paul — no NBA marker
+- skip `KXRECORDNBABEST` Best Pro Basketball Record — no NBA marker
+- skip `KXFIBACHAMPGAME` FIBA Champions League Game — no NBA marker
+- skip `KXNBLGAME` Australia NBL Game — no NBA marker
+- skip `KXFIBATOTAL` FIBA Total — no NBA marker
+- NBA  `KXNBASERIESOT` Pro Basketball Series Overtime — ticker prefix KXNBA
+- skip `KXNCAAMBWAC` Western Athletic Conference Tournament — no NBA marker
+- NBA  `KXNBADRAFTCOMP` Pro Basketball Draft Comparison — ticker prefix KXNBA
+- NBA  `KXNBAFINALSVIEWERGAME7` NBA finals viewership — ticker prefix KXNBA
+- skip `KXNCAAWBMOP` Women's College Basketball Most Outstanding Player — no NBA marker
+- skip `KXNCAAMBBIGEAST` Big East Conference Tournament — no NBA marker
+- skip `KXBBSERIEA2GAME` Italy Serie A2 Game — no NBA marker
+- skip `KXLKLSPREAD` LKL Lithuania Spread — no NBA marker
+- skip `KXVBAGAME` Vietnam VBA Game — no NBA marker
+- skip `KXNCAAWB2QTOTAL` Women's College Basketball 2nd Quarter Total — no NBA marker
+- skip `KXNCAAMBSUN` Atlantic Sun Conference Tournament — no NBA marker
+- skip `KXWNBACCUP` WNBA Commissioner's Cup Winner — non-NBA basketball marker 'WNBA'
+- skip `KXDUNKMAN` Dunkman World Championships Winner — no NBA marker
+- skip `KXEUROLEAGUETOTAL` EuroLeague Total — no NBA marker
+- skip `KXEUROCUPSPREAD` EuroCup Basketball Spread — no NBA marker
+- skip `KXMVECBCHAMPIONSHIP` MVE College Basketball Championship — no NBA marker
+- skip `KXNCAAMBBOTHQUAL` Men's College Basketball Both Teams to Qualify — no NBA marker
+- skip `KXDBBFGAME` Denmark Basketligaen Game — no NBA marker
+- NBA  `KXNBAREB` NBA Player Rebounds — ticker prefix KXNBA
+- NBA  `KXNBA2H` NBA 2nd Half Winner — ticker prefix KXNBA
 - skip `KXLEADERWNBAAST` WNBA APG Leader — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBANORTHWEST` Pro Basketball Northwest Division Winner — ticker prefix KXNBA
+- skip `KXNCAAWBWINS` Women's College Basketball Win Totals — no NBA marker
+- NBA  `KXNBASPORTSMANSHIP` NBA Sportsmanship Award — ticker prefix KXNBA
+- NBA  `KXNBAPIADVANCE` NBA Play-In Team to Advance — ticker prefix KXNBA
+- skip `KXMARMADSEEDROUND` March Madness Seed Round — no NBA marker
+- skip `KXBIG12REG` Big 12 Regular Season Champions — no NBA marker
+- skip `KXNCAABBIG10` Big Ten Men's Basketball Tournament — no NBA marker
+- skip `KXNCAAWBUNDEFEATED` Undefeated in Women's College Basketball Regular Season — no NBA marker
+- skip `KXWNBASEMIFINAL` WNBA Semifinals Qualifiers — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBATOP5ROTY` Top 5 NBA draft ROTY — ticker prefix KXNBA
+- skip `KXMARMADCONFWIN` March Madness Conference Winner — no NBA marker
+- NBA  `KXNBACOTM` NBA Coach of the Month — ticker prefix KXNBA
+- skip `KXWNBAGAMESPLAYED` WNBA Games Played in a Season — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBA3D` NBA Player Triple Double — ticker prefix KXNBA
+- skip `KXLNBP` Mexico LNBP Champion — no NBA marker
+- NBA  `KXNBAALLSTARGAME` NBA All-Star Game Winner — ticker prefix KXNBA
+- NBA  `KXNBAPTSPROT` NBA Player Points Protected — ticker prefix KXNBA
+- skip `KXSHEINBAUMOUT` Claudia Sheinbaum out as President of Mexico? — no NBA marker
+- NBA  `KXNBANEXTTEAMCONF` Pro Basketball Next Team Conference — ticker prefix KXNBA
+- skip `KXNCAAWBRACE` Women's College Basketball Race to Points — no NBA marker
+- skip `KXTATUMRETURN` When Will Jayson Tatum Play His Next Game — no NBA marker
+- NBA  `KXNBADPOTM` NBA Defensive Player of the Month — ticker prefix KXNBA
+- skip `KXNCAAWB3Q` Women's College Basketball 3rd Quarter Winner — no NBA marker
+- skip `KXEARNINGSMENTIONBA` Boeing Earnings Call — no NBA marker
+- NBA  `KXNBA2QWINNER` NBA 2nd Quarter Winner — ticker prefix KXNBA
+- NBA  `KXNBAH2HPRA` NBA Head-to-Head Points, Rebounds and Assists — ticker prefix KXNBA
+- skip `KXWNBAROY` WNBA Rookie of the Year — non-NBA basketball marker 'WNBA'
+- skip `KXSLBTOTAL` England Super League Basketball Total — no NBA marker
+- NBA  `KXNBAPA` Pro Basketball Player Points + Assists — ticker prefix KXNBA
+- skip `KXVTB` Russia VTB United Champion — no NBA marker
+- skip `KXNCAAMSEC` SEC MEN'S BASKETBALL TOURNAMENT — no NBA marker
+- skip `KXA10REG` A10 Regular Season Champions — no NBA marker
+- NBA  `KXNBA1QSPREAD` NBA 1st Quarter Spread — ticker prefix KXNBA
+- skip `KXNCAAWBACC` Women's College Basketball ACC Conference Tournament Champion — no NBA marker
+- skip `KXLNBPTOTAL` LNBP Total — no NBA marker
+- skip `KXNCAAMBAWARD` Men's College Basketball Awards — no NBA marker
+- skip `KXCOINBASE` Coinbase KPI — no NBA marker
+- skip `KXNCAAMBBIGTENREGTOP` Men's College Basketball Big Ten Regular Season Top Finishers — no NBA marker
+- NBA  `KXNBAAWARDFIN` NBA Award Finalists — ticker prefix KXNBA
+- skip `KXNBLTOTAL` Australia NBL Total — no NBA marker
+- NBA  `KXNBAWCFQUAL` NBA Western Conference Finals Qualifiers — ticker prefix KXNBA
+- NBA  `KXNBARULE` Pro Basketball Rule — ticker prefix KXNBA
+- skip `KXNCAAMB2HTOTAL` Men's College Basketball 2nd Half Total — no NBA marker
+- skip `KXMARMAD3D` Men's March Madness Triple Double — no NBA marker
+- skip `KXKBLSPREAD` Korea KBL Spread — no NBA marker
+- NBA  `KXNBAASTPROT` NBA Player Assists Protected — ticker prefix KXNBA
+- NBA  `KXNBACUPGROUPWIN` NBA Cup Group to Win — ticker prefix KXNBA
+- NBA  `KXNBAGAME7` NBA Series that Go to a Game 7 — ticker prefix KXNBA
+- skip `KXGRAMBPRNBA` Best Progressive R&B Album — no NBA marker
+- NBA  `KXNBASTOCK` NBA Player Steals + Blocks — ticker prefix KXNBA
+- skip `KXWCCREG` West Coast Conference Regular Season Champions — no NBA marker
+- NBA  `KXNBATEAMSALE` Pro Basketball Team to be Sold — ticker prefix KXNBA
+- skip `KXWMARMAD` March Tournament (W) — no NBA marker
+- skip `KXLBPGAME` Colombia LBP Basketball Game — no NBA marker
+- skip `KXNEWCOACHLAL` New Lakers coach — no NBA marker
+- NBA  `KXNBAFINALSMVP` Finals MVP — ticker prefix KXNBA
+- skip `KXNCAAMBIGEAST` Big East Men's basketball tournament — no NBA marker
+- NBA  `KXNBARECORD` Pro Basketball Best/Worst Regular Season Record — ticker prefix KXNBA
+- NBA  `KXNBADRAFTTEAM` Pro Basketball Team to Draft — ticker prefix KXNBA
+- skip `KXWNBAMENTION` WNBA Mentions — non-NBA basketball marker 'WNBA'
+- skip `KXCBA` China CBA Champion — no NBA marker
+- NBA  `KXMEDIACOVERNBA2K` WHO WILL BE ON THE COVER OF NBA 2K — title mentions NBA
+- NBA  `KXNBASTARTERS` Pro Basketball Starting Lineup — ticker prefix KXNBA
+- skip `KXWNBAASGAME` WNBA All Star Game — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAEXTENSION` NBA Player Contract Extension — ticker prefix KXNBA
+- skip `KXNCAAMBWINMARGIN` Men's College Basketball Winning Margin — no NBA marker
+- NBA  `KXNBAWINMARGIN` NBA Win Margin — ticker prefix KXNBA
+- skip `KXWNBADUNK` Women's Pro Basketball Player to Dunk — non-NBA basketball marker 'WNBA'
+- skip `KXWNBADRAFT2` WNBA Draft 2nd Pick — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAWB` Women's March Madness Champion — no NBA marker
+- skip `KXNCAAMBAMER` American Conference Tournament — no NBA marker
+- skip `KXNCAAMBKENPOMTOP` Men's College Basketball KenPom Top Ratings — no NBA marker
+- skip `KXWNBAALLSTARS` Women's Pro Basketball All-Star Selections — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBA3PT` NBA Player Threes — ticker prefix KXNBA
+- skip `KXNCAAWB3QSPREAD` Women's College Basketball 3rd Quarter Spread — no NBA marker
+- skip `KXWNBA3PT` Women's Pro Basketball Player Threes — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAPLAYOFFWINS` NBA Playoff Wins by Team — ticker prefix KXNBA
+- NBA  `KXNBAPREPACK3ML` 3ML Basketball Combo — ticker prefix KXNBA
+- NBA  `KXNBAFINALSOUTCOME` NBA Finals Outcome — ticker prefix KXNBA
+- NBA  `KXNBA2NDTEAMDEF` NBA All-Defensive 2nd Team — ticker prefix KXNBA
+- skip `KXBBSERIEAGAME` Italy Serie A Game — no NBA marker
+- skip `KXWNBAH2HPRA` Women's Pro Basketball Head to Head Pts + Reb + Ast — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAMB2ML` College Basketball 2-Moneyline Combo — no NBA marker
+- skip `KXLEADERWNBAREB` WNBA RPG Leader — non-NBA basketball marker 'WNBA'
+- skip `KXWNBACOY` WNBA Coach of the Year — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAPLAYERSPECIALS` Pro Basketball Player Specials — ticker prefix KXNBA
+- skip `KXCZENBLGAME` Czech NBL Game — no NBA marker
+- NBA  `KXNBAH2H3PT` NBA Head-to-Head Three Pointers — ticker prefix KXNBA
+- skip `KXNCAAMBKENPOMRANK` Men's College Basketball KenPom Ratings — no NBA marker
+- skip `KXNCAABBIGTEN` Big Ten Men's Basketball Tournament — no NBA marker
+- skip `KXWSBLGAME` Sweden SBL Game — no NBA marker
+- skip `KXPLKGAME` Poland PLK Game — no NBA marker
+- NBA  `KXNBA2KCOVER` Who will be on the cover of NBA 2k? — ticker prefix KXNBA
+- NBA  `KXNBASERIESPTSLEADER` Pro Basketball Series Points Leader — ticker prefix KXNBA
+- skip `KXNCAAMBUNDEFEATEDHOME` Men's College Basketball Teams to go Undefeated at Home — no NBA marker
+- skip `KXBSLSPREAD` Turkey BSL Spread — no NBA marker
+- skip `KXNCAAMBWINS` Men's College Basketball Win Totals — no NBA marker
+- NBA  `KXNBASUMMERGAME` Pro Basketball Summer League Game — ticker prefix KXNBA
+- skip `KXWNBA4QSPREAD` Women's Pro Basketball 4th Quarter Spread — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAWBSEC` Women's College Basketball SEC Conference Tournament Champion — no NBA marker
+- NBA  `KXNBAEAST1SEED` NBA Eastern Conference 1 Seed — ticker prefix KXNBA
+- skip `KXNCAAWBBBBB` NCAAWB Conference Champions — no NBA marker
+- NBA  `KXNBAPLAYIN` Which Team Will Make the Play-In Tournament — ticker prefix KXNBA
+- skip `KXBBWSERIEAGAME` Italy Serie A (W) Game — no NBA marker
+- NBA  `KXNBAAST` NBA Player Assists — ticker prefix KXNBA
+- skip `KXCEBLGAME` Canadian Elite Basketball League Game — no NBA marker
+- NBA  `KXNBADRAFT1` NBA Draft First Pick — ticker prefix KXNBA
+- skip `KXNCAAMBRACE` Men's College Basketball Race to Points — no NBA marker
+- NBA  `KXNBASERIESPTSSPREAD` Pro Basketball Series Points Spread — ticker prefix KXNBA
+- NBA  `KXNBA1HWINNER` Pro Baskeball 1st Half Winner — ticker prefix KXNBA
+- skip `KXWNBAPLAYOFFHOST` Women's Pro Basketball Playoff Home Games — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAMBCONFLEADER` Men's College Basketball Conference Stat Leader — no NBA marker
+- skip `KXSOWBBALLSPREAD` Summer Olympics Women's Basketball Spread — no NBA marker
+- skip `KXMARMADSEED` Men's College Basketball Tournament Seeds — no NBA marker
+- NBA  `KXNBAH2HTEAM3PT` NBA H2H Team Three Pointers — ticker prefix KXNBA
+- skip `KXNCAAMBWCC` West Coast Conference Tournament — no NBA marker
+- NBA  `KXNBASUMMER1HTOTAL` Pro Basketball Summer League 1st Half Total — ticker prefix KXNBA
+- skip `KXEBBALLGAME` eBasketball Game — no NBA marker
+- NBA  `KXNBAHUSTLE` NBA Hustle Award — ticker prefix KXNBA
+- skip `KXNCAAMBSPREAD` Men's College Basketball Spread — no NBA marker
+- skip `KXNCAAMB1H` Men's College Basketball 1st Half Winner — no NBA marker
+- skip `KXNCAAMBMAMER` Mid-American Conference Tournament — no NBA marker
+- skip `KXNCAAMB1HTOTAL` Men's College Basketball 1st Half Total — no NBA marker
+- skip `KXWNBASERIESGAMES` WNBA Series Total Games — non-NBA basketball marker 'WNBA'
+- skip `KXSTEPHDEAL` Steph Curry Endorsement Deal — no NBA marker
+- skip `KXNCAAMBCONFAWARD` Men's College Basketball Conference Awards — no NBA marker
+- skip `KXWNBA3PTCONTESTOU` Women's Pro Basketball 3-Point Contest Threes Made — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBADRAFT5` NBA Draft Fifth Pick — ticker prefix KXNBA
+- skip `KXWMARMADSEED` Women's College Basketball Tournament Seeds — no NBA marker
+- skip `KXFIBAGAME` FIBA Game — no NBA marker
+- skip `KXBSLGAME` Turkey BSL Game — no NBA marker
+- NBA  `KXNBAFIRSTBASKET` Pro Basketball First Basket — ticker prefix KXNBA
+- skip `KXSPBGAME` Venezuela Superliga Game — no NBA marker
+- skip `KXWNBAEAST1` Women's Pro Basketball Eastern Conference #1 Seed — non-NBA basketball marker 'WNBA'
+- skip `KXWNBAREB` Women's Pro Basketball Player Rebounds — non-NBA basketball marker 'WNBA'
+- skip `KXNCAAMBUNDEFEATED` Undefeated in College Basketball Regular Season — no NBA marker
+- NBA  `KXNBAEUROPEANNOUNCE` NBA Europe Inaugural Season Being Announced — ticker prefix KXNBA
+- NBA  `KXNBAEAST` Pro Basketball Eastern Conference Champion — ticker prefix KXNBA
+- skip `KXWNBA3PTROUND` Women's Pro Basketball 3-Point Contest Round Qualifiers — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBASUMMER1HWINNER` Pro Basketball Summer League 1st Half Winner — ticker prefix KXNBA
+- skip `KXNCAAWB4QTOTAL` Women's College Basketball 4th Quarter Total — no NBA marker
+- skip `KXNCAAWBAWARD` Women's College Basketball Awards — no NBA marker
+- skip `KXFIBASPREAD` FIBA Spread — no NBA marker
+- skip `KXWNBAOT` Women's Pro Basketball Overtime — non-NBA basketball marker 'WNBA'
+- skip `KXWNBADRAFT3` WNBA Draft 3rd Pick — non-NBA basketball marker 'WNBA'
+- skip `KXAMAFMRNBA` Favorite Male R&B Artist — no NBA marker
+- skip `KXNCAAWBTEAMTOTAL` Women's College Basketball Team Total — no NBA marker
+- NBA  `KXNBAGAMES` NBA games — ticker prefix KXNBA
+- skip `KXWNBA1HSPREAD` Women's Pro Basketball 1st Half Spread — non-NBA basketball marker 'WNBA'
+- skip `KXIBPLGAME` Men's Iceland Basketball Premier League Game — no NBA marker
+- NBA  `KXNBALADDERPTS` NBA Player Points Ladder — ticker prefix KXNBA
+- NBA  `KXNBAHALLOFFAME` Pro Basketball Hall of Fame — ticker prefix KXNBA
+- NBA  `KXNBA2HTEAMTOTAL` NBA 2nd Half Team Total — ticker prefix KXNBA
+- skip `KXNCAAMBBIGTENQUAL` Men's College Basketball Big Ten Championship Qualifiers — no NBA marker
+- skip `KXWNBAWEST1` Women's Pro Basketball Western Conference #1 Seed — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBACUPMVP` NBA Cup Tournament MVP — ticker prefix KXNBA
+- skip `KXNCAAMBBIGEASTQUAL` Men's College Basketball Big East Championship Qualifiers — no NBA marker
+- skip `KXLNBELITETOTAL` LNB Elite Total — no NBA marker
+- skip `KXTRUMPCANBAN` Trump Canada ban — no NBA marker
+- NBA  `KXALBUMRELEASEDATENBAYOUNGBOY` Will NBA Youngboy release a new album? — title mentions NBA
+- skip `KXNBL` Australia NBL Champion — no NBA marker
+- skip `KXNCAAMBAPCHURN` Men's College Basketball Teams to be Ranked #1 — no NBA marker
+- NBA  `KXNBACUP1STTEAM` NBA Cup All-Tournament Team — ticker prefix KXNBA
+- skip `KXUNRIVALEDGAME` Unrivaled Basketball Game — no NBA marker
+- NBA  `KXNBASUMMERMVP` Pro Basketball Summer League MVP — ticker prefix KXNBA
+- skip `KXCAATOURNAMENT` CAA Tournament — no NBA marker
+- skip `KXWSESBLGAME` Women's Sweden SBL Game — no NBA marker
+- skip `KXNCAAWB2H` Women's College Basketball 2nd Half Winner — no NBA marker
+- NBA  `KXNBAATLANTIC` Pro Basketball Atlantic Division Winner — ticker prefix KXNBA
+- NBA  `KXNBADRAFT9` NBA Draft Ninth Pick — ticker prefix KXNBA
+- skip `KXFIBAECUPSPREAD` FIBA Europe Cup Spread — no NBA marker
+- skip `KXMWIAINTCOMINBACK` I Ain’t Comin’ Back total streams — no NBA marker
+- NBA  `KXNBARETIRE` NBA Retirement — ticker prefix KXNBA
+- NBA  `KXNBAMVPDPOY` Pro Basketball Player to Win MVP and DPOY — ticker prefix KXNBA
+- NBA  `KXNBANEWCHAMPION` Pro Basketball New Champion — ticker prefix KXNBA
+- skip `KXWNBA3QSPREAD` Women's Pro Basketball 3rd Quarter Spread — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAFINBLOWOUT` Pro Basketball Finals Blowout — ticker prefix KXNBA
+- skip `KXBAN2XRAKAI` 2xRaKai BE UNBANNED — no NBA marker
+- skip `KXNCAAMBHTEAMTOTAL` Mens College Basketball 1st Half Team Total — no NBA marker
+- NBA  `KXNBASERIESSCORE` NBA Series Exact Score — ticker prefix KXNBA
+- NBA  `KXNBAMVPCHAMP` MVP to Win the NBA Finals — ticker prefix KXNBA
+- skip `KXBIGEASTREG` Big East Regular Season Champions — no NBA marker
+- skip `KXNCAAWBCONF` NCAAWB Conference to win Championship — no NBA marker
+- NBA  `KXNBAALLSTARMVP` NBA All-Star Game MVP — ticker prefix KXNBA
+- skip `KXBRIANBAUMGARTNER` How many receipts will Brian Baumgartner process in 8 hours? — no NBA marker
+- NBA  `KXNBACENTRAL` Pro Basketball Central Division Winner — ticker prefix KXNBA
+- skip `KXACBGAME` Spain Liga ACB Game — no NBA marker
+- NBA  `KXLEADERNBAPTS` NBA PPG Leader — title mentions NBA
+- skip `KXISL` Israeli Super League Champion — no NBA marker
+- skip `KXNCAAMBBIG10REG` Men's College Basketball Big Ten Regular Season Champion — no NBA marker
+- skip `KXWNBAPLAYOFF` WNBA Playoff Qualifiers — non-NBA basketball marker 'WNBA'
+- skip `KXMARMAD` Men's College Basketball Tournament Champion — no NBA marker
+- skip `KXDBBGAME` Deutscher Basketball Bund (DBB) Game — no NBA marker
+- skip `KXWNBA1HTOTAL` WNBA 1st Half Total — non-NBA basketball marker 'WNBA'
+- NBA  `KXNBAFINMVP` NBA Finals MVP — ticker prefix KXNBA
+- skip `KXNCAAMBMEAC` Mid-Eastern Conference Tournament — no NBA marker
+- NBA  `KXKXSPOTIFYALBUMRELEASEDATESC` WILL NBA YOUNBOY RELEASE SLIME CRY  — title mentions NBA
+- skip `KXAMAFRNBA` Favorite R&B Album — no NBA marker
+- skip `KXNCAAWBCONFSTREAK` Women's College Basketball Conference Championship Streak — no NBA marker
+- NBA  `KXLEADERNBABLK` NBA BPG Leader — title mentions NBA
+- NBA  `KXNBARA` Pro Basketball Player Rebounds + Assists — ticker prefix KXNBA
+- skip `KXACCREG` ACC Regular Season Champions — no NBA marker
+- skip `KXNCAAMBOV` Ohio Valley Conference Tournament — no NBA marker
+- NBA  `KXNBAPACIFIC` Pro Basketball Pacific Division Winner — ticker prefix KXNBA
+- skip `KXGRAMBRNBA` Best R&B Album — no NBA marker
+- skip `KXBBLGAME` Bundesliga Basketball Game — no NBA marker
+- skip `KXWNBAGAME` Women's Pro Basketball Game — non-NBA basketball marker 'WNBA'
