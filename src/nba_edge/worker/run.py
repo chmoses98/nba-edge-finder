@@ -379,6 +379,10 @@ class Worker:
     # conductor.yml's production-proven invocation instead of against a copy of itself.
     CAPTURE_CMD = ("nba", "capture", "--out", "ARCHIVE", "--orderbook", "--max-orderbooks", "300")
     CAPTURE_BUDGET_S = 600.0
+    # The explorer rebuild measured 354 s of CPU on 2026-11-05 (30 teams, 174 players, 187 current-season games, 41 MB) and will only grow through the season.
+    # It had a 300 s budget, so the worker killed it (rc 124) on every rebuild and the published explorer stayed at its 2026-10-31 build, with last season's
+    # team and player research, for days. Budget it at 5x the measurement; the job is hourly-gated, so a slow run costs one cycle, not every cycle.
+    RESEARCH_EXPORT_BUDGET_S = 1800.0
 
     # The slow jobs, in dependency order, with the command each runs and how long it may take.
     # Ordered deliberately: context before simulate (a simulation wants the freshest roster), and
@@ -398,6 +402,9 @@ class Worker:
         # it is cheap and its only job is to reflect whatever the cycle just wrote. It never fails
         # the cycle -- the exporter itself writes health-only and exits 1 on any problem, and a
         # non-zero rc here is logged like any other job.
+        # Current-season box scores (data/archive/history/espn): incremental, final games only, skipped when pulled within 90 minutes. The explorer's team
+        # research (blended ratings, raw current-season metrics, four factors) reads them; without this job the explorer ages with the last manual pull.
+        ("history_refresh", ["nba", "history-refresh", "--out", "ARCHIVE/history", "--min-interval-minutes", "90"], 900.0),
         ("app_export", ["nba", "app-export", "--data-root", "ARCHIVE", "--out", "ARCHIVE/app/latest"], 300.0),
         # The research explorer (contract 1.1.0): immediately after app_export and as its own job, so a
         # research failure can never block or corrupt the v1 export. It reads the run id and clock from
@@ -408,7 +415,7 @@ class Worker:
         # when the explorer is missing, the v1 events changed, or it is an hour old, and otherwise
         # logs the reason and exits 0 without touching explorer/ (publish.publish never prunes it).
         ("research_export", ["nba", "research-export", "--data-root", "ARCHIVE", "--out", "ARCHIVE/app/latest",
-                             "--history-root", "DATA", "--min-interval-minutes", "60"], 300.0),
+                             "--history-root", "DATA", "--min-interval-minutes", "60"], RESEARCH_EXPORT_BUDGET_S),
         (
             "discover",
             [
@@ -426,7 +433,7 @@ class Worker:
     )
 
     # Jobs that run every cycle regardless of the conductor's decision.
-    ALWAYS_DUE = frozenset({"app_export", "research_export"})
+    ALWAYS_DUE = frozenset({"history_refresh", "app_export", "research_export"})
 
     def _run_due_jobs(self, decision: dict | None = None) -> list[str]:
         return self._run_due_jobs_detailed(decision)[0]

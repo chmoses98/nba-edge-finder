@@ -52,18 +52,19 @@ def calibrated_p_play(p_hurdle, cls: list[str | None], calib: dict) -> np.ndarra
     return out
 
 
-
 def enforce_confirmed_out(p_play: np.ndarray, participation: list[dict]) -> np.ndarray:
-    """Definitive official OUT cannot consume expected minutes in team reconciliation.
+    """Force confirmed OUT to zero regardless of calibrated or raw hurdle P(play).
 
-    Preserve nonzero probabilities for projected OUT, doubtful, questionable,
-    and unverified players: those are not confirmed exclusions.
+    Other statuses retain their probabilities; an aggregator's projected OUT is
+    not falsely upgraded to an official confirmation. Reconciliation uses this
+    vector so an unavailable player contributes *zero* team minutes and points.
+    Conditional prop projections for OUT players must also be withheld.
     """
     p = np.asarray(p_play, dtype=float).copy()
     if len(p) != len(participation):
         raise ValueError("participation length differs from probability vector")
-    mask = np.array([x.get("status") == "CONFIRMED_OUT" for x in participation], dtype=bool)
-    p[mask] = 0.0
+    out = np.array([row.get("status") == "CONFIRMED_OUT" for row in participation], dtype=bool)
+    p[out] = 0.0
     return p
 
 
@@ -129,6 +130,9 @@ def resolve_event(rows: list[dict], event_id: str, start_utc: str, entities: Ite
         d = {"status": part.status, "certainty": part.certainty, "source": part.source, "captured_utc": part.captured_utc,
              "age_minutes": None if part.age_minutes is None else round(part.age_minutes, 1), "reasons": reasons,
              "designation": chosen["status"] if chosen else None, "implicit": implicit, "_class": cls,
+             # which INJURY source the call rests on, independent of a starter/lineup observation (a confirmed starter must not change
+             # whether the official report covered the player: that decides the minutes model, see project.py)
+             "report_source": chosen["source"] if chosen else None,
              "gate_injury_status": part.gate_injury_status()}
         if R:
             d["restriction"] = {"minutes_cap": (R.get("detail") or {}).get("minutes_cap"), "source": R["source"],

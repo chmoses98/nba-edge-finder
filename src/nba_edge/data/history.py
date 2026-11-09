@@ -456,7 +456,16 @@ def _write_manifest(path: Path, seasons: dict[str, dict[str, Any]], errors: list
     path.write_text(json.dumps(m, indent=2))
 
 
-def run_history_pull(out_root: Path, seasons: list[str], what: list[str], sleep_s: float = 0.25, max_games: int | None = None) -> int:
+def current_season(today: date | None = None) -> str:
+    """The NBA season a calendar date falls in: October to June belong to the season that starts that October; July to September to the NEXT one
+    (so the off-season refresh targets the coming season and finds nothing to pull)."""
+    d = today or datetime.now(tz=ET).date()
+    y = d.year if d.month >= 7 else d.year - 1
+    return f"{y}-{str(y + 1)[2:]}"
+
+
+def run_history_pull(out_root: Path, seasons: list[str], what: list[str], sleep_s: float = 0.25, max_games: int | None = None,
+                     resume_window_days: int | None = None) -> int:
     """Pull ESPN scoreboards+summaries for each season into Parquet under ``out_root/espn``. Returns 0 (errors are
     recorded in MANIFEST.json rather than raised). ``max_games`` caps *new* games per run (for smoke tests)."""
     what = [w.strip().lower() for w in what if w.strip()]
@@ -487,11 +496,18 @@ def run_history_pull(out_root: Path, seasons: list[str], what: list[str], sleep_
         st = _SeasonState(out_root, season)
         log.info(kv(event="history_season_start", season=season, already_done=len(st.done)))
         n_dates = n_skipped = 0
+        # Incremental refresh: games are final once played, so start `resume_window_days` before the newest stored game instead of at the season's opening day
+        # (a late correction to a recent box score is still picked up, a season's worth of scoreboards is not re-read every cycle).
+        since = None
+        if resume_window_days is not None and st.teams:
+            since = date.fromisoformat(max(str(r["game_date_et"]) for r in st.teams)) - timedelta(days=resume_window_days)
         for d in iter_season_dates(season):
             if stop:
                 break
             if d > today_et:
                 break
+            if since is not None and d < since:
+                continue
             n_dates += 1
             now = utcnow()
             sb = cached_scoreboard(d, cache_root, now)

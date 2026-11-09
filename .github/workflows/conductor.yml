@@ -146,6 +146,10 @@ jobs:
         if: needs.decide.outputs.evaluate == 'true'
         continue-on-error: true
         run: nba evaluate --data data --out data/archive/eval
+      # Current-season box scores into the archive (data/archive/history/espn), read by the research explorer below. Same command the worker runs.
+      - name: History refresh (current season)
+        continue-on-error: true
+        run: nba history-refresh --out data/archive/history --min-interval-minutes 90
       # Edge Finder app export (edge_finder.app.v1). Read-only over the archive; writes
       # data/archive/app/latest, which the push step below carries to the data-archive branch
       # (app/ is not a ledger kind, so Ledger.verify ignores it). continue-on-error because a

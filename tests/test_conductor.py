@@ -144,3 +144,16 @@ def test_season_calendar_does_not_go_permanently_dormant_and_flags_itself():
     assert future and not known, "January 2029 is basketball season; the conductor must not sleep through it"
     summer, _, known = season_window("2029-08-01")
     assert not summer and not known
+
+
+def test_context_refreshes_fast_inside_the_pre_tip_starter_window():
+    """Starters are flagged ~19 min before tip; the generic 55-min cadence would miss that window."""
+    from nba_edge.workflows.conductor import decide
+    now = datetime(2026, 11, 4, 23, 40, tzinfo=UTC)
+    rows = [{"game_id": "espn:1", "start_time_utc": "2026-11-05T00:10:00Z", "status": "scheduled"}]      # tips in 30 min
+    near = decide(now, rows, capture_age_min=3, last_sim_age_min=5, last_settle_age_min=5, last_eval_age_min=5, last_context_age_min=10)
+    fresh = decide(now, rows, capture_age_min=3, last_sim_age_min=5, last_settle_age_min=5, last_eval_age_min=5, last_context_age_min=3)
+    assert near["context"] is True and fresh["context"] is False
+    far_rows = [{"game_id": "espn:2", "start_time_utc": "2026-11-05T03:00:00Z", "status": "scheduled"}]    # tips in ~3h20
+    far = decide(now, far_rows, capture_age_min=3, last_sim_age_min=5, last_settle_age_min=5, last_eval_age_min=5, last_context_age_min=10)
+    assert far["context"] is False

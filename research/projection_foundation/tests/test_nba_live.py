@@ -94,6 +94,16 @@ def test_official_report_to_observations_and_resolution(official_jan15, tmp_path
     assert (st == "CONFIRMED_OUT").any() and (st == "LIKELY_ACTIVE").any()
     out = next(e for e, d in res.items() if d["status"] == "CONFIRMED_OUT")
     assert res[out]["certainty"] == "REPORTED" and res[out]["designation"] == "OUT" and not res[out]["implicit"]
+    # Actual archived official NBA PDF -> point-in-time observation -> calibrated
+    # participation -> hard exclusion before reconciliation. The calibrated
+    # logistic model itself intentionally does not round to exact zero.
+    classes = [res[e]["_class"] for e in ents]
+    calibrated = PART.calibrated_p_play(np.full(len(ents), 0.75), classes, PART.load_calibration())
+    forced = PART.enforce_confirmed_out(calibrated, [res[e] for e in ents])
+    assert 0 < calibrated[ents.index(out)] < 0.01
+    assert forced[ents.index(out)] == 0.0
+    assert all(forced[i] == 0 for i, e in enumerate(ents) if res[e]["status"] == "CONFIRMED_OUT")
+    assert any(forced[i] > 0 for i, e in enumerate(ents) if res[e]["status"] == "LIKELY_ACTIVE")
     imp = next(e for e, d in res.items() if d["implicit"])
     assert res[imp]["certainty"] == "PROJECTED" and res[imp]["status"] == "LIKELY_ACTIVE"
     # a player the roster does not contain is UNVERIFIED, never active
@@ -702,3 +712,83 @@ def test_an_unmatched_official_row_with_a_rostered_namesake_is_reported_not_gues
     assert st["possible_identity_miss_names"] == ["PHI: Maxey, Marcus (OUT)"]
     unmatched = [o for o in obs if o.entity_id.startswith("unmatched:")]
     assert len(unmatched) == 1 and unmatched[0].status == "OUT"
+
+
+def test_confirmed_out_hard_zero_precedes_reconciliation_and_withholds_props():
+    """A 30-point conditional model cannot leak any OUT player points/minutes into team projections."""
+    from nba.project import withhold_likely_out
+
+    part = [
+        {"status": "CONFIRMED_OUT", "certainty": "REPORTED", "source": AV.SRC_OFFICIAL,
+         "designation": "OUT"},
+        {"status": "LIKELY_OUT", "certainty": "PROJECTED", "source": AV.SRC_ESPN_INJ,
+         "designation": "OUT"},
+        {"status": "UNCERTAIN", "certainty": "REPORTED", "designation": "QUESTIONABLE"},
+        {"status": "LIKELY_ACTIVE", "certainty": "PROJECTED", "designation": "AVAILABLE"},
+    ]
+    raw_p = np.array([0.02, 0.10, 0.45, 0.90])
+    p = PART.enforce_confirmed_out(raw_p, part)
+    np.testing.assert_array_equal(p, [0.0, 0.10, 0.45, 0.90])
+    df = pd.DataFrame({"game_id": [1] * 4, "team": ["BOS"] * 4,
+                       "p_play": p, "minutes": [38.0, 32.0, 28.0, 35.0],
+                       "pts": [30.0, 22.0, 20.0, 24.0]})
+    _, rec = REC.reconcile(df, {(1, "BOS"): 110.0})
+    assert rec[0]["minutes_sum_raw"] == round(0.10 * 32 + 0.45 * 28 + 0.90 * 35, 1)
+    assert rec[0]["points_sum_raw"] == round(0.10 * 22 + 0.45 * 20 + 0.90 * 24, 1)
+    findings, status = withhold_likely_out(part[0], [], "PASS")
+    assert status == "BLOCK"
+    assert findings[0]["severity"] == "BLOCK"
+    assert "zero expected team contribution" in findings[0]["action"].lower()
+    assert raw_p[0] * 30 > 0  # the regression being guarded against
+
+
+def test_confirmed_out_length_mismatch_fails_closed():
+    import pytest
+
+    with pytest.raises(ValueError, match="length"):
+        PART.enforce_confirmed_out(np.array([0.5]), [{"status": "CONFIRMED_OUT"}, {"status": "LIKELY_ACTIVE"}])
+
+
+
+def test_confirmed_out_has_participation_only_and_no_actionable_prop_forecast():
+    # A confirmed DNP must NOT be scored as a zero-point under on Kalshi.
+    # Conditional stat PMFs may exist in the research output but must never
+    # enter the archived/sellable player-stat forecast stream.
+    res = {
+        "generated_utc": "2026-11-02T18:00:00Z",
+        "model": {"version": "test"},
+        "games": [{"game_id": "espn:123", "start_utc": "2026-11-02T23:00:00Z"}],
+        "players": [{
+            "player_id": "espn:7", "name": "Out starter", "team": "BOS",
+            "game_id": "espn:123", "family": "points", "mean": 29.0,
+            "expected_mean": 0.0, "actionable": False,
+            "data_asof_utc": "2026-11-02T18:00:00Z",
+            "participation": {
+                "status": "CONFIRMED_OUT", "certainty": "REPORTED",
+                "source": AV.SRC_OFFICIAL, "p_play": 0.0, "designation": "OUT",
+                "captured_utc": "2026-11-02T17:59:00Z", "implicit": False,
+            },
+            "gate": {"status": "BLOCK"}, "readiness": "RESEARCH",
+            "_tags": {}, "_pmf": {"lo": 0, "probs": [0.0, 0.0, 1.0]},
+        }],
+    }
+    records = FC.challenger_records(res)
+    assert len(records) == 1
+    assert records[0]["family"] == "participation"
+    assert records[0]["mean"] == 0.0
+    assert records[0]["probs"] == [1.0, 0.0]
+
+
+def test_legacy_espn_out_never_impersonates_official_confirmation():
+    from nba.project import _legacy_participation, withhold_likely_out
+
+    legacy = _legacy_participation("OUT")
+    assert legacy["status"] == "LIKELY_OUT"
+    assert legacy["certainty"] == "UNKNOWN"
+    assert legacy["source"] == "espn_context_injuries"
+    # A historical ESPN label still withholds a risky conditional prop,
+    # but cannot force an officially confirmed 0% participation assumption.
+    p = PART.enforce_confirmed_out(np.array([0.37]), [legacy])
+    assert p[0] == 0.37
+    _, status = withhold_likely_out(legacy, [], "PASS")
+    assert status == "BLOCK"

@@ -15,8 +15,14 @@ Leak rules
 - ``pregame`` is recomputed here from the authoritative tip: the prediction instant AND the market observation
   it used must both be strictly before tip. Only pregame rows enter any metric or the authority ledger.
 - The closing snapshot is the last market observation STRICTLY before tip (``evaluation.clv.closing_snapshot``).
-- CLV is reported for a hypothetical YES bought at the prediction-time ``market_yes_ask`` and a hypothetical NO
-  bought at ``market_no_ask``; the per-view "signed" CLV picks the side the view favoured versus the market.
+- ``clv_yes_prob`` / ``clv_no_prob`` (and every ``clv_mean``) are QUOTED-EXECUTION CLV: close midpoint minus the
+  prediction-time executable ASK of the side (``market_yes_ask`` / ``market_no_ask``), pre-fee. They INCLUDE the
+  half-spread paid on entry, so a market that never moves still scores about minus half the spread. They are not
+  selection CLV and not actual-fill CLV, and no fee is applied anywhere in this module. Their meaning is unchanged
+  (authority gates read them) and they are re-exposed under the explicit names ``quoted_execution_clv_*``.
+- ``selection_clv_*`` (additive, clv-canonical/1) is close midpoint minus the prediction-time MIDPOINT of the same
+  side: no spread, no fee. It is only produced when the close is a two-sided midpoint
+  (``close_price_source == "mid"``); a last-trade fallback is a trade print, not a midpoint, and is flagged.
 """
 
 from __future__ import annotations
@@ -116,6 +122,28 @@ def observations_by_ticker(ledger: Ledger, tickers: set[str]) -> dict[str, list[
     return out
 
 
+def close_price_source(obs: dict[str, Any] | None) -> str | None:
+    """``"mid"`` for a two-sided quote, ``"last_trade"`` when only a trade print exists, else None."""
+    if obs is None:
+        return None
+    b, a = obs.get("yes_bid"), obs.get("yes_ask")
+    if b is not None and a is not None and 0 <= b <= 100 and 0 <= a <= 100:
+        return "mid"
+    lp = obs.get("last_price")
+    return "last_trade" if lp is not None and 0 <= lp <= 100 else None
+
+
+def entry_mid_cents(bid: Any, ask: Any) -> float | None:
+    """Midpoint of a two-sided quote (cents), None for a missing/one-sided/invalid book."""
+    if bid is None or ask is None:
+        return None
+    try:
+        b, a = float(bid), float(ask)
+    except (TypeError, ValueError):
+        return None
+    return (b + a) / 2.0 if 0 <= b <= a <= 100 else None
+
+
 def close_price_cents(obs: dict[str, Any] | None) -> float | None:
     """Mid of yes_bid/yes_ask, falling back to last_price. None when the snapshot carries no price."""
     if obs is None:
@@ -159,6 +187,12 @@ def build_evaluation_row(pred: dict[str, Any], rec: SettlementRecord, tip: datet
             clv_yes = clv_prob(float(yes_ask), close_c, "yes")
         if no_ask is not None and 0 <= no_ask <= 100:
             clv_no = clv_prob(100.0 - float(no_ask), close_c, "no")
+    src = close_price_source(closing)
+    sel_yes = sel_no = None
+    ymid = entry_mid_cents(pred.get("market_yes_bid"), yes_ask)
+    if close_c is not None and src == "mid" and ymid is not None:
+        sel_yes = (close_c - ymid) / 100.0          # YES axis; NO is the mirror image
+        sel_no = -sel_yes
     hours = (tip - predicted_at).total_seconds() / 3600.0
     return {
         "prediction_id": pred.get("prediction_id"),
@@ -181,6 +215,12 @@ def build_evaluation_row(pred: dict[str, Any], rec: SettlementRecord, tip: datet
         "close_observed_at_utc": None if closing is None else closing.get("_observed_at_utc"),
         "clv_yes_prob": clv_yes,
         "clv_no_prob": clv_no,
+        "clv_basis": "quoted_execution: close_mid - entry_ask, pre-fee, includes entry half-spread",
+        "quoted_execution_clv_yes_prob": clv_yes,
+        "quoted_execution_clv_no_prob": clv_no,
+        "selection_clv_yes_prob": sel_yes,
+        "selection_clv_no_prob": sel_no,
+        "close_price_source": src,
         "hours_before_tip": hours,
         "settlement_engine": rec.engine_version,
     }
@@ -193,6 +233,15 @@ def signed_clv(row: dict[str, Any], p: float | None) -> float | None:
     ref = row.get("p_market")
     ref = 0.5 if ref is None else float(ref)
     return row.get("clv_yes_prob") if p > ref else row.get("clv_no_prob")
+
+
+def signed_selection_clv(row: dict[str, Any], p: float | None) -> float | None:
+    """Selection CLV (close mid - entry mid, no spread, no fee) for the side ``p`` favours versus the market."""
+    if p is None:
+        return None
+    ref = row.get("p_market")
+    ref = 0.5 if ref is None else float(ref)
+    return row.get("selection_clv_yes_prob") if p > ref else row.get("selection_clv_no_prob")
 
 
 # ---- metrics --------------------------------------------------------------------------------------
@@ -243,8 +292,12 @@ def view_metrics(rows: list[dict[str, Any]], view: View) -> dict[str, Any]:
             out["n_with_market"], out["brier_market"], out["brier_skill_vs_market"] = 0, None, None
         clvs = [c for c in (signed_clv(r, float(r[key])) for r in used) if c is not None]
         out["n_with_clv"], out["clv_mean"] = len(clvs), _mean(clvs)
+        out["clv_mean_basis"] = "quoted_execution (close_mid - entry_ask; pre-fee; includes half-spread)"
+        sels = [c for c in (signed_selection_clv(r, float(r[key])) for r in used) if c is not None]
+        out["n_with_selection_clv"], out["selection_clv_mean"] = len(sels), _mean(sels)
     else:
         out["n_with_clv"], out["clv_mean"] = 0, None
+        out["n_with_selection_clv"], out["selection_clv_mean"] = 0, None
     out["by_hours_bucket"] = _by_hours(used, key)
     out["by_prob_bucket"] = _by_prob(used, key)
     return out

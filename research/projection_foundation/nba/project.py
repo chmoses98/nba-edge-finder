@@ -148,6 +148,16 @@ def withhold_likely_out(pa: dict, findings: list[dict], status: str) -> tuple[li
     """A likely-out player is withheld exactly like a confirmed-out one: the gate alone only REVIEWs the row, which still publishes it as
     "conditional on playing". The finding says where the exclusion comes from, so an aggregator report is never read as the league's own
     designation; the participation status itself stays LIKELY_OUT / PROJECTED and is never promoted to CONFIRMED_OUT."""
+    if pa.get("status") == "CONFIRMED_OUT":
+        # A DNP prop is non-actionable; some Kalshi markets VOID / settle
+        # scalar, so do not present a conditional-on-playing projection as an
+        # actionable under or a settled-zero prediction.
+        return findings + [{"check": "participation_withheld", "severity": "BLOCK",
+                            "what": f"OUT: {pa.get('designation') or 'OUT'} ({pa.get('source') or 'unknown source'}; "
+                                    f"certainty {pa.get('certainty') or 'unknown'}). "
+                                    "Player will not play: conditional stats are not actionable.",
+                            "category": "data_quality",
+                            "action": "Withhold player props; zero expected team contribution."}], "BLOCK"
     if pa.get("status") != "LIKELY_OUT":
         return findings, status
     return findings + [{"check": "participation_withheld", "severity": "BLOCK", "what": likely_out_reason(pa),
@@ -155,9 +165,9 @@ def withhold_likely_out(pa: dict, findings: list[dict], status: str) -> tuple[li
 
 
 def _legacy_participation(status: str | None) -> dict:
-    """Participation block for runs without a live availability feed (ESPN context statuses only)."""
+    """Legacy ESPN context has no official point-in-time confirmation: never label its OUT as CONFIRMED_OUT."""
     s = (status or "UNKNOWN").upper()
-    m = {"OUT": ("CONFIRMED_OUT", "OUT"), "DOUBTFUL": ("LIKELY_OUT", "DOUBTFUL"), "QUESTIONABLE": ("UNCERTAIN", "QUESTIONABLE"),
+    m = {"OUT": ("LIKELY_OUT", "OUT"), "DOUBTFUL": ("LIKELY_OUT", "DOUBTFUL"), "QUESTIONABLE": ("UNCERTAIN", "QUESTIONABLE"),
          "DAY-TO-DAY": ("UNCERTAIN", "DAY-TO-DAY"), "ACTIVE": ("UNVERIFIED", "UNKNOWN")}.get(s, ("UNVERIFIED", "UNKNOWN"))
     return {"status": m[0], "certainty": "UNKNOWN", "source": "espn_context_injuries", "captured_utc": None, "age_minutes": None,
             "reasons": ["legacy run: ESPN context injury status only, no point-in-time observation"], "designation": s,
@@ -261,13 +271,10 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
     else:
         F["p_play"] = F["p_hurdle"]
         basis = ["hurdle"] * len(F)
-    # A definitive OUT cannot consume even fractional minutes in reconciliation.
-    # Calibrated logistic probabilities are not exact zeros, but official OUT is.
-    # This also covers legacy ESPN-context OUT when a live observation is absent.
     F["p_play"] = PART.enforce_confirmed_out(F["p_play"].to_numpy(), part)
     # minutes: report-aware E_inj where the official report covers the game, else the frozen best (E)
     from .live.availability import SRC_OFFICIAL
-    report_cov = np.array([bool(p.get("source") == SRC_OFFICIAL) for p in part])
+    report_cov = np.array([bool(p.get("report_source", p.get("source")) == SRC_OFFICIAL) for p in part])
     F["min_pub"] = np.where(report_cov, F["min_inj"], F["min_best"])
     caps = np.array([((p.get("restriction") or {}).get("minutes_cap") or np.nan) for p in part], float)
     F["min_cap"] = caps
@@ -377,9 +384,17 @@ def project_slate(sl: dict | None, out: str | None, *, availability: dict | None
         row = {
             "player_id": f"espn:{r['pid']}", "name": r["name"], "team": r["team"], "opponent": r["opp"],
             "game_id": f"espn:{r['game_id']}", "family": fam, "mean": round(float(d.mean[i]), 2),
+            # mean is conditional on playing (kept for backward compatibility
+            # and non-DNP calibration). Consumers should show expected_mean and
+            # suppress player props with actionable=False.
+            "expected_mean": round(float(d.mean[i]) * float(r["p_play"]), 2),
+            "conditional_on_playing": True,
+            "actionable": status != "BLOCK" and float(r["p_play"]) > 0.0,
             "median": int(d.median[i]), "p10": int(d.quantile(0.1)[i]), "p90": int(d.quantile(0.9)[i]),
             "thresholds": th,
             "opportunity": {"family": "minutes", "mean": round(float(mdist.mean[i]), 1),
+                            "expected_mean": round(float(mdist.mean[i]) * float(r["p_play"]), 1),
+                            "conditional_on_playing": True,
                             "p10": int(mdist.quantile(0.1)[i]), "p90": int(mdist.quantile(0.9)[i])},
             "opponent_adjustment": {"factor": round(opp_f, 4), "sample_games": int(opp_n)},
             "adjustments": adj, "readiness": fz_readiness,

@@ -68,7 +68,7 @@ def test_push_first_publishes_the_capture_before_the_slow_jobs_and_keeps_one_cap
     w, log = make(tmp_path, clock, push_first=True)
     rec = one_cycle(w, clock)
     assert log[0] == ("capture",) and log[1][0] == "push" and log[1][1].startswith("capture: run-1 at ")
-    assert [e[0] for e in log[2:-1]] == ["job", "job"]                                                  # app_export, research_export run after the early push
+    assert [e[0] for e in log[2:-1]] == ["job", "job", "job"]  # history_refresh, app_export, research_export                                                  # app_export, research_export run after the early push
     assert log[-1][0] == "push" and log[-1][1].startswith("cycle: run-1 at ")                          # the closing push never repeats the capture subject
     assert sum(1 for e in log if e[0] == "push" and e[1].startswith("capture:")) == 1
     assert rec.capture_pushed_first is True and rec.push_ok is True
