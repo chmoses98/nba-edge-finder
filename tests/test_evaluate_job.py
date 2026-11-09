@@ -142,3 +142,57 @@ def test_build_row_requires_yes_no_outcome():
         engine_version="e", idempotency_key="k",
     )
     assert build_evaluation_row(prediction_row("p", TIP - timedelta(hours=1)), rec, TIP, []) is None
+
+
+def test_pointing_evaluate_at_the_reports_directory_fails_closed(settled):
+    """Regression: the worker and conductor.yml ran `nba evaluate --out <archive>/eval`, an EMPTY ledger, so evaluate read 0
+    predictions and 0 settlements on every run and reported success (production: n_rows 0 against 18,231 settled tickers).
+    The reports directory is not a ledger root; the job must refuse it instead of quietly evaluating nothing."""
+    reports = settled / "eval"
+    reports.mkdir(exist_ok=True)
+    assert run_evaluate(reports, settled / "data", now=EVAL_AT) == 2
+    assert not (reports / "report.json").exists(), "a refused run must not write a misleading empty report"
+    # and the correct root still works end to end on the same archive
+    assert run_evaluate(settled, settled / "data", now=EVAL_AT) == 0
+    assert (settled / "eval" / "report.json").exists()
+
+
+def test_the_worker_evaluates_the_ledger_root_not_the_reports_directory():
+    from nba_edge.worker.run import Worker
+
+    cmd = dict((name, tmpl) for name, tmpl, _ in Worker.SLOW_JOBS)["evaluate"]
+    out = cmd[cmd.index("--out") + 1]
+    assert out == "ARCHIVE", f"worker evaluate --out must be the archive root, got {out!r}"
+
+
+def test_closing_observation_reads_dollar_quotes_via_quote_cents(tmp_path):
+    """Regression: boards captured since the Kalshi API moved to dollar strings carry the cents view only under
+    `_quote_cents`; `_OBS_KEYS` read the bare `yes_bid`, so every closing quote was None and the closing price (hence CLV and
+    Kalshi's own calibration) could never be computed."""
+    from nba_edge.workflows.evaluate import _slim, close_price_cents
+
+    row = {"ticker": "T", "yes_bid_dollars": "0.4000", "yes_ask_dollars": "0.4400", "_quote_cents": {"yes_bid": 40, "yes_ask": 44, "no_bid": 56, "no_ask": 60, "last_price": 42},
+           "_family": "game_winner", "_observed_at_utc": "2026-10-03T22:00:00Z"}
+    assert close_price_cents(_slim(row)) == 42.0
+
+
+def test_closing_observations_use_the_last_board_strictly_before_tip_and_step_back_over_a_paused_market(tmp_path):
+    from datetime import UTC, datetime
+
+    from nba_edge.workflows.evaluate import closing_observations
+
+    led = Ledger(tmp_path, run_id="r1")
+    t1, t2, t3 = (datetime(2026, 10, 3, 22, m, tzinfo=UTC) for m in (0, 15, 30))
+    tip = datetime(2026, 10, 3, 22, 30, tzinfo=UTC)
+
+    def row(tk, yes_ask):
+        return {"ticker": tk, "_quote_cents": {"yes_bid": yes_ask - 2, "yes_ask": yes_ask, "no_bid": None, "no_ask": None, "last_price": None}, "_family": "f"}
+
+    led.append_rows("kalshi/markets", [row("A", 50), row("B", 60)], observed_at=t1)
+    led.append_rows("kalshi/markets", [row("A", 52)], observed_at=t2)  # B paused: absent from this board
+    led.append_rows("kalshi/markets", [row("A", 99), row("B", 99)], observed_at=t3)  # at tip: must never be used
+    got = closing_observations(led, {tip: {"A", "B", "MISSING"}})
+    assert got["A"][-1]["yes_ask"] == 52 and got["A"][-1]["_observed_at_utc"].endswith("22:15:00Z")
+    assert got["B"][-1]["yes_ask"] == 60, "B was absent from the last pre-tip board; its newest earlier observation is used and keeps its own timestamp"
+    assert got["B"][-1]["_observed_at_utc"].endswith("22:00:00Z")
+    assert "MISSING" not in got
