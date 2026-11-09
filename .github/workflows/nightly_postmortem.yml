@@ -3,7 +3,9 @@ name: nightly-postmortem
 # evaluation. Reads the data-archive branch, writes ONLY a workflow artifact: no push, no orders, no archive writes.
 on:
   schedule:
-    - cron: "40 11 * * *"   # 06:40 ET: every game has finished and been settled
+    # 11:40 UTC = 06:40 EST / 07:40 EDT. GitHub cron is UTC-only; the last NBA games finish ~04:30 UTC and settle by ~05:00 UTC, so this
+    # is after settlement in both halves of the year. The *dates* below are computed in America/New_York, so DST never shifts the slate.
+    - cron: "40 11 * * *"
   workflow_dispatch:
     inputs:
       dates:
@@ -28,12 +30,19 @@ jobs:
           mkdir -p "$RUNNER_TEMP/arch"
           git archive origin/data-archive manifest.jsonl contracts predictions settlements boxscores context kalshi | tar -x -C "$RUNNER_TEMP/arch"
       - name: Audit every projected market
+        env:
+          INPUT_DATES: ${{ github.event.inputs.dates }}   # via env, never interpolated into the script
         run: |
-          DATES="${{ github.event.inputs.dates }}"
+          set -o pipefail
+          DATES="$INPUT_DATES"
+          case "$DATES" in *[!0-9\ -]*) echo "bad dates input"; exit 2;; esac
           if [ -z "$DATES" ]; then DATES="$(TZ=America/New_York date -d 'yesterday' +%F) $(TZ=America/New_York date -d '2 days ago' +%F)"; fi
           ARGS=""; for d in $DATES; do ARGS="$ARGS --date $d"; done
           # exit 3 == BLOCKED (eligible inputs but nothing graded): the job fails loudly instead of printing PASS
-          nba audit-markets --archive "$RUNNER_TEMP/arch" $ARGS --out audit-out
+          rc=0
+          nba audit-markets --archive "$RUNNER_TEMP/arch" $ARGS --out audit-out || rc=$?
+          for f in audit-out/*/report.md; do [ -f "$f" ] && cat "$f" >> "$GITHUB_STEP_SUMMARY"; done
+          exit $rc
       - name: Paper parlay evaluation (no-op until tickets exist)
         if: always()
         run: |

@@ -196,3 +196,28 @@ def test_closing_observations_use_the_last_board_strictly_before_tip_and_step_ba
     assert got["B"][-1]["yes_ask"] == 60, "B was absent from the last pre-tip board; its newest earlier observation is used and keeps its own timestamp"
     assert got["B"][-1]["_observed_at_utc"].endswith("22:00:00Z")
     assert "MISSING" not in got
+
+
+def test_backlog_drains_across_runs_within_a_per_run_cap_and_status_says_incomplete(settled, monkeypatch):
+    """Runtime safety: one run may only take NBA_EVAL_MAX_NEW_ROWS rows; the rest is an explicit backlog drained by later runs."""
+    monkeypatch.setenv("NBA_EVAL_MAX_NEW_ROWS", "1")
+    assert run_evaluate(settled, settled / "data", now=EVAL_AT) == 0
+    st = json.loads((settled / "STATUS_evaluate.json").read_text())
+    assert st["n_new_rows"] == 1 and st["backlog_remaining"] == 1 and st["complete"] is False
+    assert run_evaluate(settled, settled / "data", now=EVAL_AT + timedelta(minutes=1)) == 0
+    st = json.loads((settled / "STATUS_evaluate.json").read_text())
+    assert st["n_rows"] == 2 and st["backlog_remaining"] == 0 and st["complete"] is True
+    assert {r["prediction_id"] for r in _rows(settled, "evaluations")} == {"p1", "p2"}  # no duplicates, nothing lost
+
+
+def test_market_only_closes_are_cached_and_stable_across_runs(settled):
+    run_evaluate(settled, settled / "data", now=EVAL_AT)
+    first = (settled / "eval" / "market_only.json").read_text()
+    run_evaluate(settled, settled / "data", now=EVAL_AT + timedelta(minutes=1))
+    assert (settled / "eval" / "market_only.json").read_text() == first
+
+
+def test_zero_rows_with_eligible_settled_predictions_is_an_error(settled, monkeypatch):
+    """An empty evaluation must never report success when eligible settled inputs exist."""
+    monkeypatch.setenv("NBA_EVAL_MAX_NEW_ROWS", "0")
+    assert run_evaluate(settled, settled / "data", now=EVAL_AT) == 3

@@ -28,6 +28,8 @@ Leak rules
 from __future__ import annotations
 
 import json
+import os
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -57,11 +59,25 @@ from nba_edge.workflows.settle import KALSHI_ENGINE_VERSION, coerce, latest_sche
 log = get_logger(__name__)
 
 VIEW_PROB_KEY = {View.DATA_ONLY: "p_data_only", View.MARKET_BASELINE: "p_market", View.HYBRID: "p_hybrid"}
+DEFAULT_MAX_NEW_ROWS = 150_000  # per run; the first historical backfill drains over several runs instead of one over-budget run
+DEFAULT_BUDGET_S = 600.0
+_REPORT_KEYS = ("ticker", "family", "y", "pregame", "p_data_only", "p_market", "p_hybrid", "p_production", "clv_yes_prob", "clv_no_prob",
+                "selection_clv_yes_prob", "selection_clv_no_prob", "hours_before_tip")
 HOUR_BUCKETS = (("<1h", 0.0, 1.0), ("1-6h", 1.0, 6.0), ("6-24h", 6.0, 24.0), (">24h", 24.0, float("inf")))
 _OBS_KEYS = ("ticker", "yes_bid", "yes_ask", "no_bid", "no_ask", "last_price", "status", "result", "_family", "_observed_at_utc")
 
 
 # ---- loading --------------------------------------------------------------------------------------
+
+
+def iter_rows_newest_first(ledger: Ledger, kind: str):
+    """Rows of ``kind`` by day partition, newest day first (recent evidence is evaluated first when a backlog exists)."""
+    base = ledger.root / kind
+    if not base.exists():
+        return
+    for part in sorted(base.glob("dt=*"), reverse=True):
+        d = part.name[3:]
+        yield from ledger.iter_rows(kind, dt_from=d, dt_to=d)
 
 
 def _dt(v: Any) -> datetime | None:
@@ -425,28 +441,41 @@ def build_report(rows: list[dict[str, Any]], now: datetime, n_new: int) -> dict[
 # ---- market-only calibration --------------------------------------------------------------------------
 
 
-def market_only_report(settlements: dict[str, SettlementRecord], tips: dict[str, datetime], obs: dict[str, list[dict[str, Any]]], families: dict[str, str]) -> dict[str, Any]:
-    """How well-calibrated is Kalshi's own closing price? Computed over market-only (engine 'kalshi') YES/NO
-    settlements. Closing = last observation strictly before tip when the game is known, else the last
-    observation while the market was still 'open'."""
-    by_family: dict[str, tuple[list[float], list[int]]] = {}
-    n_no_close = 0
+def market_close_entries(settlements: dict[str, SettlementRecord], tips: dict[str, datetime], obs: dict[str, list[dict[str, Any]]], families: dict[str, str],
+                         only: set[str] | None = None) -> dict[str, list[Any]]:
+    """``ticker -> [close_prob | None, y, family]`` for market-only (engine 'kalshi') YES/NO settlements. Closing = last
+    observation strictly before tip when the game is known, else the last observation while the market was still 'open'."""
+    out: dict[str, list[Any]] = {}
     for tk, rec in settlements.items():
+        if only is not None and tk not in only:
+            continue
         if rec.engine_version != KALSHI_ENGINE_VERSION or rec.outcome not in (SettlementOutcome.YES, SettlementOutcome.NO):
             continue
         observations = obs.get(tk, [])
         tip = tips.get(rec.game_id) if rec.game_id else None
         closing = closing_snapshot(observations, tip) if tip is not None else _last_open(observations)
         c = close_price_cents(closing)
+        out[tk] = [None if c is None else c / 100.0, 1 if rec.outcome == SettlementOutcome.YES else 0, families.get(tk) or "unknown"]
+    return out
+
+
+def market_only_from_entries(entries: dict[str, list[Any]]) -> dict[str, Any]:
+    by_family: dict[str, tuple[list[float], list[int]]] = {}
+    n_no_close = 0
+    for c, y, fam in entries.values():
         if c is None:
             n_no_close += 1
             continue
-        fam = families.get(tk) or "unknown"
         for k in (fam, "ALL"):
             ps, ys = by_family.setdefault(k, ([], []))
-            ps.append(c / 100.0)
-            ys.append(1 if rec.outcome == SettlementOutcome.YES else 0)
+            ps.append(c)
+            ys.append(y)
     return {"n_without_close": n_no_close, "families": {k: _metrics(ps, ys) for k, (ps, ys) in sorted(by_family.items())}}
+
+
+def market_only_report(settlements: dict[str, SettlementRecord], tips: dict[str, datetime], obs: dict[str, list[dict[str, Any]]], families: dict[str, str]) -> dict[str, Any]:
+    """How well-calibrated is Kalshi's own closing price? (uncached; ``run_evaluate`` caches per ticker)."""
+    return market_only_from_entries(market_close_entries(settlements, tips, obs, families))
 
 
 def _last_open(observations: list[dict[str, Any]]) -> dict[str, Any] | None:
@@ -497,19 +526,27 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
         print(f"evaluate: --out {out_root} is the reports directory, not the ledger root; the ledger is {out_root.parent}")
         return 2
     ledger = Ledger(out_root)
+    max_new = int(os.environ.get("NBA_EVAL_MAX_NEW_ROWS", DEFAULT_MAX_NEW_ROWS))
+    budget_s = float(os.environ.get("NBA_EVAL_BUDGET_S", DEFAULT_BUDGET_S))
+    t0 = time.monotonic()
 
     settlements = best_settlements(ledger)
     tips = tip_times(ledger)
-    predictions = list(ledger.iter_rows("predictions"))
-    existing_rows = list(ledger.iter_rows("evaluations"))
-    seen = {(r.get("prediction_id"), r.get("settlement_key")) for r in existing_rows}
+    # Streamed, never listed: 2M predictions / 1.4M evaluations do not fit in memory as dicts (the unbounded version was OOM-killed).
+    seen: set[tuple[Any, Any]] = set()
+    report_rows: list[dict[str, Any]] = []
+    for r in ledger.iter_rows("evaluations"):
+        seen.add((r.get("prediction_id"), r.get("settlement_key")))
+        report_rows.append({k: r.get(k) for k in _REPORT_KEYS})
 
-    # Pass 1 (no market data): which (prediction, settlement) pairs are NEW, and which closes do they and the market-only
-    # report need? Only those games' closing boards are reconstructed.
+    # Pass 1 (no market data), NEWEST partitions first: which (prediction, settlement) pairs are new? At most ``max_new`` are taken per
+    # run; the remainder is a backlog that later runs drain (idempotent via ``seen``), so one run never exceeds its time budget.
     pending: list[tuple[dict[str, Any], SettlementRecord, datetime]] = []
     n_skipped = {"unsettled": 0, "no_tip": 0, "invalid": 0}
+    n_eligible = 0  # predictions with a YES/NO settlement and a known tip: if these exist, an empty evaluation is an error
+    backlog = 0
     wanted: dict[datetime, set[str]] = {}
-    for pred in predictions:
+    for pred in iter_rows_newest_first(ledger, "predictions"):
         tk = pred.get("ticker")
         rec = settlements.get(tk) if tk else None
         if rec is None or rec.outcome not in (SettlementOutcome.YES, SettlementOutcome.NO):
@@ -520,24 +557,42 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
         if tip is None:
             n_skipped["no_tip"] += 1
             continue
+        n_eligible += 1
         if (pred.get("prediction_id"), rec.idempotency_key) in seen:
+            continue
+        if len(pending) >= max_new or time.monotonic() - t0 > budget_s * 0.35:
+            backlog += 1
             continue
         pending.append((pred, rec, tip))
         wanted.setdefault(tip, set()).add(tk)
+
+    # Market-only closes are cached per ticker (a close never changes once the game has tipped), so only newly settled tickers
+    # cost a board reconstruction.
+    cache_path = out_root / "eval" / "market_close_cache.json"
+    try:
+        cache: dict[str, list[Any]] = json.loads(cache_path.read_text()) if cache_path.exists() else {}
+    except (OSError, ValueError):
+        cache = {}
     market_only_tickers = {
         tk for tk, rec in settlements.items()
-        if rec.engine_version == KALSHI_ENGINE_VERSION and rec.outcome in (SettlementOutcome.YES, SettlementOutcome.NO)
+        if rec.engine_version == KALSHI_ENGINE_VERSION and rec.outcome in (SettlementOutcome.YES, SettlementOutcome.NO) and tk not in cache
     }
-    for tk in market_only_tickers:
+    n_market_deferred = 0
+    for tk in sorted(market_only_tickers):
         rec = settlements[tk]
         t = tips.get(rec.game_id) if rec.game_id else None
         if t is not None:
+            if time.monotonic() - t0 > budget_s * 0.6:
+                market_only_tickers.discard(tk)  # over budget: stays uncached, picked up by the next run
+                n_market_deferred += 1
+                continue
             wanted.setdefault(t, set()).add(tk)
     obs = closing_observations(ledger, wanted)
     no_tip = {tk for tk in market_only_tickers if not (settlements[tk].game_id and tips.get(settlements[tk].game_id))}
     if no_tip:  # market-only settlements of games with no known tip are closed on "last open observation": needs the full history
         obs.update(observations_by_ticker(ledger, no_tip))
     families_by_ticker = {tk: str(o[-1].get("_family") or "") for tk, o in obs.items() if o}
+    cache.update(market_close_entries(settlements, tips, obs, families_by_ticker, only=market_only_tickers))
 
     new_rows: list[dict[str, Any]] = []
     for pred, rec, tip in pending:
@@ -551,23 +606,31 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
             continue
         seen.add(key)
         new_rows.append(row)
+        report_rows.append({k: row.get(k) for k in _REPORT_KEYS})
     if new_rows:
         e = ledger.append_rows("evaluations", new_rows, observed_at=now, meta={"n": len(new_rows)})
         log.info(kv(event="evaluations_written", path=e.path, rows=e.rows))
 
-    all_rows = existing_rows + new_rows
-    report = build_report(all_rows, now, len(new_rows))
+    report = build_report(report_rows, now, len(new_rows))
     report["skipped"] = n_skipped
-    market_only = market_only_report(settlements, tips, obs, families_by_ticker)
+    market_only = market_only_from_entries(cache)
     eval_dir = out_root / "eval"
     eval_dir.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(json.dumps(cache))
     (eval_dir / "report.json").write_text(json.dumps(report, indent=1, default=str))
     (eval_dir / "report.md").write_text(report_markdown(report))
     (eval_dir / "market_only.json").write_text(json.dumps(market_only, indent=1, default=str))
+    complete = backlog == 0 and n_market_deferred == 0
     status = {
-        "evaluated_at_utc": iso(now), "n_rows": len(all_rows), "n_pregame": report["n_pregame"], "n_new_rows": len(new_rows),
+        "evaluated_at_utc": iso(now), "n_rows": len(report_rows), "n_pregame": report["n_pregame"], "n_new_rows": len(new_rows),
         "families": sorted(report["families"]), "skipped": n_skipped, "run_id": ledger.run_id,
+        "n_eligible_settled_predictions": n_eligible, "backlog_remaining": backlog, "market_closes_deferred": n_market_deferred,
+        "complete": complete, "elapsed_s": round(time.monotonic() - t0, 1),
     }
     (out_root / "STATUS_evaluate.json").write_text(json.dumps(status, indent=1, default=str))
     print(json.dumps(status, indent=1, default=str))
+    if n_eligible > 0 and len(report_rows) == 0:
+        # Never a silent success: settled, tipped predictions exist but nothing was evaluated.
+        print(f"evaluate: FAILED - {n_eligible} eligible settled predictions but 0 evaluation rows")
+        return 3
     return 0
