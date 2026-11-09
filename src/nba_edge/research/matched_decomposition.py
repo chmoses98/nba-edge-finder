@@ -38,7 +38,12 @@ from zoneinfo import ZoneInfo
 import numpy as np
 import pandas as pd
 
-from nba_edge.features.build import FEATURE_VERSION, BuildConfig, build_game_params, rest_days_for  # noqa: F401 (FEATURE_VERSION re-exported)
+from nba_edge.features.build import (  # noqa: F401 (FEATURE_VERSION re-exported)
+    FEATURE_VERSION,
+    BuildConfig,
+    build_game_params,
+    rest_days_for,
+)
 from nba_edge.sim.engine import SIM_VERSION, simulate  # noqa: F401 (SIM_VERSION re-exported)
 from nba_edge.sim.params import GameParams, PlayerParams
 

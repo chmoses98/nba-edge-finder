@@ -259,6 +259,20 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     return run_evaluate(out_root=Path(args.out), data_root=Path(args.data))
 
 
+def cmd_audit_markets(args: argparse.Namespace) -> int:
+    from nba_edge.audit.markets import run_audit
+
+    return run_audit(Path(args.archive), list(args.date), Path(args.out))
+
+
+def cmd_parlay(args: argparse.Namespace) -> int:
+    from nba_edge.parlay.paper import run_eval, run_freeze
+
+    if args.action == "freeze":
+        return run_freeze(Path(args.archive), args.date, Path(args.out))
+    return run_eval(Path(args.archive), Path(args.out))
+
+
 def cmd_app_export(args: argparse.Namespace) -> int:
     from nba_edge.app_export import export
     from nba_edge.timeutil import parse_iso
@@ -449,6 +463,19 @@ def build_parser() -> argparse.ArgumentParser:
     e.add_argument("--out", default="out/eval")
     e.add_argument("--data", default="data")
     e.set_defaults(func=cmd_evaluate)
+
+    am = sub.add_parser("audit-markets", help="Read-only all-market point-in-time postmortem for ET date(s) (issue #95)")
+    am.add_argument("--archive", default="data/archive")
+    am.add_argument("--date", action="append", required=True, help="ET game date YYYY-MM-DD (repeatable)")
+    am.add_argument("--out", required=True, help="derived-view directory (never the archive)")
+    am.set_defaults(func=cmd_audit_markets)
+
+    pp = sub.add_parser("parlay-paper", help="Paper-parlay research: freeze pre-tip tickets / evaluate after settlement (no orders)")
+    pp.add_argument("action", choices=["freeze", "eval"])
+    pp.add_argument("--archive", default="data/archive")
+    pp.add_argument("--date", default=None, help="ET date for freeze")
+    pp.add_argument("--out", required=True)
+    pp.set_defaults(func=cmd_parlay)
 
     ax = sub.add_parser("app-export", help="Publish the Edge Finder app export (edge_finder.app.v1) from the archive")
     ax.add_argument("--out", default="data/archive/app/latest")

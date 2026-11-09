@@ -1,0 +1,50 @@
+name: nightly-postmortem
+# RESEARCH_ONLY. Read-only all-market audit of the previous ET slate (+ the day before, to pick up late settlements) and paper-parlay
+# evaluation. Reads the data-archive branch, writes ONLY a workflow artifact: no push, no orders, no archive writes.
+on:
+  schedule:
+    - cron: "40 11 * * *"   # 06:40 ET: every game has finished and been settled
+  workflow_dispatch:
+    inputs:
+      dates:
+        description: "Space-separated ET dates (default: yesterday and the day before)"
+        required: false
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Fetch the archive evidence (sparse; slates and app exports are not needed)
+        run: |
+          git fetch --depth 1 origin data-archive
+          mkdir -p "$RUNNER_TEMP/arch"
+          git archive origin/data-archive manifest.jsonl contracts predictions settlements boxscores context kalshi | tar -x -C "$RUNNER_TEMP/arch"
+      - name: Audit every projected market
+        run: |
+          DATES="${{ github.event.inputs.dates }}"
+          if [ -z "$DATES" ]; then DATES="$(TZ=America/New_York date -d 'yesterday' +%F) $(TZ=America/New_York date -d '2 days ago' +%F)"; fi
+          ARGS=""; for d in $DATES; do ARGS="$ARGS --date $d"; done
+          # exit 3 == BLOCKED (eligible inputs but nothing graded): the job fails loudly instead of printing PASS
+          nba audit-markets --archive "$RUNNER_TEMP/arch" $ARGS --out audit-out
+      - name: Paper parlay evaluation (no-op until tickets exist)
+        if: always()
+        run: |
+          mkdir -p parlay-out
+          nba parlay-paper eval --archive "$RUNNER_TEMP/arch" --out parlay-out || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightly-postmortem
+          path: |
+            audit-out/**/report.md
+            audit-out/**/report.json
+            audit-out/**/universe.csv
+            parlay-out/**
