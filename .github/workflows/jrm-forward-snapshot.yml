@@ -81,6 +81,16 @@ jobs:
           echo "go=$go" >> "$GITHUB_OUTPUT"
           echo "prev=$(git -C arch rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "### JRM snapshot: go=$go ${why}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Attribution hook (archive commits from this workflow are not Claude co-authored)
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          cat > arch/.git/hooks/commit-msg <<'HOOK'
+          #!/bin/sh
+          sed -i -e '/^Co-Authored-By: Claude/d' -e '/^Claude-Session:/d' "$1"
+          printf '\nGenerated-By: GitHub Actions jrm-forward-snapshot run %s (no LLM)\n' "$GITHUB_RUN_ID" >> "$1"
+          HOOK
+          sed -i 's/^          //' arch/.git/hooks/commit-msg
+          chmod +x arch/.git/hooks/commit-msg
       - uses: actions/setup-python@v5
         if: steps.gate.outputs.go == 'true'
         with: { python-version: "${{ env.PY }}" }

@@ -43,6 +43,8 @@ for line in git("diff", "--name-status", f"{prev}..{head}").splitlines():
     else:
         problems.append(f"forbidden change: {line}")
 info = {"prev": prev[:8], "head": head[:8], "new_snapshots": new_snap}
+if "claude" in git("log", f"{prev}..{head}", "--format=%B%an%ae").lower():
+    problems.append("an Actions-generated archive commit carries Claude attribution")
 if len(new_snap) != 1:
     problems.append(f"expected exactly 1 new snapshot file, found {len(new_snap)}")
 else:
