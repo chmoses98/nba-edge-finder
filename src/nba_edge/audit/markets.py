@@ -129,7 +129,9 @@ def cluster_bootstrap_mean(values: list[float], clusters: list[str], n_boot: int
     cnt = np.array([len(g) for g in groups])
     idx = rng.integers(0, len(groups), size=(n_boot, len(groups)))
     means = sums[idx].sum(axis=1) / cnt[idx].sum(axis=1)
-    return {"n": len(values), "n_clusters": len(groups), "mean": mean,
+    # two-sided bootstrap p-value for "mean == 0" (share of resamples on the other side of zero, doubled)
+    p_two = float(min(1.0, 2.0 * min(np.mean(means <= 0.0), np.mean(means >= 0.0))))
+    return {"n": len(values), "n_clusters": len(groups), "mean": mean, "p_boot": max(p_two, 1.0 / n_boot),
             "ci95": [float(np.percentile(means, 2.5)), float(np.percentile(means, 97.5))]}
 
 
@@ -150,15 +152,49 @@ def cluster_bootstrap_ratio(num: list[float], den: list[float], clusters: list[s
     return {"n": len(num), "n_clusters": len(arr), "mean": ratio, "ci95": [float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))]}
 
 
-def skill_flag(delta_brier: float | None, ci: list[float] | None, n_clusters: int) -> str:
-    """Colour code of (market Brier - model Brier): positive = model better. Green only when the CI excludes 0."""
+def benjamini_hochberg(pvals: list[float | None], q: float = 0.10) -> list[float | None]:
+    """BH-adjusted p-values (FDR) over the families tested; ``None`` stays ``None``. Controls the false-discovery rate across the
+    ~17 family comparisons that a single report makes."""
+    idx = [i for i, p in enumerate(pvals) if p is not None]
+    out: list[float | None] = [None] * len(pvals)
+    m = len(idx)
+    order = sorted(idx, key=lambda i: pvals[i])  # type: ignore[arg-type,return-value]
+    prev = 1.0
+    for rank in range(m, 0, -1):
+        i = order[rank - 1]
+        prev = min(prev, float(pvals[i]) * m / rank)  # type: ignore[arg-type]
+        out[i] = prev
+    return out
+
+
+UNGRADED_SERIES_GROUPS = (
+    ("PROT", "protected_prop_needs_period_participation"),  # resolves to fair price if the player only played the first half
+    ("ESCALATOR", "scalar_payout_formula_not_binary"),
+    ("WINMARGIN", "win_margin_bucket_settleable_from_final_score_no_model_probability"),
+    ("PTSLEADER", "points_leader_no_model_probability"),
+    ("RACE", "race_to_no_model_probability"),
+)
+
+
+def ungraded_group(ticker: str) -> str:
+    series = ticker.split("-")[0]
+    for key, name in UNGRADED_SERIES_GROUPS:
+        if key in series:
+            return name
+    return ""
+
+
+def skill_flag(delta_brier: float | None, ci: list[float] | None, n_clusters: int, q_bh: float | None = None, q: float = 0.10) -> str:
+    """Colour of (market Brier - model Brier): positive = model better. Green/red only when the game-clustered CI excludes 0 AND, when
+    a multiple-comparison q-value is supplied, the BH-adjusted q is below ``q``; anything else is yellow (inconclusive)."""
     if delta_brier is None:
         return "⚪"
     if ci is None or n_clusters < MIN_CLUSTERS_FOR_CI:
-        return "🟡" if delta_brier > 0 else "🔴"
-    if ci[0] > 0:
+        return "🟡"
+    significant = q_bh is None or q_bh < q
+    if ci[0] > 0 and significant:
         return "🟢"
-    if ci[1] < 0:
+    if ci[1] < 0 and significant:
         return "🔴"
     return "🟡"
 
@@ -381,6 +417,9 @@ def audit_date(archive: Path, date_et: str, out_dir: Path, now: datetime | None 
                     why = str(s.get("reason") or "").split("(")[0].strip().lower()
                     why = "_".join(why.replace("'", "").split())[:40]
                     reason = f"settlement_{str(o).lower()}:{why}" if why else f"settlement_{str(o).lower()}"
+                    grp = ungraded_group(tk)
+                    if grp:
+                        reason = f"{reason}|{grp}"
             elif n_pred_by_ticker.get(tk, 0) == 0:
                 reason = "no_model_forecast"
             else:
@@ -432,6 +471,11 @@ def _family_table(rows: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
             "clv_selection_mean": float(np.mean(clv_s)) if clv_s else None, "n_clv_selection": len(clv_s),
             "clv_actual_fill_n": 0,
         })
+    qs = benjamini_hochberg([t["market_minus_model_brier"].get("p_boot") for t in table])
+    for t, qv in zip(table, qs, strict=True):
+        t["q_bh_market_minus_model"] = qv
+        d = t["market_minus_model_brier"]
+        t["skill"] = skill_flag(d["mean"], d["ci95"], d["n_clusters"], qv)
     return table
 
 
@@ -492,13 +536,13 @@ def render_markdown(rep: dict[str, Any]) -> str:
     lines += ["", "## Coverage", f"universe **{c['universe']}** = graded **{c['graded']}** + ungraded **{c['universe'] - c['graded']}**", ""]
     for k, v in c.get("ungraded_by_reason", {}).items():
         lines.append(f"- ungraded `{k}`: {v}")
-    lines += [f"- refused: {c.get('refused')}", "", "## Family performance (latest pre-tip forecast per ticker; 🟢 model beats market CI>0, 🟡 inconclusive, 🔴 market better, ⚪ no market)", "",
-              "| family | n | games | p̄ | base | Brier model | Brier mkt | mkt−model (95% CI) | skill | +EV picks | ROI after fee (95% CI) | CLV exec | CLV sel |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    lines += [f"- refused: {c.get('refused')}", "", "## Family performance (latest pre-tip forecast per ticker; 🟢 model beats market, 🔴 market beats model — both only when the game-clustered CI excludes 0 and BH q<0.10 across families; 🟡 inconclusive; ⚪ no market)", "",
+              "| family | n | games | p̄ | base | Brier model | Brier mkt | mkt−model (95% CI) | q(BH) | skill | +EV picks | ROI after fee (95% CI) | CLV exec | CLV sel |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for t in rep.get("headline_latest_pretip_by_family", []):
         d, r = t["market_minus_model_brier"], t["pick_roi_after_fee"]
         dci = f"{_fmt(d['mean'])} {d['ci95'] and [round(x, 3) for x in d['ci95']] or ''}"
         rci = f"{_fmt(r['mean'])} {r['ci95'] and [round(x, 3) for x in r['ci95']] or ''}"
-        lines.append(f"| {t['family']} | {t['n']} | {t['n_games']} | {_fmt(t['mean_p_model'], 3)} | {_fmt(t['base_rate'], 3)} | {_fmt(t['brier_model'])} | {_fmt(t['brier_market_mid'])} | {dci} | {t['skill']} | {t['n_positive_ev_picks']} | {rci} | {_fmt(t['clv_quoted_exec_mean'])} | {_fmt(t['clv_selection_mean'])} |")
+        lines.append(f"| {t['family']} | {t['n']} | {t['n_games']} | {_fmt(t['mean_p_model'], 3)} | {_fmt(t['base_rate'], 3)} | {_fmt(t['brier_model'])} | {_fmt(t['brier_market_mid'])} | {dci} | {_fmt(t.get('q_bh_market_minus_model'), 3)} | {t['skill']} | {t['n_positive_ev_picks']} | {rci} | {_fmt(t['clv_quoted_exec_mean'])} | {_fmt(t['clv_selection_mean'])} |")
     for title, key, col in (("By time before tip (all horizons; rows are NOT independent)", "by_horizon", "horizon"), ("By game", "by_game", "game_id"), ("By model-probability bin", "by_price_bin", "price_bin")):
         lines += ["", f"## {title}", "", f"| {col} | n | Brier model | Brier mkt | skill | +EV picks | ROI |", "|---|---|---|---|---|---|---|"]
         for t in rep.get(key, []):

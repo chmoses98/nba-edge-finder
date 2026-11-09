@@ -133,3 +133,15 @@ def test_clustered_ci_and_skill_flag_are_conservative():
     assert r["ci95"] is None, "fewer than 5 games: no interval, so no green flag"
     assert skill_flag(0.05, None, 3) == "🟡"
     assert skill_flag(0.05, [0.01, 0.09], 10) == "🟢" and skill_flag(-0.05, [-0.09, -0.01], 10) == "🔴" and skill_flag(0.0, [-0.1, 0.1], 10) == "🟡"
+
+
+def test_bh_controls_multiplicity_and_skill_requires_q():
+    from nba_edge.audit.markets import benjamini_hochberg, ungraded_group
+
+    q = benjamini_hochberg([0.001, 0.02, 0.04, 0.5, None])
+    assert q[4] is None and q[0] == pytest.approx(0.004) and all(a <= b for a, b in zip(q[:3], q[1:4], strict=False))
+    assert skill_flag(0.05, [0.01, 0.09], 10, q_bh=0.5) == "🟡", "CI excludes 0 but the family-wise q does not: still inconclusive"
+    assert skill_flag(0.05, [0.01, 0.09], 10, q_bh=0.01) == "🟢"
+    assert ungraded_group("KXNBAPTSPROT-26NOV08BKNDAL-X") == "protected_prop_needs_period_participation"
+    assert ungraded_group("KXNBAWINMARGIN-26NOV08BKNDAL-BKN11TO20").startswith("win_margin")
+    assert ungraded_group("KXNBAPTS-26NOV08BKNDAL-X") == ""

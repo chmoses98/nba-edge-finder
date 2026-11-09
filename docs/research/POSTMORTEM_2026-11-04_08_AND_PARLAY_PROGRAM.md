@@ -60,3 +60,21 @@ Paper tickets are frozen before the first tip; no orders and no RFQ submissions 
 
 ## 5. Nightly automation
 `.github/workflows/nightly_postmortem.yml` (06:40 ET): sparse archive fetch → `nba audit-markets` for the last two ET dates (fails the job on BLOCKED) → `nba parlay-paper eval` → artifact upload. Writes nothing to any branch.
+
+## 6. Follow-up (2026-11-09 evening): root-cause evidence, ungraded accounting, runtime
+
+**Multiple-comparison control.** The audit now reports Benjamini–Hochberg q across the family comparisons; green/red requires a game-clustered CI excluding 0 **and** q < 0.10. Nov 4: market beats model (q<0.10) on `game_total` (q=.009), `team_total` (.017), `player_points` (.043), `player_threes` (.043). Nov 8: nothing survives.
+
+**Ungraded accounting (Nov 4).** Of 3,527 "semantics not proven" tickets, 2,900 (82%) are `*PROT` protected props (identical to the base prop except that a player who only plays the first half resolves to the fair price). They are gradeable as the base prop once per-period participation is known — the single largest coverage gain available. The rest: 199 points-leader, 134 scalar escalators (payout formula `floor(10000·(y/50)^3)/10000`, not binary: needs expected-payout scoring, not Brier), 112 win-margin buckets (settleable from the final score; the simulator emits no probability for them), 84 race-to, 98 other. Same split on Nov 8 (1,691 PROT of 1,998).
+
+**Model-vs-market root-cause evidence** (`scripts/audit_diagnostics.py`; 21 games over both dates, per-game not per-rung):
+* Totals are **anti-informative**: across games the sign of the model's disagreement with the market total is negatively correlated with the realised outcome vs market (game_total ρ=−0.62, team_total −0.59, period_total −0.66; p≤0.01). A model that merely added noise would show ρ≈0.
+* The crude injury proxy does **not** explain it: ρ(model−market total gap, number of non-G-League OUT players) ≈ −0.02…−0.05. So the "missing team injury impact" hypothesis (L2) is not supported as the driver of the totals error, and PR #81's candidate failed its held-out test (below). Pace/efficiency attribution needs the #61 postgame diagnostics over ≥ 30 games on the `projection-data` branch.
+* Frozen-weight blend: weights fitted on Nov 4 only are ≈0 for totals, player points and threes and ≤ 0.15 elsewhere; scored on untouched Nov 8 (4,060 tickets) pooled Brier is model 0.1612, market 0.1534, blend 0.1530. The market is the better forecast; a heavily market-weighted blend is at best marginally better. **No promotion**: 21 games, and the weights should be re-estimated prospectively.
+* Caveat: `period_winner` shows ρ=+0.96 only because both teams' tickers appear per game and mirror each other; it is an artifact, not skill.
+
+**#81 held-out result.** REJECT_FOR_PRODUCTION (RMSE gain −0.0005, CI [−0.0014, +0.0004], 2,444 team-games from untouched 2025-26). Details in `INJURY_RESPONSE_SHADOW.md`.
+
+**Evaluator runtime.** `nba evaluate` is memory-bounded (the unbounded version was OOM-killed at 2M predictions) and capped at 150k new rows / 600 s per run, newest partitions first; the 1.4M-row backlog drains over ~10 runs (~85 s each locally; steady state 65 s), and market-only closes are cached. A run with eligible settled predictions but zero rows exits 3.
+
+**CI.** The failing `dry-run` check (projection-foundation) died with "runner has received a shutdown signal" ~11 minutes into the research stage, exactly like the scheduled run on unmodified `main` (run 42679890601, same step, 11m08s) — infrastructure, not this change.
