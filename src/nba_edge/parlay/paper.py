@@ -17,6 +17,9 @@ from nba_edge.timeutil import parse_iso
 MIN_LEG_EDGE = 0.04  # model prob minus fee-adjusted break-even at the captured ask
 PROP_MIN_EDGE = 0.10  # props are only admitted with a much larger edge
 STAKE_USD = 10.0
+# Market-anchoring weight on the model for the `selective_shrunk` strategy. Derived from the 2026-11-04 development audit only (blend weights
+# were 0.00-0.15 for most families; see scripts/audit_diagnostics.py); NOT tuned on 2026-11-08. Re-estimate prospectively.
+SHRINK_W = 0.10
 SEED = 20261109
 
 
@@ -60,6 +63,13 @@ def candidate_legs(archive: Path, date_et: str, now: datetime, allow_props: bool
     return {g: v for g, v in out.items() if v}
 
 
+def shrunk(leg: Leg, w: float = SHRINK_W) -> Leg | None:
+    """Leg with the model probability pulled toward the market (None without a market probability)."""
+    if leg.p_market is None:
+        return None
+    return Leg(leg.ticker, leg.game_id, leg.side, leg.ask_cents, w * leg.p_model + (1.0 - w) * leg.p_market, leg.p_market, leg.family)
+
+
 def make_tickets(legs_by_game: dict[str, list[Leg]], date_et: str, now: datetime, first_tip: datetime, n_legs: int = 8) -> list[Ticket]:
     """One ticket per strategy from at most one leg per game (cross-game legs only: no same-game dependence is assumed away)."""
     games = sorted(legs_by_game)
@@ -67,8 +77,18 @@ def make_tickets(legs_by_game: dict[str, list[Leg]], date_et: str, now: datetime
     out: list[Ticket] = []
     if len(games) >= 2:
         top = sorted((v[0] for v in legs_by_game.values()), key=lambda leg: leg.p_model - breakeven_prob(leg.ask_cents), reverse=True)
-        out.append(build_ticket(top[:n_legs], date_et, now, first_tip, STAKE_USD, strategy="selective"))
+        t = build_ticket(top[:n_legs], date_et, now, first_tip, STAKE_USD, strategy="selective")
+        t.notes.append("RAW model probabilities: hypothesis under test; the audit found model-market gaps on totals/props anti-informative")
+        t.ticket_id = t.content_hash()[:16]
+        out.append(t)
         out.append(build_ticket(top[:2], date_et, now, first_tip, STAKE_USD, strategy="simple_2leg"))
+        anchored = [x for x in (shrunk(v[0]) for v in legs_by_game.values()) if x is not None]
+        anchored.sort(key=lambda leg: leg.p_model - breakeven_prob(leg.ask_cents), reverse=True)
+        if len(anchored) >= 2:
+            t = build_ticket(anchored[:n_legs], date_et, now, first_tip, STAKE_USD, strategy="selective_shrunk")
+            t.notes.append(f"leg probabilities shrunk toward market (w_model={SHRINK_W}); control for the winner's-curse on raw model-market gaps")
+            t.ticket_id = t.content_hash()[:16]
+            out.append(t)
         pick = [rng.choice(legs_by_game[g]) for g in games][:n_legs]
         out.append(build_ticket(pick, date_et, now, first_tip, STAKE_USD, strategy="random_same_pool"))
     return out

@@ -109,5 +109,5 @@ def test_paper_freeze_and_eval_end_to_end(tmp_path):
     assert run_eval(tmp_path / "a", tmp_path / "p") == 0
     import json
     rep = json.loads((tmp_path / "p" / "parlay_eval.json").read_text())
-    assert rep["selective"]["resolved"] == 1 and rep["selective"]["hits"] == 1 and rep["selective"]["priced_by_rfq"] == 0
+    assert "selective_shrunk" in rep and rep["selective"]["resolved"] == 1 and rep["selective"]["hits"] == 1 and rep["selective"]["priced_by_rfq"] == 0
     assert rep["selective"]["verdict"] == "INSUFFICIENT_EVIDENCE"

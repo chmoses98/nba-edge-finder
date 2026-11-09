@@ -46,8 +46,7 @@ jobs:
       - name: Paper parlay evaluation (no-op until tickets exist)
         if: always()
         run: |
-          mkdir -p parlay-out
-          nba parlay-paper eval --archive "$RUNNER_TEMP/arch" --out parlay-out || true
+          nba parlay-paper eval --archive "$RUNNER_TEMP/arch" --out docs/parlay_paper || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -56,4 +55,4 @@ jobs:
             audit-out/**/report.md
             audit-out/**/report.json
             audit-out/**/universe.csv
-            parlay-out/**
+            docs/parlay_paper/parlay_eval.json
