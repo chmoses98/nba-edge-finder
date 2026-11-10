@@ -1,6 +1,6 @@
-# Evaluation report (2026-11-10T16:18:52Z)
+# Evaluation report (2026-11-10T17:58:59Z)
 
-rows=1475078 pregame=1475078 new_this_run=125078
+rows=1475078 pregame=1475078 new_this_run=0
 
 ## game_spread
 
