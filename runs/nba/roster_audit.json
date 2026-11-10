@@ -1,58 +1,28 @@
 {
  "availability": {
-  "blocked_but_not_ruled_out": [],
+  "blocked_but_not_ruled_out": [
+   "Devin Booker (UNVERIFIED)",
+   "Dillon Brooks (UNVERIFIED)"
+  ],
   "misaligned": [],
   "n_misaligned": 0,
   "official_explicit_designations": {
-   "ACTIVE": 169,
+   "ACTIVE": 175,
    "DOUBTFUL": 13,
-   "OUT": 1027,
-   "PROBABLE": 31,
-   "QUESTIONABLE": 85
+   "OUT": 1069,
+   "PROBABLE": 26,
+   "QUESTIONABLE": 93
   },
   "ruled_out_rows_not_blocked": []
  },
- "checked_utc": "2026-11-09T19:46:31Z",
- "errors": [],
- "feed_generated_utc": "2026-11-09T19:39:32Z",
- "feed_sha256": "f941748005cf3e6e3f13ce234f7957668261a004653ad4e6231da243e972631d",
- "genuine_roster_errors": 0,
+ "checked_utc": "2026-11-10T01:35:43Z",
+ "errors": [
+  "OKC: not_on_league_roster_of_this_team: Nique Clifford -> listed on ['SAC']"
+ ],
+ "feed_generated_utc": "2026-11-10T01:28:48Z",
+ "feed_sha256": "2bb669d7f2e59c6dabbdebf2849a02fc34eb299edb3c60fe8a0294cb52055f54",
+ "genuine_roster_errors": 1,
  "identity": {
-  "ATL": {
-   "espn_roster": 18,
-   "espn_roster_not_in_feed": [],
-   "feed": 18,
-   "league_roster_not_in_feed": [
-    "RayJ Dennis&nbsp;&nbsp;(TW)",
-    "Jalen Wilson&nbsp;&nbsp;(TW)",
-    "Keshon Gilbert&nbsp;&nbsp;(TW)"
-   ],
-   "nba_roster": 18,
-   "not_on_espn_roster_of_this_team": [],
-   "not_on_league_roster_of_this_team": [],
-   "on_two_rosters": [],
-   "unconfirmed_by_independent_roster": [
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report",
-      "named in a dated transaction for this team"
-     ],
-     "name": "Jalen Wilson"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "RayJ Dennis"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Keshon Gilbert"
-    }
-   ]
-  },
   "BOS": {
    "espn_roster": 16,
    "espn_roster_not_in_feed": [],
@@ -89,105 +59,6 @@
     }
    ]
   },
-  "CHA": {
-   "espn_roster": 18,
-   "espn_roster_not_in_feed": [],
-   "feed": 18,
-   "league_roster_not_in_feed": [
-    "PJ Hall&nbsp;&nbsp;(TW)",
-    "Michael Ajayi&nbsp;&nbsp;(TW)",
-    "Kylan Boswell&nbsp;&nbsp;(TW)"
-   ],
-   "nba_roster": 18,
-   "not_on_espn_roster_of_this_team": [],
-   "not_on_league_roster_of_this_team": [],
-   "on_two_rosters": [],
-   "unconfirmed_by_independent_roster": [
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Kylan Boswell"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "PJ Hall"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Michael Ajayi"
-    }
-   ]
-  },
-  "CLE": {
-   "espn_roster": 15,
-   "espn_roster_not_in_feed": [],
-   "feed": 15,
-   "league_roster_not_in_feed": [
-    "Tristan Enaruna&nbsp;&nbsp;(TW)",
-    "Nae'Qwan Tomlin",
-    "Ernest Udeh Jr.&nbsp;&nbsp;(TW)",
-    "Khalifa Diop"
-   ],
-   "nba_roster": 16,
-   "not_on_espn_roster_of_this_team": [],
-   "not_on_league_roster_of_this_team": [],
-   "on_two_rosters": [],
-   "unconfirmed_by_independent_roster": [
-    {
-     "corroborated_by": [
-      "named in a dated transaction for this team"
-     ],
-     "name": "Norchad Omier"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Ernest Udeh Jr."
-    },
-    {
-     "corroborated_by": [
-      "named in a dated transaction for this team"
-     ],
-     "name": "Riley Minix"
-    }
-   ]
-  },
-  "DAL": {
-   "espn_roster": 18,
-   "espn_roster_not_in_feed": [],
-   "feed": 18,
-   "league_roster_not_in_feed": [
-    "Walter Clayton&nbsp;&nbsp;(TW)",
-    "Tobi Lawal&nbsp;&nbsp;(TW)",
-    "Jett Howard&nbsp;&nbsp;(TW)"
-   ],
-   "nba_roster": 18,
-   "not_on_espn_roster_of_this_team": [],
-   "not_on_league_roster_of_this_team": [],
-   "on_two_rosters": [],
-   "unconfirmed_by_independent_roster": [
-    {
-     "corroborated_by": [],
-     "name": "Walter Clayton Jr."
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Jett Howard"
-    },
-    {
-     "corroborated_by": [],
-     "name": "Tobi Lawal"
-    }
-   ]
-  },
   "DEN": {
    "espn_roster": 17,
    "espn_roster_not_in_feed": [],
@@ -217,45 +88,6 @@
       "named in a dated transaction for this team"
      ],
      "name": "Cam Whitmore"
-    }
-   ]
-  },
-  "DET": {
-   "espn_roster": 18,
-   "espn_roster_not_in_feed": [],
-   "feed": 18,
-   "league_roster_not_in_feed": [
-    "Ron Holland",
-    "Isaac Jones&nbsp;&nbsp;(TW)",
-    "Elijah Harkless&nbsp;&nbsp;(TW)",
-    "Ugonna Onyenso&nbsp;&nbsp;(TW)"
-   ],
-   "nba_roster": 18,
-   "not_on_espn_roster_of_this_team": [],
-   "not_on_league_roster_of_this_team": [],
-   "on_two_rosters": [],
-   "unconfirmed_by_independent_roster": [
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Elijah Harkless"
-    },
-    {
-     "corroborated_by": [],
-     "name": "Ronald Holland II"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Ugonna Onyenso"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Isaac Jones"
     }
    ]
   },
@@ -325,87 +157,49 @@
     }
    ]
   },
-  "IND": {
-   "espn_roster": 17,
+  "LAC": {
+   "espn_roster": 19,
    "espn_roster_not_in_feed": [],
-   "feed": 17,
+   "feed": 19,
    "league_roster_not_in_feed": [
-    "Jalen Slawson&nbsp;&nbsp;(TW)",
-    "Braden Smith&nbsp;&nbsp;(TW)",
-    "Kobe Brown&nbsp;&nbsp;(TW)"
+    "Nick Martinelli&nbsp;&nbsp;(TW)",
+    "Cam Christie&nbsp;&nbsp;(TW)",
+    "Jalen Pickett&nbsp;&nbsp;(TW)",
+    "Nicolas Batum"
    ],
-   "nba_roster": 17,
+   "nba_roster": 20,
    "not_on_espn_roster_of_this_team": [],
    "not_on_league_roster_of_this_team": [],
    "on_two_rosters": [],
    "unconfirmed_by_independent_roster": [
     {
+     "corroborated_by": [],
+     "name": "Jalen Pickett"
+    },
+    {
      "corroborated_by": [
       "named under this team on the official injury report",
       "named in a dated transaction for this team"
      ],
-     "name": "Jalen Slawson"
+     "name": "Cam Christie"
     },
     {
      "corroborated_by": [
       "named under this team on the official injury report"
      ],
-     "name": "Kobe Brown"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report",
-      "named in a dated transaction for this team"
-     ],
-     "name": "Braden Smith"
+     "name": "Nick Martinelli"
     }
    ]
   },
-  "LAL": {
-   "espn_roster": 19,
+  "MIA": {
+   "espn_roster": 17,
    "espn_roster_not_in_feed": [],
-   "feed": 19,
+   "feed": 17,
    "league_roster_not_in_feed": [
-    "Chris Ma\u00f1on&nbsp;&nbsp;(TW)",
-    "Lawson Lovering&nbsp;&nbsp;(TW)",
-    "Nick Smith Jr.",
-    "Arthur Kaluma&nbsp;&nbsp;(TW)"
-   ],
-   "nba_roster": 19,
-   "not_on_espn_roster_of_this_team": [],
-   "not_on_league_roster_of_this_team": [],
-   "on_two_rosters": [],
-   "unconfirmed_by_independent_roster": [
-    {
-     "corroborated_by": [],
-     "name": "Arthur Kaluma"
-    },
-    {
-     "corroborated_by": [
-      "named in a dated transaction for this team"
-     ],
-     "name": "Lawson Lovering"
-    },
-    {
-     "corroborated_by": [],
-     "name": "Chris Manon"
-    },
-    {
-     "corroborated_by": [
-      "named in a dated transaction for this team"
-     ],
-     "name": "AK Okereke"
-    }
-   ]
-  },
-  "MEM": {
-   "espn_roster": 19,
-   "espn_roster_not_in_feed": [],
-   "feed": 19,
-   "league_roster_not_in_feed": [
-    "Jahmai Mashack&nbsp;&nbsp;(TW)",
-    "Javon Small&nbsp;&nbsp;(TW)",
-    "Carson Cooper&nbsp;&nbsp;(TW)"
+    "Tre Donaldson&nbsp;&nbsp;(TW)",
+    "Vladislav Goldin&nbsp;&nbsp;(TW)",
+    "Jahmir Young",
+    "Keshad Johnson&nbsp;&nbsp;(TW)"
    ],
    "nba_roster": 18,
    "not_on_espn_roster_of_this_team": [],
@@ -413,30 +207,21 @@
    "on_two_rosters": [],
    "unconfirmed_by_independent_roster": [
     {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Jahmai Mashack"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Javon Small"
+     "corroborated_by": [],
+     "name": "Keshad Johnson"
     },
     {
      "corroborated_by": [
       "named under this team on the official injury report",
       "named in a dated transaction for this team"
      ],
-     "name": "Richie Saunders"
+     "name": "Vladislav Goldin"
     },
     {
      "corroborated_by": [
-      "named under this team on the official injury report",
-      "named in a dated transaction for this team"
+      "named under this team on the official injury report"
      ],
-     "name": "Carson Cooper"
+     "name": "Tre Donaldson"
     }
    ]
   },
@@ -543,6 +328,67 @@
     }
    ]
   },
+  "OKC": {
+   "espn_roster": 18,
+   "espn_roster_not_in_feed": [],
+   "feed": 18,
+   "league_roster_not_in_feed": [
+    "Josh Dix&nbsp;&nbsp;(TW)",
+    "Brooks Barnhizer&nbsp;&nbsp;(TW)",
+    "Micah Peavy&nbsp;&nbsp;(TW)",
+    "Dalen Terry"
+   ],
+   "nba_roster": 18,
+   "not_on_espn_roster_of_this_team": [],
+   "not_on_league_roster_of_this_team": [
+    "Nique Clifford -> listed on ['SAC']"
+   ],
+   "on_two_rosters": [],
+   "unconfirmed_by_independent_roster": [
+    {
+     "corroborated_by": [],
+     "name": "Micah Peavy"
+    },
+    {
+     "corroborated_by": [],
+     "name": "Brooks Barnhizer"
+    },
+    {
+     "corroborated_by": [],
+     "name": "Josh Dix"
+    }
+   ]
+  },
+  "ORL": {
+   "espn_roster": 17,
+   "espn_roster_not_in_feed": [],
+   "feed": 17,
+   "league_roster_not_in_feed": [
+    "Alex Morales&nbsp;&nbsp;(TW)",
+    "Colin Castleton&nbsp;&nbsp;(TW)",
+    "Izaiyah Nelson&nbsp;&nbsp;(TW)"
+   ],
+   "nba_roster": 17,
+   "not_on_espn_roster_of_this_team": [],
+   "not_on_league_roster_of_this_team": [],
+   "on_two_rosters": [],
+   "unconfirmed_by_independent_roster": [
+    {
+     "corroborated_by": [],
+     "name": "Colin Castleton"
+    },
+    {
+     "corroborated_by": [],
+     "name": "Alex Morales"
+    },
+    {
+     "corroborated_by": [
+      "named under this team on the official injury report"
+     ],
+     "name": "Izaiyah Nelson"
+    }
+   ]
+  },
   "PHI": {
    "espn_roster": 17,
    "espn_roster_not_in_feed": [],
@@ -609,6 +455,83 @@
     }
    ]
   },
+  "POR": {
+   "espn_roster": 17,
+   "espn_roster_not_in_feed": [],
+   "feed": 17,
+   "league_roster_not_in_feed": [
+    "Chris Youngblood&nbsp;&nbsp;(TW)",
+    "Jayson Kent&nbsp;&nbsp;(TW)",
+    "John Tonje&nbsp;&nbsp;(TW)"
+   ],
+   "nba_roster": 17,
+   "not_on_espn_roster_of_this_team": [],
+   "not_on_league_roster_of_this_team": [],
+   "on_two_rosters": [],
+   "unconfirmed_by_independent_roster": [
+    {
+     "corroborated_by": [
+      "named under this team on the official injury report"
+     ],
+     "name": "John Tonje"
+    },
+    {
+     "corroborated_by": [
+      "named under this team on the official injury report"
+     ],
+     "name": "Jayson Kent"
+    },
+    {
+     "corroborated_by": [
+      "named under this team on the official injury report"
+     ],
+     "name": "Chris Youngblood"
+    }
+   ]
+  },
+  "SAC": {
+   "espn_roster": 16,
+   "espn_roster_not_in_feed": [],
+   "feed": 16,
+   "league_roster_not_in_feed": [
+    "Nique Clifford",
+    "Leaky Black&nbsp;&nbsp;(TW)",
+    "Jonathan Mogbo&nbsp;&nbsp;(TW)",
+    "Killian Hayes",
+    "Sean Pedulla&nbsp;&nbsp;(TW)"
+   ],
+   "nba_roster": 17,
+   "not_on_espn_roster_of_this_team": [],
+   "not_on_league_roster_of_this_team": [],
+   "on_two_rosters": [],
+   "unconfirmed_by_independent_roster": [
+    {
+     "corroborated_by": [
+      "named in a dated transaction for this team"
+     ],
+     "name": "Leaky Black"
+    },
+    {
+     "corroborated_by": [
+      "named under this team on the official injury report"
+     ],
+     "name": "Dylan Cardwell"
+    },
+    {
+     "corroborated_by": [
+      "named under this team on the official injury report",
+      "named in a dated transaction for this team"
+     ],
+     "name": "Sean Pedulla"
+    },
+    {
+     "corroborated_by": [
+      "named under this team on the official injury report"
+     ],
+     "name": "Jonathan Mogbo"
+    }
+   ]
+  },
   "SAS": {
    "espn_roster": 17,
    "espn_roster_not_in_feed": [],
@@ -643,50 +566,14 @@
     }
    ]
   },
-  "TOR": {
-   "espn_roster": 17,
-   "espn_roster_not_in_feed": [],
-   "feed": 17,
-   "league_roster_not_in_feed": [
-    "Malachi Smith&nbsp;&nbsp;(TW)",
-    "Nate Bittle&nbsp;&nbsp;(TW)"
-   ],
-   "nba_roster": 16,
-   "not_on_espn_roster_of_this_team": [],
-   "not_on_league_roster_of_this_team": [],
-   "on_two_rosters": [],
-   "unconfirmed_by_independent_roster": [
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report",
-      "named in a dated transaction for this team"
-     ],
-     "name": "Malachi Smith"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report",
-      "named in a dated transaction for this team"
-     ],
-     "name": "Kevin McCullar Jr."
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report",
-      "named in a dated transaction for this team"
-     ],
-     "name": "Nate Bittle"
-    }
-   ]
-  },
-  "WAS": {
+  "UTA": {
    "espn_roster": 18,
    "espn_roster_not_in_feed": [],
    "feed": 18,
    "league_roster_not_in_feed": [
-    "Felix Okpara&nbsp;&nbsp;(TW)",
-    "Reece Beekman&nbsp;&nbsp;(TW)",
-    "Jamir Watkins&nbsp;&nbsp;(TW)"
+    "Trey Alexander&nbsp;&nbsp;(TW)",
+    "Harrison Ingram&nbsp;&nbsp;(TW)",
+    "Kobe Bufkin&nbsp;&nbsp;(TW)"
    ],
    "nba_roster": 18,
    "not_on_espn_roster_of_this_team": [],
@@ -697,367 +584,318 @@
      "corroborated_by": [
       "named under this team on the official injury report"
      ],
-     "name": "Reece Beekman"
+     "name": "Trey Alexander"
+    },
+    {
+     "corroborated_by": [
+      "named under this team on the official injury report",
+      "named in a dated transaction for this team"
+     ],
+     "name": "Harrison Ingram"
     },
     {
      "corroborated_by": [
       "named under this team on the official injury report"
      ],
-     "name": "Jamir Watkins"
-    },
-    {
-     "corroborated_by": [
-      "named under this team on the official injury report"
-     ],
-     "name": "Felix Okpara"
+     "name": "Kobe Bufkin"
     }
    ]
   }
  },
  "minutes": {
-  "ATL": {
-   "from_middling_p_play": 15.0,
-   "from_new_team_roles": 3.3,
-   "game_id": "401909952",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 246.3,
-   "minutes_sum_recomputed": 247.6,
-   "n_middling_p_play": 5,
-   "n_new_team": 3,
-   "n_players": 18,
-   "overshoot_without_new_team_roles": 0.011,
-   "status": "PASS",
-   "sum_p": 10.25,
-   "sum_without_new_team_roles": 244.2
-  },
   "BOS": {
-   "from_middling_p_play": 34.1,
-   "from_new_team_roles": 9.2,
+   "from_middling_p_play": 14.1,
+   "from_new_team_roles": 0.2,
    "game_id": "401909961",
    "minutes_scale": 1.0,
-   "minutes_sum_raw": 251.5,
-   "minutes_sum_recomputed": 253.2,
-   "n_middling_p_play": 6,
+   "minutes_sum_raw": 257.9,
+   "minutes_sum_recomputed": 259.3,
+   "n_middling_p_play": 3,
    "n_new_team": 2,
    "n_players": 16,
-   "overshoot_without_new_team_roles": 0.01,
+   "overshoot_without_new_team_roles": 0.073,
    "status": "PASS",
-   "sum_p": 12.26,
-   "sum_without_new_team_roles": 244.0
-  },
-  "CHA": {
-   "from_middling_p_play": 18.2,
-   "from_new_team_roles": 2.4,
-   "game_id": "401909953",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 225.4,
-   "minutes_sum_recomputed": 227.0,
-   "n_middling_p_play": 4,
-   "n_new_team": 2,
-   "n_players": 18,
-   "overshoot_without_new_team_roles": -0.07,
-   "status": "REVIEW",
-   "sum_p": 9.83,
-   "sum_without_new_team_roles": 224.6
-  },
-  "CLE": {
-   "from_middling_p_play": 10.0,
-   "from_new_team_roles": 2.1,
-   "game_id": "401909953",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 223.3,
-   "minutes_sum_recomputed": 224.9,
-   "n_middling_p_play": 3,
-   "n_new_team": 2,
-   "n_players": 15,
-   "overshoot_without_new_team_roles": -0.078,
-   "status": "PASS",
-   "sum_p": 9.9,
-   "sum_without_new_team_roles": 222.8
-  },
-  "DAL": {
-   "from_middling_p_play": 56.5,
-   "from_new_team_roles": 14.1,
-   "game_id": "401909956",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 246.1,
-   "minutes_sum_recomputed": 248.5,
-   "n_middling_p_play": 5,
-   "n_new_team": 2,
-   "n_players": 18,
-   "overshoot_without_new_team_roles": -0.029,
-   "status": "REVIEW",
-   "sum_p": 13.02,
-   "sum_without_new_team_roles": 234.4
+   "sum_p": 11.93,
+   "sum_without_new_team_roles": 259.2
   },
   "DEN": {
-   "from_middling_p_play": 17.8,
+   "from_middling_p_play": 18.1,
    "from_new_team_roles": 0,
    "game_id": "401909957",
    "minutes_scale": 1.0,
-   "minutes_sum_raw": 250.8,
-   "minutes_sum_recomputed": 253.0,
+   "minutes_sum_raw": 246.9,
+   "minutes_sum_recomputed": 249.0,
    "n_middling_p_play": 6,
    "n_new_team": 0,
    "n_players": 17,
-   "overshoot_without_new_team_roles": 0.047,
+   "overshoot_without_new_team_roles": 0.031,
    "status": "REVIEW",
-   "sum_p": 12.23,
-   "sum_without_new_team_roles": 253.0
-  },
-  "DET": {
-   "from_middling_p_play": 19.0,
-   "from_new_team_roles": 0.0,
-   "game_id": "401909954",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 231.0,
-   "minutes_sum_recomputed": 233.4,
-   "n_middling_p_play": 6,
-   "n_new_team": 1,
-   "n_players": 18,
-   "overshoot_without_new_team_roles": -0.034,
-   "status": "PASS",
-   "sum_p": 11.66,
-   "sum_without_new_team_roles": 233.4
+   "sum_p": 12.13,
+   "sum_without_new_team_roles": 249.0
   },
   "GSW": {
-   "from_middling_p_play": 14.7,
+   "from_middling_p_play": 15.0,
    "from_new_team_roles": 0,
    "game_id": "401909959",
-   "minutes_scale": 0.8653,
-   "minutes_sum_raw": 279.1,
-   "minutes_sum_recomputed": 281.2,
+   "minutes_scale": 0.8638,
+   "minutes_sum_raw": 279.6,
+   "minutes_sum_recomputed": 281.7,
    "n_middling_p_play": 3,
    "n_new_team": 0,
    "n_players": 18,
-   "overshoot_without_new_team_roles": 0.165,
+   "overshoot_without_new_team_roles": 0.166,
    "status": "REVIEW",
-   "sum_p": 12.05,
-   "sum_without_new_team_roles": 281.2
+   "sum_p": 12.09,
+   "sum_without_new_team_roles": 281.7
   },
   "HOU": {
-   "from_middling_p_play": 18.4,
+   "from_middling_p_play": 18.6,
    "from_new_team_roles": 0.0,
    "game_id": "401909957",
    "minutes_scale": 1.0,
-   "minutes_sum_raw": 246.4,
-   "minutes_sum_recomputed": 248.0,
+   "minutes_sum_raw": 246.8,
+   "minutes_sum_recomputed": 248.4,
    "n_middling_p_play": 4,
    "n_new_team": 2,
    "n_players": 17,
-   "overshoot_without_new_team_roles": 0.027,
+   "overshoot_without_new_team_roles": 0.029,
    "status": "PASS",
-   "sum_p": 10.14,
-   "sum_without_new_team_roles": 248.0
+   "sum_p": 10.18,
+   "sum_without_new_team_roles": 248.4
   },
-  "IND": {
-   "from_middling_p_play": 12.7,
-   "from_new_team_roles": 0,
-   "game_id": "401909956",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 255.8,
-   "minutes_sum_recomputed": 257.7,
-   "n_middling_p_play": 2,
-   "n_new_team": 0,
-   "n_players": 17,
-   "overshoot_without_new_team_roles": 0.067,
-   "status": "PASS",
-   "sum_p": 12.2,
-   "sum_without_new_team_roles": 257.7
-  },
-  "LAL": {
-   "from_middling_p_play": 50.3,
-   "from_new_team_roles": 7.1,
-   "game_id": "401909952",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 235.8,
-   "minutes_sum_recomputed": 238.0,
-   "n_middling_p_play": 10,
-   "n_new_team": 3,
-   "n_players": 19,
-   "overshoot_without_new_team_roles": -0.044,
-   "status": "PASS",
-   "sum_p": 12.19,
-   "sum_without_new_team_roles": 230.9
-  },
-  "MEM": {
-   "from_middling_p_play": 24.6,
-   "from_new_team_roles": 0.0,
-   "game_id": "401909955",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 246.4,
-   "minutes_sum_recomputed": 248.0,
+  "LAC": {
+   "from_middling_p_play": 27.1,
+   "from_new_team_roles": 24.7,
+   "game_id": "401909962",
+   "minutes_scale": 0.8233,
+   "minutes_sum_raw": 293.3,
+   "minutes_sum_recomputed": 295.2,
    "n_middling_p_play": 5,
-   "n_new_team": 1,
+   "n_new_team": 2,
    "n_players": 19,
-   "overshoot_without_new_team_roles": 0.027,
-   "status": "PASS",
-   "sum_p": 12.2,
-   "sum_without_new_team_roles": 248.0
+   "overshoot_without_new_team_roles": 0.12,
+   "status": "REVIEW",
+   "sum_p": 11.68,
+   "sum_without_new_team_roles": 270.5
   },
-  "MIL": {
-   "from_middling_p_play": 58.6,
-   "from_new_team_roles": 8.7,
-   "game_id": "401909960",
-   "minutes_scale": 0.8687,
-   "minutes_sum_raw": 278.0,
-   "minutes_sum_recomputed": 280.1,
+  "MIA": {
+   "from_middling_p_play": 27.5,
+   "from_new_team_roles": 3.9,
+   "game_id": "401909963",
+   "minutes_scale": 1.0,
+   "minutes_sum_raw": 240.8,
+   "minutes_sum_recomputed": 244.1,
    "n_middling_p_play": 8,
    "n_new_team": 1,
+   "n_players": 17,
+   "overshoot_without_new_team_roles": -0.006,
+   "status": "PASS",
+   "sum_p": 13.34,
+   "sum_without_new_team_roles": 240.2
+  },
+  "MIL": {
+   "from_middling_p_play": 24.3,
+   "from_new_team_roles": 8.3,
+   "game_id": "401909960",
+   "minutes_scale": 1.0,
+   "minutes_sum_raw": 269.3,
+   "minutes_sum_recomputed": 271.3,
+   "n_middling_p_play": 5,
+   "n_new_team": 1,
    "n_players": 18,
-   "overshoot_without_new_team_roles": 0.124,
+   "overshoot_without_new_team_roles": 0.089,
    "status": "REVIEW",
-   "sum_p": 13.7,
-   "sum_without_new_team_roles": 271.3
+   "sum_p": 14.59,
+   "sum_without_new_team_roles": 263.0
   },
   "NOP": {
-   "from_middling_p_play": 107.7,
-   "from_new_team_roles": 10.9,
+   "from_middling_p_play": 58.1,
+   "from_new_team_roles": 0.0,
    "game_id": "401909959",
    "minutes_scale": 1.0,
-   "minutes_sum_raw": 256.1,
-   "minutes_sum_recomputed": 257.7,
-   "n_middling_p_play": 11,
+   "minutes_sum_raw": 213.7,
+   "minutes_sum_recomputed": 214.8,
+   "n_middling_p_play": 6,
+   "n_new_team": 2,
+   "n_players": 18,
+   "overshoot_without_new_team_roles": -0.11,
+   "status": "REVIEW",
+   "sum_p": 8.76,
+   "sum_without_new_team_roles": 214.8
+  },
+  "NYK": {
+   "from_middling_p_play": 28.8,
+   "from_new_team_roles": 9.4,
+   "game_id": "401909960",
+   "minutes_scale": 1.0,
+   "minutes_sum_raw": 225.8,
+   "minutes_sum_recomputed": 227.7,
+   "n_middling_p_play": 7,
+   "n_new_team": 2,
+   "n_players": 17,
+   "overshoot_without_new_team_roles": -0.096,
+   "status": "PASS",
+   "sum_p": 12.8,
+   "sum_without_new_team_roles": 218.3
+  },
+  "OKC": {
+   "from_middling_p_play": 14.4,
+   "from_new_team_roles": 7.0,
+   "game_id": "401909965",
+   "minutes_scale": 1.0,
+   "minutes_sum_raw": 252.2,
+   "minutes_sum_recomputed": 253.7,
+   "n_middling_p_play": 2,
    "n_new_team": 2,
    "n_players": 18,
    "overshoot_without_new_team_roles": 0.022,
    "status": "PASS",
-   "sum_p": 11.46,
-   "sum_without_new_team_roles": 246.8
+   "sum_p": 11.01,
+   "sum_without_new_team_roles": 246.7
   },
-  "NYK": {
-   "from_middling_p_play": 47.5,
-   "from_new_team_roles": 8.9,
-   "game_id": "401909960",
+  "ORL": {
+   "from_middling_p_play": 42.9,
+   "from_new_team_roles": 0.0,
+   "game_id": "401909964",
    "minutes_scale": 1.0,
-   "minutes_sum_raw": 229.5,
-   "minutes_sum_recomputed": 231.0,
-   "n_middling_p_play": 9,
-   "n_new_team": 2,
-   "n_players": 17,
-   "overshoot_without_new_team_roles": -0.08,
-   "status": "PASS",
-   "sum_p": 11.74,
-   "sum_without_new_team_roles": 222.1
-  },
-  "PHI": {
-   "from_middling_p_play": 24.0,
-   "from_new_team_roles": 1.2,
-   "game_id": "401909961",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 240.2,
-   "minutes_sum_recomputed": 241.7,
-   "n_middling_p_play": 8,
-   "n_new_team": 2,
-   "n_players": 17,
-   "overshoot_without_new_team_roles": -0.004,
-   "status": "PASS",
-   "sum_p": 9.69,
-   "sum_without_new_team_roles": 240.5
-  },
-  "PHX": {
-   "from_middling_p_play": 19.8,
-   "from_new_team_roles": 4.8,
-   "game_id": "401909958",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 234.8,
-   "minutes_sum_recomputed": 237.2,
-   "n_middling_p_play": 7,
+   "minutes_sum_raw": 249.3,
+   "minutes_sum_recomputed": 250.5,
+   "n_middling_p_play": 4,
    "n_new_team": 1,
    "n_players": 17,
-   "overshoot_without_new_team_roles": -0.038,
+   "overshoot_without_new_team_roles": 0.037,
    "status": "PASS",
-   "sum_p": 11.75,
-   "sum_without_new_team_roles": 232.3
+   "sum_p": 10.42,
+   "sum_without_new_team_roles": 250.5
+  },
+  "PHI": {
+   "from_middling_p_play": 15.1,
+   "from_new_team_roles": 1.8,
+   "game_id": "401909961",
+   "minutes_scale": 1.0,
+   "minutes_sum_raw": 255.5,
+   "minutes_sum_recomputed": 257.2,
+   "n_middling_p_play": 5,
+   "n_new_team": 2,
+   "n_players": 17,
+   "overshoot_without_new_team_roles": 0.058,
+   "status": "REVIEW",
+   "sum_p": 10.48,
+   "sum_without_new_team_roles": 255.5
+  },
+  "PHX": {
+   "from_middling_p_play": 164.6,
+   "from_new_team_roles": 3.1,
+   "game_id": "401909962",
+   "minutes_scale": 1.45,
+   "minutes_sum_raw": 165.7,
+   "minutes_sum_recomputed": 164.6,
+   "n_middling_p_play": 15,
+   "n_new_team": 1,
+   "n_players": 17,
+   "overshoot_without_new_team_roles": -0.331,
+   "status": "REVIEW",
+   "sum_p": 8.51,
+   "sum_without_new_team_roles": 161.5
+  },
+  "POR": {
+   "from_middling_p_play": 29.9,
+   "from_new_team_roles": 0,
+   "game_id": "401909965",
+   "minutes_scale": 1.0,
+   "minutes_sum_raw": 268.0,
+   "minutes_sum_recomputed": 269.7,
+   "n_middling_p_play": 3,
+   "n_new_team": 0,
+   "n_players": 17,
+   "overshoot_without_new_team_roles": 0.117,
+   "status": "PASS",
+   "sum_p": 11.72,
+   "sum_without_new_team_roles": 269.7
+  },
+  "SAC": {
+   "from_middling_p_play": 41.2,
+   "from_new_team_roles": 0.0,
+   "game_id": "401909964",
+   "minutes_scale": 1.0,
+   "minutes_sum_raw": 265.4,
+   "minutes_sum_recomputed": 266.9,
+   "n_middling_p_play": 3,
+   "n_new_team": 2,
+   "n_players": 16,
+   "overshoot_without_new_team_roles": 0.105,
+   "status": "PASS",
+   "sum_p": 10.47,
+   "sum_without_new_team_roles": 266.9
   },
   "SAS": {
    "from_middling_p_play": 20.0,
    "from_new_team_roles": 0.0,
    "game_id": "401909958",
    "minutes_scale": 1.0,
-   "minutes_sum_raw": 246.7,
-   "minutes_sum_recomputed": 248.2,
+   "minutes_sum_raw": 246.6,
+   "minutes_sum_recomputed": 248.1,
    "n_middling_p_play": 3,
    "n_new_team": 2,
    "n_players": 17,
-   "overshoot_without_new_team_roles": 0.028,
+   "overshoot_without_new_team_roles": 0.027,
    "status": "PASS",
    "sum_p": 10.52,
-   "sum_without_new_team_roles": 248.2
+   "sum_without_new_team_roles": 248.1
   },
-  "TOR": {
-   "from_middling_p_play": 52.7,
+  "UTA": {
+   "from_middling_p_play": 34.6,
    "from_new_team_roles": 0.0,
-   "game_id": "401909955",
+   "game_id": "401909963",
    "minutes_scale": 1.0,
-   "minutes_sum_raw": 248.6,
-   "minutes_sum_recomputed": 250.0,
-   "n_middling_p_play": 5,
+   "minutes_sum_raw": 240.9,
+   "minutes_sum_recomputed": 242.4,
+   "n_middling_p_play": 3,
    "n_new_team": 3,
-   "n_players": 17,
-   "overshoot_without_new_team_roles": 0.035,
-   "status": "PASS",
-   "sum_p": 10.69,
-   "sum_without_new_team_roles": 250.0
-  },
-  "WAS": {
-   "from_middling_p_play": 33.2,
-   "from_new_team_roles": 0,
-   "game_id": "401909954",
-   "minutes_scale": 1.0,
-   "minutes_sum_raw": 250.8,
-   "minutes_sum_recomputed": 252.1,
-   "n_middling_p_play": 5,
-   "n_new_team": 0,
    "n_players": 18,
-   "overshoot_without_new_team_roles": 0.044,
-   "status": "PASS",
-   "sum_p": 10.8,
-   "sum_without_new_team_roles": 252.1
+   "overshoot_without_new_team_roles": 0.004,
+   "status": "REVIEW",
+   "sum_p": 10.4,
+   "sum_without_new_team_roles": 242.4
   }
  },
  "schema": "sift.nba_roster_audit.v1",
  "slate": "2026-11-09",
  "sources": {
   "espn_rosters": "ok",
-  "independent_rosters": "basketball-reference: ok (league host: unavailable {'ATL': 0, 'BOS': 0, 'CHA': 0, 'CLE': 0, 'DAL': 0, 'DEN': 0, 'DET': 0, 'GSW': 0, 'HOU': 0, 'IND': 0, 'LAL': 0, 'MEM': 0, 'MIL': 0, 'NOP': 0, 'NYK': 0, 'PHI': 0, 'PHX': 0, 'SAS': 0, 'TOR': 0, 'WAS': 0}); usable teams ['ATL', 'BOS', 'CHA', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAL', 'MEM', 'MIL', 'NOP', 'NYK', 'PHI', 'PHX', 'SAS', 'TOR', 'WAS']; dropped as incomplete []",
+  "independent_rosters": "basketball-reference: ok (league host: unavailable {'BOS': 0, 'DEN': 0, 'GSW': 0, 'HOU': 0, 'LAC': 0, 'MIA': 0, 'MIL': 0, 'NOP': 0, 'NYK': 0, 'OKC': 0, 'ORL': 0, 'PHI': 0, 'PHX': 0, 'POR': 0, 'SAC': 0, 'SAS': 0, 'UTA': 0}); usable teams ['BOS', 'DEN', 'GSW', 'HOU', 'LAC', 'MIA', 'MIL', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'UTA']; dropped as incomplete []",
   "transactions": "ok"
  },
  "transactions": [
   {
-   "date": "2026-11-07T08:00Z",
-   "team": "MEM",
-   "text": "Signed G Richie Saunders to two-way contract."
+   "date": "2026-11-08T08:00Z",
+   "team": "OKC",
+   "text": "Waived F Dalen Terry."
   },
   {
-   "date": "2026-11-05T08:00Z",
-   "team": "TOR",
-   "text": "Signed G Kevin McCullar Jr. to a two-way contract."
+   "date": "2026-11-08T08:00Z",
+   "team": "SAC",
+   "text": "Traded G Nique Clifford to the Oklahoma City Thunder."
   },
   {
-   "date": "2026-11-05T08:00Z",
-   "team": "CLE",
-   "text": "Signed F Norchad Omier to a two-way contract. Waived F Riley Minix."
+   "date": "2026-11-04T08:00Z",
+   "team": "OKC",
+   "text": "Signed F Dalen Terry to a contract for the remainder of the season."
   },
   {
-   "date": "2026-11-01T07:00Z",
-   "team": "CHA",
-   "text": "Exercised the third-year team options on Fs Kon Knueppel and Liam McNeeley."
-  },
-  {
-   "date": "2026-10-28T07:00Z",
-   "team": "LAL",
-   "text": "Waived F AK Okereke. Signed C Lawson Lovering to a two-way contract."
+   "date": "2026-10-23T07:00Z",
+   "team": "SAC",
+   "text": "Signed G Sean Pedulla to a two-way contract."
   },
   {
    "date": "2026-10-19T07:00Z",
-   "team": "CHA",
-   "text": "Signed G Brandon Miller to a multiyear contract extension."
+   "team": "OKC",
+   "text": "Re-signed G Cason Wallace to a rookie-scale contract extension."
   },
   {
    "date": "2026-10-19T07:00Z",
-   "team": "MEM",
-   "text": "Waived G Walter Clayton Jr. and G Micah Peavy."
+   "team": "SAC",
+   "text": "Waived G Adam Flagler."
   },
   {
    "date": "2026-10-19T07:00Z",
@@ -1071,33 +909,23 @@
   },
   {
    "date": "2026-10-19T07:00Z",
-   "team": "LAL",
-   "text": "Waived F Dalton Knecht."
-  },
-  {
-   "date": "2026-10-19T07:00Z",
    "team": "HOU",
    "text": "Waived Sean Pedulla. Converted Fs Oscar Tshiebwe and Julian Phillips's contract to two-way contracts."
   },
   {
-   "date": "2026-10-19T07:00Z",
-   "team": "DAL",
-   "text": "Waived F Dwight Powell."
+   "date": "2026-10-17T07:00Z",
+   "team": "OKC",
+   "text": "Waived F Buddy Boeheim, C Christoph Tilly and Gs. Nate Johnson, Dariq Whitehead and Lamar Wilderson."
   },
   {
    "date": "2026-10-17T07:00Z",
-   "team": "CHA",
-   "text": "Waived Gs. Jarkel Joiner and Latrell Wrightsell."
+   "team": "SAC",
+   "text": "Waived Gs Elfrid Payton and Tristen Newton. Waived F Viktor Lakhin."
   },
   {
    "date": "2026-10-17T07:00Z",
-   "team": "MEM",
-   "text": "Waived F Zach Cleveland."
-  },
-  {
-   "date": "2026-10-17T07:00Z",
-   "team": "TOR",
-   "text": "Converted the contract of C Nate Bittle to a two-way contract. Waived Gs Nimari Burnett, Jalen Celestine, Tyreke Key, F Tyson Degenhart and C Jamarion Sharp."
+   "team": "POR",
+   "text": "Waived F Jeremy Sochan."
   },
   {
    "date": "2026-10-17T07:00Z",
@@ -1111,18 +939,23 @@
   },
   {
    "date": "2026-10-17T07:00Z",
+   "team": "ORL",
+   "text": "Waived Fs Malaki Branham and Kevin Knox II. Waived G JD Davison."
+  },
+  {
+   "date": "2026-10-17T07:00Z",
    "team": "MIL",
    "text": "Waived Fs Johni Broome, Pete Nance, G Marcus Garrett and C Jake Stephens."
   },
   {
    "date": "2026-10-17T07:00Z",
-   "team": "LAL",
-   "text": "Waived C Rafael Castro and F Niwa Tait-Jones."
+   "team": "MIA",
+   "text": "Waived Fs Ezra Ausar and Gabe Madsen. Waived G Bez Mbeng and C Kylor Kelley."
   },
   {
    "date": "2026-10-17T07:00Z",
-   "team": "IND",
-   "text": "Waived Cs Keba Keita, Rienk Mast and F James Johnson."
+   "team": "LAC",
+   "text": "Signed G Cam Christie to a two-way contract. Waived Gs Miye Oni, Jahmyl Telfort and Blake Wesley."
   },
   {
    "date": "2026-10-17T07:00Z",
@@ -1131,23 +964,8 @@
   },
   {
    "date": "2026-10-17T07:00Z",
-   "team": "DET",
-   "text": "Waived F John Ukomadu. Waived G Brice Williams."
-  },
-  {
-   "date": "2026-10-17T07:00Z",
    "team": "DEN",
    "text": "Waived G Dame Goodwin and Fs Coleman Hawkins and Emanuel Miller."
-  },
-  {
-   "date": "2026-10-17T07:00Z",
-   "team": "DAL",
-   "text": "Waived Gs Seth Lundy and John Poulakidas."
-  },
-  {
-   "date": "2026-10-17T07:00Z",
-   "team": "CLE",
-   "text": "Waived Fs Rashaun Agee, Tre'Von Spillers and Gs Zack Austin and Noam Yaacov."
   },
   {
    "date": "2026-10-17T07:00Z",
@@ -1155,19 +973,9 @@
    "text": "Converted the contract of G Devin Carter to a two-way contract. Waived Fs Tucker Devries, Gabe McGlothan, Gs Hayden Gray and Milos Uzan."
   },
   {
-   "date": "2026-10-17T07:00Z",
-   "team": "ATL",
-   "text": "Waived F Cameron Corhen and G Kobe Johnson."
-  },
-  {
    "date": "2026-10-16T07:00Z",
-   "team": "CHA",
-   "text": "Waived G Pat Connaughton."
-  },
-  {
-   "date": "2026-10-16T07:00Z",
-   "team": "DAL",
-   "text": "Waived Fs Guillermo Diaz-Graham and Jorge Diaz-Graham."
+   "team": "POR",
+   "text": "Waived G Caleb Houstan."
   },
   {
    "date": "2026-10-16T07:00Z",
@@ -1175,14 +983,9 @@
    "text": "Re-signed G Payton Pritchard to a veteran extension."
   },
   {
-   "date": "2026-10-14T07:00Z",
-   "team": "TOR",
-   "text": "Waived C Trey Jemison III."
-  },
-  {
-   "date": "2026-10-14T07:00Z",
-   "team": "LAL",
-   "text": "Waived F Cole Swider."
+   "date": "2026-10-15T07:00Z",
+   "team": "SAC",
+   "text": "Converted the contract of F Leaky Black to a two-way contract."
   },
   {
    "date": "2026-10-14T07:00Z",
@@ -1190,24 +993,9 @@
    "text": "Waived C Steven Crowl."
   },
   {
-   "date": "2026-10-14T07:00Z",
-   "team": "CLE",
-   "text": "Waived G Jaxson Robinson."
-  },
-  {
    "date": "2026-10-13T07:00Z",
    "team": "DEN",
    "text": "Waived F Pedro Bradshaw."
-  },
-  {
-   "date": "2026-10-13T07:00Z",
-   "team": "ATL",
-   "text": "Waived G Isaac McKneely."
-  },
-  {
-   "date": "2026-10-12T07:00Z",
-   "team": "TOR",
-   "text": "Waived G Chucky Hepburn."
   },
   {
    "date": "2026-10-12T07:00Z",
@@ -1215,41 +1003,81 @@
    "text": "Waived G Lonnie Walker IV."
   },
   {
-   "date": "2026-10-05T07:00Z",
-   "team": "TOR",
-   "text": "Waived G Andre Jackson Jr."
+   "date": "2026-10-06T07:00Z",
+   "team": "OKC",
+   "text": "Waived G Robert McCray V."
   },
   {
-   "date": "2026-10-02T07:00Z",
-   "team": "DET",
-   "text": "Re-signed C Jalen Duren to a contract."
+   "date": "2026-10-06T07:00Z",
+   "team": "ORL",
+   "text": "Waived G Johnell Davis."
+  },
+  {
+   "date": "2026-10-06T07:00Z",
+   "team": "LAC",
+   "text": "Waived G Fletcher Loyer."
+  },
+  {
+   "date": "2026-10-05T07:00Z",
+   "team": "ORL",
+   "text": "Waived G Mike Sharavjamts."
+  },
+  {
+   "date": "2026-10-01T07:00Z",
+   "team": "HOU",
+   "text": "Waived C Rafael Castro."
+  },
+  {
+   "date": "2026-09-29T07:00Z",
+   "team": "PHX",
+   "text": "Signed F Phillip Wheeler."
+  },
+  {
+   "date": "2026-09-25T07:00Z",
+   "team": "SAC",
+   "text": "Waived Fs Gabe Levin and Tyrone Marshall Jr.."
+  },
+  {
+   "date": "2026-09-24T07:00Z",
+   "team": "POR",
+   "text": "Waived F Keylan Boone and Gs Barry Dunning and Mark Sears."
+  },
+  {
+   "date": "2026-09-23T07:00Z",
+   "team": "POR",
+   "text": "Waived G Mark Armstrong and C Samson Johnson."
+  },
+  {
+   "date": "2026-09-23T07:00Z",
+   "team": "DEN",
+   "text": "Waived G Boopie Miller."
+  },
+  {
+   "date": "2026-09-22T07:00Z",
+   "team": "MIA",
+   "text": "Claimed G Bez Mbeng off waivers. Signed G Pelle Larsson to a veteran contract extension."
+  },
+  {
+   "date": "2026-09-22T07:00Z",
+   "team": "DEN",
+   "text": "Waived G Reese Dixon-Waters and F Keonte Jones."
+  },
+  {
+   "date": "2026-09-18T07:00Z",
+   "team": "PHX",
+   "text": "Waived G David Stockton."
   }
  ],
  "transactions_about_new_team_players": [
   {
-   "date": "2026-11-07T08:00Z",
-   "team": "MEM",
-   "text": "Signed G Richie Saunders to two-way contract."
-  },
-  {
-   "date": "2026-11-05T08:00Z",
-   "team": "TOR",
-   "text": "Signed G Kevin McCullar Jr. to a two-way contract."
-  },
-  {
-   "date": "2026-11-05T08:00Z",
-   "team": "CLE",
-   "text": "Signed F Norchad Omier to a two-way contract. Waived F Riley Minix."
-  },
-  {
-   "date": "2026-10-28T07:00Z",
-   "team": "LAL",
-   "text": "Waived F AK Okereke. Signed C Lawson Lovering to a two-way contract."
+   "date": "2026-11-08T08:00Z",
+   "team": "SAC",
+   "text": "Traded G Nique Clifford to the Oklahoma City Thunder."
   },
   {
    "date": "2026-10-23T07:00Z",
-   "team": "NY",
-   "text": "Waived G Kevin McCullar Jr.."
+   "team": "SAC",
+   "text": "Signed G Sean Pedulla to a two-way contract."
   },
   {
    "date": "2026-10-19T07:00Z",
@@ -1268,8 +1096,8 @@
   },
   {
    "date": "2026-10-17T07:00Z",
-   "team": "TOR",
-   "text": "Converted the contract of C Nate Bittle to a two-way contract. Waived Gs Nimari Burnett, Jalen Celestine, Tyreke Key, F Tyson Degenhart and C Jamarion Sharp."
+   "team": "UTAH",
+   "text": "Claimed C Tony Bradley off waivers. Converted the contract of F Harrison Ingram to a twpo-way contract. Waived C Jonas Aidoo and G Tamar Bates."
   },
   {
    "date": "2026-10-17T07:00Z",
@@ -1282,19 +1110,14 @@
    "text": "Converted the contract of G Devin Carter to a two-way contract. Waived Fs Tucker Devries, Gabe McGlothan, Gs Hayden Gray and Milos Uzan."
   },
   {
-   "date": "2026-09-28T07:00Z",
-   "team": "MEM",
-   "text": "Signed Carson Cooper to a two-way contract. Waived C Lawson Lovering."
-  },
-  {
-   "date": "2026-09-21T07:00Z",
-   "team": "TOR",
-   "text": "Signed G Jaden Bradley. Converted G Malachi Smith to a two-way contract."
-  },
-  {
    "date": "2026-09-11T07:00Z",
    "team": "ATL",
    "text": "Waived Gs Devin Carter and Lamont Butler."
+  },
+  {
+   "date": "2026-08-20T07:00Z",
+   "team": "LAC",
+   "text": "Acquired G Max Strus from Cleveland."
   },
   {
    "date": "2026-08-18T07:00Z",
@@ -1302,29 +1125,19 @@
    "text": "Signed F Malik Dia to a two-way contract. Waived C Hunter Dickinson."
   },
   {
-   "date": "2026-07-22T07:00Z",
-   "team": "ATL",
-   "text": "Signed F Jalen Wilson to a two-way contract."
+   "date": "2026-08-17T07:00Z",
+   "team": "HOU",
+   "text": "Signed G Sean Pedulla to a two-way contract."
   },
   {
-   "date": "2026-07-10T07:00Z",
-   "team": "BKN",
-   "text": "Acquired F Julius Randle from Minnesota. Waived G Malachi Smith. Signed F Joshua Jefferson to a rookie scale contract."
+   "date": "2026-07-07T07:00Z",
+   "team": "UTAH",
+   "text": "Signed G Trey Alexander to a two-way contract."
   },
   {
-   "date": "2026-07-10T07:00Z",
-   "team": "DAL",
-   "text": "Signed F Tarik Biberovic to a contract."
-  },
-  {
-   "date": "2026-07-08T07:00Z",
-   "team": "DAL",
-   "text": "Acquired F Santi Aldama from Memphis. Acquired G Marcus Sasser from Detroit."
-  },
-  {
-   "date": "2026-07-06T07:00Z",
-   "team": "CHA",
-   "text": "Signed F Hannes Steinbach and G Christian Anderson to rookie scale contracts. Re-signed G Coby White to a contract. Signed Gs Michael Ajayi and Kylan Boswell to two-way contracts. Waived F Tosan Evbuomwan. Acquired F Dorian Finney-Smith and"
+   "date": "2026-07-07T07:00Z",
+   "team": "NO",
+   "text": "Re-signed G Trey Alexander to a two-way contract."
   },
   {
    "date": "2026-07-06T07:00Z",
@@ -1347,19 +1160,9 @@
    "text": "Signed F Maliq Brown and G Ja'Kobi Gillespie to two-way contracts. Signed C Tarris Reed Jr. and F Jayden Quaintance to rookie scale contracts."
   },
   {
-   "date": "2026-07-02T07:00Z",
-   "team": "DET",
-   "text": "Signed C Ugonna Onyenso to a two-way contract."
-  },
-  {
-   "date": "2026-07-01T07:00Z",
-   "team": "CLE",
-   "text": "Signed G Meleek Thomas to a contract. Signed C Ernest Udeh Jr. to a two-way contract."
-  },
-  {
-   "date": "2026-07-01T07:00Z",
-   "team": "ATL",
-   "text": "Signed F Zuby Ejiofor to a rookie scale contract. Signed C Henri Veesaar to a contract."
+   "date": "2026-07-03T07:00Z",
+   "team": "MIA",
+   "text": "Signed Tre Donaldson to a two-way contract."
   },
   {
    "date": "2026-06-30T07:00Z",
@@ -1372,34 +1175,9 @@
    "text": "Acquired G Devin Carter and draft consideration from Sacramento."
   },
   {
-   "date": "2026-04-04T07:00Z",
-   "team": "BKN",
-   "text": "Signed G Malachi Smith to a rest-of-season contract."
-  },
-  {
-   "date": "2026-03-25T07:00Z",
-   "team": "BKN",
-   "text": "Signed G Malachi Smith to a 10-day contract."
-  },
-  {
-   "date": "2026-03-14T07:00Z",
-   "team": "BKN",
-   "text": "Signed G Malachi Smith to a 10-day contract."
-  },
-  {
-   "date": "2026-03-04T08:00Z",
-   "team": "ATL",
-   "text": "Signed G Keshon Gilbert to a two-way contract."
-  },
-  {
-   "date": "2026-02-09T08:00Z",
-   "team": "MEM",
-   "text": "Signed C Lawson Lovering to a 10-day contract."
-  },
-  {
-   "date": "2026-02-06T08:00Z",
-   "team": "WSH",
-   "text": "Signed G Keshon Gilbert to a 10-day contract."
+   "date": "2026-04-10T07:00Z",
+   "team": "LAL",
+   "text": "Waived G Kobe Bufkin."
   },
   {
    "date": "2026-02-05T08:00Z",
@@ -1410,12 +1188,17 @@
    "date": "2026-02-05T08:00Z",
    "team": "CHI",
    "text": "Acquired G Rob Dillingham, F Leonard Miller and four second-round picks from Minnesota Timberwolves for G Ayo Dosunmu and F Julian Phillips."
+  },
+  {
+   "date": "2026-01-13T08:00Z",
+   "team": "LAL",
+   "text": "Signed G Kobe Bufkin to a 10-day contract."
   }
  ],
  "transactions_window": {
   "n": 435,
   "oldest": "2026-01-02T08:00Z"
  },
- "unconfirmed_players": 63,
- "unconfirmed_without_corroboration": 11
+ "unconfirmed_players": 52,
+ "unconfirmed_without_corroboration": 13
 }
