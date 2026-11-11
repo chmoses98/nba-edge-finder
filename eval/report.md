@@ -1,22 +1,22 @@
-# Evaluation report (2026-11-11T05:19:00Z)
+# Evaluation report (2026-11-11T07:06:05Z)
 
-rows=1514556 pregame=1514556 new_this_run=31189
+rows=1536730 pregame=1536730 new_this_run=22174
 
 ## game_spread
 
-n=128190 pregame=128190 excluded_post_tip=0 authority=SHADOW
+n=129543 pregame=129543 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 128190 | 0.2036 | 0.6091 | 0.0940 | - | - |
+| DATA_ONLY | 129543 | 0.2041 | 0.6104 | 0.0955 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 5260 | 0.2063 | - | - |
-| DATA_ONLY | 1-6h | 31246 | 0.2058 | - | - |
-| DATA_ONLY | 6-24h | 91684 | 0.2027 | - | - |
+| DATA_ONLY | <1h | 5326 | 0.2068 | - | - |
+| DATA_ONLY | 1-6h | 31543 | 0.2063 | - | - |
+| DATA_ONLY | 6-24h | 92674 | 0.2031 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -29,19 +29,19 @@ n=128190 pregame=128190 excluded_post_tip=0 authority=SHADOW
 
 ## game_total
 
-n=111462 pregame=111462 excluded_post_tip=0 authority=SHADOW
+n=112651 pregame=112651 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 111462 | 0.1788 | 0.5344 | 0.0124 | - | - |
+| DATA_ONLY | 112651 | 0.1786 | 0.5338 | 0.0124 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 4572 | 0.1800 | - | - |
-| DATA_ONLY | 1-6h | 27158 | 0.1788 | - | - |
-| DATA_ONLY | 6-24h | 79732 | 0.1787 | - | - |
+| DATA_ONLY | <1h | 4630 | 0.1798 | - | - |
+| DATA_ONLY | 1-6h | 27419 | 0.1786 | - | - |
+| DATA_ONLY | 6-24h | 80602 | 0.1786 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -54,19 +54,19 @@ n=111462 pregame=111462 excluded_post_tip=0 authority=SHADOW
 
 ## game_winner
 
-n=8404 pregame=8404 excluded_post_tip=0 authority=SHADOW
+n=8486 pregame=8486 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 8404 | 0.2460 | 0.7182 | 0.1120 | - | - |
+| DATA_ONLY | 8486 | 0.2465 | 0.7188 | 0.1136 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 344 | 0.2366 | - | - |
-| DATA_ONLY | 1-6h | 2044 | 0.2481 | - | - |
-| DATA_ONLY | 6-24h | 6016 | 0.2459 | - | - |
+| DATA_ONLY | <1h | 348 | 0.2372 | - | - |
+| DATA_ONLY | 1-6h | 2062 | 0.2487 | - | - |
+| DATA_ONLY | 6-24h | 6076 | 0.2463 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -79,19 +79,19 @@ n=8404 pregame=8404 excluded_post_tip=0 authority=SHADOW
 
 ## period_spread
 
-n=241219 pregame=241219 excluded_post_tip=0 authority=SHADOW
+n=244549 pregame=244549 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 241219 | 0.1743 | 0.5260 | 0.0491 | - | - |
+| DATA_ONLY | 244549 | 0.1740 | 0.5256 | 0.0505 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 11415 | 0.1759 | - | - |
-| DATA_ONLY | 1-6h | 65482 | 0.1752 | - | - |
-| DATA_ONLY | 6-24h | 164322 | 0.1738 | - | - |
+| DATA_ONLY | <1h | 11595 | 0.1755 | - | - |
+| DATA_ONLY | 1-6h | 66292 | 0.1750 | - | - |
+| DATA_ONLY | 6-24h | 166662 | 0.1735 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -104,19 +104,19 @@ n=241219 pregame=241219 excluded_post_tip=0 authority=SHADOW
 
 ## period_team_total
 
-n=60324 pregame=60324 excluded_post_tip=0 authority=SHADOW
+n=61138 pregame=61138 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 60324 | 0.1867 | 0.5555 | 0.0383 | - | - |
+| DATA_ONLY | 61138 | 0.1862 | 0.5543 | 0.0396 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 2640 | 0.1872 | - | - |
-| DATA_ONLY | 1-6h | 15664 | 0.1869 | - | - |
-| DATA_ONLY | 6-24h | 42020 | 0.1866 | - | - |
+| DATA_ONLY | <1h | 2684 | 0.1866 | - | - |
+| DATA_ONLY | 1-6h | 15862 | 0.1864 | - | - |
+| DATA_ONLY | 6-24h | 42592 | 0.1861 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -129,19 +129,19 @@ n=60324 pregame=60324 excluded_post_tip=0 authority=SHADOW
 
 ## period_total
 
-n=238340 pregame=238340 excluded_post_tip=0 authority=SHADOW
+n=241631 pregame=241631 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 238340 | 0.1736 | 0.5247 | 0.0391 | - | - |
+| DATA_ONLY | 241631 | 0.1733 | 0.5240 | 0.0393 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 11350 | 0.1743 | - | - |
-| DATA_ONLY | 1-6h | 65373 | 0.1732 | - | - |
-| DATA_ONLY | 6-24h | 161617 | 0.1738 | - | - |
+| DATA_ONLY | <1h | 11530 | 0.1740 | - | - |
+| DATA_ONLY | 1-6h | 66183 | 0.1729 | - | - |
+| DATA_ONLY | 6-24h | 163918 | 0.1735 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -154,19 +154,19 @@ n=238340 pregame=238340 excluded_post_tip=0 authority=SHADOW
 
 ## period_winner
 
-n=36244 pregame=36244 excluded_post_tip=0 authority=SHADOW
+n=36694 pregame=36694 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 36244 | 0.2436 | 0.6809 | 0.0374 | - | - |
+| DATA_ONLY | 36694 | 0.2438 | 0.6813 | 0.0390 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 1486 | 0.2377 | - | - |
-| DATA_ONLY | 1-6h | 8770 | 0.2436 | - | - |
-| DATA_ONLY | 6-24h | 25988 | 0.2439 | - | - |
+| DATA_ONLY | <1h | 1508 | 0.2380 | - | - |
+| DATA_ONLY | 1-6h | 8868 | 0.2438 | - | - |
+| DATA_ONLY | 6-24h | 26318 | 0.2441 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -179,19 +179,19 @@ n=36244 pregame=36244 excluded_post_tip=0 authority=SHADOW
 
 ## player_assists
 
-n=92511 pregame=92511 excluded_post_tip=0 authority=SHADOW
+n=93993 pregame=93993 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 91933 | 0.1573 | 0.4818 | 0.0657 | - | - |
+| DATA_ONLY | 93415 | 0.1569 | 0.4806 | 0.0640 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 4672 | 0.1538 | - | - |
-| DATA_ONLY | 1-6h | 25773 | 0.1568 | - | - |
-| DATA_ONLY | 6-24h | 61488 | 0.1577 | - | - |
+| DATA_ONLY | <1h | 4768 | 0.1531 | - | - |
+| DATA_ONLY | 1-6h | 26145 | 0.1565 | - | - |
+| DATA_ONLY | 6-24h | 62502 | 0.1573 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -204,19 +204,19 @@ n=92511 pregame=92511 excluded_post_tip=0 authority=SHADOW
 
 ## player_blocks
 
-n=17160 pregame=17160 excluded_post_tip=0 authority=SHADOW
+n=17359 pregame=17359 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 17112 | 0.2032 | 0.5994 | 0.0929 | - | - |
+| DATA_ONLY | 17311 | 0.2025 | 0.5975 | 0.0915 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 1214 | 0.1846 | - | - |
-| DATA_ONLY | 1-6h | 6022 | 0.1976 | - | - |
-| DATA_ONLY | 6-24h | 9876 | 0.2089 | - | - |
+| DATA_ONLY | <1h | 1229 | 0.1844 | - | - |
+| DATA_ONLY | 1-6h | 6080 | 0.1972 | - | - |
+| DATA_ONLY | 6-24h | 10002 | 0.2078 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -229,19 +229,19 @@ n=17160 pregame=17160 excluded_post_tip=0 authority=SHADOW
 
 ## player_double_double
 
-n=15676 pregame=15676 excluded_post_tip=0 authority=SHADOW
+n=16081 pregame=16081 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 15605 | 0.1370 | 0.5400 | 0.0571 | - | - |
+| DATA_ONLY | 16010 | 0.1361 | 0.5359 | 0.0578 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 874 | 0.1213 | - | - |
-| DATA_ONLY | 1-6h | 4798 | 0.1289 | - | - |
-| DATA_ONLY | 6-24h | 9933 | 0.1423 | - | - |
+| DATA_ONLY | <1h | 899 | 0.1202 | - | - |
+| DATA_ONLY | 1-6h | 4899 | 0.1282 | - | - |
+| DATA_ONLY | 6-24h | 10212 | 0.1412 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -254,19 +254,19 @@ n=15676 pregame=15676 excluded_post_tip=0 authority=SHADOW
 
 ## player_points
 
-n=106725 pregame=106725 excluded_post_tip=0 authority=SHADOW
+n=108508 pregame=108508 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 105962 | 0.2185 | 0.7697 | 0.0864 | - | - |
+| DATA_ONLY | 107745 | 0.2182 | 0.7668 | 0.0859 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 5198 | 0.2139 | - | - |
-| DATA_ONLY | 1-6h | 29065 | 0.2158 | - | - |
-| DATA_ONLY | 6-24h | 71699 | 0.2199 | - | - |
+| DATA_ONLY | <1h | 5298 | 0.2137 | - | - |
+| DATA_ONLY | 1-6h | 29492 | 0.2155 | - | - |
+| DATA_ONLY | 6-24h | 72955 | 0.2196 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -279,19 +279,19 @@ n=106725 pregame=106725 excluded_post_tip=0 authority=SHADOW
 
 ## player_pra
 
-n=56865 pregame=56865 excluded_post_tip=0 authority=SHADOW
+n=58099 pregame=58099 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 56545 | 0.2675 | 0.9863 | 0.1245 | - | - |
+| DATA_ONLY | 57779 | 0.2672 | 0.9805 | 0.1239 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 3087 | 0.2535 | - | - |
-| DATA_ONLY | 1-6h | 16716 | 0.2616 | - | - |
-| DATA_ONLY | 6-24h | 36742 | 0.2714 | - | - |
+| DATA_ONLY | <1h | 3170 | 0.2536 | - | - |
+| DATA_ONLY | 1-6h | 17039 | 0.2615 | - | - |
+| DATA_ONLY | 6-24h | 37570 | 0.2709 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -304,19 +304,19 @@ n=56865 pregame=56865 excluded_post_tip=0 authority=SHADOW
 
 ## player_rebounds
 
-n=120814 pregame=120814 excluded_post_tip=0 authority=SHADOW
+n=122924 pregame=122924 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 120100 | 0.2035 | 0.6909 | 0.0645 | - | - |
+| DATA_ONLY | 122210 | 0.2031 | 0.6881 | 0.0645 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 6073 | 0.1970 | - | - |
-| DATA_ONLY | 1-6h | 33576 | 0.1990 | - | - |
-| DATA_ONLY | 6-24h | 80451 | 0.2059 | - | - |
+| DATA_ONLY | <1h | 6192 | 0.1964 | - | - |
+| DATA_ONLY | 1-6h | 34093 | 0.1985 | - | - |
+| DATA_ONLY | 6-24h | 81925 | 0.2054 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -329,19 +329,19 @@ n=120814 pregame=120814 excluded_post_tip=0 authority=SHADOW
 
 ## player_steals
 
-n=35184 pregame=35184 excluded_post_tip=0 authority=SHADOW
+n=35754 pregame=35754 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 34968 | 0.1959 | 0.5795 | 0.0666 | - | - |
+| DATA_ONLY | 35538 | 0.1957 | 0.5789 | 0.0649 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 2210 | 0.1934 | - | - |
-| DATA_ONLY | 1-6h | 11877 | 0.1943 | - | - |
-| DATA_ONLY | 6-24h | 20881 | 0.1970 | - | - |
+| DATA_ONLY | <1h | 2254 | 0.1930 | - | - |
+| DATA_ONLY | 1-6h | 12037 | 0.1941 | - | - |
+| DATA_ONLY | 6-24h | 21247 | 0.1969 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -354,19 +354,19 @@ n=35184 pregame=35184 excluded_post_tip=0 authority=SHADOW
 
 ## player_threes
 
-n=127810 pregame=127810 excluded_post_tip=0 authority=SHADOW
+n=129957 pregame=129957 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 126990 | 0.1714 | 0.5345 | 0.0405 | - | - |
+| DATA_ONLY | 129137 | 0.1710 | 0.5330 | 0.0394 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 6313 | 0.1722 | - | - |
-| DATA_ONLY | 1-6h | 35002 | 0.1720 | - | - |
-| DATA_ONLY | 6-24h | 85675 | 0.1711 | - | - |
+| DATA_ONLY | <1h | 6433 | 0.1718 | - | - |
+| DATA_ONLY | 1-6h | 35507 | 0.1716 | - | - |
+| DATA_ONLY | 6-24h | 87197 | 0.1707 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -379,19 +379,19 @@ n=127810 pregame=127810 excluded_post_tip=0 authority=SHADOW
 
 ## player_triple_double
 
-n=5452 pregame=5452 excluded_post_tip=0 authority=SHADOW
+n=5629 pregame=5629 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 5402 | 0.0183 | 0.1122 | 0.0049 | - | - |
+| DATA_ONLY | 5579 | 0.0177 | 0.1089 | 0.0050 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 309 | 0.0105 | - | - |
-| DATA_ONLY | 1-6h | 1710 | 0.0165 | - | - |
-| DATA_ONLY | 6-24h | 3383 | 0.0198 | - | - |
+| DATA_ONLY | <1h | 318 | 0.0102 | - | - |
+| DATA_ONLY | 1-6h | 1753 | 0.0161 | - | - |
+| DATA_ONLY | 6-24h | 3508 | 0.0191 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
@@ -404,19 +404,19 @@ n=5452 pregame=5452 excluded_post_tip=0 authority=SHADOW
 
 ## team_total
 
-n=112176 pregame=112176 excluded_post_tip=0 authority=SHADOW
+n=113734 pregame=113734 excluded_post_tip=0 authority=SHADOW
 
 | view | n | brier | log_loss | ece | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|---|
-| DATA_ONLY | 112176 | 0.1743 | 0.5251 | 0.0184 | - | - |
+| DATA_ONLY | 113734 | 0.1746 | 0.5259 | 0.0183 | - | - |
 | MARKET_BASELINE | 0 | - | - | - | - | - |
 | HYBRID | 0 | - | - | - | - | - |
 
 | view | bucket | n | brier | skill_vs_market | clv_mean |
 |---|---|---|---|---|---|
-| DATA_ONLY | <1h | 4560 | 0.1721 | - | - |
-| DATA_ONLY | 1-6h | 27056 | 0.1735 | - | - |
-| DATA_ONLY | 6-24h | 80560 | 0.1746 | - | - |
+| DATA_ONLY | <1h | 4636 | 0.1725 | - | - |
+| DATA_ONLY | 1-6h | 27398 | 0.1739 | - | - |
+| DATA_ONLY | 6-24h | 81700 | 0.1750 | - | - |
 | DATA_ONLY | >24h | 0 | - | - | - |
 | MARKET_BASELINE | <1h | 0 | - | - | - |
 | MARKET_BASELINE | 1-6h | 0 | - | - | - |
