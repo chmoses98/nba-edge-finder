@@ -149,12 +149,32 @@ class NameIndex:
         return next(iter(pids)) if len(pids) == 1 else None
 
 
-def injuries_by_team(inj_rows: list[dict[str, Any]], names: NameIndex) -> tuple[dict[int, dict[int, InjuryStatus]], dict[str, Any]]:
+def injuries_by_team(
+    inj_rows: list[dict[str, Any]],
+    names: NameIndex,
+    *,
+    target_date: str | None = None,
+    espn_fallback_team_ids: set[int] | None = None,
+) -> tuple[dict[int, dict[int, InjuryStatus]], dict[str, Any]]:
+    """Official statuses win for the scheduled game date; use ESPN only for explicitly
+    unsubmitted teams. An official report for tomorrow must not alter tonight's roster.
+    """
     out: dict[int, dict[int, InjuryStatus]] = {}
     unresolved = []
     unresolved_out_by_team: dict[int, list[str]] = {}
-    official = [r for r in inj_rows if r.get("source") == "nba_official_pdf"]
-    rows = official or inj_rows  # prefer the official report when present
+    official = [
+        r for r in inj_rows
+        if r.get("source") == "nba_official_pdf"
+        and (target_date is None or r.get("game_date_et") == target_date)
+    ]
+    official_teams = {int(r["team_id"]) for r in official}
+    fallback_team_ids = set(espn_fallback_team_ids or ())
+    espn = [r for r in inj_rows if r.get("source") == "espn_injuries"]
+    fallback = [
+        r for r in espn
+        if int(r["team_id"]) in fallback_team_ids and int(r["team_id"]) not in official_teams
+    ] if official else []
+    rows = official + fallback if official else espn
     for r in rows:
         tid = int(r["team_id"])
         status = InjuryStatus(r.get("status", "unknown"))
@@ -165,8 +185,14 @@ def injuries_by_team(inj_rows: list[dict[str, Any]], names: NameIndex) -> tuple[
                 unresolved_out_by_team.setdefault(tid, []).append(str(r.get("player_name_raw") or "unknown"))
             continue
         out.setdefault(tid, {})[pid] = status
-    return out, {"source": "official" if official else ("espn" if inj_rows else "none"), "n": len(rows),
-                 "unresolved": unresolved[:50], "unresolved_official_out_by_team": unresolved_out_by_team}
+    return out, {
+        "source": "official" if official else ("espn" if espn else "none"),
+        "n": len(rows),
+        "unresolved": unresolved[:50],
+        "unresolved_official_out_by_team": unresolved_out_by_team,
+        "official_unsubmitted_teams": sorted(fallback_team_ids),
+        "espn_fallback_teams": sorted({int(r["team_id"]) for r in fallback}),
+    }
 
 
 def _pred_id(ticker: str, ts: str, model: str) -> str:
@@ -212,7 +238,19 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
     inj_entry = archive.latest("context/injuries")
     inj_rows = _read_kind(archive, "context/injuries")
     inj_age_min = (now - entry_observed_at(inj_entry)).total_seconds() / 60 if inj_entry else None
-    inj_map, inj_prov = injuries_by_team(inj_rows, names)
+    # An official NBA PDF can cover several dates, and some clubs have NOT YET
+    # SUBMITTED for this slate. Keep statuses game-date-correct, supplement only
+    # those explicitly unsubmitted teams from ESPN, and fail closed for them.
+    slate_matchups = {f"{g['away_tricode']}@{g['home_tricode']}" for g in games}
+    unsubmitted = set()
+    official_meta = (inj_entry.meta.get("official") or {}) if inj_entry else {}
+    for item in official_meta.get("not_yet_submitted", []):
+        matchup, sep, tid = item.rpartition(":")
+        if sep and matchup in slate_matchups and tid.isdigit():
+            unsubmitted.add(int(tid))
+    inj_map, inj_prov = injuries_by_team(
+        inj_rows, names, target_date=target, espn_fallback_team_ids=unsubmitted,
+    )
     # latest_board, not archive.latest(): once deltas exist the newest checkpoint can be hours old,
     # and STALE_MARKET_MIN gating on that age would either refuse to price or price on stale quotes.
     mkt_board = latest_board(archive)
@@ -252,6 +290,13 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             reasons.append(f"injury snapshot missing/stale ({None if inj_age_min is None else round(inj_age_min)} min)")
         if inj_prov.get("source") != "official":
             reasons.append(f"injury source is {inj_prov.get('source')} not official report")
+        missing_report = sorted({home_id, away_id} & unsubmitted)
+        if missing_report:
+            reasons.append(
+                "official injury report not yet submitted for team(s) "
+                + ", ".join(str(tid) for tid in missing_report)
+                + "; ESPN fallback is unverified"
+            )
         # If an official OUT player could not be mapped to a player ID, the
         # simulator may still give him positive minutes. Never trust that
         # game's markets until identity resolution is repaired.
