@@ -346,7 +346,8 @@ def audit_date(archive: Path, date_et: str, out_dir: Path, now: datetime | None 
         rows.append({"ticker": tk, "game_id": g.game_id, "family": universe[tk]["family"], "predicted_at_utc": p["predicted_at_utc"],
                      "hours_to_tip": round(hrs, 3), "horizon": horizon_bucket(hrs), "p_model": float(pm), "quote_observed_at_utc": q_obs,
                      "yes_bid": q["yes_bid"], "yes_ask": q["yes_ask"], "no_bid": q["no_bid"], "no_ask": q["no_ask"],
-                     "threshold": universe[tk]["threshold"], "support": universe[tk]["support"], "gate": p.get("gate"),
+                     "threshold": universe[tk]["threshold"], "period": universe[tk]["period"], "comparator": universe[tk]["comparator"],
+                     "support": universe[tk]["support"], "gate": p.get("gate"),
                      "model_version": p.get("model_version"), "legacy_p_market_present": p.get("p_market") is not None})
 
     # grade + economics
@@ -459,9 +460,21 @@ def _family_table(rows: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
         roi = cluster_bootstrap_ratio([r["pick_pnl"] for r in picks], [r["pick_stake"] for r in picks], [r["game_id"] for r in picks])
         clv_q = [r["clv_quoted_exec"] for r in picks if r["clv_quoted_exec"] is not None]
         clv_s = [r["clv_selection"] for r in picks if r["clv_selection"] is not None]
+        # YES/NO directional accuracy is intentionally distinct from Brier calibration.
+        # A 51% correct contract and a 99% correct contract both count as one direction hit.
+        direction_rows = [r for r in rs if r["p_model"] != 0.5]
+        market_direction_rows = [r for r in both if r["p_market_mid"] != 0.5]
+        disagreements = [r for r in both if r["p_model"] != 0.5 and r["p_market_mid"] != 0.5
+                         and (r["p_model"] > 0.5) != (r["p_market_mid"] > 0.5)]
         table.append({
             key: k, "n": len(rs), "n_games": len({r["game_id"] for r in rs}), "mean_p_model": float(pm.mean()), "base_rate": float(y.mean()),
             "brier_model": b_model, "n_with_market": len(both),
+            "n_model_direction_calls": len(direction_rows),
+            "model_direction_hit_rate": float(np.mean([(r["p_model"] > 0.5) == bool(r["outcome_yes"]) for r in direction_rows])) if direction_rows else None,
+            "n_market_direction_calls": len(market_direction_rows),
+            "market_direction_hit_rate": float(np.mean([(r["p_market_mid"] > 0.5) == bool(r["outcome_yes"]) for r in market_direction_rows])) if market_direction_rows else None,
+            "n_model_market_direction_disagreements": len(disagreements),
+            "model_hit_rate_on_disagreements": float(np.mean([(r["p_model"] > 0.5) == bool(r["outcome_yes"]) for r in disagreements])) if disagreements else None,
             "brier_model_on_market_rows": float(np.mean([(r["p_model"] - r["outcome_yes"]) ** 2 for r in both])) if both else None,
             "brier_market_mid": float(np.mean((np.array([r["p_market_mid"] for r in both]) - yb) ** 2)) if both else None,
             "market_minus_model_brier": dci, "skill": skill_flag(dci["mean"], dci["ci95"], dci["n_clusters"]),
@@ -493,19 +506,27 @@ def _rollups(date_et, games, universe, rows, last_pred, reason_counts, refused, 
         blockers.append("zero pre-tip forecast rows joined")
     no_quote = sum(1 for r in final_rows if r["yes_ask_eff"] is None and r["no_ask_eff"] is None)
     if final_rows and no_quote == len(final_rows):
+        status = "BLOCKED"
         blockers.append("no executable quote joined to any forecast: quote-dependent ROI/CLV/market baselines unavailable")
+    # Every individual spread/alternate-spread strike is audited, but related
+    # rungs from the same game are clustered, never independent observations.
+    spread_rows = [{**r, "spread_rung": f"{r['family']}|{r.get('period') or 'game'}|{r.get('comparator') or 'unknown'}|{r.get('threshold') if r.get('threshold') is not None else 'unknown'}"}
+                   for r in final_rows if r["family"] in ("game_spread", "period_spread")]
     return {
         "date_et": date_et, "status": status, "blockers": blockers, "generated_at_utc": (now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "games": [{"game_id": g.game_id, "matchup": f"{g.away}@{g.home}", "tip_utc": g.tip.strftime("%Y-%m-%dT%H:%M:%SZ")} for g in games],
         "coverage": {"universe": eligible, "graded": graded, "ungraded_by_reason": {k: v for k, v in sorted(reason_counts.items()) if k != "graded"},
                      "by_family_universe": dict(sorted(_count(u["family"] for u in universe.values()).items())),
-                     "pretip_forecast_rows": len(rows), "refused": refused, "forecast_rows_without_any_executable_quote": no_quote},
+                     "pretip_forecast_rows": len(rows), "refused": refused,
+                     "forecast_rows_with_an_executable_quote": len(final_rows) - no_quote,
+                     "forecast_rows_without_any_executable_quote": no_quote},
         "headline_latest_pretip_by_family": _family_table(final_rows, "family"),
         "by_horizon": _family_table(rows, "horizon"),
         "by_game": _family_table(final_rows, "game_id"),
+        "by_spread_rung": _family_table(spread_rows, "spread_rung"),
         "by_price_bin": _family_table([{**r, "price_bin": price_bin(r["p_model"])} for r in final_rows], "price_bin"),
         "not_evaluated": ["injury-status and participation splits (needs injury snapshot join per horizon)", "actual-fill CLV (no fill evidence in archive)",
-                          "multiple-comparison control (descriptive only; no promotion claims)"],
+                          "joint winner-vs-final-margin consistency (direction and individual spread-rung calibration shown separately)"],
     }
 
 
@@ -547,6 +568,13 @@ def render_markdown(rep: dict[str, Any]) -> str:
         lines += ["", f"## {title}", "", f"| {col} | n | Brier model | Brier mkt | skill | +EV picks | ROI |", "|---|---|---|---|---|---|---|"]
         for t in rep.get(key, []):
             lines.append(f"| {t[col]} | {t['n']} | {_fmt(t['brier_model'])} | {_fmt(t['brier_market_mid'])} | {t['skill']} | {t['n_positive_ev_picks']} | {_fmt(t['pick_roi_after_fee']['mean'])} |")
+    lines += ["", "## Exact spread-rung scorecard", "",
+              "YES/NO direction accuracy is a separate descriptive metric, **not** Brier calibration or winner/margin coherence. Rungs within a game are correlated; inferential intervals are game-clustered.",
+              "",
+              "| spread family / period / comparator / strike | n | games | direction hit | market direction hit | Brier model | Brier market | skill |",
+              "|---|---:|---:|---:|---:|---:|---:|---|"]
+    for t in rep.get("by_spread_rung", []):
+        lines.append(f"| {t['spread_rung']} | {t['n']} | {t['n_games']} | {_fmt(t['model_direction_hit_rate'], 3)} | {_fmt(t['market_direction_hit_rate'], 3)} | {_fmt(t['brier_model'])} | {_fmt(t['brier_market_mid'])} | {t['skill']} |")
     lines += ["", "## Not evaluated", *[f"- {x}" for x in rep["not_evaluated"]], ""]
     return "\n".join(lines)
 
