@@ -56,6 +56,9 @@ class OnOffIndex:
     def from_stints(cls, stints: pd.DataFrame, game_info: pd.DataFrame) -> OnOffIndex:
         """``stints``: certified stint rows (home_p1..5, away_p1..5, seconds, game_id);
         ``game_info``: game_id -> game_date_et, home_team_id, away_team_id."""
+        from nba_edge.pbp.stints import require_certified
+
+        require_certified(stints)  # the quarantine is enforced here, not requested in a docstring
         info = game_info.set_index("game_id")
         out: dict[int, list[_TeamGame]] = defaultdict(list)
         hcols = [f"home_p{i}" for i in range(1, 6)]

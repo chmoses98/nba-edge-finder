@@ -1,0 +1,36 @@
+# Reviewed overrides for NBA series selection (nba_edge.kalshi.discovery.is_nba_series).
+#
+# Why this file exists. The automatic rule recognises an NBA series by a KXNBA ticker prefix, an "NBA" tag, or the word NBA in the
+# series title. The 2026-10-24 discovery (772 basketball-adjacent decisions out of 15,387 series) shows that rule silently omits
+# series about NBA players/teams whose ticker and title never say "NBA" (e.g. KXQUADRUPLEDOUBLE, "Quadruple Double", tag
+# Basketball) -- they were not captured, not classified, and not even counted. Every entry below was read from the series title/tags
+# in data/catalog/discovery_summary.json (archive branch) and is NBA-specific. None of them is MODELABLE: each maps to an ontology
+# family that is RESEARCH or UNMODELABLE. Capturing them costs ~2 extra market-list requests per series per capture (open + unopened).
+#
+# `include`: ticker -> reason. Series are captured and classified like any other NBA series.
+# `exclude`: ticker -> reason. Series the automatic rule would include but that must not be treated as NBA basketball.
+#            (None needed today: the false positives found, e.g. KXALBUMRELEASEDATENBAYOUNGBOY, are already classified
+#            non_basketball_or_offcourt in the ontology and are kept captured so their counts stay visible.)
+version: "2026.10.24.1"
+include:
+  KXQUADRUPLEDOUBLE: "Basketball tag; 'Quadruple Double' -- season proposition (NBA-only achievement)"
+  KXSHAI20PTREC: "Basketball tag; 'Shai 20+ Point Streak' -- player streak proposition"
+  KXKNUEPPEL3PTREC: "Basketball tag; 'Kon Knueppel Rookie 3pt Record' -- rookie season record proposition"
+  KXWINSTREAKOKC: "Basketball tag; 'OKC Win Streak' -- team streak proposition"
+  KXRECORDNBABEST: "Basketball tag; 'Best Pro Basketball Record' -- league record proposition"
+  KXTATUMRETURN: "Basketball tag; 'When Will Jayson Tatum Play His Next Game' -- injury-return timing (availability-relevant, not modelled)"
+  KXLEBRONPLAY: "Basketball tag; 'LeBron Next Play' -- return timing (availability-relevant, not modelled)"
+  KXTRADEOFFNBA: "Basketball tag; 'Pro basketball trades offseason'"
+  KXNEXTTEAMCHRISPAUL: "Basketball tag; player destination"
+  KXNEXTTEAMGIANNIS: "Basketball tag; player destination"
+  KXNEXTTEAMLEBRON: "Basketball tag; player destination"
+  KXPLAYTOGETHERJBJT: "Basketball tag; 'Tatum and Brown Celtics'"
+  KXLBJRETIRE: "Basketball tag; 'LBJ Retire'"
+  KXSPORTSIGNAHOR: "Basketball tag; 'Al Horford' signing"
+  KXSPORTSIGNLBJ: "Basketball tag; 'LeBron James sign'"
+  KXSTEPHDEAL: "Basketball tag; 'Steph Curry Endorsement Deal'"
+  KXSTEPHSHOEDEAL: "Basketball tag; 'Steph Curry Shoe Deal'"
+  KXSTEPHPARTERNSHIP: "Basketball tag; 'Stephen Curry Partnership'"
+  KXNEWCOACHLAL: "Basketball tag; 'New Lakers coach'"
+  KXSPORTSOWNERLBJ: "Basketball tag; 'LBJ owning team'"
+exclude: {}

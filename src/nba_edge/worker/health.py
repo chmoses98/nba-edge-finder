@@ -160,9 +160,23 @@ def classify_shift(
         else:
             degraded.append("successor dispatch rejected; retirement will re-attempt")
 
+    # Collection integrity vs ontology debt. A shift is DEGRADED when the BOARD it captured is missing something it asked for
+    # (a failed series fetch, a pagination cut-off, a failing book stream). Markets that were captured perfectly but that the
+    # ontology cannot yet describe are a research backlog, not a collection fault: they used to turn every shift DEGRADED
+    # (20/20 captures OK, 0 failures, DEGRADED) and so taught people to ignore the word. They are reported in their own
+    # block and as a ::warning, never in `reasons`/`warnings`. Status files written before the split carry only `alarms`
+    # and keep their old meaning.
+    classification: dict[str, Any] = {"state": "UNKNOWN", "alarms": []}
     if capture_status and str(capture_status.get("run_id", "")) == worker_id and worker_id:
-        for a in capture_status.get("alarms") or []:
-            degraded.append(f"coverage alarm: {a}")
+        if "collection_alarms" in capture_status:
+            for a in capture_status.get("collection_alarms") or []:
+                degraded.append(f"coverage alarm: {a}")
+            cls_alarms = list(capture_status.get("classification_alarms") or [])
+            classification = {"state": "DEBT" if cls_alarms else "CLEAN", "alarms": cls_alarms,
+                              "n_unresolved": int((capture_status.get("by_support") or {}).get("UNRESOLVED", 0))}
+        else:
+            for a in capture_status.get("alarms") or []:
+                degraded.append(f"coverage alarm: {a}")
 
     if failed:
         state, disposition = FAILED, "FAILED_AFTER_RETRY"
@@ -184,6 +198,7 @@ def classify_shift(
         "failures": failed,
         "warnings": degraded,
         "streams": streams,
+        "classification": classification,
         "retry_budget": RETRY_BUDGET,
     }
 
@@ -206,12 +221,18 @@ def render_summary(health: dict[str, Any], result: dict[str, Any]) -> str:
         lines.append("")
     for r in health.get("reasons") or []:
         lines.append(f"- {r}")
+    cls = health.get("classification") or {}
+    if cls.get("state") == "DEBT":
+        lines.append(f"- ontology debt (does NOT affect the verdict above): {cls.get('n_unresolved', '?')} unresolved market(s); see COVERAGE_REPORT.md")
     return "\n".join(lines) + "\n"
 
 
 def annotations(health: dict[str, Any]) -> list[str]:
     """GitHub workflow commands: ::error for each failure, ::warning for each nonfatal finding."""
     title = f"capture-worker {health['state']}"
-    return [f"::error title={title}::{r}" for r in health.get("failures") or []] + [
+    out = [f"::error title={title}::{r}" for r in health.get("failures") or []] + [
         f"::warning title={title}::{r}" for r in health.get("warnings") or []
     ]
+    for a in (health.get("classification") or {}).get("alarms") or []:
+        out.append(f"::warning title=ontology-debt::{a}")
+    return out
