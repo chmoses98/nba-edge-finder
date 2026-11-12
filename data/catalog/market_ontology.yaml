@@ -11,7 +11,7 @@
 #   BUILDABLE   : semantics understood and the one-game simulator emits the quantity; pricing not wired
 #   RESEARCH    : semantics understood; needs a model we do not have (season sim, play-by-play, lineups)
 #   UNMODELABLE : not a basketball on-court outcome (voting, draft, transactions, business, media)
-version: "2026.09.18.3"
+version: "2026.11.02.1"
 families:
   # ------------------------------------------------------------------ game-level, full game (PRICED)
   game_winner:
@@ -256,7 +256,7 @@ families:
     period: SEASON
     support: RESEARCH
     description: "Championship-derived propositions: first-time champion, three-peat, which conference the champion comes from. Derived from a season simulator's champion distribution."
-    series_tickers: [KXNBANEWCHAMPION, KXNBANEWCHAMP, KXNBA3PEAT, KXNBACONF]
+    series_tickers: [KXNBANEWCHAMPION, KXNBANEWCHAMP, KXNBA3PEAT, KXNBACONF, KXNBAFINALSOUTCOME]
   conference_champion:
     scope: season
     stat: conference
@@ -282,14 +282,14 @@ families:
     stat: wins
     period: SEASON
     support: RESEARCH
-    series_tickers: [KXNBAWINS, KXNBAWINTOTAL, KXNBASEASONWINS]
+    series_tickers: [KXNBAWINS, KXNBAWINTOTAL, KXNBASEASONWINS, KXNBAH2HWINS]
   season_record:
     scope: season
     stat: record
     period: SEASON
     support: RESEARCH
     description: "League-wide record propositions: best/worst regular-season record, any team reaching X wins, single-team win record."
-    series_tickers: [KXNBARECORD, KXNBAMOSTWINS, KXNBAWINRECORD]
+    series_tickers: [KXNBARECORD, KXNBAMOSTWINS, KXNBAWINRECORD, KXNBAPOSTASREC, KXNBATEAMWINSTREAK, KXNBAWINSTREAK]
   playoffs_qualify:
     scope: season
     stat: playoffs
@@ -303,7 +303,7 @@ families:
     period: SEASON
     support: RESEARCH
     description: "Final regular-season seeding (1 seed by conference, exact seed) and resulting first-round matchup."
-    series_tickers: [KXNBASEED, KXNBAEAST1SEED, KXNBAWEST1SEED, KXNBAMATCHUP]
+    series_tickers: [KXNBASEED, KXNBAEAST1SEED, KXNBAWEST1SEED, KXNBAMATCHUP, KXNBASEEDOU]
   nba_cup:
     scope: season
     stat: cup
@@ -340,7 +340,7 @@ families:
     period: SEASON
     support: RESEARCH
     description: "Regular-season per-game stat leader (PPG, RPG, APG, BPG, SPG, 3PG)."
-    series_tickers: [KXLEADERNBAPTS, KXLEADERNBAREB, KXLEADERNBAAST, KXLEADERNBABLK, KXLEADERNBASTL, KXLEADERNBA3PT]
+    series_tickers: [KXLEADERNBAPTS, KXLEADERNBAREB, KXLEADERNBAAST, KXLEADERNBABLK, KXLEADERNBASTL, KXLEADERNBA3PT, KXNBASTATLEADER, KXNBASTATAVG]
     series_patterns: ["^KXLEADERNBA"]
   season_player_streak:
     scope: player
@@ -355,7 +355,7 @@ families:
     period: SEASON
     support: RESEARCH
     description: "Season-long 'any player/game records X' propositions (e.g. any player 70+ points this season)."
-    series_tickers: [KXNBAGAMESPECIALS, KXNBAPLAYERSPECIALS]
+    series_tickers: [KXNBAGAMESPECIALS, KXNBAPLAYERSPECIALS, KXNBAPLAYERHIGHSCORE, KXNBAGAMEHIGHSCORE, KXNBAESCALATORPTS, KXNBAESCALATOR3PT, KXNBAONE3PT]
 
   # ------------------------------------------------------------------ summer league (not NBA regular season; excluded from training)
   summer_league_game:
@@ -402,7 +402,7 @@ families:
     period: SEASON
     support: UNMODELABLE
     description: "Voting outcomes (MVP, DPOY, ROY, MIP, 6MOY, COY, Finals/conference-finals/Cup/Summer/All-Star MVP, Clutch POY, Sportsmanship). Not a basketball-simulation quantity."
-    series_tickers: [KXNBAMVP, KXNBADPOY, KXNBAROY, KXNBAMIP, KXNBAMIMP, KXNBA6MOY, KXNBASIXTH, KXNBACOY, KXNBAFMVP, KXNBAFINMVP, KXNBAFINALSMVP, KXNBAEFINMVP, KXNBAWFINMVP, KXNBACUPMVP, KXNBASUMMERMVP, KXNBAALLSTARMVP, KXNBASPORTSMANSHIP, KXNBACLUTCH, KXNBAMVPDPOY, KXNBATOP5ROTY]
+    series_tickers: [KXNBAMVP, KXNBADPOY, KXNBAROY, KXNBAMIP, KXNBAMIMP, KXNBA6MOY, KXNBASIXTH, KXNBACOY, KXNBAFMVP, KXNBAFINMVP, KXNBAFINALSMVP, KXNBAEFINMVP, KXNBAWFINMVP, KXNBACUPMVP, KXNBASUMMERMVP, KXNBAALLSTARMVP, KXNBASPORTSMANSHIP, KXNBACLUTCH, KXNBAMVPDPOY, KXNBATOP5ROTY, KXNBAAWARDFIN, KXNBADPOTM, KXNBAPOTM, KXNBAROTM, KXNBACOTM, KXNBAHUSTLE, KXNBASJC, KXNBATEAMMATE, KXNBAEXEC]
   all_nba_selections:
     scope: season
     stat: selection
@@ -433,7 +433,7 @@ families:
     period: SEASON
     support: UNMODELABLE
     description: "Player movement and contracts: trades, next team, contract size, retirement, return, playing together, brand deals, player options, team announcements."
-    series_tickers: [KXNBATRADE, KXNBANEXTTEAM, KXNEXTTEAMNBA, KXNBANEXTTEAMCONF, KXNBANEXTTEAMOUTLET, KXNBANEXTCONTRACT, KXNBAPLAYERDEAL, KXNBARETIRE, KXNBARETURN, KXNBACOMPETE, KXNBAPLAYTOGETHER, KXPLAYEROPTIONNBA, KXNBATEAMANNOUNCE]
+    series_tickers: [KXNBATRADE, KXNBANEXTTEAM, KXNEXTTEAMNBA, KXNBANEXTTEAMCONF, KXNBANEXTTEAMOUTLET, KXNBANEXTCONTRACT, KXNBAPLAYERDEAL, KXNBARETIRE, KXNBARETURN, KXNBACOMPETE, KXNBAPLAYTOGETHER, KXPLAYEROPTIONNBA, KXNBATEAMANNOUNCE, KXNBATOJOINCBA]
     series_patterns: ["^KXNBANEXTTEAM", "^KXNEXTTEAMNBA"]
   coaching:
     scope: other
@@ -449,7 +449,7 @@ families:
     period: SEASON
     support: UNMODELABLE
     description: "League/franchise business: expansion cities, relocation, team/stake sales, governors, new franchises, conference realignment, rule changes, arena completion."
-    series_tickers: [KXCITYNBAEXPAND, KXNBASEATTLE, KXNBALASVEGAS, KXNBARELOCATION, KXNBATEAMSALE, KXNBASTAKESALE, KXNBANEXTGOVERNOR, KXNBATEAM, KXNBAJOINCONF, KXNBARULE, KXNBASTADIUM]
+    series_tickers: [KXCITYNBAEXPAND, KXNBASEATTLE, KXNBALASVEGAS, KXNBARELOCATION, KXNBATEAMSALE, KXNBASTAKESALE, KXNBANEXTGOVERNOR, KXNBATEAM, KXNBAJOINCONF, KXNBARULE, KXNBASTADIUM, KXNBAFRANCHISECOST, KXNBAFRANCHISEOWNER, KXNBACITYEXPAND, KXNBAEUROPEANNOUNCE]
   schedule_announcement:
     scope: other
     stat: schedule

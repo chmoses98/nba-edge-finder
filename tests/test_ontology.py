@@ -120,3 +120,21 @@ def test_legacy_priced_name_still_resolves_from_the_immutable_archive():
     # and we must never write the legacy name back out
     assert str(Support.MODELABLE) == "MODELABLE"
     assert not hasattr(Support, "PRICED")
+
+
+def test_series_live_in_2026_11_02_snapshot_now_map():
+    """27 series (3,080-markets-worth incl. 692 stat-leader and 303 award-finalist markets) were live in the archived
+    full snapshot of 2026-11-02T00:04Z but absent from the ontology (found by the Alpha cross-sport inventory)."""
+    o = Ontology.load()
+    expected = {
+        "season_stat_leader": ["KXNBASTATLEADER", "KXNBASTATAVG"],
+        "awards": ["KXNBAAWARDFIN", "KXNBADPOTM", "KXNBAPOTM", "KXNBAROTM", "KXNBACOTM", "KXNBAHUSTLE", "KXNBASJC", "KXNBATEAMMATE", "KXNBAEXEC"],
+        "champion_special": ["KXNBAFINALSOUTCOME"],
+        "season_specials": ["KXNBAPLAYERHIGHSCORE", "KXNBAGAMEHIGHSCORE", "KXNBAESCALATORPTS", "KXNBAESCALATOR3PT", "KXNBAONE3PT"],
+        "season_wins": ["KXNBAH2HWINS"], "season_record": ["KXNBAPOSTASREC", "KXNBATEAMWINSTREAK", "KXNBAWINSTREAK"],
+        "playoff_seed": ["KXNBASEEDOU"], "transactions": ["KXNBATOJOINCBA"],
+        "franchise_business": ["KXNBAFRANCHISECOST", "KXNBAFRANCHISEOWNER", "KXNBACITYEXPAND", "KXNBAEUROPEANNOUNCE"],
+    }
+    for fam, tickers in expected.items():
+        for t in tickers:
+            assert o.family_for_series(t) == fam, t
