@@ -505,9 +505,16 @@ def _rollups(date_et, games, universe, rows, last_pred, reason_counts, refused, 
         status = "BLOCKED"
         blockers.append("zero pre-tip forecast rows joined")
     no_quote = sum(1 for r in final_rows if r["yes_ask_eff"] is None and r["no_ask_eff"] is None)
+    quote_by_family: dict[str, dict[str, int]] = defaultdict(lambda: {"priced": 0, "unpriced": 0})
+    for r in final_rows:
+        k = "unpriced" if r["yes_ask_eff"] is None and r["no_ask_eff"] is None else "priced"
+        quote_by_family[r["family"]][k] += 1
     if final_rows and no_quote == len(final_rows):
         status = "BLOCKED"
         blockers.append("no executable quote joined to any forecast: quote-dependent ROI/CLV/market baselines unavailable")
+    elif no_quote:
+        status = "DEGRADED"
+        blockers.append(f"{no_quote} valid pre-tip model forecasts have no executable archived ask; price/economic grading unavailable for those tickers")
     # Every individual spread/alternate-spread strike is audited, but related
     # rungs from the same game are clustered, never independent observations.
     spread_rows = [{**r, "spread_rung": f"{r['family']}|{r.get('period') or 'game'}|{r.get('comparator') or 'unknown'}|{r.get('threshold') if r.get('threshold') is not None else 'unknown'}"}
@@ -519,11 +526,28 @@ def _rollups(date_et, games, universe, rows, last_pred, reason_counts, refused, 
                      "by_family_universe": dict(sorted(_count(u["family"] for u in universe.values()).items())),
                      "pretip_forecast_rows": len(rows), "refused": refused,
                      "forecast_rows_with_an_executable_quote": len(final_rows) - no_quote,
-                     "forecast_rows_without_any_executable_quote": no_quote},
+                     "forecast_rows_without_any_executable_quote": no_quote,
+                     "quote_by_family": {f: dict(c) for f, c in sorted(quote_by_family.items())}},
         "headline_latest_pretip_by_family": _family_table(final_rows, "family"),
         "by_horizon": _family_table(rows, "horizon"),
         "by_game": _family_table(final_rows, "game_id"),
         "by_spread_rung": _family_table(spread_rows, "spread_rung"),
+        "high_confidence_misses": {
+            "definition": "model_yes_prob >= 0.90 and settled NO, or <= 0.10 and settled YES; descriptive, not injury attribution",
+            "count": sum(1 for r in final_rows if r["outcome_yes"] is not None and (
+                (r["p_model"] >= 0.90 and not r["outcome_yes"]) or
+                (r["p_model"] <= 0.10 and r["outcome_yes"]))),
+            "examples": sorted(
+                [{"ticker": r["ticker"], "game_id": r["game_id"], "family": r["family"],
+                  "predicted_at_utc": r["predicted_at_utc"], "p_model_yes": r["p_model"],
+                  "outcome_yes": r["outcome_yes"], "p_market_mid": r["p_market_mid"],
+                  "quote_observed_at_utc": r["quote_observed_at_utc"]}
+                 for r in final_rows if r["outcome_yes"] is not None and (
+                    (r["p_model"] >= 0.90 and not r["outcome_yes"]) or
+                    (r["p_model"] <= 0.10 and r["outcome_yes"]))],
+                key=lambda r: (-abs(r["p_model_yes"] - r["outcome_yes"]), r["ticker"]),
+            )[:100],
+        },
         "by_price_bin": _family_table([{**r, "price_bin": price_bin(r["p_model"])} for r in final_rows], "price_bin"),
         "not_evaluated": ["injury-status and participation splits (needs injury snapshot join per horizon)", "actual-fill CLV (no fill evidence in archive)",
                           "joint winner-vs-final-margin consistency (direction and individual spread-rung calibration shown separately)"],
@@ -557,7 +581,9 @@ def render_markdown(rep: dict[str, Any]) -> str:
     lines += ["", "## Coverage", f"universe **{c['universe']}** = graded **{c['graded']}** + ungraded **{c['universe'] - c['graded']}**", ""]
     for k, v in c.get("ungraded_by_reason", {}).items():
         lines.append(f"- ungraded `{k}`: {v}")
-    lines += [f"- refused: {c.get('refused')}", "", "## Family performance (latest pre-tip forecast per ticker; 🟢 model beats market, 🔴 market beats model — both only when the game-clustered CI excludes 0 and BH q<0.10 across families; 🟡 inconclusive; ⚪ no market)", "",
+    lines += [f"- refused: {c.get('refused')}", f"- quote join by family: {c.get('quote_by_family', {})}",
+              f"- high-confidence model misses: {rep.get('high_confidence_misses', {}).get('count', 0)} (see JSON for examples; injury causation untested)",
+              "", "## Family performance (latest pre-tip forecast per ticker; 🟢 model beats market, 🔴 market beats model — both only when the game-clustered CI excludes 0 and BH q<0.10 across families; 🟡 inconclusive; ⚪ no market)", "",
               "| family | n | games | p̄ | base | Brier model | Brier mkt | mkt−model (95% CI) | q(BH) | skill | +EV picks | ROI after fee (95% CI) | CLV exec | CLV sel |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for t in rep.get("headline_latest_pretip_by_family", []):
         d, r = t["market_minus_model_brier"], t["pick_roi_after_fee"]
@@ -605,4 +631,9 @@ def run_audit(archive: Path, dates: list[str], out_dir: Path) -> int:
             worst = EXIT_BLOCKED
             for b in rep["blockers"]:
                 print(f"  BLOCKED: {b}")
+    # Report rolling 7/14/30 ET-calendar-day family metrics where archive audits
+    # exist; missing active-game dates make a period INCOMPLETE, never a green pass.
+    if dates:
+        from nba_edge.audit.rolling import rolling_scorecards
+        rolling_scorecards(archive, out_dir, max(dates))
     return worst

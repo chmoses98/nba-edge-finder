@@ -176,7 +176,8 @@ def test_all_missing_executable_quotes_block_audit_even_when_settled_models_exis
 def test_direction_score_is_not_brier_and_every_spread_rung_is_kept(tmp_path):
     build(tmp_path, spread=True)
     rep = audit_date(tmp_path, "2026-11-07", tmp_path / "out")
-    assert rep["status"] == "OK"
+    assert rep["status"] == "DEGRADED"  # winner quote exists; spread is missing its archived ask
+    assert rep["coverage"]["quote_by_family"]["game_spread"] == {"priced": 0, "unpriced": 1}
     assert len(rep["by_spread_rung"]) == 1
     rung = rep["by_spread_rung"][0]
     assert rung["spread_rung"] == "game_spread|game|gte|-4.5"
@@ -188,3 +189,38 @@ def test_direction_score_is_not_brier_and_every_spread_rung_is_kept(tmp_path):
     assert winner["model_direction_hit_rate"] == 1.0
     assert winner["n_market_direction_calls"] == 0  # market midpoint was exactly 0.50
     assert "multiple-comparison control" not in " ".join(rep["not_evaluated"])
+
+
+def test_rolling_scorecard_counts_ungraded_tickers_without_pseudoreplication(tmp_path):
+    from nba_edge.audit.rolling import rolling_scorecards
+
+    build(tmp_path)
+    rep = audit_date(tmp_path, "2026-11-07", tmp_path / "o")
+    assert rep["status"] == "OK"
+    result = rolling_scorecards(tmp_path, tmp_path / "o", "2026-11-07", periods=(7,))
+    week = result["7d"]
+    assert week["status"] == "COMPLETE"
+    assert week["coverage"]["market_universe"] == 2
+    assert week["coverage"]["graded"] == 1
+    assert week["coverage"]["ungraded"] == 1
+    assert week["coverage"]["ungraded_by_reason"]["settlement_unsettleable:semantics_not_proven"] == 1
+    winner = next(f for f in week["families"] if f["family"] == "game_winner")
+    assert winner["n"] == 1 and winner["n_games"] == 1
+    assert winner["brier_model"] == pytest.approx(0.16)
+
+
+def test_rolling_scorecard_exposes_missing_game_day_instead_of_claiming_complete(tmp_path):
+    from nba_edge.audit.rolling import rolling_scorecards
+
+    led = build(tmp_path)
+    previous_day = TIP - timedelta(days=1)
+    led.append_rows("context/schedule", [
+        {"game_id": "g2", "game_date_et": "2026-11-06", "start_time_utc": iso(previous_day),
+         "away_tricode": "BBB", "home_tricode": "CCC"},
+    ], observed_at=T(700))
+    audit_date(tmp_path, "2026-11-07", tmp_path / "o")
+    result = rolling_scorecards(tmp_path, tmp_path / "o", "2026-11-07", periods=(7,))
+    week = result["7d"]
+    assert week["status"] == "INCOMPLETE"
+    assert week["missing_game_dates"] == ["2026-11-06"]
+    assert week["coverage"]["graded"] == 1
