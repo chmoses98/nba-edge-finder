@@ -41,6 +41,7 @@ from pathlib import Path
 from typing import Any
 
 from nba_edge import __version__
+from nba_edge.archive.slate_store import read_json_any
 from nba_edge.config import REPO_ROOT
 from nba_edge.team_research.box import box_rates, enrich_team_games
 
@@ -429,7 +430,7 @@ def load_inputs(app_root: Path, data_root: Path, history_root: Path | None = Non
         warnings.append(f"{data_root} holds no archive manifest; no rosters, injuries, price paths or predictions")
     blend, blend_meta = _blend_inputs(team_games, player_games, season, history_root, warnings)
     slate = _read_json(data_root / "slates" / "latest" / "slate.json")
-    packet = _read_json(data_root / "slates" / "latest" / "packet.json")
+    packet = read_json_any(data_root / "slates" / "latest" / "packet.json")  # plain (pre-compression) or .json.gz
     return ResearchInputs(
         manifest=manifest, events=events, markets=markets, model_prices=_items(app_root, "model_prices"),
         recommendations=_items(app_root, "recommendations"), wagers=_items(app_root, "wagers"),

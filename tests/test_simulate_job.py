@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 
 from nba_edge.archive.ledger import Ledger
+from nba_edge.archive.slate_store import read_json_any
 from nba_edge.data.history import write_parquet
 from nba_edge.workflows.simulate import run_simulate
 
@@ -76,8 +77,8 @@ def test_run_simulate_end_to_end(tmp_path):
     pr = next(x for x in preds if x["ticker"] == "KXNBAGAME-26OCT20OKCSAS-SAS")
     assert pr["p_market"] == pytest.approx(0.61) and pr["p_data_only"] != pr["p_market"] and pr["authority"] == "RESEARCH"
     assert pr["input_snapshot_ids"]["hybrid_market_weight"] == "0.9"  # game scope
-    assert (tmp_path / "archive" / "slates" / "latest" / "packet.json").exists()
-    packet = json.loads((tmp_path / "archive" / "slates" / "latest" / "packet.json").read_text())
+    assert (tmp_path / "archive" / "slates" / "latest" / "packet.json.gz").exists()
+    packet = read_json_any(tmp_path / "archive" / "slates" / "latest" / "packet.json")
     assert packet["games"][0]["home"]["players"][0]["sim"]["pts"]["q50"] >= 0
     assert led.verify() == []
 
