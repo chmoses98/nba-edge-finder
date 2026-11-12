@@ -259,3 +259,29 @@ def test_pit_quote_fill_joins_last_board_at_forecast_time_and_fails_closed(tmp_p
     assert fills[0]["market_yes_ask"] == 54 and fills[0]["p_market"] == pytest.approx(0.52)
     assert fills[0]["market_observed_at_utc"].endswith("20:10:00Z") and fills[0]["quote_source"] == "PIT_BOARD_RECONSTRUCTED"
     assert stats == {"needs_quote": 5, "filled": 1, "no_board": 1, "stale": 1, "ticker_absent": 1, "one_sided": 1, "chain_error": 0, "deferred": 0}
+
+
+def test_deferred_pit_quote_lookup_is_retried_without_permanently_unpriced_rows(settled, monkeypatch):
+    """A budget deferral must not mark a prediction evaluated or declare the backlog complete."""
+    import nba_edge.workflows.evaluate as ev
+
+    original = ev.pit_quote_fill
+
+    def force_defer(_ledger, pending, deadline=None, deferred_indices=None):
+        assert pending and deferred_indices is not None
+        deferred_indices.add(0)
+        return {}, {"needs_quote": 1, "filled": 0, "deferred": 1}
+
+    monkeypatch.setattr(ev, "pit_quote_fill", force_defer)
+    assert run_evaluate(settled, settled / "data", now=EVAL_AT) == 0
+    st = json.loads((settled / "STATUS_evaluate.json").read_text())
+    assert st["n_new_rows"] == 1 and st["backlog_remaining"] == 1
+    assert st["quote_fills_deferred"] == 1 and st["complete"] is False
+    assert len(_rows(settled, "evaluations")) == 1
+
+    monkeypatch.setattr(ev, "pit_quote_fill", original)
+    assert run_evaluate(settled, settled / "data", now=EVAL_AT + timedelta(minutes=1)) == 0
+    st = json.loads((settled / "STATUS_evaluate.json").read_text())
+    assert st["n_rows"] == 2 and st["n_new_rows"] == 1
+    assert st["quote_fills_deferred"] == 0 and st["backlog_remaining"] == 0 and st["complete"] is True
+    assert {r["prediction_id"] for r in _rows(settled, "evaluations")} == {"p1", "p2"}
