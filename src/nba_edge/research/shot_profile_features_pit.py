@@ -75,7 +75,9 @@ def build_pit_features(
     """
     fga = shots[(~shots.is_free_throw) & shots.is_shooting_play & shots.coordinate_valid].copy()
     fga = fga[fga.zone.isin(ZONES)]
-    fga["ts"] = pd.to_datetime(fga.event_time_utc, format="mixed", utc=True).astype("int64") // 10**9
+    # Seconds since the epoch, independent of the datetime resolution. `.astype("int64") // 10**9` assumed nanoseconds; pandas 3 parses to
+    # microseconds, which made every timestamp 1000x too small (kiloseconds) and the 45-day recency decay effectively switched off.
+    fga["ts"] = (pd.to_datetime(fga.event_time_utc, format="mixed", utc=True) - pd.Timestamp("1970-01-01", tz="UTC")).dt.total_seconds()
 
     players: dict[int, _Acc] = defaultdict(_Acc)
     allowed: dict[int, _Acc] = defaultdict(_Acc)      # what a team lets opponents take

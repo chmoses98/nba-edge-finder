@@ -830,3 +830,21 @@ def test_free_throws_and_unlocated_shots_do_not_enter_a_profile():
     f = build_pit_features(pd.concat([ft, unloc, base], ignore_index=True))
     assert set(f.game_id) == {"g1"}, "only locatable field-goal attempts build a profile"
     assert f.iloc[0].player_prior_attempts == 0.0
+
+
+def test_decay_is_exactly_one_half_after_one_half_life_whatever_the_datetime_resolution():
+    """Regression: `.astype("int64") // 10**9` assumed nanosecond datetimes. pandas 3 parses to microseconds, so every timestamp was 1000x too small
+    and a 45-day half-life behaved like a 45,000-day one (the existing one-year test still passed because a year's decay is "less than 2" even then)."""
+    from datetime import datetime, timedelta
+
+    from nba_edge.research.shot_profile_features_pit import HALF_LIFE_DAYS, build_pit_features
+
+    t0 = datetime(2025, 1, 1, tzinfo=UTC)
+    t1 = t0 + timedelta(days=HALF_LIFE_DAYS)
+    shots = _shot_frame([
+        ("g1", t0.isoformat(), -1, 10, 20, "rim", True),
+        ("g1", t0.isoformat(), -1, 10, 20, "rim", True),
+        ("g2", t1.isoformat(), -1, 10, 20, "rim", True),
+    ])
+    f = build_pit_features(shots).set_index("game_id")
+    assert f.loc["g2", "player_prior_attempts"] == pytest.approx(2 * 0.5, abs=1e-6)
