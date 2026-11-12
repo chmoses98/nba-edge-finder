@@ -230,14 +230,17 @@ def close_price_cents(obs: dict[str, Any] | None) -> float | None:
 PIT_QUOTE_MAX_AGE_S = 20 * 60
 
 
-def pit_quote_fill(ledger: Ledger, pending: list[tuple[dict[str, Any], SettlementRecord, datetime]], deadline: float | None = None
+def pit_quote_fill(ledger: Ledger, pending: list[tuple[dict[str, Any], SettlementRecord, datetime]], deadline: float | None = None,
+                   deferred_indices: set[int] | None = None,
                    ) -> tuple[dict[int, dict[str, Any]], dict[str, int]]:
     """Point-in-time Kalshi quotes for predictions whose own quote fields are empty (legacy simulator rows).
 
     For each such prediction the board used is the last tick at or before ``predicted_at_utc`` AND strictly before tip,
     reconstructed through the verified checkpoint+delta chain. Quotes older than ``PIT_QUOTE_MAX_AGE_S``, broken chains,
     absent tickers and one-sided books stay unpriced (fail closed): no later quote and no invented price is ever used.
-    Returns ({index into pending: quote fields}, counters).
+    Returns ({index into pending: quote fields}, counters). When a runtime deadline defers
+    a quote lookup, deferred_indices receives those prediction indexes; callers MUST
+    retry rather than commit a permanently unpriced evaluation row.
     """
     stats = {"needs_quote": 0, "filled": 0, "no_board": 0, "stale": 0, "ticker_absent": 0, "one_sided": 0, "chain_error": 0, "deferred": 0}
     ticks = sorted({entry_observed_at(e) for e in ledger.manifest() if e.kind in ("kalshi/markets", "kalshi/markets_delta")})
@@ -264,6 +267,8 @@ def pit_quote_fill(ledger: Ledger, pending: list[tuple[dict[str, Any], Settlemen
     for at, idxs in sorted(by_tick.items()):
         if deadline is not None and time.monotonic() > deadline:
             stats["deferred"] += len(idxs)
+            if deferred_indices is not None:
+                deferred_indices.update(idxs)
             continue
         try:
             rec = reconstruct_at(ledger.root, at)
@@ -657,9 +662,16 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
     families_by_ticker = {tk: str(o[-1].get("_family") or "") for tk, o in obs.items() if o}
     cache.update(market_close_entries(settlements, tips, obs, families_by_ticker, only=market_only_tickers))
 
-    fills, quote_stats = pit_quote_fill(ledger, pending, deadline=t0 + budget_s * 0.8)
+    deferred_indices: set[int] = set()
+    fills, quote_stats = pit_quote_fill(ledger, pending, deadline=t0 + budget_s * 0.8,
+                                       deferred_indices=deferred_indices)
     new_rows: list[dict[str, Any]] = []
     for i, (pred, rec, tip) in enumerate(pending):
+        if i in deferred_indices:
+            # This prediction has not had its PIT market quote checked. Do NOT append
+            # a permanently unpriced row: leave its key unseen so the next run retries it.
+            backlog += 1
+            continue
         if i in fills:
             pred = {**pred, **fills[i]}
         tk = pred.get("ticker")
@@ -694,7 +706,8 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
         "evaluated_at_utc": iso(now), "n_rows": len(report_rows), "n_pregame": report["n_pregame"], "n_new_rows": len(new_rows),
         "families": sorted(report["families"]), "skipped": n_skipped, "run_id": ledger.run_id,
         "n_eligible_settled_predictions": n_eligible, "backlog_remaining": backlog, "market_closes_deferred": n_market_deferred,
-        "complete": complete, "elapsed_s": round(time.monotonic() - t0, 1),
+        "complete": complete, "quote_fills_deferred": len(deferred_indices),
+        "elapsed_s": round(time.monotonic() - t0, 1),
     }
     (out_root / "STATUS_evaluate.json").write_text(json.dumps(status, indent=1, default=str))
     print(json.dumps(status, indent=1, default=str))
