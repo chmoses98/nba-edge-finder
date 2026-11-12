@@ -40,7 +40,7 @@ def build(tmp_path, *, settled=True, p=0.6, late_pred=False, cents=False, no_quo
     if spread:
         led.append_rows("contracts", [{"ticker": spread_tk, "family": "game_spread", "game_id": "g1",
                                       "scope": "game", "stat": "margin", "period": "game",
-                                      "threshold": -4.5, "comparator": "gte", "support": "BUILDABLE"}], observed_at=T(600))
+                                      "threshold": -4.5, "comparator": "gte", "support": "BUILDABLE"}], observed_at=T(599))
     q = (lambda a, b: {"_quote_cents": {"yes_bid": a, "yes_ask": b, "no_bid": 100 - b, "no_ask": 100 - a}}) if cents else \
         (lambda a, b: {"yes_bid_dollars": f"{a/100:.4f}", "yes_ask_dollars": f"{b/100:.4f}", "no_bid_dollars": f"{(100-b)/100:.4f}", "no_ask_dollars": f"{(100-a)/100:.4f}"})
     if no_quotes:
@@ -64,7 +64,7 @@ def build(tmp_path, *, settled=True, p=0.6, late_pred=False, cents=False, no_quo
         if spread:
             led.append_rows("settlements", [{"ticker": spread_tk, "game_id": "g1", "outcome": "YES",
                                              "settled_at_utc": iso(TIP + timedelta(hours=4)),
-                                             "engine_version": "settle-1.0"}], observed_at=TIP + timedelta(hours=4))
+                                             "engine_version": "settle-1.0"}], observed_at=TIP + timedelta(hours=4, seconds=1))
     return led
 
 
