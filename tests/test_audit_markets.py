@@ -29,19 +29,30 @@ def iso(d):
     return d.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def build(tmp_path, *, settled=True, p=0.6, late_pred=False, cents=False):
+def build(tmp_path, *, settled=True, p=0.6, late_pred=False, cents=False, no_quotes=False, spread=False):
     led = Ledger(tmp_path, run_id="r1")
     led.append_rows("context/schedule", [{"game_id": "g1", "game_date_et": "2026-11-07", "start_time_utc": iso(TIP), "actual_tip_utc": None,
                                           "away_tricode": "AAA", "home_tricode": "HHH", "_observed_at_utc": iso(T(600))}], observed_at=T(600))
     led.append_rows("contracts", [{"ticker": "KXNBAGAME-26NOV07AAAHHH-AAA", "family": "game_winner", "game_id": "g1", "scope": "game", "stat": "winner",
                                    "support": "BUILDABLE", "threshold": 0.0, "_observed_at_utc": iso(T(600))}], observed_at=T(600))
     tk = "KXNBAGAME-26NOV07AAAHHH-AAA"
+    spread_tk = "KXNBASPREAD-26NOV07AAAHHH-AAA-4"
+    if spread:
+        led.append_rows("contracts", [{"ticker": spread_tk, "family": "game_spread", "game_id": "g1",
+                                      "scope": "game", "stat": "margin", "period": "game",
+                                      "threshold": -4.5, "comparator": "gte", "support": "BUILDABLE"}], observed_at=T(600))
     q = (lambda a, b: {"_quote_cents": {"yes_bid": a, "yes_ask": b, "no_bid": 100 - b, "no_ask": 100 - a}}) if cents else \
         (lambda a, b: {"yes_bid_dollars": f"{a/100:.4f}", "yes_ask_dollars": f"{b/100:.4f}", "no_bid_dollars": f"{(100-b)/100:.4f}", "no_ask_dollars": f"{(100-a)/100:.4f}"})
+    if no_quotes:
+        def q(a, b):
+            return {}  # board snapshots exist, but none carry executable bid/ask
     led.append_rows("kalshi/markets", [{"ticker": tk, **q(48, 52)}, {"ticker": "KXNBAUNKNOWN-26NOV07AAAHHH-X", **q(10, 12)}], observed_at=T(120))
     led.append_rows("kalshi/markets", [{"ticker": tk, **q(55, 59)}, {"ticker": "KXNBAUNKNOWN-26NOV07AAAHHH-X", **q(10, 12)}], observed_at=T(20))
     led.append_rows("kalshi/markets", [{"ticker": tk, **q(1, 2)}], observed_at=TIP + timedelta(minutes=5))  # post-tip board: must never be used
     preds = [{"prediction_id": "p1", "ticker": tk, "game_id": "g1", "predicted_at_utc": iso(T(90)), "p_data_only": p, "family": "game_winner"}]
+    if spread:
+        preds.append({"prediction_id": "spread1", "ticker": spread_tk, "game_id": "g1",
+                      "predicted_at_utc": iso(T(90)), "p_data_only": 0.8, "family": "game_spread"})
     if late_pred:
         preds.append({"prediction_id": "p2", "ticker": tk, "game_id": "g1", "predicted_at_utc": iso(TIP + timedelta(minutes=1)), "p_data_only": 0.99})
     if p is not None:
@@ -50,6 +61,10 @@ def build(tmp_path, *, settled=True, p=0.6, late_pred=False, cents=False):
         led.append_rows("settlements", [{"ticker": tk, "game_id": "g1", "outcome": "YES", "settled_at_utc": iso(TIP + timedelta(hours=4)), "engine_version": "settle-1.0"},
                                         {"ticker": "KXNBAUNKNOWN-26NOV07AAAHHH-X", "game_id": "g1", "outcome": "UNSETTLEABLE", "reason": "semantics not proven (support=UNRESOLVED)",
                                          "settled_at_utc": iso(TIP + timedelta(hours=4)), "engine_version": "settle-1.0"}], observed_at=TIP + timedelta(hours=4))
+        if spread:
+            led.append_rows("settlements", [{"ticker": spread_tk, "game_id": "g1", "outcome": "YES",
+                                             "settled_at_utc": iso(TIP + timedelta(hours=4)),
+                                             "engine_version": "settle-1.0"}], observed_at=TIP + timedelta(hours=4))
     return led
 
 
@@ -145,3 +160,31 @@ def test_bh_controls_multiplicity_and_skill_requires_q():
     assert ungraded_group("KXNBAPTSPROT-26NOV08BKNDAL-X") == "protected_prop_needs_period_participation"
     assert ungraded_group("KXNBAWINMARGIN-26NOV08BKNDAL-BKN11TO20").startswith("win_margin")
     assert ungraded_group("KXNBAPTS-26NOV08BKNDAL-X") == ""
+
+
+def test_all_missing_executable_quotes_block_audit_even_when_settled_models_exist(tmp_path):
+    build(tmp_path, no_quotes=True)
+    rep = audit_date(tmp_path, "2026-11-07", tmp_path / "out")
+    assert rep["coverage"]["graded"] == 1  # settlement and PIT probability are still valid
+    assert rep["coverage"]["forecast_rows_with_an_executable_quote"] == 0
+    assert rep["coverage"]["forecast_rows_without_any_executable_quote"] == 1
+    assert rep["status"] == "BLOCKED"
+    assert any("no executable quote" in reason for reason in rep["blockers"])
+    assert run_audit(tmp_path, ["2026-11-07"], tmp_path / "out2") == 3
+
+
+def test_direction_score_is_not_brier_and_every_spread_rung_is_kept(tmp_path):
+    build(tmp_path, spread=True)
+    rep = audit_date(tmp_path, "2026-11-07", tmp_path / "out")
+    assert rep["status"] == "OK"
+    assert len(rep["by_spread_rung"]) == 1
+    rung = rep["by_spread_rung"][0]
+    assert rung["spread_rung"] == "game_spread|game|gte|-4.5"
+    assert rung["n"] == 1 and rung["n_games"] == 1
+    assert rung["model_direction_hit_rate"] == 1.0  # 80% YES and actual YES
+    assert rung["brier_model"] == pytest.approx(0.04)  # calibrated penalty, not 0/1 direction
+    assert rung["market_direction_hit_rate"] is None  # no invented market quote for spread
+    winner = next(x for x in rep["headline_latest_pretip_by_family"] if x["family"] == "game_winner")
+    assert winner["model_direction_hit_rate"] == 1.0
+    assert winner["n_market_direction_calls"] == 0  # market midpoint was exactly 0.50
+    assert "multiple-comparison control" not in " ".join(rep["not_evaluated"])
