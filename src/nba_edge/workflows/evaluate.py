@@ -27,6 +27,7 @@ Leak rules
 
 from __future__ import annotations
 
+import bisect
 import json
 import os
 import time
@@ -225,6 +226,71 @@ def close_price_cents(obs: dict[str, Any] | None) -> float | None:
     return None
 
 
+# A pre-tip quote older than this when the forecast was made is not "the market at forecast time"; it is left unpriced.
+PIT_QUOTE_MAX_AGE_S = 20 * 60
+
+
+def pit_quote_fill(ledger: Ledger, pending: list[tuple[dict[str, Any], SettlementRecord, datetime]], deadline: float | None = None,
+                   deferred_indices: set[int] | None = None,
+                   ) -> tuple[dict[int, dict[str, Any]], dict[str, int]]:
+    """Point-in-time Kalshi quotes for predictions whose own quote fields are empty (legacy simulator rows).
+
+    For each such prediction the board used is the last tick at or before ``predicted_at_utc`` AND strictly before tip,
+    reconstructed through the verified checkpoint+delta chain. Quotes older than ``PIT_QUOTE_MAX_AGE_S``, broken chains,
+    absent tickers and one-sided books stay unpriced (fail closed): no later quote and no invented price is ever used.
+    Returns ({index into pending: quote fields}, counters). When a runtime deadline defers
+    a quote lookup, deferred_indices receives those prediction indexes; callers MUST
+    retry rather than commit a permanently unpriced evaluation row.
+    """
+    stats = {"needs_quote": 0, "filled": 0, "no_board": 0, "stale": 0, "ticker_absent": 0, "one_sided": 0, "chain_error": 0, "deferred": 0}
+    ticks = sorted({entry_observed_at(e) for e in ledger.manifest() if e.kind in ("kalshi/markets", "kalshi/markets_delta")})
+    by_tick: dict[datetime, list[int]] = {}
+    for i, (pred, _rec, tip) in enumerate(pending):
+        if pred.get("p_market") is not None or pred.get("market_yes_ask") is not None:
+            continue
+        stats["needs_quote"] += 1
+        pa = _dt(pred.get("predicted_at_utc"))
+        if pa is None:
+            stats["no_board"] += 1
+            continue
+        k = bisect.bisect_right(ticks, pa) - 1
+        while k >= 0 and ticks[k] >= tip:
+            k -= 1
+        if k < 0:
+            stats["no_board"] += 1
+            continue
+        if (pa - ticks[k]).total_seconds() > PIT_QUOTE_MAX_AGE_S:
+            stats["stale"] += 1
+            continue
+        by_tick.setdefault(ticks[k], []).append(i)
+    out: dict[int, dict[str, Any]] = {}
+    for at, idxs in sorted(by_tick.items()):
+        if deadline is not None and time.monotonic() > deadline:
+            stats["deferred"] += len(idxs)
+            if deferred_indices is not None:
+                deferred_indices.update(idxs)
+            continue
+        try:
+            rec = reconstruct_at(ledger.root, at)
+        except DeltaChainError:
+            stats["chain_error"] += len(idxs)
+            continue
+        board = {r.get("ticker"): _slim(r) for r in rec.rows}
+        for i in idxs:
+            q = board.get(pending[i][0].get("ticker"))
+            if q is None:
+                stats["ticker_absent"] += 1
+                continue
+            mid = entry_mid_cents(q.get("yes_bid"), q.get("yes_ask"))
+            if mid is None or q.get("no_ask") is None or q.get("no_bid") is None:
+                stats["one_sided"] += 1
+                continue
+            out[i] = {"market_yes_bid": q["yes_bid"], "market_yes_ask": q["yes_ask"], "market_no_bid": q["no_bid"], "market_no_ask": q["no_ask"],
+                      "p_market": mid / 100.0, "market_observed_at_utc": rec.observed_at_utc, "quote_source": "PIT_BOARD_RECONSTRUCTED"}
+            stats["filled"] += 1
+    return out, stats
+
+
 # ---- row construction ------------------------------------------------------------------------------
 
 
@@ -278,6 +344,8 @@ def build_evaluation_row(pred: dict[str, Any], rec: SettlementRecord, tip: datet
         "p_hybrid": pred.get("p_hybrid"),
         "p_production": pred.get("p_production"),
         "entry_yes_ask": yes_ask,
+        "market_observed_at_utc": pred.get("market_observed_at_utc"),
+        "quote_source": pred.get("quote_source"),
         "entry_no_ask": no_ask,
         "close_prob": None if close_c is None else close_c / 100.0,
         "close_observed_at_utc": None if closing is None else closing.get("_observed_at_utc"),
@@ -594,8 +662,18 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
     families_by_ticker = {tk: str(o[-1].get("_family") or "") for tk, o in obs.items() if o}
     cache.update(market_close_entries(settlements, tips, obs, families_by_ticker, only=market_only_tickers))
 
+    deferred_indices: set[int] = set()
+    fills, quote_stats = pit_quote_fill(ledger, pending, deadline=t0 + budget_s * 0.8,
+                                       deferred_indices=deferred_indices)
     new_rows: list[dict[str, Any]] = []
-    for pred, rec, tip in pending:
+    for i, (pred, rec, tip) in enumerate(pending):
+        if i in deferred_indices:
+            # This prediction has not had its PIT market quote checked. Do NOT append
+            # a permanently unpriced row: leave its key unseen so the next run retries it.
+            backlog += 1
+            continue
+        if i in fills:
+            pred = {**pred, **fills[i]}
         tk = pred.get("ticker")
         row = build_evaluation_row(pred, rec, tip, obs.get(tk, []))
         if row is None:
@@ -613,6 +691,9 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
 
     report = build_report(report_rows, now, len(new_rows))
     report["skipped"] = n_skipped
+    report["pit_quote_fill"] = quote_stats
+    n_mkt = sum(1 for r in report_rows if r.get("p_market") is not None)
+    report["n_rows_with_market_baseline"] = n_mkt
     market_only = market_only_from_entries(cache)
     eval_dir = out_root / "eval"
     eval_dir.mkdir(parents=True, exist_ok=True)
@@ -625,10 +706,13 @@ def run_evaluate(out_root: Path, data_root: Path, now: datetime | None = None) -
         "evaluated_at_utc": iso(now), "n_rows": len(report_rows), "n_pregame": report["n_pregame"], "n_new_rows": len(new_rows),
         "families": sorted(report["families"]), "skipped": n_skipped, "run_id": ledger.run_id,
         "n_eligible_settled_predictions": n_eligible, "backlog_remaining": backlog, "market_closes_deferred": n_market_deferred,
-        "complete": complete, "elapsed_s": round(time.monotonic() - t0, 1),
+        "complete": complete, "quote_fills_deferred": len(deferred_indices),
+        "elapsed_s": round(time.monotonic() - t0, 1),
     }
     (out_root / "STATUS_evaluate.json").write_text(json.dumps(status, indent=1, default=str))
     print(json.dumps(status, indent=1, default=str))
+    if report_rows and n_mkt == 0:
+        print(f"evaluate: WARNING - {len(report_rows)} evaluation rows but ZERO carry a market baseline; market-vs-model comparisons are unavailable ({quote_stats})")
     if n_eligible > 0 and len(report_rows) == 0:
         # Never a silent success: settled, tipped predictions exist but nothing was evaluated.
         print(f"evaluate: FAILED - {n_eligible} eligible settled predictions but 0 evaluation rows")

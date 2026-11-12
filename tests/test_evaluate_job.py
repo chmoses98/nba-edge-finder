@@ -221,3 +221,67 @@ def test_zero_rows_with_eligible_settled_predictions_is_an_error(settled, monkey
     """An empty evaluation must never report success when eligible settled inputs exist."""
     monkeypatch.setenv("NBA_EVAL_MAX_NEW_ROWS", "0")
     assert run_evaluate(settled, settled / "data", now=EVAL_AT) == 3
+
+
+def test_pit_quote_fill_joins_last_board_at_forecast_time_and_fails_closed(tmp_path):
+    """Legacy predictions carry no quote: the baseline comes from the board at-or-before the forecast (and before tip), never later."""
+    from datetime import UTC, datetime
+
+    from nba_edge.workflows.evaluate import pit_quote_fill
+
+    led = Ledger(tmp_path, run_id="r1")
+    t0, t1, t2 = (datetime(2026, 10, 3, 20, m, tzinfo=UTC) for m in (0, 10, 40))
+    tip = datetime(2026, 10, 3, 22, 0, tzinfo=UTC)
+
+    def row(tk, bid, ask):
+        return {"ticker": tk, "_quote_cents": {"yes_bid": bid, "yes_ask": ask, "no_bid": None if ask is None else 100 - ask, "no_ask": 100 - bid, "last_price": None}, "_family": "f"}
+
+    led.append_rows("kalshi/markets", [row("A", 40, 44), row("TWO", 10, None)], observed_at=t0)
+    led.append_rows("kalshi/markets", [row("A", 50, 54)], observed_at=t1)
+    led.append_rows("kalshi/markets", [row("A", 90, 94)], observed_at=t2)  # AFTER the forecast: must never be used
+
+    class R:  # settlement stub; pit_quote_fill only reads the prediction and tip
+        pass
+
+    def pred(tk, at):
+        return {"ticker": tk, "predicted_at_utc": iso(at), "p_market": None, "market_yes_ask": None}
+
+    pending = [
+        (pred("A", datetime(2026, 10, 3, 20, 15, tzinfo=UTC)), R(), tip),   # uses the 20:10 board
+        (pred("A", datetime(2026, 10, 3, 21, 30, tzinfo=UTC)), R(), tip),   # 20:40 board is 50 min old: stale -> unpriced
+        (pred("MISSING", datetime(2026, 10, 3, 20, 15, tzinfo=UTC)), R(), tip),
+        (pred("TWO", datetime(2026, 10, 3, 20, 5, tzinfo=UTC)), R(), tip),  # one-sided book
+        (pred("A", datetime(2026, 10, 3, 19, 0, tzinfo=UTC)), R(), tip),    # before any board
+        ({**pred("A", datetime(2026, 10, 3, 20, 15, tzinfo=UTC)), "p_market": 0.5}, R(), tip),  # already quoted: untouched
+    ]
+    fills, stats = pit_quote_fill(led, pending)
+    assert set(fills) == {0}
+    assert fills[0]["market_yes_ask"] == 54 and fills[0]["p_market"] == pytest.approx(0.52)
+    assert fills[0]["market_observed_at_utc"].endswith("20:10:00Z") and fills[0]["quote_source"] == "PIT_BOARD_RECONSTRUCTED"
+    assert stats == {"needs_quote": 5, "filled": 1, "no_board": 1, "stale": 1, "ticker_absent": 1, "one_sided": 1, "chain_error": 0, "deferred": 0}
+
+
+def test_deferred_pit_quote_lookup_is_retried_without_permanently_unpriced_rows(settled, monkeypatch):
+    """A budget deferral must not mark a prediction evaluated or declare the backlog complete."""
+    import nba_edge.workflows.evaluate as ev
+
+    original = ev.pit_quote_fill
+
+    def force_defer(_ledger, pending, deadline=None, deferred_indices=None):
+        assert pending and deferred_indices is not None
+        deferred_indices.add(0)
+        return {}, {"needs_quote": 1, "filled": 0, "deferred": 1}
+
+    monkeypatch.setattr(ev, "pit_quote_fill", force_defer)
+    assert run_evaluate(settled, settled / "data", now=EVAL_AT) == 0
+    st = json.loads((settled / "STATUS_evaluate.json").read_text())
+    assert st["n_new_rows"] == 1 and st["backlog_remaining"] == 1
+    assert st["quote_fills_deferred"] == 1 and st["complete"] is False
+    assert len(_rows(settled, "evaluations")) == 1
+
+    monkeypatch.setattr(ev, "pit_quote_fill", original)
+    assert run_evaluate(settled, settled / "data", now=EVAL_AT + timedelta(minutes=1)) == 0
+    st = json.loads((settled / "STATUS_evaluate.json").read_text())
+    assert st["n_rows"] == 2 and st["n_new_rows"] == 1
+    assert st["quote_fills_deferred"] == 0 and st["backlog_remaining"] == 0 and st["complete"] is True
+    assert {r["prediction_id"] for r in _rows(settled, "evaluations")} == {"p1", "p2"}
