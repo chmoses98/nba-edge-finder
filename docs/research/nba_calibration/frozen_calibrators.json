@@ -1,0 +1,115 @@
+{
+ "P1_calibration_only": {
+  "eps": 0.01,
+  "groups": [
+   "arm",
+   "slot"
+  ],
+  "lambda": 10.0,
+  "maps": {
+   "ewm5|morning": {
+    "a": 0.348565,
+    "b": 0.774856,
+    "n": 5087
+   },
+   "ewm5|pretip": {
+    "a": 0.331991,
+    "b": 0.571688,
+    "n": 1816
+   },
+   "sim_rotation|morning": {
+    "a": -0.067059,
+    "b": 1.078982,
+    "n": 5087
+   },
+   "sim_rotation|pretip": {
+    "a": -0.065107,
+    "b": 0.961003,
+    "n": 1816
+   }
+  }
+ },
+ "P1_combined": {
+  "eps": 0.01,
+  "groups": [
+   "arm",
+   "slot"
+  ],
+  "lambda": 10.0,
+  "maps": {
+   "ewm5|morning": {
+    "a": 1.63518,
+    "b": 0.676845,
+    "n": 3062
+   },
+   "ewm5|pretip": {
+    "a": 1.557704,
+    "b": 0.672291,
+    "n": 1298
+   },
+   "sim_rotation|morning": {
+    "a": 1.137113,
+    "b": 0.905968,
+    "n": 3062
+   },
+   "sim_rotation|pretip": {
+    "a": 1.088672,
+    "b": 0.932486,
+    "n": 1298
+   }
+  }
+ },
+ "P2_props": {
+  "eps": 0.005,
+  "groups": [
+   "arm",
+   "family"
+  ],
+  "lambda": 10.0,
+  "maps": {
+   "ewm5|assists": {
+    "a": -0.187401,
+    "b": 0.935588,
+    "n": 27660
+   },
+   "ewm5|points": {
+    "a": -0.262296,
+    "b": 0.878627,
+    "n": 36880
+   },
+   "ewm5|rebounds": {
+    "a": -0.121682,
+    "b": 0.919407,
+    "n": 32270
+   },
+   "ewm5|threes": {
+    "a": -0.158845,
+    "b": 0.866407,
+    "n": 27660
+   },
+   "sim_rotation|assists": {
+    "a": -0.094921,
+    "b": 0.947572,
+    "n": 27660
+   },
+   "sim_rotation|points": {
+    "a": -0.189606,
+    "b": 0.962075,
+    "n": 36880
+   },
+   "sim_rotation|rebounds": {
+    "a": -0.184394,
+    "b": 0.941903,
+    "n": 32270
+   },
+   "sim_rotation|threes": {
+    "a": -0.103755,
+    "b": 0.942663,
+    "n": 27660
+   }
+  }
+ },
+ "fitted_through_outcomes_observed_at": "2026-11-13T06:13:59Z",
+ "schema": "nba_calibration_frozen.v1",
+ "valid_for_games_tipping_after": "2026-11-13T06:13:59Z"
+}
