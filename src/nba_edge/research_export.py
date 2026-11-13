@@ -1449,7 +1449,7 @@ def _distributions(ctx: _Ctx, ev: dict, gid: str, metric_ids: set[str]) -> tuple
         q = sim.get(key)
         if not isinstance(q, dict):
             continue
-        out.append({"market_id": None, "metric_id": None, "entity_id": None, "label": f"game {key} (home perspective)" if key == "margin" else f"game {key}",
+        out.append({"market_id": None, "metric_id": None, "entity_id": None, "label": "game margin (home minus away points; positive = home wins)" if key == "margin" else f"game {key}",
                     "quantiles": {k: float(v) for k, v in sorted(q.items()) if k.startswith("q") and v is not None},
                     "mean": _f(q.get("mean")), "stdev": _f(sd.get(key)), "samples": n_sims, "run_id": None, "generated_at": c_time.to_iso(gen),
                     "source": "slates/latest/packet.json games[].sim", "quality_status": "RESEARCH"})

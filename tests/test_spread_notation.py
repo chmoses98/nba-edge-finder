@@ -30,3 +30,33 @@ def test_slate_report_never_exposes_unqualified_raw_signed_margin():
     assert "model spread" in out
     assert "HOME score minus AWAY score" in out
     assert game["margin_mean"] == -1.7  # display must never mutate model data
+
+
+def test_missing_or_invalid_margins_never_invent_a_favourite():
+    assert format_projected_spread(None, "PHI", "TOR") == "unavailable"
+    assert format_projected_spread(float("nan"), "PHI", "TOR") == "unavailable"
+    assert format_projected_spread(float("inf"), "PHI", "TOR") == "unavailable"
+    assert format_projected_spread(2.0, "PHI", "PHI") == "unavailable"
+    assert format_projected_spread(2.0, "", "TOR") == "unavailable"
+
+
+def test_rounding_boundaries_and_ties():
+    assert format_projected_spread(0.04, "PHI", "TOR") == "Pick'em"
+    assert format_projected_spread(-0.04, "PHI", "TOR") == "Pick'em"
+    assert format_projected_spread(0.06, "PHI", "TOR") == "PHI -0.1"
+    assert format_projected_spread(-0.06, "PHI", "TOR") == "TOR -0.1"
+    assert format_projected_spread(-1.96, "PHI", "TOR") == "TOR -2"
+
+
+def test_projected_winner_agrees_with_simulated_win_probability_sign():
+    # P(home) < 0.5 must coincide with an away-team label for any non-trivial margin.
+    for margin, p_home, label in [(-1.7, 0.457, "TOR -1.7"), (6.5, 0.71, "PHI -6.5"), (-12.0, 0.15, "TOR -12")]:
+        assert format_projected_spread(margin, "PHI", "TOR") == label
+        assert (p_home > 0.5) == label.startswith("PHI")
+
+
+def test_postgame_accuracy_uses_raw_margins_not_labels():
+    # TOR -1.7 projected; PHI won 112-101 (PHI -11). Error is in home-minus-away units.
+    projected, final = -1.7, 112 - 101
+    assert round(abs(projected - final), 6) == 12.7
+    assert format_projected_spread(final, "PHI", "TOR") == "PHI -11"

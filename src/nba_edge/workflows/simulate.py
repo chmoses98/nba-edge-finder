@@ -480,15 +480,16 @@ def _packet_game(g: dict[str, Any], gp, rep, sim, names: NameIndex, contracts: l
     }
 
 
-def format_projected_spread(home_margin: float, home: str, away: str) -> str:
+def format_projected_spread(home_margin: float | None, home: str, away: str) -> str:
     """Team-first conventional spread from a raw HOME-minus-AWAY model margin.
 
     +6.5 for PHI at home => PHI -6.5; -1.7 => away team -1.7.
     This is a display conversion, NEVER a change to simulation or settlement.
     """
-    if not math.isfinite(home_margin) or not home or not away or home == away:
+    if (not isinstance(home_margin, (int, float)) or isinstance(home_margin, bool)
+            or not math.isfinite(home_margin) or not home or not away or home == away):
         return "unavailable"
-    if abs(home_margin) < 0.05:
+    if round(abs(home_margin), 1) == 0:
         return "Pick'em"
     leader = home if home_margin > 0 else away
     amount = f"{abs(home_margin):.1f}".removesuffix(".0")
