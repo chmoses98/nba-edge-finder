@@ -17,6 +17,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import math
 from collections import Counter
 from dataclasses import asdict
 from pathlib import Path
@@ -320,6 +321,8 @@ def run_simulate(out_root: Path, data_root: Path, date: str | None = None, n_sim
             "home_params": {"pace": gp.home.pace, "off_ppp": gp.home.off_ppp, "def_ppp": gp.home.def_ppp, "rest_days": gp.home.rest_days, "b2b": gp.home.b2b, "games_used": rep.team_games_used.get(home_id)},
             "away_params": {"pace": gp.away.pace, "off_ppp": gp.away.off_ppp, "def_ppp": gp.away.def_ppp, "rest_days": gp.away.rest_days, "b2b": gp.away.b2b, "games_used": rep.team_games_used.get(away_id)},
         }
+        # Derived display only: simulator margin_mean remains home_pts - away_pts.
+        gsum["spread_label"] = format_projected_spread(gsum["margin_mean"], gsum["home"], gsum["away"])
         slate_games.append(gsum)
         # contracts
         cutoff_utc = et_midnight_utc(cutoff)
@@ -477,15 +480,38 @@ def _packet_game(g: dict[str, Any], gp, rep, sim, names: NameIndex, contracts: l
     }
 
 
+def format_projected_spread(home_margin: float, home: str, away: str) -> str:
+    """Team-first conventional spread from a raw HOME-minus-AWAY model margin.
+
+    +6.5 for PHI at home => PHI -6.5; -1.7 => away team -1.7.
+    This is a display conversion, NEVER a change to simulation or settlement.
+    """
+    if not math.isfinite(home_margin) or not home or not away or home == away:
+        return "unavailable"
+    if abs(home_margin) < 0.05:
+        return "Pick'em"
+    leader = home if home_margin > 0 else away
+    amount = f"{abs(home_margin):.1f}".removesuffix(".0")
+    return f"{leader} -{amount}"
+
+
 def slate_markdown(s: dict[str, Any]) -> str:
     L = [f"# NBA slate {s['date_et']} — generated {s['generated_at_utc']} — {s['model_version']}", "", f"_{s['authority_note']}_", "",
          f"Market snapshot age: {s.get('market_snapshot_age_min') and round(s['market_snapshot_age_min'])} min · injury snapshot age: {s.get('injury_snapshot_age_min') and round(s['injury_snapshot_age_min'])} min ({s.get('injury_provenance', {}).get('source')})", "",
          "## Coverage", "", "| support | contracts |", "|---|---:|"]
     for k, v in sorted(s["coverage"].items()):
         L.append(f"| {k} | {v} |")
-    L += ["", "## Games", "", "| game | tip (UTC) | P(home) | margin μ±σ | total μ±σ | OT | sims | inputs |", "|---|---|---:|---|---|---:|---:|---|"]
+    L += [
+        "", "## Games", "",
+        "_Model spread names the projected winner as TEAM -points. "
+        "The underlying JSON margin_mean remains HOME score minus AWAY score._",
+        "",
+        "| game | tip (UTC) | P(home) | model spread | margin σ | total μ±σ | OT | sims | inputs |",
+        "|---|---|---:|---|---:|---|---:|---:|---|",
+    ]
     for g in s["games"]:
-        L.append(f"| {g['away']} @ {g['home']} | {g['tip_utc']} | {g['p_home_win']:.3f} | {g['margin_mean']:+.1f}±{g['margin_sd']:.1f} | {g['total_mean']:.1f}±{g['total_sd']:.1f} | {g['ot_rate']:.3f} | {g['n_sims']} | {'ok' if g['inputs_trusted'] else 'CANNOT_TRUST: ' + '; '.join(g['input_reasons'][:2])} |")
+        spread = format_projected_spread(g["margin_mean"], g["home"], g["away"])
+        L.append(f"| {g['away']} @ {g['home']} | {g['tip_utc']} | {g['p_home_win']:.3f} | {spread} | ±{g['margin_sd']:.1f} | {g['total_mean']:.1f}±{g['total_sd']:.1f} | {g['ot_rate']:.3f} | {g['n_sims']} | {'ok' if g['inputs_trusted'] else 'CANNOT_TRUST: ' + '; '.join(g['input_reasons'][:2])} |")
     L += ["", "## Contracts (OK gate, sorted by best EV)", "", "| ticker | title | side | ask | p_mkt | p_data | p_hyb | EV | bet≤ | thesis |", "|---|---|---|---:|---:|---:|---:|---:|---:|---|"]
     ok = [c for c in s["contracts"] if c["gate"] == "OK"]
     ok.sort(key=lambda c: -max(c["ev_yes"] or -9, c["ev_no"] or -9))
