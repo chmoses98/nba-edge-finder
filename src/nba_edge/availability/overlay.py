@@ -5,12 +5,16 @@ never read an injury report (``PARTICIPATION_SOURCE = proxy_recent_team_games_no
 module post-processes their rows with the official NBA injury report as it stood at the projection's own
 ``as_of``. It never edits the frozen arms; it emits new rows under a separate model version.
 
-Rules (all inputs strictly ``captured_utc <= as_of``):
+Rules (all inputs strictly ``effective_utc <= as_of``):
 
 1. Resolve each player's status from the LATEST official-report snapshot for (game, team):
    an explicit status (OUT / DOUBTFUL / QUESTIONABLE / PROBABLE / ACTIVE), or ``unlisted`` when the
-   player is on the report's implied roster but not listed. A player missing from a covered team's
-   snapshot is ``not_on_roster`` (traded, waived, two-way not with the team, ...).
+   player is on the report's implied roster (ESPN team rosters fetched at capture) but not listed. A player
+   missing from a covered team's snapshot is suppressed as ``not_on_roster`` ONLY with positive roster
+   evidence (:meth:`AvailabilityIndex.roster_evidence`): he appears on another team's roster, or he was on this
+   team's roster earlier and has been dropped. On the opponent's roster for the same game (stale projection
+   team) -> ``team_mismatch``; never on any roster -> ``roster_unconfirmed``; both keep the baseline.
+   Every record is usable only from :func:`effective_utc` (the later of its capture and its snapshot write).
 2. Teams without an official snapshot yet fall back to the latest ESPN injury capture (OUT, QUESTIONABLE);
    otherwise the status is ``unknown`` and the baseline is untouched. ESPN statuses are unverified (as in the
    live path, PR #101): an ESPN-only OUT is never suppressed, it is capped like an official QUESTIONABLE
@@ -60,28 +64,50 @@ def espn_pid(entity_id: str) -> str:
 
 @dataclass(frozen=True)
 class Status:
-    status: str  # out | not_on_roster | doubtful | questionable | probable | available | unlisted | unknown
-    source: str  # official | official_roster | espn | none
+    status: str  # out | not_on_roster | doubtful | questionable | probable | available | unlisted | team_mismatch
+    #              | roster_unconfirmed | unknown
+    source: str  # official | official_roster | roster_moved | roster_dropped | espn | none
     captured_utc: str | None = None
 
 
+def effective_utc(r: dict[str, Any]) -> str:
+    """When a record became usable: its own ``captured_utc``, or the time its snapshot file was written if later.
+
+    The availability producer stamps implicit-roster rows with the official report's fetch time, but builds them
+    from rosters fetched at capture time; when it reuses an older report (PIT fallback) the roster evidence would
+    otherwise appear hours before it existed. ``x_available_utc`` is the snapshot write time (set by the loader)."""
+    t = r["captured_utc"]
+    w = r.get("x_available_utc")
+    return w if w and w > t else t
+
+
 class AvailabilityIndex:
-    """``sift.availability.v1`` records indexed for point-in-time lookups."""
+    """``sift.availability.v1`` records indexed for point-in-time lookups (on :func:`effective_utc`)."""
 
     def __init__(self, records: Iterable[dict[str, Any]]):
-        # (event, team) -> {captured_utc: {pid: record}}
+        # (event, team) -> {effective_utc: {pid: record}}
         self._off: dict[tuple[str, str], dict[str, dict[str, dict]]] = defaultdict(lambda: defaultdict(dict))
         self._espn: dict[str, dict[str, dict[str, dict]]] = defaultdict(lambda: defaultdict(dict))
+        # pid -> [(effective_utc, team)] from every official roster snapshot (implicit or explicit rows)
+        self._roster_hist: dict[str, list[tuple[str, str]]] = defaultdict(list)
+        self._event_teams: dict[str, set[str]] = defaultdict(set)
         for r in records:
             if r.get("kind", "injury") != "injury":
                 continue
+            t = effective_utc(r)
+            matched = str(r["entity_id"]).startswith("espn:")
             pid = espn_pid(r["entity_id"])
             if r.get("source") == OFFICIAL:
-                self._off[(r["event_id"], r["team"])][r["captured_utc"]][pid] = r
+                self._off[(r["event_id"], r["team"])][t][pid] = r
+                self._event_teams[r["event_id"]].add(r["team"])
+                if matched:
+                    self._roster_hist[pid].append((t, r["team"]))
             elif r.get("source") == ESPN:
-                self._espn[r["event_id"]][r["captured_utc"]][pid] = r
+                self._espn[r["event_id"]][t][pid] = r
         self._off_times = {k: sorted(v) for k, v in self._off.items()}
         self._espn_times = {k: sorted(v) for k, v in self._espn.items()}
+        for v in self._roster_hist.values():
+            v.sort()
 
     @staticmethod
     def _latest(times: list[str] | None, as_of: str) -> str | None:
@@ -100,13 +126,33 @@ class AvailabilityIndex:
         snap = self._off[(event_id, team)][t]
         return (t, snap) if len(snap) >= MIN_ROSTER_SNAPSHOT else None
 
+    def roster_evidence(self, event_id: str, team: str, player_id: str, as_of: str) -> str:
+        """Why a player is missing from his projected team's latest snapshot, from roster snapshots <= as_of only.
+
+        opponent    on the OTHER team's snapshot for this very game: the projection has a stale team; he is in the game
+        moved       his latest roster appearance anywhere is with another team (trade, signing elsewhere)
+        dropped     he was on this team's roster earlier and is no longer (waived, assignment, released)
+        unconfirmed never seen on any roster snapshot: no positive evidence either way (e.g. ESPN roster lag)"""
+        for opp in self._event_teams.get(event_id, ()):
+            if opp != team:
+                snap = self.team_snapshot(event_id, opp, as_of)
+                if snap is not None and player_id in snap[1]:
+                    return "opponent"
+        hist = [(t, tm) for t, tm in self._roster_hist.get(player_id, ()) if t <= as_of]
+        if not hist:
+            return "unconfirmed"
+        return "moved" if hist[-1][1] != team else "dropped"
+
     def status(self, event_id: str, team: str, player_id: str, as_of: str) -> Status:
         snap = self.team_snapshot(event_id, team, as_of)
         if snap is not None:
             t, rows = snap
             r = rows.get(player_id)
             if r is None:
-                return Status("not_on_roster", "official_roster", t)
+                ev = self.roster_evidence(event_id, team, player_id, as_of)
+                if ev in ("moved", "dropped"):
+                    return Status("not_on_roster", f"roster_{ev}", t)
+                return Status("team_mismatch" if ev == "opponent" else "roster_unconfirmed", "official_roster", t)
             if r.get("certainty") != "REPORTED":
                 return Status("unlisted", "official", t)
             s = str(r["status"]).lower()
@@ -119,15 +165,18 @@ class AvailabilityIndex:
         return Status("unknown", "none", None)
 
     def first_out_after(self, event_id: str, team: str, player_id: str, after: str, until: str) -> str | None:
-        """First official capture in (after, until] that lists the player OUT/DOUBTFUL or drops him from the
-        roster: used only by the replay to label late scratches. Never used to build a forecast."""
+        """First official capture in (after, until] that lists the player OUT/DOUBTFUL or shows positive roster
+        evidence of his absence: used only by the replay to label late scratches. Never used to build a forecast."""
         for t in self._off_times.get((event_id, team), ()):
             if after < t <= until:
                 snap = self._off[(event_id, team)][t]
                 if len(snap) < MIN_ROSTER_SNAPSHOT:
                     continue
                 r = snap.get(player_id)
-                if r is None or (r.get("certainty") == "REPORTED" and str(r["status"]).upper() in ("OUT", "DOUBTFUL")):
+                if r is None:
+                    if self.roster_evidence(event_id, team, player_id, t) in ("moved", "dropped"):
+                        return t
+                elif r.get("certainty") == "REPORTED" and str(r["status"]).upper() in ("OUT", "DOUBTFUL"):
                     return t
         return None
 

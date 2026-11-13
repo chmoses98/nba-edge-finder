@@ -99,12 +99,52 @@ def test_latest_snapshot_wins():
     assert idx.status(GAME, TEAM, ROSTER[0], AS_OF).status == "available"
 
 
-def test_player_missing_from_covered_roster_is_not_on_roster():
-    idx = AvailabilityIndex(snapshot(omit=(ROSTER[1],)))
+def test_player_dropped_from_roster_is_suppressed():
+    earlier = snapshot(t="2026-11-09T12:00:00Z")
+    idx = AvailabilityIndex(earlier + snapshot(omit=(ROSTER[1],)))
     st = idx.status(GAME, TEAM, ROSTER[1], AS_OF)
-    assert (st.status, st.source) == ("not_on_roster", "official_roster")
+    assert (st.status, st.source) == ("not_on_roster", "roster_dropped")
     _, dec = apply_overlay(team_rows(), idx, TRI)
     assert dec[(GAME, ROSTER[1])].suppressed
+
+
+def test_player_moved_to_another_team_is_suppressed():
+    elsewhere = [rec(ROSTER[1], team="ZZZ", event="espn:9", t="2026-11-09T20:00:00Z")]
+    idx = AvailabilityIndex(snapshot(t="2026-11-08T12:00:00Z") + elsewhere + snapshot(omit=(ROSTER[1],)))
+    assert idx.status(GAME, TEAM, ROSTER[1], AS_OF).source == "roster_moved"
+
+
+def test_absence_without_positive_roster_evidence_keeps_baseline():
+    """Never seen on any roster snapshot (e.g. ESPN roster lag for a new signing): not evidence of absence."""
+    idx = AvailabilityIndex(snapshot(omit=(ROSTER[1],)))
+    assert idx.status(GAME, TEAM, ROSTER[1], AS_OF).status == "roster_unconfirmed"
+    _, dec = apply_overlay(team_rows(), idx, TRI)
+    d = dec[(GAME, ROSTER[1])]
+    assert not d.suppressed and d.p_new == d.p_base
+
+
+def test_player_on_opponents_roster_is_a_team_mismatch_not_an_absence():
+    """Stale projection team (traded to tonight's opponent): he is in the game, so never suppressed."""
+    opp = [rec(ROSTER[1], team="BBB")] + [rec(f"-{900 + i}", team="BBB") for i in range(9)]
+    idx = AvailabilityIndex(snapshot(t="2026-11-08T12:00:00Z") + snapshot(omit=(ROSTER[1],)) + opp)
+    assert idx.status(GAME, TEAM, ROSTER[1], AS_OF).status == "team_mismatch"
+    _, dec = apply_overlay(team_rows(), idx, TRI)
+    assert not dec[(GAME, ROSTER[1])].suppressed
+
+
+def test_snapshot_is_usable_only_from_its_write_time():
+    """A roster built after the report fetch must not be visible at the report's (earlier) captured_utc."""
+    late = [dict(r, x_available_utc="2026-11-09T23:30:00Z") for r in snapshot(t="2026-11-09T22:30:00Z", overrides={ROSTER[0]: "OUT"})]
+    idx = AvailabilityIndex(snapshot(t="2026-11-09T20:00:00Z") + late)
+    assert idx.status(GAME, TEAM, ROSTER[0], AS_OF).status == "unlisted"
+    assert idx.status(GAME, TEAM, ROSTER[0], "2026-11-09T23:45:00Z").status == "out"
+
+
+def test_snapshot_write_time_from_archive_path():
+    from nba_edge.research.availability_replay import snapshot_written_utc
+
+    assert snapshot_written_utc("x/availability/nba/2026-11-10/012844Z_35edd4473e1d.jsonl.gz") == "2026-11-10T01:28:44Z"
+    assert snapshot_written_utc("x/other.jsonl.gz") is None
 
 
 def test_incomplete_team_snapshot_does_not_imply_roster_absence():
@@ -238,7 +278,8 @@ def test_replay_end_to_end_improves_participation_and_counts_suppression(tmp_pat
                  {"game_id": GAME, "player_id": pid, "statistic": "points", "actual": 12.0, "played": True,
                   "observed_at": "2026-11-10T03:00:00Z"}]
     _write(shadow / "outcomes/gate/dt=2026-11-10/g.jsonl.gz", gate)
-    _write(pdata / "availability/nba/2026-11-09/a.jsonl.gz", snapshot(overrides={ROSTER[0]: "OUT"}, omit=(ROSTER[1],)))
+    _write(pdata / "availability/nba/2026-11-09/120000Z_a.jsonl.gz", snapshot(t="2026-11-09T12:00:00Z"))
+    _write(pdata / "availability/nba/2026-11-09/220000Z_b.jsonl.gz", snapshot(overrides={ROSTER[0]: "OUT"}, omit=(ROSTER[1],)))
     teams = tmp_path / "teams.csv"
     teams.write_text(f"team_id,tricode\n{TID},{TEAM}\n")
     rep = evaluate(str(shadow), str(pdata), str(teams), arms=("sim_rotation",))

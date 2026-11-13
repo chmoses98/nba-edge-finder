@@ -23,6 +23,7 @@ import gzip
 import json
 import math
 import os
+import re
 from collections import Counter, defaultdict
 from typing import Any
 
@@ -57,8 +58,27 @@ def load_outcomes(shadow_root: str) -> dict[tuple[str, str, str], dict]:
             for r in _read(os.path.join(shadow_root, "outcomes/gate/dt=*/*.jsonl.gz"))}
 
 
+def snapshot_written_utc(path: str) -> str | None:
+    """``availability/nba/2026-11-10/012844Z_<hash>.jsonl.gz`` -> ``2026-11-10T01:28:44Z`` (snapshot write time)."""
+    m = re.match(r"(\d{2})(\d{2})(\d{2})Z_", os.path.basename(path))
+    d = os.path.basename(os.path.dirname(path))
+    if not m or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", d):
+        return None
+    return f"{d}T{m.group(1)}:{m.group(2)}:{m.group(3)}Z"
+
+
 def load_availability(avail_root: str) -> list[dict]:
-    return list(_read(os.path.join(avail_root, "availability/nba/*/*.jsonl.gz")))
+    out = []
+    for f in sorted(glob.glob(os.path.join(avail_root, "availability/nba/*/*.jsonl.gz"))):
+        w = snapshot_written_utc(f)
+        with gzip.open(f, "rt") as fh:
+            for line in fh:
+                if line.strip():
+                    r = json.loads(line)
+                    if w:
+                        r["x_available_utc"] = w
+                    out.append(r)
+    return out
 
 
 def load_team_tricodes(teams_csv: str) -> dict[int, str]:
@@ -294,6 +314,8 @@ def _reconcile(universe, decisions, outcomes, box_present, index) -> dict[str, A
             cats[f"suppressed:{d.status.status}({d.status.source})"] += 1
         elif d.status.status in ("questionable", "probable") or d.status.source == "espn":
             cats[f"thinned_not_suppressed:{d.status.status}({d.status.source})"] += 1
+        elif d.status.status in ("roster_unconfirmed", "team_mismatch"):
+            cats[f"still_projected:{d.status.status}"] += 1
         elif index.first_out_after(g, d.team, p, d.as_of, d.kickoff):
             cats["still_projected:late_scratch_after_as_of"] += 1
         elif d.status.status == "unknown":
@@ -324,6 +346,8 @@ def _absences(U, decisions, outcomes, box_present, index) -> dict[str, Any]:
             cat = f"PREDICTABLE_{st.status}_{st.source}"
         elif st.status in ("questionable", "probable") or st.source == "espn":
             cat = f"UNCERTAIN_{st.status}_{st.source}"
+        elif st.status in ("roster_unconfirmed", "team_mismatch"):
+            cat = f"KEPT_{st.status}"
         else:
             # the replay looks past as_of ONLY to label: was there later pre-kickoff information?
             late = index.first_out_after(g, d.team, p, d.as_of, d.kickoff)
