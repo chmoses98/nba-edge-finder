@@ -114,6 +114,219 @@ def test_official_report_to_observations_and_resolution(official_jan15, tmp_path
     assert s["coverage"]["mean_coverage"] > 0.9 and s["coverage"]["max_newest_age_minutes"] < 5
 
 
+
+def test_official_confirmed_out_zeroes_expected_minutes_before_reconciliation():
+    # The calibrated hurdle has a strictly positive probability even for OUT.
+    # An official confirmed OUT must not consume any minutes or points.
+    p = PART.enforce_confirmed_out(
+        np.array([0.04, 0.08, 0.45, 0.88]),
+        [{"status": "CONFIRMED_OUT"}, {"status": "LIKELY_OUT"},
+         {"status": "UNCERTAIN"}, {"status": "LIKELY_ACTIVE"}],
+    )
+    np.testing.assert_array_equal(p, [0.0, 0.08, 0.45, 0.88])
+    df = pd.DataFrame({"game_id": [1] * 4, "team": ["BOS"] * 4,
+                       "p_play": p, "minutes": [36.0, 30.0, 32.0, 30.0],
+                       "pts": [30.0, 22.0, 18.0, 12.0]})
+    _, recs = REC.reconcile(df, {(1, "BOS"): 110.0})
+    assert recs[0]["minutes_sum_raw"] == round(0.08 * 30 + 0.45 * 32 + 0.88 * 30, 1)
+    assert recs[0]["points_sum_raw"] == round(0.08 * 22 + 0.45 * 18 + 0.88 * 12, 1)
+
+
+
+
+def test_live_lineup_injury_response_uses_pretip_status_and_trailing_roster():
+    from nba.live.injury_team import lineup_team_deltas
+    from nba_edge.research.lineup_impact import LineupImpactModel
+
+    # Two teams, each with a complete 240-minute historical rotation.
+    # BOS loses a 36-minute two-way player; replacement minutes go to six
+    # teammates. The missing BOS defender must raise NYK's projected points.
+    hist, slate, part = [], [], []
+    date = pd.Timestamp("2026-01-11")
+    for team, opp, base in (("BOS", "NYK", 100), ("NYK", "BOS", 200)):
+        for k in range(10):
+            for i in range(7):
+                hist.append({"game_id": k + 1, "date": date - pd.Timedelta(days=11-k),
+                             "team": team, "pid": base + i,
+                             "minutes": 36.0 if i == 0 else 34.0})
+        for i in range(7):
+            absent = team == "BOS" and i == 0
+            slate.append({"game_id": 99, "date": date, "team": team, "opp": opp,
+                          "pid": base + i, "p_play": 0.0 if absent else 1.0,
+                          "min_pub": 40.0 if team == "BOS" and i else
+                          (36.0 if i == 0 else 34.0)})
+            part.append({"source": AV.SRC_OFFICIAL,
+                         "status": "CONFIRMED_OUT" if absent else "LIKELY_ACTIVE",
+                         "designation": "OUT" if absent else "AVAILABLE",
+                         "certainty": "REPORTED" if absent else "PROJECTED",
+                         "implicit": not absent, "age_minutes": 30.0})
+    model = LineupImpactModel(offense={-100: 0.05}, defense={-100: 0.04},
+                              n_players=1, training_cutoff="2025-07-01")
+    shifts, audit = lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                                       part, model, pace_by_game={(99, "BOS"): 98.0,
+                                                                  (99, "NYK"): 98.0})
+    assert len(audit) == 2
+    assert shifts[(99, "BOS")] < -3.0
+    assert shifts[(99, "NYK")] > 2.5
+    # P(play) and E[minutes | play] are distinct: an unrelated player's
+    # lower availability does not create a NEW injury shock, but it must
+    # reduce that player's capacity to absorb a confirmed OUT's lost minutes.
+    # Otherwise a 15%-available player receives a full 34+ minute role.
+    two_way = LineupImpactModel(
+        offense={-100: 0.05, -101: 0.06},
+        defense={-100: 0.04, -101: 0.04},
+        n_players=2, training_cutoff="2025-07-01",
+    )
+    clean, _ = lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                                  part, two_way)
+    uncertain = pd.DataFrame(slate)
+    uncertain.loc[(uncertain["team"] == "BOS") & (uncertain["pid"] == 101),
+                  "p_play"] = 0.15
+    low_availability, _ = lineup_team_deltas(uncertain, pd.DataFrame(hist),
+                                             part, two_way)
+    assert low_availability[(99, "BOS")] < clean[(99, "BOS")]
+    assert low_availability[(99, "NYK")] > clean[(99, "NYK")]
+    # Conditional-minute forecasts affect who absorbs lost minutes but
+    # cannot change the total number of officially removed minutes.
+    changed_minutes = pd.DataFrame(slate)
+    changed_minutes.loc[(changed_minutes["team"] == "BOS")
+                        & (changed_minutes["pid"] == 101), "min_pub"] = 0.0
+    changed, _ = lineup_team_deltas(changed_minutes, pd.DataFrame(hist),
+                                    part, two_way)
+    assert changed[(99, "BOS")] < clean[(99, "BOS")]
+    assert changed[(99, "NYK")] > clean[(99, "NYK")]
+    # Future box rows are ignored by construction.
+    future = pd.DataFrame(hist + [{"game_id": 999, "date": date + pd.Timedelta(days=1),
+                                   "team": "BOS", "pid": 100, "minutes": 48000.0}])
+    assert lineup_team_deltas(pd.DataFrame(slate), future, part, model,
+                              pace_by_game={(99, "BOS"): 98.0, (99, "NYK"): 98.0})[0] == shifts
+    # If the official injury report has not covered both teams, fail closed.
+    no_report = [{**p, "source": "unverified"} if i >= 7 else p for i, p in enumerate(part)]
+    assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                              no_report, model)[0] == {}
+    # Partial coverage is not enough: five of seven official roster rows
+    # previously passed the >=5 heuristic and created a false adjustment.
+    partial_report = [{**p, "source": "unverified"} if i in (5, 6) else p
+                      for i, p in enumerate(part)]
+    assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                              partial_report, model)[0] == {}
+    # Old official snapshots must never be mistaken for a current injury.
+    stale = [{**p, "age_minutes": 2000.0} for p in part]
+    assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                              stale, model)[0] == {}
+    # A source-tagged but unconfirmed PROJECTED OUT is not an official shock.
+    projected = [{**p, "certainty": "PROJECTED"} for p in part]
+    assert lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist),
+                              projected, model)[0] == {}
+    # An official confirmed OUT must be zero even if the caller forgot to
+    # enforce the hard-zero participation override before this calculation.
+    raw_logit = pd.DataFrame(slate)
+    raw_logit.loc[(raw_logit["team"] == "BOS") & (raw_logit["pid"] == 100),
+                  "p_play"] = 0.08
+    assert lineup_team_deltas(raw_logit, pd.DataFrame(hist), part, model,
+                              pace_by_game={(99, "BOS"): 98.0,
+                                            (99, "NYK"): 98.0})[0] == shifts
+    # A broken mirror with only 200 recorded player-minutes is not a
+    # legitimate replacement rotation: fail closed, not a fabricated edge.
+    incomplete = pd.DataFrame(hist)
+    incomplete.loc[incomplete["team"] == "BOS", "minutes"] *= 0.8
+    assert lineup_team_deltas(pd.DataFrame(slate), incomplete, part, model)[0] == {}
+    # Invalid uncertain P(play) cannot be used to move a team forecast.
+    nan_prob = pd.DataFrame(slate)
+    nan_prob.loc[(nan_prob["team"] == "BOS") & (nan_prob["pid"] == 100),
+                 "p_play"] = np.nan
+    assert lineup_team_deltas(nan_prob, pd.DataFrame(hist), part, model)[0] == {}
+    # Normal role/minutes changes are not official injury shocks.
+    available = [{**p, "status": "LIKELY_ACTIVE", "designation": "AVAILABLE"} for p in part]
+    healthy = pd.DataFrame(slate)
+    healthy["p_play"] = 1.0
+    assert lineup_team_deltas(healthy, pd.DataFrame(hist), available, model)[0] == {}
+    # Long-standing absence is already incorporated in the trailing rating.
+    longterm = pd.DataFrame(hist)
+    longterm = longterm[~((longterm["team"] == "BOS") & (longterm["pid"] == 100))]
+    assert lineup_team_deltas(pd.DataFrame(slate), longterm, part, model)[0] == {}
+    # Official observations align by row order even with sparse index labels.
+    sparse_index = pd.DataFrame(slate)
+    sparse_index.index = np.arange(100, 100 + len(sparse_index))
+    assert lineup_team_deltas(sparse_index, pd.DataFrame(hist), part, model,
+                              pace_by_game={(99, "BOS"): 98.0, (99, "NYK"): 98.0})[0] == shifts
+
+
+
+
+def test_injury_replacements_require_current_roster_and_include_active_newcomers():
+    from nba.live.injury_team import lineup_team_deltas
+    from nba_edge.research.lineup_impact import LineupImpactModel
+
+    # A current newcomer with no historical minutes may absorb a starter's
+    # official absence, but a 34-minute traded player must not remain as a
+    # ghost slot in the historical rotation.
+    hist, slate, part = [], [], []
+    day = pd.Timestamp("2026-01-11")
+    for team, opp, base in (("BOS", "NYK", 100), ("NYK", "BOS", 200)):
+        for k in range(10):
+            for i in range(7):
+                hist.append({"game_id": k + 1, "date": day - pd.Timedelta(days=11-k),
+                             "team": team, "pid": base + i,
+                             "minutes": 36.0 if i == 0 else 34.0})
+        for i in range(7):
+            pid = base + i
+            out = team == "BOS" and i == 0
+            slate.append({"game_id": 99, "date": day, "team": team, "opp": opp,
+                          "pid": pid, "p_play": 0.0 if out else 1.0,
+                          "min_pub": 80.0 if pid == 107 else 1.0})
+            part.append({"source": AV.SRC_OFFICIAL,
+                         "status": "CONFIRMED_OUT" if out else "LIKELY_ACTIVE",
+                         "designation": "OUT" if out else "AVAILABLE",
+                         "certainty": "REPORTED" if out else "PROJECTED",
+                         "implicit": not out, "age_minutes": 30.0})
+        if team == "BOS":
+            slate.append({"game_id": 99, "date": day, "team": team, "opp": opp,
+                          "pid": 107, "p_play": 1.0, "min_pub": 80.0})
+            part.append({"source": AV.SRC_OFFICIAL, "status": "LIKELY_ACTIVE",
+                         "designation": "AVAILABLE", "certainty": "PROJECTED",
+                         "implicit": True, "age_minutes": 30.0})
+    model = LineupImpactModel(offense={-100: 0.05, -101: 0.06, -107: -0.04},
+                              defense={-100: 0.04}, n_players=3,
+                              training_cutoff="2025-07-01")
+    full, audit = lineup_team_deltas(pd.DataFrame(slate), pd.DataFrame(hist), part, model)
+    assert len(audit) == 2 and full[(99, "BOS")] < -5.0
+    bos_audit = next(r for r in audit if r["team"] == "BOS")
+    assert bos_audit["own_lost_minutes"] == 36.0
+    assert abs(sum(bos_audit["own_replacement_minutes"].values()) - 36.0) < 0.01
+    assert 107 in bos_audit["own_replacement_minutes"]      # current newcomer
+    # A substantial historical player who is not on today's roster cannot
+    # remain as phantom baseline minutes alongside the newcomer.
+    traded = [(r, p) for r, p in zip(slate, part)
+              if not (r["team"] == "BOS" and r["pid"] == 101)]
+    assert lineup_team_deltas(
+        pd.DataFrame([r for r, _ in traded]), pd.DataFrame(hist),
+        [p for _, p in traded], model
+    )[0] == {}
+    # If the newcomer is unavailable, he cannot receive replacement minutes.
+    unavailable = pd.DataFrame(slate)
+    unavailable.loc[unavailable["pid"] == 107, "p_play"] = 0.0
+    without, _ = lineup_team_deltas(unavailable, pd.DataFrame(hist), part, model)
+    assert full[(99, "BOS")] < without[(99, "BOS")] - 1.0
+    # Even with an 80-minute conditional forecast, a newcomer who has only
+    # a 10% chance of playing cannot absorb more than 4.2 expected minutes.
+    doubtful_newcomer = pd.DataFrame(slate)
+    doubtful_newcomer.loc[doubtful_newcomer["pid"] == 107, "p_play"] = 0.10
+    uncertain_replacement, uncertain_audit = lineup_team_deltas(
+        doubtful_newcomer, pd.DataFrame(hist), part, model
+    )
+    bos_uncertain = next(r for r in uncertain_audit if r["team"] == "BOS")
+    assert 0 < bos_uncertain["own_replacement_minutes"].get(107, 0) <= 4.2
+    assert abs(sum(bos_uncertain["own_replacement_minutes"].values()) - 36.0) < 0.01
+    assert full[(99, "BOS")] < uncertain_replacement[(99, "BOS")] - 1.0
+    assert uncertain_replacement[(99, "BOS")] < without[(99, "BOS")]
+    # If the remaining pretip roster cannot absorb the lost minutes, reject.
+    no_capacity = pd.DataFrame(slate)
+    no_capacity.loc[(no_capacity["team"] == "BOS") & (no_capacity["pid"] != 100),
+                    "p_play"] = 0.0
+    assert lineup_team_deltas(no_capacity, pd.DataFrame(hist), part, model)[0] == {}
+
+
 def test_calibrated_p_play_orders_by_designation():
     cal = PART.load_calibration()
     cls = ["OUT", "DOUBTFUL", "QUESTIONABLE", "AVAILABLE", "PROBABLE", None, "STARTER_CONFIRMED"]

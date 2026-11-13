@@ -69,6 +69,9 @@ class PlayerParams:
     # docs/SIMULATION.md "Known limitation: no team-level injury response". Estimating it needs
     # on/off or lineup data we do not yet ingest; until then no family may leave RESEARCH authority.
     impact_ppp: float = 0.0
+    # Positive means this player's presence reduces opponent scoring PPP.
+    # Zero in production; populated only by independently validated lineup research.
+    impact_def_ppp: float = 0.0
     # Availability that the trailing off_ppp rating was EARNED with, which is what that rating
     # already prices in. The engine shifts team efficiency by the surprise, (played - baseline), so
     # this must be the lookback availability and NOT today's p_play: using today's p_play made the
