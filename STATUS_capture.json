@@ -1,35 +1,32 @@
 {
- "last_capture_utc": "2026-11-14T13:05:25Z",
- "n_markets": 14310,
+ "last_capture_utc": "2026-11-14T13:20:25Z",
+ "n_markets": 14312,
  "n_series": 317,
- "requests": 959,
+ "requests": 957,
  "run_id": "43595505253",
  "markets_written": {
-  "encoding": "delta",
-  "seq": 24,
-  "path": "kalshi/markets_delta/dt=2026-11-14/kalshi_markets_delta_20261114T130525Z_43595505253.json.gz",
-  "bytes": 66265,
-  "n_markets": 14310,
-  "n_changed": 3660,
-  "changed_pct": 25.577,
-  "board_sha256": "3e6e5cc60529ddcdfba147de584d5f60eff37015180b517e03ed27c6f15477b6"
+  "encoding": "checkpoint",
+  "reason": "chain reached 24 deltas (limit 24)",
+  "path": "kalshi/markets/dt=2026-11-14/kalshi_markets_20261114T132025Z_43595505253.jsonl.gz",
+  "bytes": 1030322,
+  "n_markets": 14312,
+  "board_sha256": "18347eae3d0a6813b40a9b230a7a8dff3fc0b1bab69256121c915cfd77c2acee"
  },
  "orderbooks_written": {
-  "encoding": "delta",
-  "seq": 24,
-  "path": "kalshi/orderbooks_delta/dt=2026-11-14/kalshi_orderbooks_delta_20261114T130525Z_43595505253.json.gz",
-  "bytes": 41068,
+  "encoding": "checkpoint",
+  "reason": "chain reached 24 deltas (limit 24)",
+  "path": "kalshi/orderbooks/dt=2026-11-14/kalshi_orderbooks_20261114T132025Z_43595505253.jsonl.gz",
+  "bytes": 42531,
   "n_markets": 300,
-  "n_changed": 297,
-  "changed_pct": 99.0,
-  "board_sha256": "c35fda2b0594b5b9b79b7ddb0243edd29ea33b7f8bbeb794877d1f1b3104f4e7"
+  "board_sha256": "dc47bf89941ff633e0b5f9e2ef128aa65e2141850bbbb36e29f146b7fb5969d7"
  },
  "by_status": {
-  "active": 14310
+  "active": 14310,
+  "initialized": 2
  },
  "by_support": {
-  "BUILDABLE": 1626,
-  "MODELABLE": 1369,
+  "BUILDABLE": 1627,
+  "MODELABLE": 1370,
   "RESEARCH": 1807,
   "UNMODELABLE": 2353,
   "UNRESOLVED": 7155
@@ -61,8 +58,8 @@
   "player_blocks": 31,
   "player_double_double": 40,
   "player_points": 196,
-  "player_pra": 135,
-  "player_rebounds": 215,
+  "player_pra": 136,
+  "player_rebounds": 216,
   "player_steals": 72,
   "player_stocks": 18,
   "player_threes": 219,
